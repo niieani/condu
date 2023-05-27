@@ -1,7 +1,8 @@
 {
   "name": "my-node-app",
   "version": "1.0.0",
-  "dependencies": {
-
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.0.4"
   }
 }
