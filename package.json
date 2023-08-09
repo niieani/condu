@@ -2,7 +2,12 @@
   "name": "yarn-plugin-toolchain",
   "version": "1.0.0",
   "dependencies": {
+    "@pnpm/fetch": "^7.0.3",
+    "@pnpm/logger": "^5.0.0",
+    "@pnpm/network.auth-header": "^2.0.5",
+    "@pnpm/npm-resolver": "^16.0.8",
     "@pnpm/read-project-manifest": "^5.0.4",
+    "@pnpm/types": "^9.2.0",
     "@yarnpkg/cli": "^4.0.0-rc.45",
     "@yarnpkg/core": "^4.0.0-rc.45",
     "clipanion": "^3.2.1",

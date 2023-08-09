@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import { ensureDependency, getManifest } from "./toolchain.js";
 
 export type FileDef = {
   path: string;
@@ -81,6 +82,7 @@ export function collectState(config: RepoConfig): State {
   // TODO: store file list, tasks and dependencies in a git-committed file, so that any removals/upgrades can be flagged as changes during diffing
   // e.g. .config/toolchain/.files
   // e.g. .config/toolchain/.dependencies // automatically updated when doing 'yarn add' so that it's compatible with dep. auto-updaters
+  // TODO: also store version of each feature, so that we can detect if a feature has been upgraded
 
   return state;
 }
@@ -102,5 +104,19 @@ export async function evaluate(config: RepoConfig) {
 
   await writeFiles(collectedState.files, rootDir);
 
-  // TODO: add missing dependencies
+  const { manifest, writeProjectManifest } = await getManifest(rootDir);
+
+  let didChangeManifest = false;
+  for (const packageName of collectedState.devDependencies) {
+    // TODO parallelize?
+    didChangeManifest ||= await ensureDependency({
+      packageName,
+      manifest,
+      target: "devDependencies",
+    });
+  }
+
+  if (didChangeManifest) {
+    await writeProjectManifest(manifest);
+  }
 }
