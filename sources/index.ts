@@ -1,0 +1,73 @@
+import { Plugin, Project, Hooks } from "@yarnpkg/core";
+import { BaseCommand } from "@yarnpkg/cli";
+import { Option } from "clipanion";
+import { npath, ppath, xfs } from "@yarnpkg/fslib";
+// import { Hooks } from "@yarnpkg/plugin-essentials";
+import {
+  Worker,
+  isMainThread,
+  parentPort,
+  workerData,
+} from "node:worker_threads";
+import { fork } from "node:child_process";
+
+class HelloWorldCommand extends BaseCommand {
+  static paths = [[`hello`, `world`]];
+
+  name = Option.String(`--name`, `John Doe`, {
+    description: `Your name`,
+  });
+
+  async execute() {
+    console.log(`Hello ${this.name}!`);
+  }
+}
+
+let i = 0;
+let b = 0;
+const plugin: Plugin<Hooks> = {
+  hooks: {
+    async populateYarnPaths(project, definePath) {
+      console.log("populateYarnPaths", project.cwd, ++b);
+    },
+    async registerPackageExtensions(configuration, registerPackageExtension) {
+      console.log("registerPackageExtensions", configuration.projectCwd, ++i);
+    },
+    validateProject(project, definePath) {
+      // console.log(project.workspaces[0].manifest);
+      console.log("validateProject");
+    },
+    afterAllInstalled: async (project, options) => {
+      const target = project.cwd;
+      console.log("yo!!");
+      const child = fork(ppath.join(target, ".config", "test.ts"), [], {
+        env: {
+          ...process.env,
+          NODE_OPTIONS: "--loader tsx",
+          NODE_NO_WARNINGS: "1",
+        },
+      });
+      child.on("spawn", () => {
+        child.send({ hello: 123 });
+      });
+      child.on("message", console.log);
+      child.on("error", console.log);
+      child.on("exit", (code) => {
+        if (code !== 0)
+          console.log(new Error(`Worker stopped with exit code ${code}`));
+      });
+
+      // try {
+      //   const config = await import(
+      //     ppath.join(target, ".config", "toolchain.ts")
+      //   );
+      //   console.log(`What a great install, am I right?`, config);
+      // } catch {
+      //   console.log(`oops, config not found!`);
+      // }
+    },
+  },
+  commands: [HelloWorldCommand],
+};
+
+export default plugin;
