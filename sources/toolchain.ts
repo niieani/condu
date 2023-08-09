@@ -1,15 +1,28 @@
 import { $ as $$, spinner } from "zx";
-import { Configuration, Project, ResolveOptions } from "@yarnpkg/core";
-import { npath, ppath, xfs } from "@yarnpkg/fslib";
-import { getPluginConfiguration } from "@yarnpkg/cli";
-import { suggestUtils } from "@yarnpkg/plugin-essentials";
-import {
-  structUtils,
-  ThrowReport,
-  miscUtils,
-  semverUtils,
-} from "@yarnpkg/core";
-import semver from "semver";
+// import semver from "semver";
+import { readProjectManifest } from "@pnpm/read-project-manifest";
+import { createNpmResolver } from "@pnpm/npm-resolver";
+import { getCacheDir } from "./utils/dirs.js";
+import { createFetchFromRegistry } from "@pnpm/fetch";
+import { createGetAuthHeaderByURI } from "@pnpm/network.auth-header";
+import type { ProjectManifest } from "@pnpm/types";
+import path from "path";
+import { findUp } from "./utils/findUp.js";
+
+const registry = "https://registry.npmjs.org/";
+const resolveFromNpm = createNpmResolver(
+  createFetchFromRegistry({}),
+  // async (url) => {
+  //   // @ts-expect-error pnpm types are wrong, it used node-fetch internally which isn't necessary
+  //   const result: Promise<import("node-fetch").Response> = fetch(url);
+  //   return result;
+  // },
+  createGetAuthHeaderByURI({ allSettings: {} }),
+  // (uri) => {
+  //   return undefined;
+  // },
+  { offline: false, cacheDir: getCacheDir(process) },
+);
 
 // wrapper that makes the io 'inherit' by default
 const $ = (pieces: TemplateStringsArray, ...args: unknown[]) =>
@@ -22,60 +35,67 @@ async function setup() {
 // await $`yarn`;
 // await spinner("waiting", () => $`sleep 5`);
 
-const startingPath = ppath.cwd();
-const pluginConfiguration = getPluginConfiguration();
-const yarnConfig = await Configuration.find(startingPath, pluginConfiguration);
-const yarnProjectInfo = await Project.find(yarnConfig, startingPath);
+// const cwd = process.cwd();
+// const {
+//   manifest,
+//   fileName: manifestPath,
+//   writeProjectManifest,
+// } = await getManifest(cwd);
+// console.log(manifestPath);
 
-await addDependency({ package: "lodash" }, yarnConfig, yarnProjectInfo.project);
-await $`echo done`;
+// // await ensureDependency({ packageName: "lodash", manifest });
 
-async function addDependency(
-  {
-    namespace: packageNamespace = null,
-    package: packageName,
-    versionOrTag = "latest",
-  }: { namespace?: string | null; package: string; versionOrTag?: string },
-  yarnConfig: Configuration,
-  yarnProject: Project,
-) {
-  const resolver = yarnConfig.makeResolver();
-  const resolveOptions: ResolveOptions = {
-    project: yarnProject,
-    resolver,
-    report: new ThrowReport(),
-  };
+// // await writeProjectManifest(manifest);
+// await $`echo done`;
 
-  const ident = structUtils.makeIdent(packageNamespace, packageName);
-  const descriptor = structUtils.makeDescriptor(ident, versionOrTag);
-  let range = structUtils.parseRange(descriptor.range).selector;
-
-  // If the range is a tag, we have to resolve it into a semver version
-  if (!semverUtils.validRange(range)) {
-    const normalizedDescriptor = yarnConfig.normalizeDependency(descriptor);
-    const originalCandidates = await resolver.getCandidates(
-      normalizedDescriptor,
-      {},
-      resolveOptions,
-    );
-
-    range = structUtils.parseRange(originalCandidates[0].reference).selector;
-  }
-
-  const semverRange = semver.coerce(range);
-  if (semverRange === null) {
-    throw new Error(`Invalid semver range for ${packageName}`);
-  }
-  const coercedRange = `${suggestUtils.Modifier.CARET}${semverRange!.major}`;
-  const finalDescriptor = structUtils.makeDescriptor(
-    structUtils.makeIdent(packageNamespace, packageName),
-    coercedRange,
+export async function getManifest(cwd: string) {
+  const manifestPath = await findUp(
+    [
+      "package.json",
+      "package.json5",
+      "package.yaml",
+      // "yarn.lock",
+      // "package-lock.json",
+      // "pnpm-workspace.yaml",
+      // "pnpm-lock.yaml",
+    ],
+    { cwd },
   );
+  const projectDir = manifestPath ? path.dirname(manifestPath) : cwd;
 
-  yarnProject.workspaces[0].manifest.dependencies.set(
-    ident.identHash,
-    finalDescriptor,
+  return readProjectManifest(projectDir);
+}
+
+export async function ensureDependency({
+  packageName,
+  manifest,
+  versionOrTag = "latest",
+  target = "dependencies",
+  skipIfExists = true,
+}: {
+  packageName: string;
+  versionOrTag?: string;
+  target?: "dependencies" | "devDependencies" | "optionalDependencies";
+  skipIfExists?: boolean;
+  manifest: ProjectManifest;
+}) {
+  const targetDependencyList = (manifest[target] ||= {});
+  if (skipIfExists && targetDependencyList[packageName]) {
+    return false;
+  }
+  const dependency = await resolveFromNpm(
+    { alias: "lodash", pref: versionOrTag },
+    { registry },
   );
+  if (!dependency || !dependency.manifest) {
+    throw new Error(`no ${packageName} dependency found in the repository`);
+  }
+  console.log(dependency.id);
 
-  await yarnProject.workspaces[0].persistManifest();
+  const pkgDescriptor = `^${dependency.manifest.version}`;
+  if (targetDependencyList[packageName] === pkgDescriptor) {
+    return false;
+  }
+  targetDependencyList[packageName] = pkgDescriptor;
+  return true;
 }
