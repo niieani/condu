@@ -1,4 +1,4 @@
-# codename: toolchain
+# project codename: toolchain
 
 - Simple repo management system:
 
