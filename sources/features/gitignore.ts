@@ -1,4 +1,4 @@
-import { defineFeature } from "./apply.js";
+import { defineFeature } from "../defineFeature.js";
 
 // example implementation
 

@@ -1,61 +1,15 @@
 import fs from "fs/promises";
 import path from "path";
 import { ensureDependency, getManifest } from "./toolchain.js";
-
-export type FileDef = {
-  path: string;
-  content: string;
-};
-
-export interface Task {
-  // e.g. 'test:lint'
-  name: string;
-  // what is this task for? are we testing something, building, etc.
-  type: "test" | "build" | "execute" | "publish";
-
-  // potentially add something like "after" or "before" to ensure order
-}
-
-export type State = {
-  // these files will be created during execution
-  files: readonly FileDef[];
-  // we'll ensure these dependencies are installed during execution
-  devDependencies: readonly string[];
-
-  tasks: readonly Task[];
-};
-
-export type FinalState = {
-  files: FileDef[];
-  devDependencies: string[];
-  tasks: Task[];
-};
-
-export type FeatureActionFn = (
-  config: RepoConfig,
-  state: State,
-) => Partial<State>;
-
-export interface RepoConfig {
-  engine: "node@20" | "node@latest" | "bun@latest";
-  monorepo?: boolean;
-  features: readonly FeatureActionFn[];
-}
-
-type FeatureDefinition<Name extends string> = {
-  name: Name;
-  actionFn: FeatureActionFn;
-  /** set the order execution */
-  order?: {
-    after?: string[];
-    priority?: "beginning" | "end";
-  };
-};
-
-export const defineFeature = <Name extends string>({
-  actionFn,
-  ...config
-}: FeatureDefinition<Name>) => Object.assign(actionFn, config);
+import { CORE_NAME } from "./constants.js";
+import * as t from "./utils/io-ts/io-ts.js";
+import {
+  RepoConfig,
+  State,
+  FinalState,
+  FileDef,
+  RepoConfigValidator,
+} from "./configTypes.js";
 
 export function collectState(config: RepoConfig): State {
   const state: FinalState = {
@@ -67,7 +21,8 @@ export function collectState(config: RepoConfig): State {
   // TODO: sort features by `order` config
 
   for (const feature of config.features) {
-    const featureState = feature(config, state);
+    // const featureConfig = feature.order;
+    const featureState = feature.actionFn(config, state);
     if (featureState.files) {
       state.files.push(...featureState.files);
     }
@@ -97,14 +52,31 @@ export function writeFiles(files: readonly FileDef[], rootDir: string) {
   );
 }
 
-export async function evaluate(config: RepoConfig) {
+export async function apply({
+  startDir = process.cwd(),
+}: {
+  startDir?: string;
+} = {}) {
+  const { manifest, writeProjectManifest, projectDir } = await getManifest(
+    startDir,
+  );
+  const configFile = path.join(projectDir, `.config`, `${CORE_NAME}.ts`);
+  const importedConfig = await import(configFile).catch((error) => {
+    console.error(
+      `Unable to load the ${CORE_NAME} config file:\n${error.message}`,
+    );
+  });
+  if (!importedConfig?.default) {
+    return;
+  }
+  const config = t.decodeOrThrow(
+    RepoConfigValidator,
+    importedConfig.default,
+    `Errors in config file`,
+  );
+
   const collectedState = collectState(config);
-  // TODO:
-  const rootDir = process.cwd();
-
-  await writeFiles(collectedState.files, rootDir);
-
-  const { manifest, writeProjectManifest } = await getManifest(rootDir);
+  await writeFiles(collectedState.files, projectDir);
 
   let didChangeManifest = false;
   for (const packageName of collectedState.devDependencies) {

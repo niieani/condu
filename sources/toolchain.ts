@@ -63,7 +63,8 @@ export async function getManifest(cwd: string) {
   );
   const projectDir = manifestPath ? path.dirname(manifestPath) : cwd;
 
-  return readProjectManifest(projectDir);
+  const manifestData = await readProjectManifest(projectDir);
+  return { ...manifestData, projectDir };
 }
 
 export async function ensureDependency({
