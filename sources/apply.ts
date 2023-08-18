@@ -11,7 +11,7 @@ import {
   RepoConfigValidator,
 } from "./configTypes.js";
 
-export function collectState(config: RepoConfig): State {
+export async function collectState(config: RepoConfig): Promise<State> {
   const state: FinalState = {
     files: [],
     devDependencies: [],
@@ -22,7 +22,7 @@ export function collectState(config: RepoConfig): State {
 
   for (const feature of config.features) {
     // const featureConfig = feature.order;
-    const featureState = feature.actionFn(config, state);
+    const featureState = await feature.actionFn(config, state);
     if (featureState.files) {
       state.files.push(...featureState.files);
     }
@@ -75,7 +75,7 @@ export async function apply({
     `Errors in config file`,
   );
 
-  const collectedState = collectState(config);
+  const collectedState = await collectState(config);
   await writeFiles(collectedState.files, projectDir);
 
   let didChangeManifest = false;
