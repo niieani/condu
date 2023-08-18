@@ -1,7 +1,5 @@
 import { defineFeature } from "../defineFeature.js";
 
-// example implementation
-
 export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
   defineFeature({
     name: "gitignore",

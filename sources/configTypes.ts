@@ -28,7 +28,7 @@ export type FinalState = {
   tasks: Task[];
 };
 const FeatureActionFnValidator: t.Type<
-  (config: RepoConfig, state: State) => Partial<State>
+  (config: RepoConfig, state: State) => Partial<State> | Promise<Partial<State>>
 > = t.FunctionT;
 export type FeatureActionFn = t.TypeOf<typeof FeatureActionFnValidator>;
 
