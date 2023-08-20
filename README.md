@@ -1,5 +1,13 @@
 # project codename: toolchain
 
+Managing the JavaScript ecosystem can be a full time job.
+Upgrades to transpiles, migrations across builder systems, migrating or adding support for new engines (deno, bun), correct support for CommonJS and ESM, linting, testing, etc.
+And if you maintain more than one package, multiply all of that work by each one!
+
+Annoyed by ecosystem/tooling churn? Hard to maintain dependencies? Tired of manually updating configs?
+
+Toolchain is here to help out.
+
 - Simple repo management system:
 
   - Immutable/reconstructable configs (nix-os philosophy)
@@ -22,6 +30,7 @@
   - react native
   - ? deno
   - ? reasonml
+  - maybe moon or wireit? https://moonrepo.dev/
 
 - Functionality:
 

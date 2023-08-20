@@ -1,0 +1,4 @@
+- [ ] typescript
+- [ ] typescript references
+- [ ] scaffolding new packages in monorepo
+- [ ] moonrepo? integration
