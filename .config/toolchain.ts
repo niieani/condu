@@ -1,4 +1,4 @@
-import { gitignore } from "../sources/features/gitignore.js";
+import { gitignore } from "../sources/features/gitignore/gitignore.js";
 
 export default {
   engine: "bun@latest",

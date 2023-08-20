@@ -2,14 +2,14 @@ import fs from "fs/promises";
 import path from "path";
 import { ensureDependency, getManifest } from "./toolchain.js";
 import { CORE_NAME } from "./constants.js";
-import * as t from "./utils/io-ts/io-ts.js";
+import * as t from "../core/utils/io-ts/io-ts.js";
 import {
   RepoConfig,
   State,
   FinalState,
   FileDef,
   RepoConfigValidator,
-} from "./configTypes.js";
+} from "../core/configTypes.js";
 
 export async function collectState(config: RepoConfig): Promise<State> {
   const state: FinalState = {
@@ -69,6 +69,8 @@ export async function apply({
   if (!importedConfig?.default) {
     return;
   }
+
+  // TODO: migrate to https://github.com/Effect-TS/schema
   const config = t.decodeOrThrow(
     RepoConfigValidator,
     importedConfig.default,

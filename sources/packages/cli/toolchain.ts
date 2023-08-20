@@ -2,12 +2,12 @@ import { $ as $$, spinner } from "zx";
 // import semver from "semver";
 import { readProjectManifest } from "@pnpm/read-project-manifest";
 import { createNpmResolver } from "@pnpm/npm-resolver";
-import { getCacheDir } from "./utils/dirs.js";
+import { getCacheDir } from "../core/utils/dirs.js";
 import { createFetchFromRegistry } from "@pnpm/fetch";
 import { createGetAuthHeaderByURI } from "@pnpm/network.auth-header";
 import type { ProjectManifest } from "@pnpm/types";
 import path from "path";
-import { findUp } from "./utils/findUp.js";
+import { findUp } from "../core/utils/findUp.js";
 
 const registry = "https://registry.npmjs.org/";
 const resolveFromNpm = createNpmResolver(
