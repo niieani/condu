@@ -1,6 +1,10 @@
 import { defineFeature } from "../../platform/core/defineFeature.js";
-import type Toolchain from "./schemas/toolchain.js";
-import type Workspace from "./schemas/workspace.js";
+import type {
+  PartialToolchainConfig as Toolchain,
+  PartialWorkspaceConfig as Workspace,
+} from "@moonrepo/types";
+// import type Toolchain from "./schemas/toolchain.js";
+// import type Workspace from "./schemas/workspace.js";
 import yaml from "yaml";
 import { schemas } from "./utils/schemas.js";
 
@@ -23,7 +27,7 @@ const defaultToolchain: Toolchain = {
 
     /** The version of the package manager to use. */
     yarn: {
-      version: "4.0.0-rc",
+      version: "4.0.0-rc.49",
     },
 
     /** Add `node.version` as a constraint in the root `package.json` `engines`. */
@@ -51,7 +55,7 @@ const defaultToolchain: Toolchain = {
   typescript: {
     /** When `syncProjectReferences` is enabled and a dependent project reference
      * *does not* have a `tsconfig.json`, automatically create one. */
-    createMissingConfig: false,
+    // createMissingConfig: false,
 
     /** Name of `tsconfig.json` file in each project root. */
     // projectConfigFileName: 'tsconfig.json',

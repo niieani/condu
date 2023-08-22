@@ -10,6 +10,8 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
           path: ".gitignore",
           content: [
             "node_modules",
+            // TODO: extract to yarn() feature
+            ".yarn/cache",
             // ignore all generated files:
             ...state.files.map(({ path }) => path),
             ...ignore,
