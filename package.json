@@ -26,12 +26,19 @@
     "tsx": "^3.12.7",
     "typescript": "^5.1.3"
   },
+  "workspaces": [
+    "packages/features/*",
+    "packages/platform/*"
+  ],
   "type": "module",
   "scripts": {
     "start": "bun sources/toolchain.ts"
   },
-  "packageManager": "yarn@4.0.0-rc.45",
+  "packageManager": "yarn@4.0.0-rc.49",
   "resolutions": {
     "clipanion": "patch:clipanion@npm%3A4.0.0-rc.2#~/.yarn/patches/clipanion-npm-fc9187f56c.patch"
+  },
+  "engines": {
+    "node": "20.4.0"
   }
 }
