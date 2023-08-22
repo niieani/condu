@@ -3,7 +3,7 @@ import { Cli, Builtins } from "clipanion";
 import { ApplyCommand } from "./ApplyCommand.js";
 import path from "node:path";
 
-const { version, description, name } = require("../package.json");
+const { version, description, name } = require("../../../package.json");
 
 const [node, app, ...args] = process.argv;
 

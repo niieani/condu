@@ -47,7 +47,9 @@ export function writeFiles(files: readonly FileDef[], rootDir: string) {
     files.map((file) =>
       // TODO: add logging
       // TODO: add manual diffing with confirmation that change is ok
-      fs.writeFile(path.join(rootDir, file.path), file.content),
+      typeof file.content === "string"
+        ? fs.writeFile(path.join(rootDir, file.path), file.content)
+        : Promise.resolve(),
     ),
   );
 }
