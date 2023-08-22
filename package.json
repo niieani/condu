@@ -12,8 +12,10 @@
     "clipanion": "^4.0.0-rc.2",
     "fp-ts": "^2.16.1",
     "io-ts": "^2.2.20",
+    "json-schema-to-typescript": "^13.0.2",
     "remeda": "^1.24.1",
     "semver": "^7.5.1",
+    "yaml": "^2.3.1",
     "zx": "^7.2.2"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-import { defineFeature } from "../defineFeature.js";
+import { defineFeature } from "../../platform/core/defineFeature.js";
 
 export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
   defineFeature({

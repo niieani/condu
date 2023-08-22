@@ -6,6 +6,14 @@ And if you maintain more than one package, multiply all of that work by each one
 
 Annoyed by ecosystem/tooling churn? Hard to maintain dependencies? Tired of manually updating configs?
 
+Tired of various tools having different configuration formats?
+Some starting with dot, some in their own folders, some in .json,
+others in .yaml, JavaScript, or even .toml?
+
+Configure everything in TypeScript, neatly organized inside of a `.config` folder.
+Additionally, reuse your configuration across projects, and easily update them all at once.
+Override only the parts you need to in your given project, and keep the rest up to date.
+
 Toolchain is here to help out.
 
 - Simple repo management system:
