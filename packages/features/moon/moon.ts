@@ -6,14 +6,15 @@ import type {
 // import type Toolchain from "./schemas/toolchain.js";
 // import type Workspace from "./schemas/workspace.js";
 import yaml from "yaml";
-import { schemas } from "./utils/schemas.js";
+import { schemas } from "../../platform/schema-types/utils/schemas.js";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
 // TODO: add opinionated defaults for toolchain and workspace
 // TODO: use a shared config property for typescript, etc.
-// TODO: reuse the node version, package manager,
-// TODO: infer main branch from git (maybe not necessary?)
+
+const defaultPackageManager = "yarn";
+const defaultNodeVersion = "20.4.0";
 
 const defaultToolchain: Toolchain = {
   /** Extend and inherit an external configuration file. */
@@ -22,10 +23,10 @@ const defaultToolchain: Toolchain = {
   /** Configures Node.js within the toolchain. */
   node: {
     /** The version to use. */
-    version: "20.4.0",
+    version: defaultNodeVersion,
 
     /** The package manager to use when managing dependencies. */
-    packageManager: "yarn",
+    packageManager: defaultPackageManager,
 
     /** The version of the package manager to use. */
     yarn: {
@@ -83,33 +84,6 @@ const defaultToolchain: Toolchain = {
   },
 };
 
-const defaultWorkspace: Omit<Workspace, "packages"> = {
-  // REQUIRED: A map of all projects found within the workspace, or a list or file system globs.
-  // When using a map, each entry requires a unique project ID as the map key, and a file system
-  // path to the project folder as the map value. File paths are relative from the workspace root,
-  // and cannot reference projects located outside the workspace boundary.
-  // projects: ["packages/*"],
-  /** Configures the version control system to utilize within the workspace. A VCS
-is required for determining touched (added, modified, etc) files, calculating file hashes,
-computing affected files, and much more. */
-  vcs: {
-    /**
-     * The client to use when managing the repository.
-     * Accepts "git". Defaults to "git".
-     **/
-    manager: "git",
-    /**
-     * The default branch (master/main/trunk) in the repository for comparing the
-     * local branch against. For git, this is is typically "master" or "main",
-     * and must include the remote prefix (before /).
-     **/
-    defaultBranch: "main",
-  },
-};
-
-const defaultPackageManager = "yarn";
-const defaultNodeVersion = "20.4.0";
-
 const getDefaultGitBranch = async (rootDir: string) => {
   try {
     const remotes = await fs.readdir(
@@ -123,7 +97,7 @@ const getDefaultGitBranch = async (rootDir: string) => {
       path.join(rootDir, ".git", "refs", "remotes", remote, "HEAD"),
       "utf-8",
     );
-    const defaultBranch = result.split(`/${remote}/`).pop();
+    const defaultBranch = result.split(`/${remote}/`).pop()?.trim();
     if (!defaultBranch) {
       throw new Error("No default branch found");
     }
@@ -187,11 +161,9 @@ export const moon = ({
             path: ".moon/workspace.yml",
             content: yaml.stringify({
               $schema: schemas.workspace,
-              ...defaultWorkspace,
               ...workspace,
               projects: config.projects,
               vcs: {
-                ...defaultWorkspace.vcs,
                 defaultBranch,
                 ...workspace?.vcs,
               },
