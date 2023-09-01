@@ -8,10 +8,14 @@ import {
   State,
   FinalState,
   FileDef,
-  RepoConfigValidator,
+  CONFIGURED,
+  ConfiguredRepoConfig,
+  RepoConfigWithInferredValues,
 } from "../core/configTypes.js";
 
-export async function collectState(config: RepoConfig): Promise<State> {
+export async function collectState(
+  config: RepoConfigWithInferredValues,
+): Promise<State> {
   const state: FinalState = {
     files: [],
     devDependencies: [],
@@ -63,23 +67,33 @@ export async function apply({
     startDir,
   );
   const configFile = path.join(projectDir, `.config`, `${CORE_NAME}.ts`);
-  const importedConfig = await import(configFile).catch((error) => {
+  const importedConfigFile = await import(configFile).catch((error) => {
     console.error(
       `Unable to load the ${CORE_NAME} config file:\n${error.message}`,
     );
   });
-  if (!importedConfig?.default) {
+
+  const config: ConfiguredRepoConfig | undefined = importedConfigFile?.default;
+
+  if (!config || typeof config !== "object" || !(CONFIGURED in config)) {
+    console.error(
+      `Invalid configuration file. Make sure to use the configure option`,
+    );
     return;
   }
 
   // TODO: migrate to https://github.com/Effect-TS/schema
-  const config = t.decodeOrThrow(
-    RepoConfigValidator,
-    importedConfig.default,
-    `Errors in config file`,
-  );
+  // const config = t.decodeOrThrow(
+  //   RepoConfigValidator,
+  //   importedConfigFile.default,
+  //   `Errors in config file`,
+  // );
 
-  const collectedState = await collectState(config);
+  const collectedState = await collectState({
+    ...config,
+    manifest,
+    workspaceDir: projectDir,
+  });
   await writeFiles(collectedState.files, projectDir);
 
   let didChangeManifest = false;

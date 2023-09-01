@@ -34,11 +34,11 @@
   "scripts": {
     "start": "bun sources/toolchain.ts"
   },
-  "packageManager": "yarn@4.0.0-rc.49",
   "resolutions": {
     "clipanion": "patch:clipanion@npm%3A4.0.0-rc.2#~/.yarn/patches/clipanion-npm-fc9187f56c.patch"
   },
   "engines": {
     "node": "20.4.0"
-  }
+  },
+  "packageManager": "yarn@4.0.0-rc.49"
 }
