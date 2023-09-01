@@ -14,6 +14,8 @@ Configure everything in TypeScript, neatly organized inside of a `.config` folde
 Additionally, reuse your configuration across projects, and easily update them all at once.
 Override only the parts you need to in your given project, and keep the rest up to date.
 
+Tool chain fixes [this](https://twitter.com/WarrenInTheBuff/status/1672839156647575552).
+
 Toolchain is here to help out.
 
 - Simple repo management system:
