@@ -158,3 +158,8 @@ const config = {
   main: "src/main.ts",
 };
 ```
+
+## eslint info
+
+- [eslint resolver](https://github.com/import-js/eslint-import-resolver-typescript)
+- potentially eslint-plugin-i

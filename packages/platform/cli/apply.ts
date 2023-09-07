@@ -1,17 +1,16 @@
 import fs from "fs/promises";
 import path from "path";
-import { ensureDependency, getManifest } from "./toolchain.js";
-import { CORE_NAME } from "./constants.js";
-import * as t from "../core/utils/io-ts/io-ts.js";
+import { ensureDependency } from "./toolchain.js";
 import {
   RepoConfig,
   State,
   FinalState,
   FileDef,
-  CONFIGURED,
-  ConfiguredRepoConfig,
   RepoConfigWithInferredValues,
 } from "../core/configTypes.js";
+import { groupBy, equals, sort } from "remeda";
+import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
+import { LoadConfigOptions, loadProject } from "./loadProject.js";
 
 export async function collectState(
   config: RepoConfigWithInferredValues,
@@ -58,29 +57,23 @@ export function writeFiles(files: readonly FileDef[], rootDir: string) {
   );
 }
 
-export async function apply({
-  startDir = process.cwd(),
-}: {
-  startDir?: string;
-} = {}) {
-  const { manifest, writeProjectManifest, projectDir } = await getManifest(
-    startDir,
-  );
-  const configFile = path.join(projectDir, `.config`, `${CORE_NAME}.ts`);
-  const importedConfigFile = await import(configFile).catch((error) => {
-    console.error(
-      `Unable to load the ${CORE_NAME} config file:\n${error.message}`,
-    );
-  });
+const WORKSPACE = "[WORKSPACE]";
 
-  const config: ConfiguredRepoConfig | undefined = importedConfigFile?.default;
-
-  if (!config || typeof config !== "object" || !(CONFIGURED in config)) {
-    console.error(
-      `Invalid configuration file. Make sure to use the configure option`,
-    );
+export async function apply(options: LoadConfigOptions = {}) {
+  const project = await loadProject(options);
+  if (!project) {
     return;
   }
+
+  const {
+    manifest,
+    writeProjectManifest,
+    projectDir,
+    config,
+    projectConventions,
+  } = project;
+
+  const projectGlobs = projectConventions.map((project) => project.glob).sort();
 
   // TODO: migrate to https://github.com/Effect-TS/schema
   // const config = t.decodeOrThrow(
@@ -89,14 +82,57 @@ export async function apply({
   //   `Errors in config file`,
   // );
 
+  const workspaces =
+    projectGlobs.length > 0
+      ? await findWorkspacePackagesNoCheck(projectDir, {
+          patterns: projectGlobs,
+        })
+      : [];
+
+  let didChangeManifest = false;
+
+  // sync defined workspaces to package.json
+  if (!equals((manifest.workspaces ?? []).sort(), projectGlobs)) {
+    // TODO: support pnpm workspaces
+    manifest.workspaces = projectGlobs;
+    didChangeManifest = true;
+  }
+
   const collectedState = await collectState({
     ...config,
+    conventions: {
+      ...config.conventions,
+      sourceDir: config.conventions?.sourceDir ?? "src",
+    },
     manifest,
     workspaceDir: projectDir,
   });
-  await writeFiles(collectedState.files, projectDir);
 
-  let didChangeManifest = false;
+  const flattenedFiles = collectedState.files.flatMap((file) =>
+    (file.targetPackages ?? [WORKSPACE]).map((targetPackage) => ({
+      ...file,
+      targetPackage,
+    })),
+  );
+  const filesByPackage = groupBy(flattenedFiles, (file) => file.targetPackage);
+
+  for (const [targetPackage, files] of Object.entries(filesByPackage)) {
+    if (targetPackage === WORKSPACE) {
+      await writeFiles(files, projectDir);
+      continue;
+    }
+    // TODO: since we take the workspace list from package.json, we need to make sure 'moon' is applied before (race condition?)
+    // otherwise, we should transform 'config.projects' into a list of workspaces
+    const targetWorkspace = workspaces.find(
+      (workspace) => workspace.manifest.name === targetPackage,
+    );
+    if (!targetWorkspace) {
+      console.error(`Unable to find workspace ${targetPackage}`);
+      continue;
+    }
+    await writeFiles(files, targetWorkspace.dir);
+  }
+
   for (const packageName of collectedState.devDependencies) {
     // TODO parallelize?
     didChangeManifest ||= await ensureDependency({
@@ -108,5 +144,6 @@ export async function apply({
 
   if (didChangeManifest) {
     await writeProjectManifest(manifest);
+    // TODO: run 'yarn install' or whatever the package manager is if manifest changed
   }
 }
