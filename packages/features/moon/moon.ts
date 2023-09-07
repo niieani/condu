@@ -3,12 +3,14 @@ import type {
   PartialToolchainConfig as Toolchain,
   PartialWorkspaceConfig as Workspace,
 } from "@moonrepo/types";
+
 // import type Toolchain from "./schemas/toolchain.js";
 // import type Workspace from "./schemas/workspace.js";
 import yaml from "yaml";
 import { schemas } from "../../platform/schema-types/utils/schemas.js";
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { getMoonWorkspaceProjectsFromConventionConfig } from "../../platform/cli/getProjectGlobsFromMoonConfig.js";
 
 // TODO: add opinionated defaults for toolchain and workspace
 // TODO: use a shared config property for typescript, etc.
@@ -119,7 +121,7 @@ export const moon = ({
     /** projects should be defined in the top-level config */
     projects?: never;
   };
-}) =>
+} = {}) =>
   defineFeature({
     name: "moon",
     order: { priority: "beginning" },
@@ -162,7 +164,9 @@ export const moon = ({
             content: yaml.stringify({
               $schema: schemas.workspace,
               ...workspace,
-              projects: config.projects,
+              projects: getMoonWorkspaceProjectsFromConventionConfig(
+                config.projects,
+              ),
               vcs: {
                 defaultBranch,
                 ...workspace?.vcs,

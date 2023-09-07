@@ -4,11 +4,9 @@ import { configure } from "../packages/platform/core/configTypes.js";
 
 export default configure({
   engine: "bun",
-  projects: ["packages/features/*", "packages/platform/*"],
-  features: [
-    moon({
-      workspace: {},
-    }),
-    gitignore(),
+  projects: [
+    { parentPath: "packages/features", nameConvention: "@repo-feature/*" },
+    { parentPath: "packages/platform", nameConvention: "@repo/*" },
   ],
+  features: [moon(), gitignore()],
 });
