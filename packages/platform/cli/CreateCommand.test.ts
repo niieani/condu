@@ -1,19 +1,23 @@
 /// <reference types="bun-types" />
-import { createCommand } from "./CreateCommand.js";
-import { describe, expect, beforeEach, afterEach, it, mock } from "bun:test";
-import type { Mock } from "bun:test";
-// import { describe, expect, beforeEach, afterEach, it, vi } from "vitest";
-// import type { Mock } from "vitest";
+// import { describe, expect, beforeEach, afterEach, it, mock } from "bun:test";
+// import type { Mock } from "bun:test";
+import { describe, expect, beforeEach, afterEach, it, vi } from "vitest";
+import type { Mock } from "vitest";
 import { register } from "../di/di.js";
-import { Project } from "./loadProject.js";
+import type { Project } from "./loadProject.js";
+// import { createCommand } from "./CreateCommand.js";
 
 describe("createCommand", () => {
-  let logMock: Mock<(text: string) => void>;
-  let errorMock: Mock<(text: string) => void>;
+  // let logMock: Mock<(text: string) => void>;
+  // let errorMock: Mock<(text: string) => void>;
+  let logMock: Mock<[string, void]>;
+  let errorMock: Mock<[string, void]>;
 
   beforeEach(() => {
-    logMock = mock(() => {});
-    errorMock = mock(() => {});
+    // logMock = mock(() => {});
+    // errorMock = mock(() => {});
+    logMock = vi.fn();
+    errorMock = vi.fn();
   });
 
   afterEach(() => {
@@ -21,17 +25,20 @@ describe("createCommand", () => {
     errorMock.mockClear();
   });
 
-  it("should log an error if project cannot be loaded", async () => {
+  it.only("should log an error if project cannot be loaded", async () => {
     const partialPath = "./path/to/package";
     const context = { log: logMock, error: errorMock };
+    const mockLoadProject = vi.fn();
 
-    register({ loadProject: async () => undefined });
+    register({ loadProject: mockLoadProject });
+    const { createCommand } = await import("./CreateCommand.js");
 
     await createCommand({ partialPath, context });
 
-    expect(errorMock).toHaveBeenCalled();
+    expect(mockLoadProject).toHaveBeenCalled();
+    // expect(errorMock).toHaveBeenCalled();
     // expect(errorMock.mock.lastCall).toMatch("Unable to load project");
-    // expect(errorMock).toHaveBeenCalledWith("Unable to load project");
+    expect(errorMock).toHaveBeenCalledWith("Unable to load project");
     expect(logMock).not.toHaveBeenCalled();
   });
 

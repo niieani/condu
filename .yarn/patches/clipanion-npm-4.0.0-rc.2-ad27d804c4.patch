@@ -1,0 +1,85 @@
+diff --git a/lib/advanced/Cli.js b/lib/advanced/Cli.js
+index 6be88e03acf53b60d76cdce1cd0a782ac7691019..b592eddd45dbb3cd42f5e4b92cc559a4e7abdd1f 100644
+--- a/lib/advanced/Cli.js
++++ b/lib/advanced/Cli.js
+@@ -5,7 +5,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
+ var constants = require('../constants.js');
+ var core = require('../core.js');
+ var format = require('../format.js');
+-var platform = require('../platform');
++var platform = require('clipanion/platform');
+ var advanced_Command = require('./Command.js');
+ var advanced_HelpCommand = require('./HelpCommand.js');
+ 
+diff --git a/lib/advanced/Cli.mjs b/lib/advanced/Cli.mjs
+index 6834c3c692d1a06241c56f63d50bdb902e6675be..a619830373b3ed863fd31728b5ed9f32b9d2eab1 100644
+--- a/lib/advanced/Cli.mjs
++++ b/lib/advanced/Cli.mjs
+@@ -1,7 +1,7 @@
+ import { HELP_COMMAND_INDEX } from '../constants.mjs';
+ import { CliBuilder } from '../core.mjs';
+ import { formatMarkdownish, richFormat, textFormat } from '../format.mjs';
+-import { getCaptureActivator, getDefaultColorDepth } from '../platform';
++import { getCaptureActivator, getDefaultColorDepth } from 'clipanion/platform';
+ import { Command } from './Command.mjs';
+ import { HelpCommand } from './HelpCommand.mjs';
+ 
+diff --git a/lib/platform/package.json b/lib/platform/package.json
+deleted file mode 100644
+index 5ea9d43740d1bdb509612376c0e9ce91d20f8b20..0000000000000000000000000000000000000000
+--- a/lib/platform/package.json
++++ /dev/null
+@@ -1,4 +0,0 @@
+-{
+-    "main": "./node",
+-    "browser": "./browser"
+-}
+diff --git a/package.json b/package.json
+index 2f1fee631f4402dca7381e4e90d103bada38608a..49789a9429ba1115b107e64dc0d5b4d513752265 100644
+--- a/package.json
++++ b/package.json
+@@ -13,7 +13,43 @@
+     "command"
+   ],
+   "version": "4.0.0-rc.2",
+-  "main": "lib/advanced/index",
++  "main": "./lib/advanced/index.js",
++  "types": "./lib/advanced/index.d.ts",
++  "exports": {
++    ".": {
++      "types": "./lib/advanced/index.d.ts",
++      "require": "./lib/advanced/index.js",
++      "import": "./lib/advanced/index.mjs"
++    },
++    "./platform": {
++      "node": {
++        "types": "./lib/platform/node.d.ts",
++        "require": "./lib/platform/node.js",
++        "import": "./lib/platform/node.mjs"
++      },
++      "browser": {
++        "types": "./lib/platform/browser.d.ts",
++        "require": "./lib/platform/browser.js",
++        "import": "./lib/platform/browser.mjs"
++      }
++    },
++    "./lib/platform": {
++      "node": {
++        "types": "./lib/platform/node.d.ts",
++        "require": "./lib/platform/node.js",
++        "import": "./lib/platform/node.mjs"
++      },
++      "browser": {
++        "types": "./lib/platform/browser.d.ts",
++        "require": "./lib/platform/browser.js",
++        "import": "./lib/platform/browser.mjs"
++      }
++    },
++    "./lib/advanced/*": "./lib/advanced/*",
++    "./lib/advanced/builtins/*": "./lib/advanced/builtins/*",
++    "./lib/advanced/options/*": "./lib/advanced/options/*",
++    "./package.json": "./package.json"
++  },
+   "license": "MIT",
+   "sideEffects": false,
+   "repository": {

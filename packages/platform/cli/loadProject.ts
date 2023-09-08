@@ -7,10 +7,11 @@ import {
   getProjectDefinitionsFromConventionConfig,
 } from "./getProjectGlobsFromMoonConfig.js";
 import { ProjectManifest } from "@pnpm/types";
+import { withDi } from "../di/di.js";
 
 declare module "../di/di.js" {
   interface Container {
-    loadProject: typeof loadProject;
+    loadProject: typeof $loadProject;
   }
 }
 
@@ -26,7 +27,9 @@ export type Project = Omit<
   config: ConfiguredRepoConfig;
 };
 
-export async function loadProject({
+export const loadProject = withDi({ $loadProject });
+
+export async function $loadProject({
   startDir = process.cwd(),
 }: LoadConfigOptions = {}): Promise<Project | undefined> {
   const { manifest, writeProjectManifest, projectDir } = await getManifest(

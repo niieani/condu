@@ -17,6 +17,8 @@ export const typescript = ({ tsconfig }: { tsconfig?: tsconfig } = {}) =>
                 // most recommended way, because it's compatible with most tools (requires .js imports)
                 moduleResolution: "NodeNext",
                 strict: true,
+                // we don't need to emit 'use strict' in the files
+                alwaysStrict: false,
                 noImplicitOverride: true,
                 noImplicitReturns: true,
                 noPropertyAccessFromIndexSignature: true,
