@@ -10,7 +10,7 @@ import {
 } from "../core/configTypes.js";
 import { groupBy, equals, sort } from "remeda";
 import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
-import { LoadConfigOptions, loadProject } from "./loadProject.js";
+import { LoadConfigOptions, $loadProject } from "./loadProject.js";
 
 export async function collectState(
   config: RepoConfigWithInferredValues,
@@ -60,7 +60,7 @@ export function writeFiles(files: readonly FileDef[], rootDir: string) {
 const WORKSPACE = "[WORKSPACE]";
 
 export async function apply(options: LoadConfigOptions = {}) {
-  const project = await loadProject(options);
+  const project = await $loadProject(options);
   if (!project) {
     return;
   }

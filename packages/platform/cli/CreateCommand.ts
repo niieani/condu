@@ -1,7 +1,7 @@
 import { BaseContext, Command, Option } from "clipanion";
-import { loadProject } from "./loadProject.js";
 import { equals } from "remeda";
 import { WorkspaceProjectDefined } from "./getProjectGlobsFromMoonConfig.js";
+import { container } from "../di/di.js";
 
 export async function createCommand({
   partialPath,
