@@ -56,6 +56,7 @@ type EnsureDiFunction<T> = EnsureFunction<T> & {
 // TODO: don't even need to use a centralized container -- each function is its own container!
 // TODO: simplify, simplify, simplify (no need for the prefix)
 // TODO: maybe automation for node/bun to re-route imports to use the DI functions in tests?
+// e.g. import { abc } from 'mocked:actual-package'
 // TODO: ensure we use function.apply and pass the correct `this` context
 export const withDi = <Implementation extends PrefixedContainer>(
   defaultImplementationObj: RequireExactlyOne<Implementation>,
@@ -84,7 +85,9 @@ export const withDi = <Implementation extends PrefixedContainer>(
   if (typeof defaultImplementation === "function") {
     const implementation = (container[key] ??
       defaultImplementation) as NonNullable<typeof defaultImplementation>;
-    const fn: typeof implementation = (...args) => implementation(...args);
+    const fn: typeof implementation = function (this: unknown, ...args) {
+      return implementation.apply(this, args);
+    };
     diFunction = fn as EnsureFunction<
       Implementation[UnionToIntersection<keyof Implementation>]
     >;
