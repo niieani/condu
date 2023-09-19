@@ -1,13 +1,14 @@
-import { $ as $$, spinner } from "zx";
+import { spinner } from "zx";
 // import semver from "semver";
 import { readProjectManifest } from "@pnpm/read-project-manifest";
 import { createNpmResolver } from "@pnpm/npm-resolver";
 import { getCacheDir } from "../core/utils/dirs.js";
 import { createFetchFromRegistry } from "@pnpm/fetch";
 import { createGetAuthHeaderByURI } from "@pnpm/network.auth-header";
-import type { ProjectManifest } from "@pnpm/types";
 import path from "path";
 import { findUp } from "../core/utils/findUp.js";
+import { $ } from "./zx.js";
+import type PackageJson from "../schema-types/schemas/packageJson.js";
 
 const registry = "https://registry.npmjs.org/";
 const resolveFromNpm = createNpmResolver(
@@ -23,10 +24,6 @@ const resolveFromNpm = createNpmResolver(
   // },
   { offline: false, cacheDir: getCacheDir(process) },
 );
-
-// wrapper that makes the io 'inherit' by default
-const $ = (pieces: TemplateStringsArray, ...args: unknown[]) =>
-  $$(pieces, ...args).stdio("inherit", "inherit", "inherit");
 
 async function setup() {
   await $`yarn config set nodeLinker node-modules`;
@@ -78,7 +75,7 @@ export async function ensureDependency({
   versionOrTag?: string;
   target?: "dependencies" | "devDependencies" | "optionalDependencies";
   skipIfExists?: boolean;
-  manifest: ProjectManifest;
+  manifest: PackageJson;
 }) {
   const targetDependencyList = (manifest[target] ||= {});
   if (skipIfExists && targetDependencyList[packageName]) {

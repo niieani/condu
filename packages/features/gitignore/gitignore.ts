@@ -9,6 +9,7 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
         {
           path: ".gitignore",
           content: [
+            ".DS_Store",
             "node_modules",
             // TODO: extract to yarn() feature
             ".yarn/cache",

@@ -14,6 +14,9 @@ Configure everything in TypeScript, neatly organized inside of a `.config` folde
 Additionally, reuse your configuration across projects, and easily update them all at once.
 Override only the parts you need to in your given project, and keep the rest up to date.
 
+Scaffolding seems great at first, but isn't good enough, because it's not maintainable.
+The ecosystem moves too fast, and there are no configuration management tools in the JavaScript ecosystem.
+
 Tool chain fixes [this](https://twitter.com/WarrenInTheBuff/status/1672839156647575552).
 
 Toolchain is here to help out.
@@ -74,7 +77,7 @@ Toolchain is here to help out.
     - github actions
       - conditionally creates testing + release based on other strategies
   - package release strategies
-    - semantic-release
+    - semantic-release / better: [auto](https://github.com/intuit/auto)
   - dependency update automation
     - renovate
     - dependabot

@@ -1,14 +1,27 @@
 import { BaseContext, Command, Option } from "clipanion";
 import { equals } from "remeda";
 import { WorkspaceProjectDefined } from "./getProjectGlobsFromMoonConfig.js";
-import { container } from "../di/di.js";
+import { loadProject } from "./loadProject.js";
+import fs from "node:fs/promises";
+import { satisfies } from "semver";
+// import { PackageManifest } from "@pnpm/types";
+import type PackageJson from "../schema-types/schemas/packageJson.js";
+import sortPackageJson from "sort-package-json";
+import path from "node:path";
+
+// import { $ } from "zx";
+
+// const gitUser = (await $`git config user.name`).stdout.trim();
+// const gitEmail = (await $`git config user.email`).stdout.trim();
 
 export async function createCommand({
   partialPath,
+  description,
   name,
   context,
 }: {
   partialPath: string;
+  description?: string;
   name?: string;
   context: {
     log: (message: string) => void;
@@ -20,7 +33,7 @@ export async function createCommand({
     context.error(`Unable to load project`);
     return 1;
   }
-  const { projectConventions } = project;
+  const { projectConventions, manifest, projectDir } = project;
 
   const conventionMatches = partialPath.startsWith("./")
     ? [{ path: partialPath, name: name ?? partialPath }]
@@ -35,7 +48,7 @@ export async function createCommand({
       `Full path for the new package could not be inferred from the workspace config and the provided partial path.`,
     );
     context.error(
-      `If you want to provide the full path relative to the workspace, prefix it with './', e.g. ./${partialPath}`,
+      `If you're trying to provide the full path relative to the workspace, prefix it with './', e.g. ./${partialPath}`,
     );
     return 1;
   }
@@ -57,6 +70,32 @@ export async function createCommand({
 
   const [match] = conventionMatches;
   context.log(`Will create package ${match.name} at ${match.path}`);
+
+  // TODO: do I want to add prompts for description with inquirer package?
+  // maybe not, since the workflow should be as simple as possible
+  // and the user can always edit the package.json after creation
+  const packageJson: PackageJson = sortPackageJson({
+    name: match.name,
+    // copy author from workspace package.json
+    author: manifest.author,
+    license: manifest.license,
+    description,
+    type: "module",
+    contributors: manifest.contributors,
+    main: "esm/main.js",
+    publishConfig: {
+      access: "public",
+    },
+  });
+
+  const modulePath = path.join(projectDir, match.path);
+  await fs.mkdir(modulePath, { recursive: true });
+  await fs.writeFile(
+    path.join(modulePath, `/package.json`),
+    JSON.stringify(packageJson, null, 2),
+  );
+
+  context.log(`Created package ${match.name}`);
 }
 
 const createCommandContext = (context: BaseContext) => ({
@@ -76,10 +115,6 @@ export class CreateCommand extends Command {
       name: this.name,
       context: createCommandContext(this.context),
     });
-    // console.log({ matches: conventionMatches });
-
-    // context.log(conventionMatches.join("\n"));
-    // context.log(`Hello ${this.name}!`);
   }
 }
 
