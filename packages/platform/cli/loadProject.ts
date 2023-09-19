@@ -6,30 +6,29 @@ import {
   WorkspaceProjectDefined,
   getProjectDefinitionsFromConventionConfig,
 } from "./getProjectGlobsFromMoonConfig.js";
-import { ProjectManifest } from "@pnpm/types";
-import { withDi } from "../di/di.js";
-
-declare module "../di/di.js" {
-  interface Container {
-    loadProject: typeof $loadProject;
-  }
-}
+import type PackageJson from "../schema-types/schemas/packageJson.js";
+// import { ProjectManifest } from "@pnpm/types";
 
 export interface LoadConfigOptions {
   startDir?: string;
 }
 
+type WriteManifestFn = (
+  manifest: PackageJson,
+  force?: boolean,
+) => Promise<void>;
+
 export type Project = Omit<
   Awaited<ReturnType<typeof getManifest>>,
-  "fileName"
+  "fileName" | "manifest" | "writeProjectManifest"
 > & {
+  manifest: PackageJson;
   projectConventions: WorkspaceProjectDefined[];
   config: ConfiguredRepoConfig;
+  writeProjectManifest: WriteManifestFn;
 };
 
-export const loadProject = withDi({ $loadProject });
-
-export async function $loadProject({
+export async function loadProject({
   startDir = process.cwd(),
 }: LoadConfigOptions = {}): Promise<Project | undefined> {
   const { manifest, writeProjectManifest, projectDir } = await getManifest(
@@ -56,8 +55,8 @@ export async function $loadProject({
   );
 
   return {
-    manifest,
-    writeProjectManifest,
+    manifest: manifest as PackageJson,
+    writeProjectManifest: writeProjectManifest as WriteManifestFn,
     projectDir,
     projectConventions,
     config,

@@ -1,22 +1,20 @@
 import { defineFeature } from "../../platform/core/defineFeature.js";
 import type {
+  PartialVcsConfig,
   PartialToolchainConfig as Toolchain,
   PartialWorkspaceConfig as Workspace,
+  PartialInheritedTasksConfig as Tasks,
 } from "@moonrepo/types";
 
 // import type Toolchain from "./schemas/toolchain.js";
 // import type Workspace from "./schemas/workspace.js";
 import yaml from "yaml";
-import { schemas } from "../../platform/schema-types/utils/schemas.js";
-import { promises as fs } from "node:fs";
-import path from "node:path";
+import { otherSchemas as schemas } from "../../platform/schema-types/utils/schemas.js";
 import { getMoonWorkspaceProjectsFromConventionConfig } from "../../platform/cli/getProjectGlobsFromMoonConfig.js";
+import { getDefaultGitBranch } from "../../platform/core/utils/getDefaultGitBranch.js";
 
 // TODO: add opinionated defaults for toolchain and workspace
 // TODO: use a shared config property for typescript, etc.
-
-const defaultPackageManager = "yarn";
-const defaultNodeVersion = "20.4.0";
 
 const defaultToolchain: Toolchain = {
   /** Extend and inherit an external configuration file. */
@@ -25,10 +23,10 @@ const defaultToolchain: Toolchain = {
   /** Configures Node.js within the toolchain. */
   node: {
     /** The version to use. */
-    version: defaultNodeVersion,
+    // version: defaultNodeVersion,
 
     /** The package manager to use when managing dependencies. */
-    packageManager: defaultPackageManager,
+    // packageManager: defaultPackageManager,
 
     /** The version of the package manager to use. */
     yarn: {
@@ -86,51 +84,21 @@ const defaultToolchain: Toolchain = {
   },
 };
 
-const getDefaultGitBranch = async (rootDir: string) => {
-  try {
-    const remotes = await fs.readdir(
-      path.join(rootDir, ".git", "refs", "remotes"),
-    );
-    if (remotes.length === 0) {
-      throw new Error("No git remotes found");
-    }
-    const [remote] = remotes;
-    const result = await fs.readFile(
-      path.join(rootDir, ".git", "refs", "remotes", remote, "HEAD"),
-      "utf-8",
-    );
-    const defaultBranch = result.split(`/${remote}/`).pop()?.trim();
-    if (!defaultBranch) {
-      throw new Error("No default branch found");
-    }
-    return defaultBranch;
-  } catch (e) {
-    console.warn(
-      `Unable to determine the default git branch. ${e}. Using "main" as the default.`,
-    );
-    return "main";
-  }
-};
-
 export const moon = ({
   toolchain,
   workspace,
 }: {
   toolchain?: Toolchain;
-  workspace?: Omit<Workspace, "projects"> & {
+  workspace?: Omit<Workspace, "projects" | "vcs"> & {
     /** projects should be defined in the top-level config */
     projects?: never;
+    vcs?: Omit<PartialVcsConfig, "defaultBranch">;
   };
 } = {}) =>
   defineFeature({
     name: "moon",
     order: { priority: "beginning" },
     actionFn: async (config, state) => {
-      const defaultBranch = await getDefaultGitBranch(config.workspaceDir);
-      const { packageManager, engines } = config.manifest;
-      const [packageManagerName, packageManagerVersion] = packageManager?.split(
-        "@",
-      ) ?? [defaultPackageManager];
       return {
         files: [
           { path: ".moon/" },
@@ -143,19 +111,10 @@ export const moon = ({
               ...defaultToolchain,
               ...toolchain,
               node: {
-                version: engines?.node ?? defaultNodeVersion,
-                yarn:
-                  packageManagerName === "yarn"
-                    ? { version: packageManagerVersion }
-                    : undefined,
-                npm:
-                  packageManagerName === "npm"
-                    ? { version: packageManagerVersion }
-                    : undefined,
-                pnpm:
-                  packageManagerName === "pnpm"
-                    ? { version: packageManagerVersion }
-                    : undefined,
+                version: config.node.version,
+                [config.node.packageManager.name]: {
+                  version: config.node.packageManager.version,
+                },
               },
             } satisfies Toolchain),
           },
@@ -168,7 +127,7 @@ export const moon = ({
                 config.projects,
               ),
               vcs: {
-                defaultBranch,
+                defaultBranch: config.git.defaultBranch,
                 ...workspace?.vcs,
               },
             } satisfies Workspace),

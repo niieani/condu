@@ -10,7 +10,8 @@ import {
 } from "../core/configTypes.js";
 import { groupBy, equals, sort } from "remeda";
 import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
-import { LoadConfigOptions, $loadProject } from "./loadProject.js";
+import { LoadConfigOptions, loadProject } from "./loadProject.js";
+import { getDefaultGitBranch } from "../core/utils/getDefaultGitBranch.js";
 
 export async function collectState(
   config: RepoConfigWithInferredValues,
@@ -59,8 +60,11 @@ export function writeFiles(files: readonly FileDef[], rootDir: string) {
 
 const WORKSPACE = "[WORKSPACE]";
 
+const defaultPackageManager = "yarn";
+const defaultNodeVersion = "20.4.0";
+
 export async function apply(options: LoadConfigOptions = {}) {
-  const project = await $loadProject(options);
+  const project = await loadProject(options);
   if (!project) {
     return;
   }
@@ -91,8 +95,19 @@ export async function apply(options: LoadConfigOptions = {}) {
 
   let didChangeManifest = false;
 
+  const defaultBranch =
+    config.git?.defaultBranch ?? (await getDefaultGitBranch(projectDir));
+  const { packageManager, engines } = manifest;
+  const [packageManagerName, packageManagerVersion] = packageManager?.split(
+    "@",
+  ) ?? [defaultPackageManager];
+  const nodeVersion = engines?.node ?? defaultNodeVersion;
+
   // sync defined workspaces to package.json
-  if (!equals((manifest.workspaces ?? []).sort(), projectGlobs)) {
+  if (
+    !Array.isArray(manifest.workspaces) ||
+    !equals((manifest.workspaces ?? []).sort(), projectGlobs)
+  ) {
     // TODO: support pnpm workspaces
     manifest.workspaces = projectGlobs;
     didChangeManifest = true;
@@ -100,6 +115,27 @@ export async function apply(options: LoadConfigOptions = {}) {
 
   const collectedState = await collectState({
     ...config,
+    git: {
+      ...config.git,
+      defaultBranch,
+    },
+    node: {
+      ...(packageManagerName === "yarn" ||
+      packageManagerName === "pnpm" ||
+      packageManagerName === "npm"
+        ? {
+            packageManager: {
+              name: packageManagerName,
+              version: packageManagerVersion,
+            },
+          }
+        : {
+            packageManager: {
+              name: defaultPackageManager,
+            },
+          }),
+      version: nodeVersion,
+    },
     conventions: {
       ...config.conventions,
       sourceDir: config.conventions?.sourceDir ?? "src",
