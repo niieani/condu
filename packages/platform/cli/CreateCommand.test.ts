@@ -13,7 +13,7 @@ import type { Mock } from "vitest";
 import { type Project } from "./loadProject.js";
 import { loadProject } from "./loadProject.js";
 import { override, restore } from "swc-mockify/src/mockify.js";
-import { createCommand } from "./CreateCommand.js";
+import { createCommand, createPackage } from "./CreateCommand.js";
 import {
   WorkspaceProjectDefined,
   getProjectDefinitionsFromConventionConfig,
@@ -111,7 +111,12 @@ describe("createCommand", () => {
         { parentPath: "./path/group", nameConvention: "package-*" },
       ]),
     } as any;
+
     override(loadProject, async () => project);
+    // skip actually creating anything:
+    override(createPackage, async () => {
+      // throw new Error("should not be called");
+    });
 
     await createCommand({ partialPath, context });
 

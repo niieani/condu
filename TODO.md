@@ -3,10 +3,11 @@ MVP
 - [x] moonrepo integration
 - [x] typescript
 - [x] typescript references
-- [ ] scaffolding new packages in monorepo (Create package command)
+- [x] scaffolding new packages in monorepo (Create package command)
+- [x] GitHub Actions
+- [ ] vitest
 - [ ] TS building for release
 - [ ] semantic-release (use [Auto](https://github.com/intuit/auto) instead for mono-repo support)
-- [ ] GitHub Actions
 - [ ] CI build and test using moon
 
 - shippable state -
@@ -14,7 +15,7 @@ MVP
 Later:
 
 - [ ] Eslint
-- [ ] Vitest / jest
+- [ ] jest
 - [ ] Individual Package overrides
 - [ ] Customizable package source directory (so we can skip src in mono repo), when publishing copy src into the publish directory. Hmm will semantic publishing work if we copy sources?
 - [ ] State file to track changes made to the repo by the tool, and show diff before applying (for upgrading)

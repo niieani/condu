@@ -1,0 +1,8 @@
+{
+  "name": "@repo-feature/vitest",
+  "type": "module",
+  "main": "esm/main.js",
+  "publishConfig": {
+    "access": "public"
+  }
+}

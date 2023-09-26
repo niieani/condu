@@ -9,6 +9,11 @@ import type PackageJson from "../schema-types/schemas/packageJson.js";
 import sortPackageJson from "sort-package-json";
 import path from "node:path";
 
+type CommandContext = {
+  log: (message: string) => void;
+  error: (message: string) => void;
+};
+
 // import { $ } from "zx";
 
 // const gitUser = (await $`git config user.name`).stdout.trim();
@@ -23,10 +28,7 @@ export async function createCommand({
   partialPath: string;
   description?: string;
   name?: string;
-  context: {
-    log: (message: string) => void;
-    error: (message: string) => void;
-  };
+  context: CommandContext;
 }) {
   const project = await loadProject();
   if (!project) {
@@ -74,28 +76,7 @@ export async function createCommand({
   // TODO: do I want to add prompts for description with inquirer package?
   // maybe not, since the workflow should be as simple as possible
   // and the user can always edit the package.json after creation
-  const packageJson: PackageJson = sortPackageJson({
-    name: match.name,
-    // copy author from workspace package.json
-    author: manifest.author,
-    license: manifest.license,
-    description,
-    type: "module",
-    contributors: manifest.contributors,
-    main: "esm/main.js",
-    publishConfig: {
-      access: "public",
-    },
-  });
-
-  const modulePath = path.join(projectDir, match.path);
-  await fs.mkdir(modulePath, { recursive: true });
-  await fs.writeFile(
-    path.join(modulePath, `/package.json`),
-    JSON.stringify(packageJson, null, 2),
-  );
-
-  context.log(`Created package ${match.name}`);
+  await createPackage({ match, manifest, description, projectDir, context });
 }
 
 const createCommandContext = (context: BaseContext) => ({
@@ -122,6 +103,55 @@ interface ConventionMatch {
   convention: WorkspaceProjectDefined;
   path: string;
   name: string;
+}
+
+export async function createPackage({
+  match,
+  manifest,
+  description,
+  projectDir,
+  context,
+}: {
+  match: ConventionMatch | { path: string; name: string };
+  manifest: PackageJson;
+  description: string | undefined;
+  projectDir: string;
+  context: CommandContext;
+}) {
+  const modulePath = path.join(projectDir, match.path);
+  await fs.mkdir(modulePath, { recursive: true });
+  const packageJsonPath = path.join(modulePath, "package.json");
+  const existingPackageJson = await fs
+    .readFile(packageJsonPath)
+    .then((buffer): PackageJson => JSON.parse(buffer.toString()))
+    .catch(() => false as const);
+
+  if (existingPackageJson) {
+    context.log(
+      `Package ${match.name} already exists. Filling in missing fields only.`,
+    );
+  }
+
+  const packageJson: PackageJson = sortPackageJson({
+    name: match.name,
+    // copy author from workspace package.json
+    author: manifest.author,
+    license: manifest.license,
+    description,
+    type: "module",
+    contributors: manifest.contributors,
+    main: "esm/main.js",
+    publishConfig: {
+      access: "public",
+    },
+    ...existingPackageJson,
+  });
+
+  await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
+
+  context.log(
+    `${existingPackageJson ? "Updated" : "Created"} package ${match.name}`,
+  );
 }
 
 function getMatches({

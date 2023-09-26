@@ -1,8 +1,12 @@
 import { defineFeature } from "../../platform/core/defineFeature.js";
 import GithubWorkflow from "../../platform/schema-types/schemas/githubWorkflow.js";
-import yaml from "yaml";
-import type { PartialInheritedTasksConfig as Tasks } from "@moonrepo/types";
+import type {
+  PartialTaskConfig,
+  PartialInheritedTasksConfig as Tasks,
+} from "@moonrepo/types";
 import { otherSchemas as schemas } from "../../platform/schema-types/utils/schemas.js";
+import { groupBy, mapValues } from "remeda";
+import { Task } from "../../platform/core/configTypes.js";
 
 export const moonCi = ({}: {} = {}) =>
   defineFeature({
@@ -37,25 +41,51 @@ export const moonCi = ({}: {} = {}) =>
           },
         },
       };
+
+      const tasksByType: Record<Task["type"], [Task, ...Task[]]> = groupBy(
+        state.tasks,
+        (t) => t.type,
+      );
+      const typeTasks = mapValues(
+        tasksByType,
+        (tasks): PartialTaskConfig =>
+          // this groups all the tasks of the same type into a single task
+          // so that all the features implementing the same task type (e.g. 'test') can be run in parallel
+          ({
+            // self-referencing task: https://moonrepo.dev/docs/concepts/target#self-
+            deps: tasks.flatMap((t) => `~:${t.name}`),
+          }),
+      );
+      const tasks = state.tasks.map(({ name, definition }) => {
+        if (name in typeTasks) {
+          throw new Error(
+            `Task name '${name}' is reserved for the task type '${definition.type}'`,
+          );
+        }
+        return [name, definition] as const;
+      });
+
       return {
         files: [
           {
             path: ".github/workflows/ci.yml",
             type: "committed",
             publish: false,
-            content: yaml.stringify(ciWorkflow),
+            content: ciWorkflow,
           },
           {
             path: ".moon/tasks.yml",
-            content: yaml.stringify({
+            content: {
               $schema: schemas.tasks,
               fileGroups: {
                 sources: [`${config.conventions.sourceDir}/**/*`],
                 tests: [`${config.conventions.sourceDir}/**/*.test.*`],
               },
-            } satisfies Tasks),
+              tasks: { ...typeTasks, ...Object.fromEntries(tasks) },
+            } satisfies Tasks,
           },
         ],
+        flags: ["preventAdditionalTasks"],
       };
     },
   });
