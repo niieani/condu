@@ -7,6 +7,7 @@ import type {
 import { otherSchemas as schemas } from "../../platform/schema-types/utils/schemas.js";
 import { groupBy, mapValues } from "remeda";
 import { Task } from "../../platform/core/configTypes.js";
+import { nonEmpty } from "../../platform/core/utils/filter.js";
 
 export const moonCi = ({}: {} = {}) =>
   defineFeature({
@@ -42,8 +43,9 @@ export const moonCi = ({}: {} = {}) =>
         },
       };
 
+      const taskList = state.tasks.filter(nonEmpty);
       const tasksByType: Record<Task["type"], [Task, ...Task[]]> = groupBy(
-        state.tasks,
+        taskList,
         (t) => t.type,
       );
       const typeTasks = mapValues(
@@ -56,7 +58,7 @@ export const moonCi = ({}: {} = {}) =>
             deps: tasks.flatMap((t) => `~:${t.name}`),
           }),
       );
-      const tasks = state.tasks.map(({ name, definition }) => {
+      const tasks = taskList.map(({ name, definition }) => {
         if (name in typeTasks) {
           throw new Error(
             `Task name '${name}' is reserved for the task type '${definition.type}'`,
@@ -65,6 +67,8 @@ export const moonCi = ({}: {} = {}) =>
         return [name, definition] as const;
       });
 
+      const sourceExtensionsConcatenated =
+        config.conventions.sourceExtensions.join(",");
       return {
         files: [
           {
@@ -78,8 +82,12 @@ export const moonCi = ({}: {} = {}) =>
             content: {
               $schema: schemas.tasks,
               fileGroups: {
-                sources: [`${config.conventions.sourceDir}/**/*`],
-                tests: [`${config.conventions.sourceDir}/**/*.test.*`],
+                sources: [
+                  `${config.conventions.sourceDir}/**/*.{${sourceExtensionsConcatenated}}`,
+                ],
+                tests: [
+                  `${config.conventions.sourceDir}/**/*.test.{${sourceExtensionsConcatenated}}`,
+                ],
               },
               tasks: { ...typeTasks, ...Object.fromEntries(tasks) },
             } satisfies Tasks,

@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 .yarn/cache
+tsconfig.options.json
+tsconfig.json
 .moon/
 .moon/cache
 .moon/docker

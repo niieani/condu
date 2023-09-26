@@ -12,7 +12,7 @@ export const typescript = ({ tsconfig }: { tsconfig?: tsconfig } = {}) =>
           content: {
             compilerOptions: {
               target: "ESNext",
-              module: "ESNext",
+              module: "NodeNext",
               // most recommended way, because it's compatible with most tools (requires .js imports)
               moduleResolution: "NodeNext",
               strict: true,
@@ -51,14 +51,21 @@ export const typescript = ({ tsconfig }: { tsconfig?: tsconfig } = {}) =>
               // assumeChangesOnlyAffectDirectDependencies: true,
               ...tsconfig?.compilerOptions,
             },
-            include: [config.conventions.sourceDir],
+            ...(config.projects
+              ? {}
+              : {
+                  include: [config.conventions.sourceDir],
+                }),
             ...tsconfig,
           } satisfies tsconfig,
         },
-        // config.projects && {
-        //   path: "tsconfig.json",
-
-        // }
+        config.projects && {
+          path: "tsconfig.json",
+          content: {
+            extends: "./tsconfig.options.json",
+            files: [],
+          } satisfies tsconfig,
+        },
       ],
     }),
   });

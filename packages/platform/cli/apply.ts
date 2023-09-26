@@ -13,9 +13,7 @@ import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
 import { LoadConfigOptions, loadProject } from "./loadProject.js";
 import { getDefaultGitBranch } from "../core/utils/getDefaultGitBranch.js";
 import yaml from "yaml";
-
-const nonEmpty = <T>(value: T | undefined | false | 0 | ""): value is T =>
-  Boolean(value);
+import { nonEmpty } from "../core/utils/filter.js";
 
 export async function collectState(
   config: RepoConfigWithInferredValues,
@@ -176,6 +174,17 @@ export async function apply(options: LoadConfigOptions = {}) {
     conventions: {
       ...config.conventions,
       sourceDir: config.conventions?.sourceDir ?? "src",
+      sourceExtensions: config.conventions?.sourceExtensions ?? [
+        "ts",
+        "tsx",
+        "mts",
+        "cts",
+        "js",
+        "jsx",
+        "mjs",
+        "cjs",
+        "json",
+      ],
     },
     manifest,
     workspaceDir: projectDir,
