@@ -2,39 +2,58 @@ import fs from "fs/promises";
 import path from "path";
 import { ensureDependency } from "./toolchain.js";
 import {
-  RepoConfig,
-  State,
-  FinalState,
+  CollectedState,
   FileDef,
   RepoConfigWithInferredValues,
+  Task,
+  StateFlags,
 } from "../core/configTypes.js";
-import { groupBy, equals, sort } from "remeda";
+import { groupBy, equals } from "remeda";
 import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
 import { LoadConfigOptions, loadProject } from "./loadProject.js";
 import { getDefaultGitBranch } from "../core/utils/getDefaultGitBranch.js";
+import yaml from "yaml";
+
+const nonEmpty = <T>(value: T | undefined | false | 0 | ""): value is T =>
+  Boolean(value);
 
 export async function collectState(
   config: RepoConfigWithInferredValues,
-): Promise<State> {
-  const state: FinalState = {
+): Promise<CollectedState> {
+  const state: CollectedState = {
     files: [],
     devDependencies: [],
     tasks: [],
   };
 
-  // TODO: sort features by `order` config
+  // TODO: topo-sort features by `order` config
+
+  const flags: { [K in keyof StateFlags]?: string } = {};
 
   for (const feature of config.features) {
     // const featureConfig = feature.order;
     const featureState = await feature.actionFn(config, state);
     if (featureState.files) {
-      state.files.push(...featureState.files);
+      state.files.push(...featureState.files.filter(nonEmpty));
     }
     if (featureState.tasks) {
-      state.tasks.push(...featureState.tasks);
+      if (flags.preventAdditionalTasks) {
+        console.warn(
+          `Feature ${feature.name} adds tasks, but the previously evaluated ${flags.preventAdditionalTasks} feature set the 'preventAdditionalTasks' flag already. This is likely due to the order of features being incorrect.`,
+        );
+      }
+      state.tasks.push(...featureState.tasks.filter(nonEmpty));
     }
     if (featureState.devDependencies) {
-      state.devDependencies.push(...featureState.devDependencies);
+      state.devDependencies.push(
+        ...featureState.devDependencies.filter(nonEmpty),
+      );
+    }
+    if (featureState.flags) {
+      for (const key of featureState.flags) {
+        // first feature to set a flag wins
+        flags[key] ||= feature.name;
+      }
     }
   }
 
@@ -46,14 +65,32 @@ export async function collectState(
   return state;
 }
 
+const stringify = (obj: unknown, filePath: string) =>
+  filePath.match(/\.ya?ml$/i)
+    ? yaml.stringify(obj)
+    : JSON.stringify(obj, null, 2);
+
+const writeFileFromDef = async (file: FileDef, rootDir: string) => {
+  if (typeof file.content === "undefined") {
+    return;
+  }
+  const content =
+    typeof file.content === "string"
+      ? file.content
+      : stringify(file.content, file.path);
+  console.log(`Writing ${file.path}`);
+  const targetPath = path.join(rootDir, file.path);
+  const parentDir = path.dirname(targetPath);
+  await fs.mkdir(parentDir, { recursive: true });
+  return fs.writeFile(path.join(rootDir, file.path), content);
+};
+
 export function writeFiles(files: readonly FileDef[], rootDir: string) {
   return Promise.allSettled(
     files.map((file) =>
       // TODO: add logging
       // TODO: add manual diffing with confirmation that change is ok
-      typeof file.content === "string"
-        ? fs.writeFile(path.join(rootDir, file.path), file.content)
-        : Promise.resolve(),
+      writeFileFromDef(file, rootDir),
     ),
   );
 }
@@ -145,10 +182,12 @@ export async function apply(options: LoadConfigOptions = {}) {
   });
 
   const flattenedFiles = collectedState.files.flatMap((file) =>
-    (file.targetPackages ?? [WORKSPACE]).map((targetPackage) => ({
-      ...file,
-      targetPackage,
-    })),
+    file
+      ? (file.targetPackages ?? [WORKSPACE]).map((targetPackage) => ({
+          ...file,
+          targetPackage,
+        }))
+      : [],
   );
   const filesByPackage = groupBy(flattenedFiles, (file) => file.targetPackage);
 

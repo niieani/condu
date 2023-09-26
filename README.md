@@ -1,5 +1,8 @@
 # project codename: toolchain
 
+The un-template / un-boilerplate / un-scaffold / un-generator.
+Keep ALL of your project configuration up to date, and easily override it.
+
 Managing the JavaScript ecosystem can be a full time job.
 Upgrades to transpiles, migrations across builder systems, migrating or adding support for new engines (deno, bun), correct support for CommonJS and ESM, linting, testing, etc.
 And if you maintain more than one package, multiply all of that work by each one!
@@ -72,7 +75,7 @@ Toolchain is here to help out.
     - pure bun
     - pure node test runner?
     - eslint
-    - rome.tools linting + formatter ?
+    - rome.tools (now [biome](https://biomejs.dev/)) linting + formatter ?
   - ci strategies
     - github actions
       - conditionally creates testing + release based on other strategies
@@ -99,7 +102,7 @@ something like:
 import { gitignore, npmignore, editorconfig, license } from "@niieani/scaffold";
 export const config: import("@niieani/scaffold").RepoConfig = {
   engine: "node", // or bun
-  engineVersion: "18", // optional
+  engineVersion: "20", // optional
   monorepo: false, // optional
   // infer name, author and license from package.json
   features: [gitignore(), npmignore(), editorconfig(), license()],

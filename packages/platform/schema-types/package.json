@@ -1,0 +1,8 @@
+{
+  "name": "@repo/schema-types",
+  "type": "module",
+  "main": "esm/main.js",
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -8,7 +8,6 @@ import type {
 
 // import type Toolchain from "./schemas/toolchain.js";
 // import type Workspace from "./schemas/workspace.js";
-import yaml from "yaml";
 import { otherSchemas as schemas } from "../../platform/schema-types/utils/schemas.js";
 import { getMoonWorkspaceProjectsFromConventionConfig } from "../../platform/cli/getProjectGlobsFromMoonConfig.js";
 import { getDefaultGitBranch } from "../../platform/core/utils/getDefaultGitBranch.js";
@@ -106,21 +105,32 @@ export const moon = ({
           { path: ".moon/docker" },
           {
             path: ".moon/toolchain.yml",
-            content: yaml.stringify({
+            content: {
               $schema: schemas.toolchain,
               ...defaultToolchain,
               ...toolchain,
+              ...(config.projects && {
+                typescript: {
+                  ...defaultToolchain.typescript,
+                  syncProjectReferences: true,
+                  syncProjectReferencesToPaths: true,
+                  createMissingConfig: true,
+                  rootOptionsConfigFileName: "tsconfig.options.json",
+                  ...toolchain?.typescript,
+                },
+              }),
               node: {
                 version: config.node.version,
                 [config.node.packageManager.name]: {
                   version: config.node.packageManager.version,
                 },
+                ...toolchain?.node,
               },
-            } satisfies Toolchain),
+            } satisfies Toolchain,
           },
           {
             path: ".moon/workspace.yml",
-            content: yaml.stringify({
+            content: {
               $schema: schemas.workspace,
               ...workspace,
               projects: getMoonWorkspaceProjectsFromConventionConfig(
@@ -130,7 +140,7 @@ export const moon = ({
                 defaultBranch: config.git.defaultBranch,
                 ...workspace?.vcs,
               },
-            } satisfies Workspace),
+            } satisfies Workspace,
           },
         ],
       };

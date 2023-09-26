@@ -14,7 +14,9 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
             // TODO: extract to yarn() feature
             ".yarn/cache",
             // ignore all generated files:
-            ...state.files.map(({ path }) => path),
+            ...state.files.flatMap(({ path, type }) =>
+              type === "committed" ? [] : [path],
+            ),
             ...ignore,
           ].join("\n"),
         },
