@@ -64,6 +64,7 @@ export interface FeatureDefinition {
 interface Conventions {
   /** @default 'src' */
   sourceDir?: string;
+  sourceExtensions?: string[];
 }
 
 type GitConfig = {
