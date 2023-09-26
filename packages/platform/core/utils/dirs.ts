@@ -6,8 +6,8 @@ export function getCacheDir(opts: {
   env: NodeJS.ProcessEnv;
   platform: string;
 }) {
-  if (opts.env.XDG_CACHE_HOME) {
-    return path.join(opts.env.XDG_CACHE_HOME, "pnpm");
+  if (opts.env["XDG_CACHE_HOME"]) {
+    return path.join(opts.env["XDG_CACHE_HOME"], "pnpm");
   }
   if (opts.platform === "darwin") {
     return path.join(os.homedir(), "Library/Caches/pnpm");
@@ -15,8 +15,8 @@ export function getCacheDir(opts: {
   if (opts.platform !== "win32") {
     return path.join(os.homedir(), ".cache/pnpm");
   }
-  if (opts.env.LOCALAPPDATA) {
-    return path.join(opts.env.LOCALAPPDATA, "pnpm-cache");
+  if (opts.env["LOCALAPPDATA"]) {
+    return path.join(opts.env["LOCALAPPDATA"], "pnpm-cache");
   }
   return path.join(os.homedir(), ".pnpm-cache");
 }

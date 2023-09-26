@@ -1,16 +1,15 @@
 import fs from "fs/promises";
 import path from "path";
 import { ensureDependency } from "./toolchain.js";
-import {
+import type {
   CollectedState,
   FileDef,
   RepoConfigWithInferredValues,
-  Task,
   StateFlags,
 } from "../core/configTypes.js";
 import { groupBy, equals } from "remeda";
 import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
-import { LoadConfigOptions, loadProject } from "./loadProject.js";
+import { type LoadConfigOptions, loadProject } from "./loadProject.js";
 import { getDefaultGitBranch } from "../core/utils/getDefaultGitBranch.js";
 import yaml from "yaml";
 import { nonEmpty } from "../core/utils/filter.js";

@@ -1,6 +1,6 @@
-import { BaseContext, Command, Option } from "clipanion";
+import { type BaseContext, Command, Option } from "clipanion";
 import { equals } from "remeda";
-import { WorkspaceProjectDefined } from "./getProjectGlobsFromMoonConfig.js";
+import type { WorkspaceProjectDefined } from "./getProjectGlobsFromMoonConfig.js";
 import { loadProject } from "./loadProject.js";
 import fs from "node:fs/promises";
 import { satisfies } from "semver";
@@ -45,16 +45,6 @@ export async function createCommand({
         name,
       });
 
-  if (conventionMatches.length === 0) {
-    context.error(
-      `Full path for the new package could not be inferred from the workspace config and the provided partial path.`,
-    );
-    context.error(
-      `If you're trying to provide the full path relative to the workspace, prefix it with './', e.g. ./${partialPath}`,
-    );
-    return 1;
-  }
-
   if (conventionMatches.length > 1) {
     context.error(
       `Multiple possible paths for the new package were inferred from the workspace config:`,
@@ -71,6 +61,17 @@ export async function createCommand({
   }
 
   const [match] = conventionMatches;
+
+  if (!match) {
+    context.error(
+      `Full path for the new package could not be inferred from the workspace config and the provided partial path.`,
+    );
+    context.error(
+      `If you're trying to provide the full path relative to the workspace, prefix it with './', e.g. ./${partialPath}`,
+    );
+    return 1;
+  }
+
   context.log(`Will create package ${match.name} at ${match.path}`);
 
   // TODO: do I want to add prompts for description with inquirer package?
@@ -85,7 +86,7 @@ const createCommandContext = (context: BaseContext) => ({
 });
 
 export class CreateCommand extends Command {
-  static paths = [["create"]];
+  static override paths = [["create"]];
 
   partialPath = Option.String({ required: true });
   name = Option.String("--as");
@@ -175,10 +176,10 @@ function getMatches({
       convention.nameConvention !== "*"
     ) {
       const conventionParts = convention.nameConvention.split("*");
-      if (conventionParts.length !== 2) {
+      const [left, right, ...rest] = conventionParts;
+      if (!left || !right || rest.length > 0) {
         throw new Error(`Invalid nameConvention: ${convention.nameConvention}`);
       }
-      const [left, right] = conventionParts;
       if (partialPath.startsWith(left) && partialPath.endsWith(right)) {
         const dirName = partialPath.slice(
           left.length,

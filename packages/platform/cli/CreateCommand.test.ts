@@ -15,7 +15,7 @@ import { loadProject } from "./loadProject.js";
 import { override, restore } from "swc-mockify/src/mockify.js";
 import { createCommand, createPackage } from "./CreateCommand.js";
 import {
-  WorkspaceProjectDefined,
+  type WorkspaceProjectDefined,
   getProjectDefinitionsFromConventionConfig,
 } from "./getProjectGlobsFromMoonConfig.js";
 // import { createCommand } from "./CreateCommand.js";

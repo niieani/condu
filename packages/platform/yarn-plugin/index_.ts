@@ -12,7 +12,7 @@ import {
 import { fork } from "node:child_process";
 
 class HelloWorldCommand extends BaseCommand {
-  static paths = [[`hello`, `world`]];
+  static override paths = [[`hello`, `world`]];
 
   name = Option.String(`--name`, `John Doe`, {
     description: `Your name`,
