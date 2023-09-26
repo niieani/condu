@@ -2,6 +2,6 @@
   "name": "@repo-feature/moon",
   "type": "module",
   "dependencies": {
-    "@moonrepo/types": "^1.6.0"
+    "@moonrepo/types": "^1.6.1"
   }
 }

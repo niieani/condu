@@ -3,7 +3,7 @@ import { apply } from "./apply.js";
 import { $ } from "./zx.js";
 
 export class ApplyCommand extends Command {
-  static paths = [["apply"]];
+  static override paths = [["apply"]];
 
   // name = Option.String();
 
