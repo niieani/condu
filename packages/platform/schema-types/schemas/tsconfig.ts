@@ -947,4 +947,4 @@ export interface ReferencesDefinition {
   [k: string]: unknown | undefined;
 }
 
-export default Tsconfig;
+export type { Tsconfig as default };

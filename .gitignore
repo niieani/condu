@@ -3,6 +3,7 @@ node_modules
 .yarn/cache
 tsconfig.options.json
 tsconfig.json
+eslint.config.js
 .moon/
 .moon/cache
 .moon/docker

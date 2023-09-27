@@ -1,4 +1,5 @@
 import { defineFeature } from "../../platform/core/defineFeature.js";
+import { nonEmpty } from "@repo/core/utils/filter.js";
 
 export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
   defineFeature({
@@ -14,9 +15,11 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
             // TODO: extract to yarn() feature
             ".yarn/cache",
             // ignore all generated files:
-            ...state.files.flatMap(({ path, type }) =>
-              type === "committed" ? [] : [path],
-            ),
+            ...state.files
+              .filter(nonEmpty)
+              .flatMap(({ path, type }) =>
+                type === "committed" ? [] : [path],
+              ),
             ...ignore,
           ].join("\n"),
         },

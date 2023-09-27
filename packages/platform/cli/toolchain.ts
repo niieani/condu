@@ -9,6 +9,7 @@ import path from "path";
 import { findUp } from "../core/utils/findUp.js";
 import { $ } from "./zx.js";
 import type PackageJson from "../schema-types/schemas/packageJson.js";
+import type { DependencyDef } from "../core/configTypes.js";
 
 const registry = "https://registry.npmjs.org/";
 const resolveFromNpm = createNpmResolver(
@@ -65,35 +66,34 @@ export async function getManifest(cwd: string) {
 }
 
 export async function ensureDependency({
-  packageName,
+  packageAlias,
   manifest,
   versionOrTag = "latest",
   target = "dependencies",
   skipIfExists = true,
-}: {
-  packageName: string;
-  versionOrTag?: string;
-  target?: "dependencies" | "devDependencies" | "optionalDependencies";
-  skipIfExists?: boolean;
+}: DependencyDef & {
   manifest: PackageJson;
 }) {
   const targetDependencyList = (manifest[target] ||= {});
-  if (skipIfExists && targetDependencyList[packageName]) {
+  if (skipIfExists && targetDependencyList[packageAlias]) {
     return false;
   }
   const dependency = await resolveFromNpm(
-    { alias: "lodash", pref: versionOrTag },
+    { alias: packageAlias, pref: versionOrTag },
     { registry },
   );
   if (!dependency || !dependency.manifest) {
-    throw new Error(`no ${packageName} dependency found in the repository`);
+    throw new Error(`no ${packageAlias} dependency found in the repository`);
   }
-  console.log(dependency.id);
 
-  const pkgDescriptor = `^${dependency.manifest.version}`;
-  if (targetDependencyList[packageName] === pkgDescriptor) {
+  const pkgDescriptor = `${
+    dependency.manifest.name !== packageAlias
+      ? `npm:${dependency.manifest.name}@`
+      : ""
+  }^${dependency.manifest.version}`;
+  if (targetDependencyList[packageAlias] === pkgDescriptor) {
     return false;
   }
-  targetDependencyList[packageName] = pkgDescriptor;
+  targetDependencyList[packageAlias] = pkgDescriptor;
   return true;
 }

@@ -31,14 +31,12 @@ export type License =
 /**
  * A person who has been involved in creating or maintaining this package.
  */
-export type Person =
-  | {
-      name: string;
-      url?: string;
-      email?: string;
-      [k: string]: unknown | undefined;
-    }
-  | Person1;
+export type Person = {
+  name: string;
+  url?: string;
+  email?: string;
+  [k: string]: unknown | undefined;
+} | Person1;
 export type Person1 =
   | {
       name: string;
@@ -47,9 +45,7 @@ export type Person1 =
       [k: string]: unknown | undefined;
     }
   | string;
-export type PackageExportsEntry =
-  | PackageExportsEntryPath
-  | PackageExportsEntryObject;
+export type PackageExportsEntry = PackageExportsEntryPath | PackageExportsEntryObject;
 /**
  * The module path that is resolved when this specifier is imported. Set to `null` to disallow importing this module.
  */
@@ -143,17 +139,12 @@ export type Overrides = {
   settings?: Settings;
   overrides?: Overrides;
 }[];
-export type SchemaForPrettierrc =
-  | (OptionsDefinition & OverridesDefinition)
-  | string;
+export type SchemaForPrettierrc = (OptionsDefinition & OverridesDefinition) | string;
 /**
  * Your configuration can extend an existing configuration(s) (whether your own or a third-party config)
  */
 export type SimpleStringOrArrayStringRule = (string | SimpleArrayStringRule) &
-  (
-    | ((string | SimpleArrayStringRule) & string)
-    | ((string | SimpleArrayStringRule) & unknown[])
-  );
+  (((string | SimpleArrayStringRule) & string) | ((string | SimpleArrayStringRule) & unknown[]));
 /**
  * @minItems 1
  *
@@ -212,7 +203,7 @@ export type ArrayStringRule = (
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
           | (([] | {}) | SimpleArrayStringRule | CoreRule)
-        ))[],
+        ))[]
     ]
 ) &
   (
@@ -231,7 +222,7 @@ export type ArrayStringRule = (
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                   | (([] | {}) | SimpleArrayStringRule | CoreRule)
-                ))[],
+                ))[]
             ]
         ))
     | ((
@@ -248,7 +239,7 @@ export type ArrayStringRule = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         string)
@@ -266,7 +257,7 @@ export type ArrayStringRule = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         unknown[])
@@ -279,15 +270,9 @@ export type LowerUpperRule = (
   | ("lower" | "upper" | [])
   | [
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
     ]
 ) &
   (
@@ -297,15 +282,9 @@ export type LowerUpperRule = (
           | ("lower" | "upper" | [])
           | [
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -313,15 +292,9 @@ export type LowerUpperRule = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -330,15 +303,9 @@ export type LowerUpperRule = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -359,7 +326,7 @@ export type AlwaysMultiLineRule = (
         (
           | ((("always" | "always-multi-line" | {}) | CoreRule) & string)
           | (("always" | "always-multi-line" | {}) | CoreRule)
-        ),
+        )
     ]
 ) &
   (
@@ -370,16 +337,14 @@ export type AlwaysMultiLineRule = (
           | [
               (("always" | "always-multi-line" | {}) | CoreRule) &
                 (
-                  | ((("always" | "always-multi-line" | {}) | CoreRule) &
-                      string)
+                  | ((("always" | "always-multi-line" | {}) | CoreRule) & string)
                   | (("always" | "always-multi-line" | {}) | CoreRule)
                 ),
               (("always" | "always-multi-line" | {}) | CoreRule) &
                 (
-                  | ((("always" | "always-multi-line" | {}) | CoreRule) &
-                      string)
+                  | ((("always" | "always-multi-line" | {}) | CoreRule) & string)
                   | (("always" | "always-multi-line" | {}) | CoreRule)
-                ),
+                )
             ]
         ))
     | ((
@@ -395,7 +360,7 @@ export type AlwaysMultiLineRule = (
               (
                 | ((("always" | "always-multi-line" | {}) | CoreRule) & string)
                 | (("always" | "always-multi-line" | {}) | CoreRule)
-              ),
+              )
           ]
       ) &
         string)
@@ -412,7 +377,7 @@ export type AlwaysMultiLineRule = (
               (
                 | ((("always" | "always-multi-line" | {}) | CoreRule) & string)
                 | (("always" | "always-multi-line" | {}) | CoreRule)
-              ),
+              )
           ]
       ) &
         unknown[])
@@ -424,10 +389,8 @@ export type BooleanRule = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -436,16 +399,8 @@ export type BooleanRule = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -453,26 +408,16 @@ export type BooleanRule = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -494,7 +439,7 @@ export type ArrayStringRule1 = (
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
           | (([] | {}) | SimpleArrayStringRule | CoreRule)
-        ))[],
+        ))[]
     ]
 ) &
   (
@@ -513,7 +458,7 @@ export type ArrayStringRule1 = (
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                   | (([] | {}) | SimpleArrayStringRule | CoreRule)
-                ))[],
+                ))[]
             ]
         ))
     | ((
@@ -530,7 +475,7 @@ export type ArrayStringRule1 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         string)
@@ -548,7 +493,7 @@ export type ArrayStringRule1 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         unknown[])
@@ -558,88 +503,38 @@ export type ArrayStringRule1 = (
  */
 export type NewlineSpaceWithIgnoreRule = (
   | null
-  | (
-      | "always"
-      | "never"
-      | "always-single-line"
-      | "never-single-line"
-      | "always-multi-line"
-      | "never-multi-line"
-      | []
-    )
+  | ("always" | "never" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | [])
   | [
       (
-        | (
-            | "always"
-            | "always-single-line"
-            | "never-single-line"
-            | "always-multi-line"
-            | "never-multi-line"
-            | {}
-          )
+        | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
         | CoreRule
       ) &
         (
           | ((
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             ) &
               string)
           | (
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             )
         ),
       (
-        | (
-            | "always"
-            | "always-single-line"
-            | "never-single-line"
-            | "always-multi-line"
-            | "never-multi-line"
-            | {}
-          )
+        | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
         | CoreRule
       ) &
         (
           | ((
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             ) &
               string)
           | (
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             )
-        ),
+        )
     ]
 ) &
   (
@@ -727,7 +622,7 @@ export type NewlineSpaceWithIgnoreRule = (
                         )
                       | CoreRule
                     )
-                ),
+                )
             ]
         ))
     | ((
@@ -743,14 +638,7 @@ export type NewlineSpaceWithIgnoreRule = (
           )
         | [
             (
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             ) &
               (
@@ -779,14 +667,7 @@ export type NewlineSpaceWithIgnoreRule = (
                   )
               ),
             (
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             ) &
               (
@@ -813,7 +694,7 @@ export type NewlineSpaceWithIgnoreRule = (
                       )
                     | CoreRule
                   )
-              ),
+              )
           ]
       ) &
         string)
@@ -830,14 +711,7 @@ export type NewlineSpaceWithIgnoreRule = (
           )
         | [
             (
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             ) &
               (
@@ -866,14 +740,7 @@ export type NewlineSpaceWithIgnoreRule = (
                   )
               ),
             (
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             ) &
               (
@@ -900,7 +767,7 @@ export type NewlineSpaceWithIgnoreRule = (
                       )
                     | CoreRule
                   )
-              ),
+              )
           ]
       ) &
         unknown[])
@@ -914,28 +781,14 @@ export type NewlineRule = (
   | [
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
         ),
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
-        ),
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
@@ -944,92 +797,32 @@ export type NewlineRule = (
           | null
           | ("always" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -1037,36 +830,16 @@ export type NewlineRule = (
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -1076,15 +849,7 @@ export type NewlineRule = (
  */
 export type NewlineSpaceRule = (
   | null
-  | (
-      | "always"
-      | "never"
-      | "always-single-line"
-      | "never-single-line"
-      | "always-multi-line"
-      | "never-multi-line"
-      | []
-    )
+  | ("always" | "never" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | [])
   | [
       (
         | (
@@ -1163,7 +928,7 @@ export type NewlineSpaceRule = (
                 )
               | CoreRule
             )
-        ),
+        )
     ]
 ) &
   (
@@ -1257,7 +1022,7 @@ export type NewlineSpaceRule = (
                         )
                       | CoreRule
                     )
-                ),
+                )
             ]
         ))
     | ((
@@ -1349,7 +1114,7 @@ export type NewlineSpaceRule = (
                       )
                     | CoreRule
                   )
-              ),
+              )
           ]
       ) &
         string)
@@ -1442,7 +1207,7 @@ export type NewlineSpaceRule = (
                       )
                     | CoreRule
                   )
-              ),
+              )
           ]
       ) &
         unknown[])
@@ -1452,15 +1217,7 @@ export type NewlineSpaceRule = (
  */
 export type NewlineSpaceRule1 = (
   | null
-  | (
-      | "always"
-      | "never"
-      | "always-single-line"
-      | "never-single-line"
-      | "always-multi-line"
-      | "never-multi-line"
-      | []
-    )
+  | ("always" | "never" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | [])
   | [
       (
         | (
@@ -1539,7 +1296,7 @@ export type NewlineSpaceRule1 = (
                 )
               | CoreRule
             )
-        ),
+        )
     ]
 ) &
   (
@@ -1633,7 +1390,7 @@ export type NewlineSpaceRule1 = (
                         )
                       | CoreRule
                     )
-                ),
+                )
             ]
         ))
     | ((
@@ -1725,7 +1482,7 @@ export type NewlineSpaceRule1 = (
                       )
                     | CoreRule
                   )
-              ),
+              )
           ]
       ) &
         string)
@@ -1818,7 +1575,7 @@ export type NewlineSpaceRule1 = (
                       )
                     | CoreRule
                   )
-              ),
+              )
           ]
       ) &
         unknown[])
@@ -1830,10 +1587,8 @@ export type BooleanRule1 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -1842,16 +1597,8 @@ export type BooleanRule1 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -1859,26 +1606,16 @@ export type BooleanRule1 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -1890,10 +1627,8 @@ export type BooleanRule2 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -1902,16 +1637,8 @@ export type BooleanRule2 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -1919,26 +1646,16 @@ export type BooleanRule2 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -1952,28 +1669,14 @@ export type NewlineRule1 = (
   | [
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
         ),
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
-        ),
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
@@ -1982,92 +1685,32 @@ export type NewlineRule1 = (
           | null
           | ("always" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -2075,36 +1718,16 @@ export type NewlineRule1 = (
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -2114,15 +1737,7 @@ export type NewlineRule1 = (
  */
 export type NewlineSpaceRule2 = (
   | null
-  | (
-      | "always"
-      | "never"
-      | "always-single-line"
-      | "never-single-line"
-      | "always-multi-line"
-      | "never-multi-line"
-      | []
-    )
+  | ("always" | "never" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | [])
   | [
       (
         | (
@@ -2201,7 +1816,7 @@ export type NewlineSpaceRule2 = (
                 )
               | CoreRule
             )
-        ),
+        )
     ]
 ) &
   (
@@ -2295,7 +1910,7 @@ export type NewlineSpaceRule2 = (
                         )
                       | CoreRule
                     )
-                ),
+                )
             ]
         ))
     | ((
@@ -2387,7 +2002,7 @@ export type NewlineSpaceRule2 = (
                       )
                     | CoreRule
                   )
-              ),
+              )
           ]
       ) &
         string)
@@ -2480,7 +2095,7 @@ export type NewlineSpaceRule2 = (
                       )
                     | CoreRule
                   )
-              ),
+              )
           ]
       ) &
         unknown[])
@@ -2490,88 +2105,38 @@ export type NewlineSpaceRule2 = (
  */
 export type NewlineSpaceWithIgnoreRule1 = (
   | null
-  | (
-      | "always"
-      | "never"
-      | "always-single-line"
-      | "never-single-line"
-      | "always-multi-line"
-      | "never-multi-line"
-      | []
-    )
+  | ("always" | "never" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | [])
   | [
       (
-        | (
-            | "always"
-            | "always-single-line"
-            | "never-single-line"
-            | "always-multi-line"
-            | "never-multi-line"
-            | {}
-          )
+        | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
         | CoreRule
       ) &
         (
           | ((
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             ) &
               string)
           | (
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             )
         ),
       (
-        | (
-            | "always"
-            | "always-single-line"
-            | "never-single-line"
-            | "always-multi-line"
-            | "never-multi-line"
-            | {}
-          )
+        | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
         | CoreRule
       ) &
         (
           | ((
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             ) &
               string)
           | (
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             )
-        ),
+        )
     ]
 ) &
   (
@@ -2659,7 +2224,7 @@ export type NewlineSpaceWithIgnoreRule1 = (
                         )
                       | CoreRule
                     )
-                ),
+                )
             ]
         ))
     | ((
@@ -2675,14 +2240,7 @@ export type NewlineSpaceWithIgnoreRule1 = (
           )
         | [
             (
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             ) &
               (
@@ -2711,14 +2269,7 @@ export type NewlineSpaceWithIgnoreRule1 = (
                   )
               ),
             (
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             ) &
               (
@@ -2745,7 +2296,7 @@ export type NewlineSpaceWithIgnoreRule1 = (
                       )
                     | CoreRule
                   )
-              ),
+              )
           ]
       ) &
         string)
@@ -2762,14 +2313,7 @@ export type NewlineSpaceWithIgnoreRule1 = (
           )
         | [
             (
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             ) &
               (
@@ -2798,14 +2342,7 @@ export type NewlineSpaceWithIgnoreRule1 = (
                   )
               ),
             (
-              | (
-                  | "always"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | "always-multi-line"
-                  | "never-multi-line"
-                  | {}
-                )
+              | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
               | CoreRule
             ) &
               (
@@ -2832,7 +2369,7 @@ export type NewlineSpaceWithIgnoreRule1 = (
                       )
                     | CoreRule
                   )
-              ),
+              )
           ]
       ) &
         unknown[])
@@ -2845,15 +2382,9 @@ export type LowerUpperRule1 = (
   | ("lower" | "upper" | [])
   | [
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
     ]
 ) &
   (
@@ -2863,15 +2394,9 @@ export type LowerUpperRule1 = (
           | ("lower" | "upper" | [])
           | [
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -2879,15 +2404,9 @@ export type LowerUpperRule1 = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -2896,15 +2415,9 @@ export type LowerUpperRule1 = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -2916,10 +2429,8 @@ export type BooleanRule3 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -2928,16 +2439,8 @@ export type BooleanRule3 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -2945,26 +2448,16 @@ export type BooleanRule3 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -2976,10 +2469,8 @@ export type BooleanRule4 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -2988,16 +2479,8 @@ export type BooleanRule4 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -3005,26 +2488,16 @@ export type BooleanRule4 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -3036,10 +2509,8 @@ export type BooleanRule5 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -3048,16 +2519,8 @@ export type BooleanRule5 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -3065,26 +2528,16 @@ export type BooleanRule5 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -3097,15 +2550,9 @@ export type AlwaysNeverRule = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -3115,15 +2562,9 @@ export type AlwaysNeverRule = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -3131,15 +2572,9 @@ export type AlwaysNeverRule = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -3148,15 +2583,9 @@ export type AlwaysNeverRule = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -3178,7 +2607,7 @@ export type ArrayStringRule2 = (
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
           | (([] | {}) | SimpleArrayStringRule | CoreRule)
-        ))[],
+        ))[]
     ]
 ) &
   (
@@ -3197,7 +2626,7 @@ export type ArrayStringRule2 = (
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                   | (([] | {}) | SimpleArrayStringRule | CoreRule)
-                ))[],
+                ))[]
             ]
         ))
     | ((
@@ -3214,7 +2643,7 @@ export type ArrayStringRule2 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         string)
@@ -3232,7 +2661,7 @@ export type ArrayStringRule2 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         unknown[])
@@ -3244,7 +2673,7 @@ export type StringRule = (
   | (null | string)
   | [
       ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-      ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+      ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
     ]
 ) &
   (
@@ -3253,14 +2682,14 @@ export type StringRule = (
           | (null | string)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
             ]
         ))
     | ((
         | (null | string)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
           ]
       ) &
         string)
@@ -3268,7 +2697,7 @@ export type StringRule = (
         | (null | string)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
           ]
       ) &
         unknown[])
@@ -3280,10 +2709,8 @@ export type BooleanRule6 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -3292,16 +2719,8 @@ export type BooleanRule6 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -3309,26 +2728,16 @@ export type BooleanRule6 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -3340,7 +2749,7 @@ export type StringRule1 = (
   | (null | string)
   | [
       ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-      ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+      ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
     ]
 ) &
   (
@@ -3349,14 +2758,14 @@ export type StringRule1 = (
           | (null | string)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
             ]
         ))
     | ((
         | (null | string)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
           ]
       ) &
         string)
@@ -3364,7 +2773,7 @@ export type StringRule1 = (
         | (null | string)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
           ]
       ) &
         unknown[])
@@ -3377,15 +2786,9 @@ export type AlwaysNeverRule1 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -3395,15 +2798,9 @@ export type AlwaysNeverRule1 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -3411,15 +2808,9 @@ export type AlwaysNeverRule1 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -3428,15 +2819,9 @@ export type AlwaysNeverRule1 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -3449,15 +2834,9 @@ export type AlwaysNeverRule2 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -3467,15 +2846,9 @@ export type AlwaysNeverRule2 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -3483,15 +2856,9 @@ export type AlwaysNeverRule2 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -3500,15 +2867,9 @@ export type AlwaysNeverRule2 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -3529,7 +2890,7 @@ export type AlwaysMultiLineRule1 = (
         (
           | ((("always" | "always-multi-line" | {}) | CoreRule) & string)
           | (("always" | "always-multi-line" | {}) | CoreRule)
-        ),
+        )
     ]
 ) &
   (
@@ -3540,16 +2901,14 @@ export type AlwaysMultiLineRule1 = (
           | [
               (("always" | "always-multi-line" | {}) | CoreRule) &
                 (
-                  | ((("always" | "always-multi-line" | {}) | CoreRule) &
-                      string)
+                  | ((("always" | "always-multi-line" | {}) | CoreRule) & string)
                   | (("always" | "always-multi-line" | {}) | CoreRule)
                 ),
               (("always" | "always-multi-line" | {}) | CoreRule) &
                 (
-                  | ((("always" | "always-multi-line" | {}) | CoreRule) &
-                      string)
+                  | ((("always" | "always-multi-line" | {}) | CoreRule) & string)
                   | (("always" | "always-multi-line" | {}) | CoreRule)
-                ),
+                )
             ]
         ))
     | ((
@@ -3565,7 +2924,7 @@ export type AlwaysMultiLineRule1 = (
               (
                 | ((("always" | "always-multi-line" | {}) | CoreRule) & string)
                 | (("always" | "always-multi-line" | {}) | CoreRule)
-              ),
+              )
           ]
       ) &
         string)
@@ -3582,7 +2941,7 @@ export type AlwaysMultiLineRule1 = (
               (
                 | ((("always" | "always-multi-line" | {}) | CoreRule) & string)
                 | (("always" | "always-multi-line" | {}) | CoreRule)
-              ),
+              )
           ]
       ) &
         unknown[])
@@ -3595,15 +2954,9 @@ export type AlwaysNeverRule3 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -3613,15 +2966,9 @@ export type AlwaysNeverRule3 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -3629,15 +2976,9 @@ export type AlwaysNeverRule3 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -3646,15 +2987,9 @@ export type AlwaysNeverRule3 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -3666,10 +3001,8 @@ export type BooleanRule7 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -3678,16 +3011,8 @@ export type BooleanRule7 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -3695,26 +3020,16 @@ export type BooleanRule7 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -3725,7 +3040,7 @@ export type BooleanRule7 = (
 export type ObjectRule = (
   | null
   | {
-      [k: string]: SimpleArrayStringRule | undefined;
+      [k: string]: (SimpleArrayStringRule) | undefined;
     }
   | [CoreRule, CoreRule]
 ) &
@@ -3734,21 +3049,21 @@ export type ObjectRule = (
         (
           | null
           | {
-              [k: string]: SimpleArrayStringRule | undefined;
+              [k: string]: (SimpleArrayStringRule) | undefined;
             }
           | [CoreRule, CoreRule]
         ))
     | (
         | null
         | {
-            [k: string]: SimpleArrayStringRule | undefined;
+            [k: string]: (SimpleArrayStringRule) | undefined;
           }
         | [CoreRule, CoreRule]
       )
     | ((
         | null
         | {
-            [k: string]: SimpleArrayStringRule | undefined;
+            [k: string]: (SimpleArrayStringRule) | undefined;
           }
         | [CoreRule, CoreRule]
       ) &
@@ -3760,7 +3075,7 @@ export type ObjectRule = (
 export type ObjectRule1 = (
   | null
   | {
-      [k: string]: SimpleArrayStringRule | undefined;
+      [k: string]: (SimpleArrayStringRule) | undefined;
     }
   | [CoreRule, CoreRule]
 ) &
@@ -3769,21 +3084,21 @@ export type ObjectRule1 = (
         (
           | null
           | {
-              [k: string]: SimpleArrayStringRule | undefined;
+              [k: string]: (SimpleArrayStringRule) | undefined;
             }
           | [CoreRule, CoreRule]
         ))
     | (
         | null
         | {
-            [k: string]: SimpleArrayStringRule | undefined;
+            [k: string]: (SimpleArrayStringRule) | undefined;
           }
         | [CoreRule, CoreRule]
       )
     | ((
         | null
         | {
-            [k: string]: SimpleArrayStringRule | undefined;
+            [k: string]: (SimpleArrayStringRule) | undefined;
           }
         | [CoreRule, CoreRule]
       ) &
@@ -3795,7 +3110,7 @@ export type ObjectRule1 = (
 export type ObjectRule2 = (
   | null
   | {
-      [k: string]: SimpleArrayStringRule | undefined;
+      [k: string]: (SimpleArrayStringRule) | undefined;
     }
   | [CoreRule, CoreRule]
 ) &
@@ -3804,21 +3119,21 @@ export type ObjectRule2 = (
         (
           | null
           | {
-              [k: string]: SimpleArrayStringRule | undefined;
+              [k: string]: (SimpleArrayStringRule) | undefined;
             }
           | [CoreRule, CoreRule]
         ))
     | (
         | null
         | {
-            [k: string]: SimpleArrayStringRule | undefined;
+            [k: string]: (SimpleArrayStringRule) | undefined;
           }
         | [CoreRule, CoreRule]
       )
     | ((
         | null
         | {
-            [k: string]: SimpleArrayStringRule | undefined;
+            [k: string]: (SimpleArrayStringRule) | undefined;
           }
         | [CoreRule, CoreRule]
       ) &
@@ -3830,7 +3145,7 @@ export type ObjectRule2 = (
 export type ObjectRule3 = (
   | null
   | {
-      [k: string]: SimpleArrayStringRule | undefined;
+      [k: string]: (SimpleArrayStringRule) | undefined;
     }
   | [CoreRule, CoreRule]
 ) &
@@ -3839,21 +3154,21 @@ export type ObjectRule3 = (
         (
           | null
           | {
-              [k: string]: SimpleArrayStringRule | undefined;
+              [k: string]: (SimpleArrayStringRule) | undefined;
             }
           | [CoreRule, CoreRule]
         ))
     | (
         | null
         | {
-            [k: string]: SimpleArrayStringRule | undefined;
+            [k: string]: (SimpleArrayStringRule) | undefined;
           }
         | [CoreRule, CoreRule]
       )
     | ((
         | null
         | {
-            [k: string]: SimpleArrayStringRule | undefined;
+            [k: string]: (SimpleArrayStringRule) | undefined;
           }
         | [CoreRule, CoreRule]
       ) &
@@ -3866,10 +3181,8 @@ export type BooleanRule8 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -3878,16 +3191,8 @@ export type BooleanRule8 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -3895,26 +3200,16 @@ export type BooleanRule8 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -3926,10 +3221,8 @@ export type BooleanRule9 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -3938,16 +3231,8 @@ export type BooleanRule9 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -3955,26 +3240,16 @@ export type BooleanRule9 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -3988,28 +3263,14 @@ export type NewlineRule2 = (
   | [
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
         ),
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
-        ),
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
@@ -4018,92 +3279,32 @@ export type NewlineRule2 = (
           | null
           | ("always" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -4111,36 +3312,16 @@ export type NewlineRule2 = (
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -4154,28 +3335,14 @@ export type NewlineRule3 = (
   | [
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
         ),
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
-        ),
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
@@ -4184,92 +3351,32 @@ export type NewlineRule3 = (
           | null
           | ("always" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -4277,36 +3384,16 @@ export type NewlineRule3 = (
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -4318,212 +3405,50 @@ export type SpaceRule = (
   | null
   | ("always" | "never" | "always-single-line" | "never-single-line" | [])
   | [
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
         ),
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
-        ),
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
     | (null &
         (
           | null
-          | (
-              | "always"
-              | "never"
-              | "always-single-line"
-              | "never-single-line"
-              | []
-            )
+          | ("always" | "never" | "always-single-line" | "never-single-line" | [])
           | [
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -4531,72 +3456,16 @@ export type SpaceRule = (
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -4608,212 +3477,50 @@ export type SpaceRule1 = (
   | null
   | ("always" | "never" | "always-single-line" | "never-single-line" | [])
   | [
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
         ),
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
-        ),
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
     | (null &
         (
           | null
-          | (
-              | "always"
-              | "never"
-              | "always-single-line"
-              | "never-single-line"
-              | []
-            )
+          | ("always" | "never" | "always-single-line" | "never-single-line" | [])
           | [
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -4821,72 +3528,16 @@ export type SpaceRule1 = (
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -4898,7 +3549,7 @@ export type IntegerRule = (
   | (null | number)
   | [
       ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-      ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+      ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
     ]
 ) &
   (
@@ -4907,7 +3558,7 @@ export type IntegerRule = (
           | (null | number)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
             ]
         ))
     | (number &
@@ -4915,14 +3566,14 @@ export type IntegerRule = (
           | (null | number)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
             ]
         ))
     | ((
         | (null | number)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
           ]
       ) &
         unknown[])
@@ -4935,15 +3586,9 @@ export type AlwaysNeverRule4 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -4953,15 +3598,9 @@ export type AlwaysNeverRule4 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -4969,15 +3608,9 @@ export type AlwaysNeverRule4 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -4986,15 +3619,9 @@ export type AlwaysNeverRule4 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -5016,7 +3643,7 @@ export type ArrayStringRule3 = (
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
           | (([] | {}) | SimpleArrayStringRule | CoreRule)
-        ))[],
+        ))[]
     ]
 ) &
   (
@@ -5035,7 +3662,7 @@ export type ArrayStringRule3 = (
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                   | (([] | {}) | SimpleArrayStringRule | CoreRule)
-                ))[],
+                ))[]
             ]
         ))
     | ((
@@ -5052,7 +3679,7 @@ export type ArrayStringRule3 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         string)
@@ -5070,7 +3697,7 @@ export type ArrayStringRule3 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         unknown[])
@@ -5082,10 +3709,8 @@ export type BooleanRule10 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -5094,16 +3719,8 @@ export type BooleanRule10 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -5111,26 +3728,16 @@ export type BooleanRule10 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -5144,28 +3751,14 @@ export type NewlineRule4 = (
   | [
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
         ),
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
-        ),
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
@@ -5174,92 +3767,32 @@ export type NewlineRule4 = (
           | null
           | ("always" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -5267,36 +3800,16 @@ export type NewlineRule4 = (
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -5310,28 +3823,14 @@ export type NewlineRule5 = (
   | [
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
         ),
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
-        ),
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
@@ -5340,92 +3839,32 @@ export type NewlineRule5 = (
           | null
           | ("always" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -5433,36 +3872,16 @@ export type NewlineRule5 = (
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -5474,212 +3893,50 @@ export type SpaceRule2 = (
   | null
   | ("always" | "never" | "always-single-line" | "never-single-line" | [])
   | [
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
         ),
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
-        ),
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
     | (null &
         (
           | null
-          | (
-              | "always"
-              | "never"
-              | "always-single-line"
-              | "never-single-line"
-              | []
-            )
+          | ("always" | "never" | "always-single-line" | "never-single-line" | [])
           | [
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -5687,72 +3944,16 @@ export type SpaceRule2 = (
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -5764,212 +3965,50 @@ export type SpaceRule3 = (
   | null
   | ("always" | "never" | "always-single-line" | "never-single-line" | [])
   | [
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
         ),
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
-        ),
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
     | (null &
         (
           | null
-          | (
-              | "always"
-              | "never"
-              | "always-single-line"
-              | "never-single-line"
-              | []
-            )
+          | ("always" | "never" | "always-single-line" | "never-single-line" | [])
           | [
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -5977,72 +4016,16 @@ export type SpaceRule3 = (
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -6054,10 +4037,8 @@ export type BooleanRule11 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -6066,16 +4047,8 @@ export type BooleanRule11 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -6083,26 +4056,16 @@ export type BooleanRule11 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -6114,7 +4077,7 @@ export type IntegerRule1 = (
   | (null | number)
   | [
       ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-      ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+      ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
     ]
 ) &
   (
@@ -6123,7 +4086,7 @@ export type IntegerRule1 = (
           | (null | number)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
             ]
         ))
     | (number &
@@ -6131,14 +4094,14 @@ export type IntegerRule1 = (
           | (null | number)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
             ]
         ))
     | ((
         | (null | number)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
           ]
       ) &
         unknown[])
@@ -6152,28 +4115,14 @@ export type NewlineRule6 = (
   | [
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
         ),
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
-        ),
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
@@ -6182,92 +4131,32 @@ export type NewlineRule6 = (
           | null
           | ("always" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -6275,36 +4164,16 @@ export type NewlineRule6 = (
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -6316,212 +4185,50 @@ export type SpaceRule4 = (
   | null
   | ("always" | "never" | "always-single-line" | "never-single-line" | [])
   | [
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
         ),
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
-        ),
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
     | (null &
         (
           | null
-          | (
-              | "always"
-              | "never"
-              | "always-single-line"
-              | "never-single-line"
-              | []
-            )
+          | ("always" | "never" | "always-single-line" | "never-single-line" | [])
           | [
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -6529,72 +4236,16 @@ export type SpaceRule4 = (
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -6607,15 +4258,9 @@ export type AlwaysNeverRule5 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -6625,15 +4270,9 @@ export type AlwaysNeverRule5 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -6641,15 +4280,9 @@ export type AlwaysNeverRule5 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -6658,15 +4291,9 @@ export type AlwaysNeverRule5 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -6678,10 +4305,8 @@ export type BooleanRule12 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -6690,16 +4315,8 @@ export type BooleanRule12 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -6707,26 +4324,16 @@ export type BooleanRule12 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -6739,15 +4346,9 @@ export type AlwaysNeverRule6 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -6757,15 +4358,9 @@ export type AlwaysNeverRule6 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -6773,15 +4368,9 @@ export type AlwaysNeverRule6 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -6790,15 +4379,9 @@ export type AlwaysNeverRule6 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -6820,7 +4403,7 @@ export type ArrayStringRule4 = (
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
           | (([] | {}) | SimpleArrayStringRule | CoreRule)
-        ))[],
+        ))[]
     ]
 ) &
   (
@@ -6839,7 +4422,7 @@ export type ArrayStringRule4 = (
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                   | (([] | {}) | SimpleArrayStringRule | CoreRule)
-                ))[],
+                ))[]
             ]
         ))
     | ((
@@ -6856,7 +4439,7 @@ export type ArrayStringRule4 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         string)
@@ -6874,7 +4457,7 @@ export type ArrayStringRule4 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         unknown[])
@@ -6896,7 +4479,7 @@ export type ArrayStringRule5 = (
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
           | (([] | {}) | SimpleArrayStringRule | CoreRule)
-        ))[],
+        ))[]
     ]
 ) &
   (
@@ -6915,7 +4498,7 @@ export type ArrayStringRule5 = (
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                   | (([] | {}) | SimpleArrayStringRule | CoreRule)
-                ))[],
+                ))[]
             ]
         ))
     | ((
@@ -6932,7 +4515,7 @@ export type ArrayStringRule5 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         string)
@@ -6950,7 +4533,7 @@ export type ArrayStringRule5 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         unknown[])
@@ -6963,15 +4546,9 @@ export type AlwaysNeverRule7 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -6981,15 +4558,9 @@ export type AlwaysNeverRule7 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -6997,15 +4568,9 @@ export type AlwaysNeverRule7 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -7014,15 +4579,9 @@ export type AlwaysNeverRule7 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -7034,7 +4593,7 @@ export type IntegerRule2 = (
   | (null | number)
   | [
       ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-      ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+      ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
     ]
 ) &
   (
@@ -7043,7 +4602,7 @@ export type IntegerRule2 = (
           | (null | number)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
             ]
         ))
     | (number &
@@ -7051,14 +4610,14 @@ export type IntegerRule2 = (
           | (null | number)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
             ]
         ))
     | ((
         | (null | number)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
           ]
       ) &
         unknown[])
@@ -7070,10 +4629,8 @@ export type BooleanRule13 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -7082,16 +4639,8 @@ export type BooleanRule13 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -7099,26 +4648,16 @@ export type BooleanRule13 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -7130,10 +4669,8 @@ export type BooleanRule14 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -7142,16 +4679,8 @@ export type BooleanRule14 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -7159,26 +4688,16 @@ export type BooleanRule14 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -7190,10 +4709,8 @@ export type BooleanRule15 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -7202,16 +4719,8 @@ export type BooleanRule15 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -7219,26 +4728,16 @@ export type BooleanRule15 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -7250,10 +4749,8 @@ export type BooleanRule16 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -7262,16 +4759,8 @@ export type BooleanRule16 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -7279,26 +4768,16 @@ export type BooleanRule16 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -7310,10 +4789,8 @@ export type BooleanRule17 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -7322,16 +4799,8 @@ export type BooleanRule17 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -7339,26 +4808,16 @@ export type BooleanRule17 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -7370,10 +4829,8 @@ export type BooleanRule18 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -7382,16 +4839,8 @@ export type BooleanRule18 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -7399,26 +4848,16 @@ export type BooleanRule18 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -7430,10 +4869,8 @@ export type BooleanRule19 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -7442,16 +4879,8 @@ export type BooleanRule19 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -7459,26 +4888,16 @@ export type BooleanRule19 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -7491,15 +4910,9 @@ export type AlwaysNeverRule8 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -7509,15 +4922,9 @@ export type AlwaysNeverRule8 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -7525,15 +4932,9 @@ export type AlwaysNeverRule8 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -7542,15 +4943,9 @@ export type AlwaysNeverRule8 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -7562,10 +4957,8 @@ export type BooleanRule20 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -7574,16 +4967,8 @@ export type BooleanRule20 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -7591,26 +4976,16 @@ export type BooleanRule20 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -7622,10 +4997,8 @@ export type BooleanRule21 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -7634,16 +5007,8 @@ export type BooleanRule21 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -7651,26 +5016,16 @@ export type BooleanRule21 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -7683,15 +5038,9 @@ export type AlwaysNeverRule9 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -7701,15 +5050,9 @@ export type AlwaysNeverRule9 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -7717,15 +5060,9 @@ export type AlwaysNeverRule9 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -7734,15 +5071,9 @@ export type AlwaysNeverRule9 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -7755,15 +5086,9 @@ export type AlwaysNeverRule10 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -7773,15 +5098,9 @@ export type AlwaysNeverRule10 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -7789,15 +5108,9 @@ export type AlwaysNeverRule10 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -7806,15 +5119,9 @@ export type AlwaysNeverRule10 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -7827,15 +5134,9 @@ export type LowerUpperRule2 = (
   | ("lower" | "upper" | [])
   | [
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
     ]
 ) &
   (
@@ -7845,15 +5146,9 @@ export type LowerUpperRule2 = (
           | ("lower" | "upper" | [])
           | [
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -7861,15 +5156,9 @@ export type LowerUpperRule2 = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -7878,15 +5167,9 @@ export type LowerUpperRule2 = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -7898,10 +5181,8 @@ export type BooleanRule22 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -7910,16 +5191,8 @@ export type BooleanRule22 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -7927,26 +5200,16 @@ export type BooleanRule22 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -7958,10 +5221,8 @@ export type BooleanRule23 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -7970,16 +5231,8 @@ export type BooleanRule23 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -7987,26 +5240,16 @@ export type BooleanRule23 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -8019,15 +5262,9 @@ export type AlwaysNeverRule11 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -8037,15 +5274,9 @@ export type AlwaysNeverRule11 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -8053,15 +5284,9 @@ export type AlwaysNeverRule11 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -8070,15 +5295,9 @@ export type AlwaysNeverRule11 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -8091,15 +5310,9 @@ export type AlwaysNeverRule12 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -8109,15 +5322,9 @@ export type AlwaysNeverRule12 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -8125,15 +5332,9 @@ export type AlwaysNeverRule12 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -8142,15 +5343,9 @@ export type AlwaysNeverRule12 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -8163,15 +5358,9 @@ export type AlwaysNeverRule13 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -8181,15 +5370,9 @@ export type AlwaysNeverRule13 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -8197,15 +5380,9 @@ export type AlwaysNeverRule13 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -8214,15 +5391,9 @@ export type AlwaysNeverRule13 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -8236,28 +5407,14 @@ export type NewlineRule7 = (
   | [
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
         ),
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
-        ),
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
@@ -8266,92 +5423,32 @@ export type NewlineRule7 = (
           | null
           | ("always" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -8359,36 +5456,16 @@ export type NewlineRule7 = (
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -8402,28 +5479,14 @@ export type NewlineRule8 = (
   | [
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
         ),
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
-        ),
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
@@ -8432,92 +5495,32 @@ export type NewlineRule8 = (
           | null
           | ("always" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -8525,36 +5528,16 @@ export type NewlineRule8 = (
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -8566,212 +5549,50 @@ export type SpaceRule5 = (
   | null
   | ("always" | "never" | "always-single-line" | "never-single-line" | [])
   | [
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
         ),
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
-        ),
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
     | (null &
         (
           | null
-          | (
-              | "always"
-              | "never"
-              | "always-single-line"
-              | "never-single-line"
-              | []
-            )
+          | ("always" | "never" | "always-single-line" | "never-single-line" | [])
           | [
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -8779,72 +5600,16 @@ export type SpaceRule5 = (
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -8856,212 +5621,50 @@ export type SpaceRule6 = (
   | null
   | ("always" | "never" | "always-single-line" | "never-single-line" | [])
   | [
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
         ),
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
-        ),
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
     | (null &
         (
           | null
-          | (
-              | "always"
-              | "never"
-              | "always-single-line"
-              | "never-single-line"
-              | []
-            )
+          | ("always" | "never" | "always-single-line" | "never-single-line" | [])
           | [
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -9069,72 +5672,16 @@ export type SpaceRule6 = (
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -9147,15 +5694,9 @@ export type AlwaysNeverRule14 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -9165,15 +5706,9 @@ export type AlwaysNeverRule14 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -9181,15 +5716,9 @@ export type AlwaysNeverRule14 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -9198,15 +5727,9 @@ export type AlwaysNeverRule14 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -9218,7 +5741,7 @@ export type IntegerRule3 = (
   | (null | number)
   | [
       ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-      ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+      ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
     ]
 ) &
   (
@@ -9227,7 +5750,7 @@ export type IntegerRule3 = (
           | (null | number)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
             ]
         ))
     | (number &
@@ -9235,14 +5758,14 @@ export type IntegerRule3 = (
           | (null | number)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
             ]
         ))
     | ((
         | (null | number)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
           ]
       ) &
         unknown[])
@@ -9254,10 +5777,8 @@ export type BooleanRule24 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -9266,16 +5787,8 @@ export type BooleanRule24 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -9283,26 +5796,16 @@ export type BooleanRule24 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -9324,7 +5827,7 @@ export type ArrayStringRule6 = (
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
           | (([] | {}) | SimpleArrayStringRule | CoreRule)
-        ))[],
+        ))[]
     ]
 ) &
   (
@@ -9343,7 +5846,7 @@ export type ArrayStringRule6 = (
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                   | (([] | {}) | SimpleArrayStringRule | CoreRule)
-                ))[],
+                ))[]
             ]
         ))
     | ((
@@ -9360,7 +5863,7 @@ export type ArrayStringRule6 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         string)
@@ -9378,7 +5881,7 @@ export type ArrayStringRule6 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         unknown[])
@@ -9391,15 +5894,9 @@ export type LowerUpperRule3 = (
   | ("lower" | "upper" | [])
   | [
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
     ]
 ) &
   (
@@ -9409,15 +5906,9 @@ export type LowerUpperRule3 = (
           | ("lower" | "upper" | [])
           | [
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -9425,15 +5916,9 @@ export type LowerUpperRule3 = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -9442,15 +5927,9 @@ export type LowerUpperRule3 = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -9462,10 +5941,8 @@ export type BooleanRule25 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -9474,16 +5951,8 @@ export type BooleanRule25 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -9491,26 +5960,16 @@ export type BooleanRule25 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -9532,7 +5991,7 @@ export type ArrayStringRule7 = (
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
           | (([] | {}) | SimpleArrayStringRule | CoreRule)
-        ))[],
+        ))[]
     ]
 ) &
   (
@@ -9551,7 +6010,7 @@ export type ArrayStringRule7 = (
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                   | (([] | {}) | SimpleArrayStringRule | CoreRule)
-                ))[],
+                ))[]
             ]
         ))
     | ((
@@ -9568,7 +6027,7 @@ export type ArrayStringRule7 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         string)
@@ -9586,7 +6045,7 @@ export type ArrayStringRule7 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         unknown[])
@@ -9598,10 +6057,8 @@ export type BooleanRule26 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -9610,16 +6067,8 @@ export type BooleanRule26 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -9627,26 +6076,16 @@ export type BooleanRule26 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -9659,15 +6098,9 @@ export type AlwaysNeverRule15 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -9677,15 +6110,9 @@ export type AlwaysNeverRule15 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -9693,15 +6120,9 @@ export type AlwaysNeverRule15 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -9710,15 +6131,9 @@ export type AlwaysNeverRule15 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -9740,7 +6155,7 @@ export type ArrayStringRule8 = (
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
           | (([] | {}) | SimpleArrayStringRule | CoreRule)
-        ))[],
+        ))[]
     ]
 ) &
   (
@@ -9759,7 +6174,7 @@ export type ArrayStringRule8 = (
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                   | (([] | {}) | SimpleArrayStringRule | CoreRule)
-                ))[],
+                ))[]
             ]
         ))
     | ((
@@ -9776,7 +6191,7 @@ export type ArrayStringRule8 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         string)
@@ -9794,7 +6209,7 @@ export type ArrayStringRule8 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         unknown[])
@@ -9807,15 +6222,9 @@ export type AlwaysNeverRule16 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -9825,15 +6234,9 @@ export type AlwaysNeverRule16 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -9841,15 +6244,9 @@ export type AlwaysNeverRule16 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -9858,15 +6255,9 @@ export type AlwaysNeverRule16 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -9879,15 +6270,9 @@ export type AlwaysNeverRule17 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -9897,15 +6282,9 @@ export type AlwaysNeverRule17 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -9913,15 +6292,9 @@ export type AlwaysNeverRule17 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -9930,15 +6303,9 @@ export type AlwaysNeverRule17 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -9960,7 +6327,7 @@ export type ArrayStringRule9 = (
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
           | (([] | {}) | SimpleArrayStringRule | CoreRule)
-        ))[],
+        ))[]
     ]
 ) &
   (
@@ -9979,7 +6346,7 @@ export type ArrayStringRule9 = (
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                   | (([] | {}) | SimpleArrayStringRule | CoreRule)
-                ))[],
+                ))[]
             ]
         ))
     | ((
@@ -9996,7 +6363,7 @@ export type ArrayStringRule9 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         string)
@@ -10014,7 +6381,7 @@ export type ArrayStringRule9 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         unknown[])
@@ -10027,15 +6394,9 @@ export type AlwaysNeverRule18 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -10045,15 +6406,9 @@ export type AlwaysNeverRule18 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -10061,15 +6416,9 @@ export type AlwaysNeverRule18 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -10078,15 +6427,9 @@ export type AlwaysNeverRule18 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -10099,15 +6442,9 @@ export type AlwaysNeverRule19 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -10117,15 +6454,9 @@ export type AlwaysNeverRule19 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -10133,15 +6464,9 @@ export type AlwaysNeverRule19 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -10150,15 +6475,9 @@ export type AlwaysNeverRule19 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -10171,15 +6490,9 @@ export type AlwaysNeverRule20 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -10189,15 +6502,9 @@ export type AlwaysNeverRule20 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -10205,15 +6512,9 @@ export type AlwaysNeverRule20 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -10222,15 +6523,9 @@ export type AlwaysNeverRule20 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -10242,10 +6537,8 @@ export type BooleanRule27 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -10254,16 +6547,8 @@ export type BooleanRule27 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -10271,26 +6556,16 @@ export type BooleanRule27 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -10302,7 +6577,7 @@ export type StringRule2 = (
   | (null | string)
   | [
       ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-      ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+      ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
     ]
 ) &
   (
@@ -10311,14 +6586,14 @@ export type StringRule2 = (
           | (null | string)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
             ]
         ))
     | ((
         | (null | string)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
           ]
       ) &
         string)
@@ -10326,7 +6601,7 @@ export type StringRule2 = (
         | (null | string)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
           ]
       ) &
         unknown[])
@@ -10338,7 +6613,7 @@ export type IntegerRule4 = (
   | (null | number)
   | [
       ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-      ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+      ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
     ]
 ) &
   (
@@ -10347,7 +6622,7 @@ export type IntegerRule4 = (
           | (null | number)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
             ]
         ))
     | (number &
@@ -10355,14 +6630,14 @@ export type IntegerRule4 = (
           | (null | number)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
             ]
         ))
     | ((
         | (null | number)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
           ]
       ) &
         unknown[])
@@ -10374,7 +6649,7 @@ export type StringRule3 = (
   | (null | string)
   | [
       ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-      ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+      ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
     ]
 ) &
   (
@@ -10383,14 +6658,14 @@ export type StringRule3 = (
           | (null | string)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
             ]
         ))
     | ((
         | (null | string)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
           ]
       ) &
         string)
@@ -10398,7 +6673,7 @@ export type StringRule3 = (
         | (null | string)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
           ]
       ) &
         unknown[])
@@ -10410,7 +6685,7 @@ export type StringRule4 = (
   | (null | string)
   | [
       ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-      ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+      ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
     ]
 ) &
   (
@@ -10419,14 +6694,14 @@ export type StringRule4 = (
           | (null | string)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
             ]
         ))
     | ((
         | (null | string)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
           ]
       ) &
         string)
@@ -10434,7 +6709,7 @@ export type StringRule4 = (
         | (null | string)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))
           ]
       ) &
         unknown[])
@@ -10446,10 +6721,8 @@ export type BooleanRule28 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -10458,16 +6731,8 @@ export type BooleanRule28 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -10475,26 +6740,16 @@ export type BooleanRule28 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -10506,10 +6761,8 @@ export type BooleanRule29 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -10518,16 +6771,8 @@ export type BooleanRule29 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -10535,26 +6780,16 @@ export type BooleanRule29 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -10566,10 +6801,8 @@ export type BooleanRule30 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -10578,16 +6811,8 @@ export type BooleanRule30 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -10595,26 +6820,16 @@ export type BooleanRule30 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -10626,10 +6841,8 @@ export type BooleanRule31 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -10638,16 +6851,8 @@ export type BooleanRule31 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -10655,26 +6860,16 @@ export type BooleanRule31 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -10686,10 +6881,8 @@ export type BooleanRule32 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -10698,16 +6891,8 @@ export type BooleanRule32 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -10715,26 +6900,16 @@ export type BooleanRule32 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -10747,15 +6922,9 @@ export type LowerUpperRule4 = (
   | ("lower" | "upper" | [])
   | [
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
     ]
 ) &
   (
@@ -10765,15 +6934,9 @@ export type LowerUpperRule4 = (
           | ("lower" | "upper" | [])
           | [
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -10781,15 +6944,9 @@ export type LowerUpperRule4 = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -10798,15 +6955,9 @@ export type LowerUpperRule4 = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -10819,15 +6970,9 @@ export type AlwaysNeverRule21 = (
   | ("always" | "never" | [])
   | [
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
       (("always" | "never" | {}) | CoreRule) &
-        (
-          | ((("always" | "never" | {}) | CoreRule) & string)
-          | (("always" | "never" | {}) | CoreRule)
-        ),
+        (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
     ]
 ) &
   (
@@ -10837,15 +6982,9 @@ export type AlwaysNeverRule21 = (
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -10853,15 +6992,9 @@ export type AlwaysNeverRule21 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -10870,15 +7003,9 @@ export type AlwaysNeverRule21 = (
         | ("always" | "never" | [])
         | [
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
             (("always" | "never" | {}) | CoreRule) &
-              (
-                | ((("always" | "never" | {}) | CoreRule) & string)
-                | (("always" | "never" | {}) | CoreRule)
-              ),
+              (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -10900,7 +7027,7 @@ export type ArrayStringRule10 = (
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
           | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
           | (([] | {}) | SimpleArrayStringRule | CoreRule)
-        ))[],
+        ))[]
     ]
 ) &
   (
@@ -10919,7 +7046,7 @@ export type ArrayStringRule10 = (
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                   | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                   | (([] | {}) | SimpleArrayStringRule | CoreRule)
-                ))[],
+                ))[]
             ]
         ))
     | ((
@@ -10936,7 +7063,7 @@ export type ArrayStringRule10 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         string)
@@ -10954,7 +7081,7 @@ export type ArrayStringRule10 = (
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & string)
                 | ((([] | {}) | SimpleArrayStringRule | CoreRule) & unknown[])
                 | (([] | {}) | SimpleArrayStringRule | CoreRule)
-              ))[],
+              ))[]
           ]
       ) &
         unknown[])
@@ -10967,15 +7094,9 @@ export type LowerUpperRule5 = (
   | ("lower" | "upper" | [])
   | [
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
     ]
 ) &
   (
@@ -10985,15 +7106,9 @@ export type LowerUpperRule5 = (
           | ("lower" | "upper" | [])
           | [
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -11001,15 +7116,9 @@ export type LowerUpperRule5 = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -11018,15 +7127,9 @@ export type LowerUpperRule5 = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -11039,15 +7142,9 @@ export type SingleDoubleRule = (
   | ("single" | "double" | [])
   | [
       (("single" | "double" | {}) | CoreRule) &
-        (
-          | ((("single" | "double" | {}) | CoreRule) & string)
-          | (("single" | "double" | {}) | CoreRule)
-        ),
+        (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule)),
       (("single" | "double" | {}) | CoreRule) &
-        (
-          | ((("single" | "double" | {}) | CoreRule) & string)
-          | (("single" | "double" | {}) | CoreRule)
-        ),
+        (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule))
     ]
 ) &
   (
@@ -11057,15 +7154,9 @@ export type SingleDoubleRule = (
           | ("single" | "double" | [])
           | [
               (("single" | "double" | {}) | CoreRule) &
-                (
-                  | ((("single" | "double" | {}) | CoreRule) & string)
-                  | (("single" | "double" | {}) | CoreRule)
-                ),
+                (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule)),
               (("single" | "double" | {}) | CoreRule) &
-                (
-                  | ((("single" | "double" | {}) | CoreRule) & string)
-                  | (("single" | "double" | {}) | CoreRule)
-                ),
+                (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -11073,15 +7164,9 @@ export type SingleDoubleRule = (
         | ("single" | "double" | [])
         | [
             (("single" | "double" | {}) | CoreRule) &
-              (
-                | ((("single" | "double" | {}) | CoreRule) & string)
-                | (("single" | "double" | {}) | CoreRule)
-              ),
+              (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule)),
             (("single" | "double" | {}) | CoreRule) &
-              (
-                | ((("single" | "double" | {}) | CoreRule) & string)
-                | (("single" | "double" | {}) | CoreRule)
-              ),
+              (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -11090,15 +7175,9 @@ export type SingleDoubleRule = (
         | ("single" | "double" | [])
         | [
             (("single" | "double" | {}) | CoreRule) &
-              (
-                | ((("single" | "double" | {}) | CoreRule) & string)
-                | (("single" | "double" | {}) | CoreRule)
-              ),
+              (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule)),
             (("single" | "double" | {}) | CoreRule) &
-              (
-                | ((("single" | "double" | {}) | CoreRule) & string)
-                | (("single" | "double" | {}) | CoreRule)
-              ),
+              (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -11110,10 +7189,8 @@ export type BooleanRule33 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -11122,16 +7199,8 @@ export type BooleanRule33 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -11139,26 +7208,16 @@ export type BooleanRule33 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -11171,15 +7230,9 @@ export type LowerUpperRule6 = (
   | ("lower" | "upper" | [])
   | [
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
     ]
 ) &
   (
@@ -11189,15 +7242,9 @@ export type LowerUpperRule6 = (
           | ("lower" | "upper" | [])
           | [
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -11205,15 +7252,9 @@ export type LowerUpperRule6 = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -11222,15 +7263,9 @@ export type LowerUpperRule6 = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -11242,7 +7277,7 @@ export type IntegerRule5 = (
   | (null | number)
   | [
       ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-      ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+      ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
     ]
 ) &
   (
@@ -11251,7 +7286,7 @@ export type IntegerRule5 = (
           | (null | number)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
             ]
         ))
     | (number &
@@ -11259,14 +7294,14 @@ export type IntegerRule5 = (
           | (null | number)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
             ]
         ))
     | ((
         | (null | number)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
           ]
       ) &
         unknown[])
@@ -11280,28 +7315,14 @@ export type NewlineRule9 = (
   | [
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
         ),
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
-        ),
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
@@ -11310,92 +7331,32 @@ export type NewlineRule9 = (
           | null
           | ("always" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -11403,36 +7364,16 @@ export type NewlineRule9 = (
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -11446,28 +7387,14 @@ export type NewlineRule10 = (
   | [
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
         ),
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
-        ),
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
@@ -11476,92 +7403,32 @@ export type NewlineRule10 = (
           | null
           | ("always" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -11569,36 +7436,16 @@ export type NewlineRule10 = (
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -11610,212 +7457,50 @@ export type SpaceRule7 = (
   | null
   | ("always" | "never" | "always-single-line" | "never-single-line" | [])
   | [
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
         ),
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
-        ),
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
     | (null &
         (
           | null
-          | (
-              | "always"
-              | "never"
-              | "always-single-line"
-              | "never-single-line"
-              | []
-            )
+          | ("always" | "never" | "always-single-line" | "never-single-line" | [])
           | [
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -11823,72 +7508,16 @@ export type SpaceRule7 = (
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -11900,212 +7529,50 @@ export type SpaceRule8 = (
   | null
   | ("always" | "never" | "always-single-line" | "never-single-line" | [])
   | [
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
         ),
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
-        ),
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
     | (null &
         (
           | null
-          | (
-              | "always"
-              | "never"
-              | "always-single-line"
-              | "never-single-line"
-              | []
-            )
+          | ("always" | "never" | "always-single-line" | "never-single-line" | [])
           | [
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -12113,72 +7580,16 @@ export type SpaceRule8 = (
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -12190,10 +7601,8 @@ export type BooleanRule34 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -12202,16 +7611,8 @@ export type BooleanRule34 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -12219,26 +7620,16 @@ export type BooleanRule34 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -12250,10 +7641,8 @@ export type BooleanRule35 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -12262,16 +7651,8 @@ export type BooleanRule35 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -12279,26 +7660,16 @@ export type BooleanRule35 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -12311,15 +7682,9 @@ export type SingleDoubleRule1 = (
   | ("single" | "double" | [])
   | [
       (("single" | "double" | {}) | CoreRule) &
-        (
-          | ((("single" | "double" | {}) | CoreRule) & string)
-          | (("single" | "double" | {}) | CoreRule)
-        ),
+        (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule)),
       (("single" | "double" | {}) | CoreRule) &
-        (
-          | ((("single" | "double" | {}) | CoreRule) & string)
-          | (("single" | "double" | {}) | CoreRule)
-        ),
+        (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule))
     ]
 ) &
   (
@@ -12329,15 +7694,9 @@ export type SingleDoubleRule1 = (
           | ("single" | "double" | [])
           | [
               (("single" | "double" | {}) | CoreRule) &
-                (
-                  | ((("single" | "double" | {}) | CoreRule) & string)
-                  | (("single" | "double" | {}) | CoreRule)
-                ),
+                (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule)),
               (("single" | "double" | {}) | CoreRule) &
-                (
-                  | ((("single" | "double" | {}) | CoreRule) & string)
-                  | (("single" | "double" | {}) | CoreRule)
-                ),
+                (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -12345,15 +7704,9 @@ export type SingleDoubleRule1 = (
         | ("single" | "double" | [])
         | [
             (("single" | "double" | {}) | CoreRule) &
-              (
-                | ((("single" | "double" | {}) | CoreRule) & string)
-                | (("single" | "double" | {}) | CoreRule)
-              ),
+              (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule)),
             (("single" | "double" | {}) | CoreRule) &
-              (
-                | ((("single" | "double" | {}) | CoreRule) & string)
-                | (("single" | "double" | {}) | CoreRule)
-              ),
+              (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -12362,15 +7715,9 @@ export type SingleDoubleRule1 = (
         | ("single" | "double" | [])
         | [
             (("single" | "double" | {}) | CoreRule) &
-              (
-                | ((("single" | "double" | {}) | CoreRule) & string)
-                | (("single" | "double" | {}) | CoreRule)
-              ),
+              (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule)),
             (("single" | "double" | {}) | CoreRule) &
-              (
-                | ((("single" | "double" | {}) | CoreRule) & string)
-                | (("single" | "double" | {}) | CoreRule)
-              ),
+              (((("single" | "double" | {}) | CoreRule) & string) | (("single" | "double" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -12382,10 +7729,8 @@ export type BooleanRule36 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -12394,16 +7739,8 @@ export type BooleanRule36 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -12411,26 +7748,16 @@ export type BooleanRule36 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -12569,7 +7896,7 @@ export type UnitRule = (
               | "dpcm"
               | "dppx"
               | "fr"
-            )[],
+            )[]
           ]
         | CoreRule
       ) &
@@ -12670,7 +7997,7 @@ export type UnitRule = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -12771,7 +8098,7 @@ export type UnitRule = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -12872,7 +8199,7 @@ export type UnitRule = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             )
@@ -12973,7 +8300,7 @@ export type UnitRule = (
               | "dpcm"
               | "dppx"
               | "fr"
-            )[],
+            )[]
           ]
         | CoreRule
       ) &
@@ -13074,7 +8401,7 @@ export type UnitRule = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -13175,7 +8502,7 @@ export type UnitRule = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -13276,11 +8603,11 @@ export type UnitRule = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             )
-        ))[],
+        ))[]
     ]
 ) &
   (
@@ -13416,7 +8743,7 @@ export type UnitRule = (
                       | "dpcm"
                       | "dppx"
                       | "fr"
-                    )[],
+                    )[]
                   ]
                 | CoreRule
               ) &
@@ -13517,7 +8844,7 @@ export type UnitRule = (
                             | "dpcm"
                             | "dppx"
                             | "fr"
-                          )[],
+                          )[]
                         ]
                       | CoreRule
                     ) &
@@ -13618,7 +8945,7 @@ export type UnitRule = (
                             | "dpcm"
                             | "dppx"
                             | "fr"
-                          )[],
+                          )[]
                         ]
                       | CoreRule
                     ) &
@@ -13719,7 +9046,7 @@ export type UnitRule = (
                             | "dpcm"
                             | "dppx"
                             | "fr"
-                          )[],
+                          )[]
                         ]
                       | CoreRule
                     )
@@ -13820,7 +9147,7 @@ export type UnitRule = (
                       | "dpcm"
                       | "dppx"
                       | "fr"
-                    )[],
+                    )[]
                   ]
                 | CoreRule
               ) &
@@ -13921,7 +9248,7 @@ export type UnitRule = (
                             | "dpcm"
                             | "dppx"
                             | "fr"
-                          )[],
+                          )[]
                         ]
                       | CoreRule
                     ) &
@@ -14022,7 +9349,7 @@ export type UnitRule = (
                             | "dpcm"
                             | "dppx"
                             | "fr"
-                          )[],
+                          )[]
                         ]
                       | CoreRule
                     ) &
@@ -14123,11 +9450,11 @@ export type UnitRule = (
                             | "dpcm"
                             | "dppx"
                             | "fr"
-                          )[],
+                          )[]
                         ]
                       | CoreRule
                     )
-                ))[],
+                ))[]
             ]
         ))
     | ((
@@ -14261,7 +9588,7 @@ export type UnitRule = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -14362,7 +9689,7 @@ export type UnitRule = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -14463,7 +9790,7 @@ export type UnitRule = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -14564,7 +9891,7 @@ export type UnitRule = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   )
@@ -14665,7 +9992,7 @@ export type UnitRule = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -14766,7 +10093,7 @@ export type UnitRule = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -14867,7 +10194,7 @@ export type UnitRule = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -14968,11 +10295,11 @@ export type UnitRule = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   )
-              ))[],
+              ))[]
           ]
       ) &
         string)
@@ -15107,7 +10434,7 @@ export type UnitRule = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -15208,7 +10535,7 @@ export type UnitRule = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -15309,7 +10636,7 @@ export type UnitRule = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -15410,7 +10737,7 @@ export type UnitRule = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   )
@@ -15511,7 +10838,7 @@ export type UnitRule = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -15612,7 +10939,7 @@ export type UnitRule = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -15713,7 +11040,7 @@ export type UnitRule = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -15814,11 +11141,11 @@ export type UnitRule = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   )
-              ))[],
+              ))[]
           ]
       ) &
         unknown[])
@@ -15831,15 +11158,9 @@ export type LowerUpperRule7 = (
   | ("lower" | "upper" | [])
   | [
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
       (("lower" | "upper" | {}) | CoreRule) &
-        (
-          | ((("lower" | "upper" | {}) | CoreRule) & string)
-          | (("lower" | "upper" | {}) | CoreRule)
-        ),
+        (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
     ]
 ) &
   (
@@ -15849,15 +11170,9 @@ export type LowerUpperRule7 = (
           | ("lower" | "upper" | [])
           | [
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
             ]
         ))
     | ((
@@ -15865,15 +11180,9 @@ export type LowerUpperRule7 = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         string)
@@ -15882,15 +11191,9 @@ export type LowerUpperRule7 = (
         | ("lower" | "upper" | [])
         | [
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
             (("lower" | "upper" | {}) | CoreRule) &
-              (
-                | ((("lower" | "upper" | {}) | CoreRule) & string)
-                | (("lower" | "upper" | {}) | CoreRule)
-              ),
+              (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -16029,7 +11332,7 @@ export type UnitRule1 = (
               | "dpcm"
               | "dppx"
               | "fr"
-            )[],
+            )[]
           ]
         | CoreRule
       ) &
@@ -16130,7 +11433,7 @@ export type UnitRule1 = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -16231,7 +11534,7 @@ export type UnitRule1 = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -16332,7 +11635,7 @@ export type UnitRule1 = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             )
@@ -16433,7 +11736,7 @@ export type UnitRule1 = (
               | "dpcm"
               | "dppx"
               | "fr"
-            )[],
+            )[]
           ]
         | CoreRule
       ) &
@@ -16534,7 +11837,7 @@ export type UnitRule1 = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -16635,7 +11938,7 @@ export type UnitRule1 = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -16736,11 +12039,11 @@ export type UnitRule1 = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             )
-        ))[],
+        ))[]
     ]
 ) &
   (
@@ -16876,7 +12179,7 @@ export type UnitRule1 = (
                       | "dpcm"
                       | "dppx"
                       | "fr"
-                    )[],
+                    )[]
                   ]
                 | CoreRule
               ) &
@@ -16977,7 +12280,7 @@ export type UnitRule1 = (
                             | "dpcm"
                             | "dppx"
                             | "fr"
-                          )[],
+                          )[]
                         ]
                       | CoreRule
                     ) &
@@ -17078,7 +12381,7 @@ export type UnitRule1 = (
                             | "dpcm"
                             | "dppx"
                             | "fr"
-                          )[],
+                          )[]
                         ]
                       | CoreRule
                     ) &
@@ -17179,7 +12482,7 @@ export type UnitRule1 = (
                             | "dpcm"
                             | "dppx"
                             | "fr"
-                          )[],
+                          )[]
                         ]
                       | CoreRule
                     )
@@ -17280,7 +12583,7 @@ export type UnitRule1 = (
                       | "dpcm"
                       | "dppx"
                       | "fr"
-                    )[],
+                    )[]
                   ]
                 | CoreRule
               ) &
@@ -17381,7 +12684,7 @@ export type UnitRule1 = (
                             | "dpcm"
                             | "dppx"
                             | "fr"
-                          )[],
+                          )[]
                         ]
                       | CoreRule
                     ) &
@@ -17482,7 +12785,7 @@ export type UnitRule1 = (
                             | "dpcm"
                             | "dppx"
                             | "fr"
-                          )[],
+                          )[]
                         ]
                       | CoreRule
                     ) &
@@ -17583,11 +12886,11 @@ export type UnitRule1 = (
                             | "dpcm"
                             | "dppx"
                             | "fr"
-                          )[],
+                          )[]
                         ]
                       | CoreRule
                     )
-                ))[],
+                ))[]
             ]
         ))
     | ((
@@ -17721,7 +13024,7 @@ export type UnitRule1 = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -17822,7 +13125,7 @@ export type UnitRule1 = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -17923,7 +13226,7 @@ export type UnitRule1 = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -18024,7 +13327,7 @@ export type UnitRule1 = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   )
@@ -18125,7 +13428,7 @@ export type UnitRule1 = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -18226,7 +13529,7 @@ export type UnitRule1 = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -18327,7 +13630,7 @@ export type UnitRule1 = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -18428,11 +13731,11 @@ export type UnitRule1 = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   )
-              ))[],
+              ))[]
           ]
       ) &
         string)
@@ -18567,7 +13870,7 @@ export type UnitRule1 = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -18668,7 +13971,7 @@ export type UnitRule1 = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -18769,7 +14072,7 @@ export type UnitRule1 = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -18870,7 +14173,7 @@ export type UnitRule1 = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   )
@@ -18971,7 +14274,7 @@ export type UnitRule1 = (
                     | "dpcm"
                     | "dppx"
                     | "fr"
-                  )[],
+                  )[]
                 ]
               | CoreRule
             ) &
@@ -19072,7 +14375,7 @@ export type UnitRule1 = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -19173,7 +14476,7 @@ export type UnitRule1 = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   ) &
@@ -19274,11 +14577,11 @@ export type UnitRule1 = (
                           | "dpcm"
                           | "dppx"
                           | "fr"
-                        )[],
+                        )[]
                       ]
                     | CoreRule
                   )
-              ))[],
+              ))[]
           ]
       ) &
         unknown[])
@@ -19290,10 +14593,8 @@ export type BooleanRule37 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -19302,16 +14603,8 @@ export type BooleanRule37 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -19319,26 +14612,16 @@ export type BooleanRule37 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -19352,28 +14635,14 @@ export type NewlineRule11 = (
   | [
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
         ),
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
-        ),
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
@@ -19382,92 +14651,32 @@ export type NewlineRule11 = (
           | null
           | ("always" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -19475,36 +14684,16 @@ export type NewlineRule11 = (
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -19518,28 +14707,14 @@ export type NewlineRule12 = (
   | [
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
         ),
       (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
         (
-          | ((
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
-              string)
-          | (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            )
-        ),
+          | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+          | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
@@ -19548,92 +14723,32 @@ export type NewlineRule12 = (
           | null
           | ("always" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | ("always" | "always-multi-line" | "never-multi-line" | {})
-                | CoreRule
-              ) &
+              (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -19641,36 +14756,16 @@ export type NewlineRule12 = (
         | null
         | ("always" | "always-multi-line" | "never-multi-line" | [])
         | [
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
               ),
-            (
-              | ("always" | "always-multi-line" | "never-multi-line" | {})
-              | CoreRule
-            ) &
+            (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
               (
-                | ((
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | ("always" | "always-multi-line" | "never-multi-line" | {})
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                | (("always" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -19682,212 +14777,50 @@ export type SpaceRule9 = (
   | null
   | ("always" | "never" | "always-single-line" | "never-single-line" | [])
   | [
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
         ),
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
-        ),
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
     | (null &
         (
           | null
-          | (
-              | "always"
-              | "never"
-              | "always-single-line"
-              | "never-single-line"
-              | []
-            )
+          | ("always" | "never" | "always-single-line" | "never-single-line" | [])
           | [
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -19895,72 +14828,16 @@ export type SpaceRule9 = (
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -19972,212 +14849,50 @@ export type SpaceRule10 = (
   | null
   | ("always" | "never" | "always-single-line" | "never-single-line" | [])
   | [
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
         ),
-      (
-        | ("always" | "never" | "always-single-line" | "never-single-line" | {})
-        | CoreRule
-      ) &
+      (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
         (
-          | ((
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
-              string)
-          | (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            )
-        ),
+          | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+          | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+        )
     ]
 ) &
   (
     | (null &
         (
           | null
-          | (
-              | "always"
-              | "never"
-              | "always-single-line"
-              | "never-single-line"
-              | []
-            )
+          | ("always" | "never" | "always-single-line" | "never-single-line" | [])
           | [
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-single-line"
-                    | "never-single-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-single-line"
-                          | "never-single-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+                )
             ]
         ))
     | ((
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         string)
@@ -20185,72 +14900,16 @@ export type SpaceRule10 = (
         | null
         | ("always" | "never" | "always-single-line" | "never-single-line" | [])
         | [
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
               ),
-            (
-              | (
-                  | "always"
-                  | "never"
-                  | "always-single-line"
-                  | "never-single-line"
-                  | {}
-                )
-              | CoreRule
-            ) &
+            (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) &
               (
-                | ((
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  ) &
-                    string)
-                | (
-                    | (
-                        | "always"
-                        | "never"
-                        | "always-single-line"
-                        | "never-single-line"
-                        | {}
-                      )
-                    | CoreRule
-                  )
-              ),
+                | ((("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule) & string)
+                | (("always" | "never" | "always-single-line" | "never-single-line" | {}) | CoreRule)
+              )
           ]
       ) &
         unknown[])
@@ -20262,7 +14921,7 @@ export type IntegerRule6 = (
   | (null | number)
   | [
       ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-      ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+      ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
     ]
 ) &
   (
@@ -20271,7 +14930,7 @@ export type IntegerRule6 = (
           | (null | number)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
             ]
         ))
     | (number &
@@ -20279,14 +14938,14 @@ export type IntegerRule6 = (
           | (null | number)
           | [
               ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+              ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
             ]
         ))
     | ((
         | (null | number)
         | [
             ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
-            ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule)),
+            ({} | CoreRule) & ((({} | CoreRule) & number) | ({} | CoreRule))
           ]
       ) &
         unknown[])
@@ -20295,10 +14954,7 @@ export type IntegerRule6 = (
  * Provide a glob or array of globs to ignore specific files
  */
 export type SimpleStringOrArrayStringRule1 = (string | SimpleArrayStringRule) &
-  (
-    | ((string | SimpleArrayStringRule) & string)
-    | ((string | SimpleArrayStringRule) & unknown[])
-  );
+  (((string | SimpleArrayStringRule) & string) | ((string | SimpleArrayStringRule) & unknown[]));
 /**
  * Report stylelint-disable comments without a description.
  */
@@ -20306,10 +14962,8 @@ export type BooleanRule38 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -20318,16 +14972,8 @@ export type BooleanRule38 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -20335,26 +14981,16 @@ export type BooleanRule38 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -20366,10 +15002,8 @@ export type BooleanRule39 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -20378,16 +15012,8 @@ export type BooleanRule39 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -20395,26 +15021,16 @@ export type BooleanRule39 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -20426,10 +15042,8 @@ export type BooleanRule40 = (
   | null
   | (true | [])
   | [
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-      ((true | {}) | CoreRule) &
-        ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+      ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
     ]
 ) &
   (
@@ -20438,16 +15052,8 @@ export type BooleanRule40 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | (boolean &
@@ -20455,26 +15061,16 @@ export type BooleanRule40 = (
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ))
     | ((
         | null
         | (true | [])
         | [
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-            ((true | {}) | CoreRule) &
-              ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+            ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
           ]
       ) &
         unknown[])
@@ -20681,10 +15277,7 @@ export interface PackageJson2 {
         [k: string]: unknown | undefined;
       }
     | string;
-  funding?:
-    | FundingUrl
-    | FundingWay
-    | [FundingUrl | FundingWay, ...(FundingUrl | FundingWay)[]];
+  funding?: FundingUrl | FundingWay | [FundingUrl | FundingWay, ...(FundingUrl | FundingWay)[]];
   /**
    * The 'scripts' member is an object hash of script commands that are run at various times in the lifecycle of your package. The key is the lifecycle event, and the value is the command to run at that point.
    */
@@ -20818,7 +15411,7 @@ export interface PackageJson2 {
      * This interface was referenced by `undefined`'s JSON-Schema definition
      * via the `patternProperty` "(node|npm|pnpm|yarn)".
      */
-    [k: string]: string | undefined;
+    [k: string]: (string) | undefined;
   };
   engineStrict?: boolean;
   /**
@@ -20892,7 +15485,7 @@ export interface PackageJson2 {
    * This interface was referenced by `PackageJson2`'s JSON-Schema definition
    * via the `patternProperty` "^_".
    */
-  [k: string]: any | undefined;
+  [k: string]: (any) | undefined;
 }
 /**
  * Used to specify conditional exports, note that Conditional exports are unsupported in older environments, so it's recommended to use the fallback array option if support for those environments is a concern.
@@ -21315,10 +15908,7 @@ export interface PossibleErrors {
   /**
    * Disallow template literal placeholder syntax in regular strings
    */
-  "no-template-curly-in-string"?:
-    | number
-    | ("off" | "warn" | "error")
-    | unknown[];
+  "no-template-curly-in-string"?: number | ("off" | "warn" | "error") | unknown[];
   /**
    * Disallow confusing multiline expressions
    */
@@ -21570,10 +16160,7 @@ export interface BestPractices {
   /**
    * Disallow unmodified loop conditions
    */
-  "no-unmodified-loop-condition"?:
-    | number
-    | ("off" | "warn" | "error")
-    | unknown[];
+  "no-unmodified-loop-condition"?: number | ("off" | "warn" | "error") | unknown[];
   /**
    * Disallow unused expressions
    */
@@ -21613,10 +16200,7 @@ export interface BestPractices {
   /**
    * Require using Error objects as Promise rejection reasons
    */
-  "prefer-promise-reject-errors"?:
-    | number
-    | ("off" | "warn" | "error")
-    | unknown[];
+  "prefer-promise-reject-errors"?: number | ("off" | "warn" | "error") | unknown[];
   /**
    * Enforce the consistent use of the radix argument when using parseInt()
    */
@@ -21674,10 +16258,7 @@ export interface Variables {
   /**
    * Disallow identifiers from shadowing restricted names
    */
-  "no-shadow-restricted-names"?:
-    | number
-    | ("off" | "warn" | "error")
-    | unknown[];
+  "no-shadow-restricted-names"?: number | ("off" | "warn" | "error") | unknown[];
   /**
    * Disallow the use of undeclared variables unless mentioned in /*global * / comments
    */
@@ -21819,10 +16400,7 @@ export interface StylisticIssues {
   /**
    * Enforce line breaks between arguments of a function call
    */
-  "function-call-argument-newline"?:
-    | number
-    | ("off" | "warn" | "error")
-    | unknown[];
+  "function-call-argument-newline"?: number | ("off" | "warn" | "error") | unknown[];
   /**
    * Enforce consistent line breaks inside function parentheses
    */
@@ -21870,10 +16448,7 @@ export interface StylisticIssues {
   /**
    * Require or disallow an empty line between class members
    */
-  "lines-between-class-members"?:
-    | number
-    | ("off" | "warn" | "error")
-    | unknown[];
+  "lines-between-class-members"?: number | ("off" | "warn" | "error") | unknown[];
   /**
    * Enforce consistent linebreak style
    */
@@ -22022,17 +16597,11 @@ export interface StylisticIssues {
   /**
    * Disallow whitespace before properties
    */
-  "no-whitespace-before-property"?:
-    | number
-    | ("off" | "warn" | "error")
-    | unknown[];
+  "no-whitespace-before-property"?: number | ("off" | "warn" | "error") | unknown[];
   /**
    * Enforce the location of single-line statements
    */
-  "nonblock-statement-body-position"?:
-    | number
-    | ("off" | "warn" | "error")
-    | unknown[];
+  "nonblock-statement-body-position"?: number | ("off" | "warn" | "error") | unknown[];
   /**
    * Enforce consistent line breaks inside braces
    */
@@ -22053,10 +16622,7 @@ export interface StylisticIssues {
   /**
    * Require or disallow newlines around var declarations
    */
-  "one-var-declaration-per-line"?:
-    | number
-    | ("off" | "warn" | "error")
-    | unknown[];
+  "one-var-declaration-per-line"?: number | ("off" | "warn" | "error") | unknown[];
   /**
    * Require or disallow assignment operator shorthand where possible
    */
@@ -22072,10 +16638,7 @@ export interface StylisticIssues {
   /**
    * Require or disallow padding lines between statements
    */
-  "padding-line-between-statements"?:
-    | number
-    | ("off" | "warn" | "error")
-    | unknown[];
+  "padding-line-between-statements"?: number | ("off" | "warn" | "error") | unknown[];
   /**
    * Require quotes around object literal property names
    */
@@ -22115,10 +16678,7 @@ export interface StylisticIssues {
   /**
    * Enforce consistent spacing before function definition opening parenthesis
    */
-  "space-before-function-paren"?:
-    | number
-    | ("off" | "warn" | "error")
-    | unknown[];
+  "space-before-function-paren"?: number | ("off" | "warn" | "error") | unknown[];
   /**
    * Enforce consistent spacing after the // or /* in a comment
    */
@@ -22631,7 +17191,7 @@ export interface JSONSchemaForTheStylelintConfigurationFiles {
         string,
         ...{
           [k: string]: unknown | undefined;
-        }[],
+        }[]
       ]
   )[];
   /**
@@ -22659,15 +17219,9 @@ export interface AtRule {
     | ("always" | "never" | [])
     | [
         (("always" | "never" | {}) | CoreRule) &
-          (
-            | ((("always" | "never" | {}) | CoreRule) & string)
-            | (("always" | "never" | {}) | CoreRule)
-          ),
+          (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
         (("always" | "never" | {}) | CoreRule) &
-          (
-            | ((("always" | "never" | {}) | CoreRule) & string)
-            | (("always" | "never" | {}) | CoreRule)
-          ),
+          (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
       ]
   ) &
     (
@@ -22677,15 +17231,9 @@ export interface AtRule {
             | ("always" | "never" | [])
             | [
                 (("always" | "never" | {}) | CoreRule) &
-                  (
-                    | ((("always" | "never" | {}) | CoreRule) & string)
-                    | (("always" | "never" | {}) | CoreRule)
-                  ),
+                  (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
                 (("always" | "never" | {}) | CoreRule) &
-                  (
-                    | ((("always" | "never" | {}) | CoreRule) & string)
-                    | (("always" | "never" | {}) | CoreRule)
-                  ),
+                  (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
               ]
           ))
       | ((
@@ -22693,15 +17241,9 @@ export interface AtRule {
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ) &
           string)
@@ -22710,15 +17252,9 @@ export interface AtRule {
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -22741,7 +17277,7 @@ export interface AtRule {
           (
             | ((("always" | "always-single-line" | {}) | CoreRule) & string)
             | (("always" | "always-single-line" | {}) | CoreRule)
-          ),
+          )
       ]
   ) &
     (
@@ -22752,16 +17288,14 @@ export interface AtRule {
             | [
                 (("always" | "always-single-line" | {}) | CoreRule) &
                   (
-                    | ((("always" | "always-single-line" | {}) | CoreRule) &
-                        string)
+                    | ((("always" | "always-single-line" | {}) | CoreRule) & string)
                     | (("always" | "always-single-line" | {}) | CoreRule)
                   ),
                 (("always" | "always-single-line" | {}) | CoreRule) &
                   (
-                    | ((("always" | "always-single-line" | {}) | CoreRule) &
-                        string)
+                    | ((("always" | "always-single-line" | {}) | CoreRule) & string)
                     | (("always" | "always-single-line" | {}) | CoreRule)
-                  ),
+                  )
               ]
           ))
       | ((
@@ -22770,16 +17304,14 @@ export interface AtRule {
           | [
               (("always" | "always-single-line" | {}) | CoreRule) &
                 (
-                  | ((("always" | "always-single-line" | {}) | CoreRule) &
-                      string)
+                  | ((("always" | "always-single-line" | {}) | CoreRule) & string)
                   | (("always" | "always-single-line" | {}) | CoreRule)
                 ),
               (("always" | "always-single-line" | {}) | CoreRule) &
                 (
-                  | ((("always" | "always-single-line" | {}) | CoreRule) &
-                      string)
+                  | ((("always" | "always-single-line" | {}) | CoreRule) & string)
                   | (("always" | "always-single-line" | {}) | CoreRule)
-                ),
+                )
             ]
         ) &
           string)
@@ -22789,16 +17321,14 @@ export interface AtRule {
           | [
               (("always" | "always-single-line" | {}) | CoreRule) &
                 (
-                  | ((("always" | "always-single-line" | {}) | CoreRule) &
-                      string)
+                  | ((("always" | "always-single-line" | {}) | CoreRule) & string)
                   | (("always" | "always-single-line" | {}) | CoreRule)
                 ),
               (("always" | "always-single-line" | {}) | CoreRule) &
                 (
-                  | ((("always" | "always-single-line" | {}) | CoreRule) &
-                      string)
+                  | ((("always" | "always-single-line" | {}) | CoreRule) & string)
                   | (("always" | "always-single-line" | {}) | CoreRule)
-                ),
+                )
             ]
         ) &
           unknown[])
@@ -22810,10 +17340,8 @@ export interface AtRule {
     | null
     | (true | [])
     | [
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
       ]
   ) &
     (
@@ -22822,16 +17350,8 @@ export interface AtRule {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | (boolean &
@@ -22839,32 +17359,16 @@ export interface AtRule {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -22877,16 +17381,8 @@ export interface AtRule {
     | null
     | ("always" | [])
     | [
-        (("always" | {}) | CoreRule) &
-          (
-            | ((("always" | {}) | CoreRule) & string)
-            | (("always" | {}) | CoreRule)
-          ),
-        (("always" | {}) | CoreRule) &
-          (
-            | ((("always" | {}) | CoreRule) & string)
-            | (("always" | {}) | CoreRule)
-          ),
+        (("always" | {}) | CoreRule) & (((("always" | {}) | CoreRule) & string) | (("always" | {}) | CoreRule)),
+        (("always" | {}) | CoreRule) & (((("always" | {}) | CoreRule) & string) | (("always" | {}) | CoreRule))
       ]
   ) &
     (
@@ -22895,32 +17391,16 @@ export interface AtRule {
             | null
             | ("always" | [])
             | [
-                (("always" | {}) | CoreRule) &
-                  (
-                    | ((("always" | {}) | CoreRule) & string)
-                    | (("always" | {}) | CoreRule)
-                  ),
-                (("always" | {}) | CoreRule) &
-                  (
-                    | ((("always" | {}) | CoreRule) & string)
-                    | (("always" | {}) | CoreRule)
-                  ),
+                (("always" | {}) | CoreRule) & (((("always" | {}) | CoreRule) & string) | (("always" | {}) | CoreRule)),
+                (("always" | {}) | CoreRule) & (((("always" | {}) | CoreRule) & string) | (("always" | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | ("always" | [])
           | [
-              (("always" | {}) | CoreRule) &
-                (
-                  | ((("always" | {}) | CoreRule) & string)
-                  | (("always" | {}) | CoreRule)
-                ),
-              (("always" | {}) | CoreRule) &
-                (
-                  | ((("always" | {}) | CoreRule) & string)
-                  | (("always" | {}) | CoreRule)
-                ),
+              (("always" | {}) | CoreRule) & (((("always" | {}) | CoreRule) & string) | (("always" | {}) | CoreRule)),
+              (("always" | {}) | CoreRule) & (((("always" | {}) | CoreRule) & string) | (("always" | {}) | CoreRule))
             ]
         ) &
           string)
@@ -22928,16 +17408,8 @@ export interface AtRule {
           | null
           | ("always" | [])
           | [
-              (("always" | {}) | CoreRule) &
-                (
-                  | ((("always" | {}) | CoreRule) & string)
-                  | (("always" | {}) | CoreRule)
-                ),
-              (("always" | {}) | CoreRule) &
-                (
-                  | ((("always" | {}) | CoreRule) & string)
-                  | (("always" | {}) | CoreRule)
-                ),
+              (("always" | {}) | CoreRule) & (((("always" | {}) | CoreRule) & string) | (("always" | {}) | CoreRule)),
+              (("always" | {}) | CoreRule) & (((("always" | {}) | CoreRule) & string) | (("always" | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -22975,7 +17447,7 @@ export interface Block {
           (
             | ((("always-multi-line" | "never" | {}) | CoreRule) & string)
             | (("always-multi-line" | "never" | {}) | CoreRule)
-          ),
+          )
       ]
   ) &
     (
@@ -22986,16 +17458,14 @@ export interface Block {
             | [
                 (("always-multi-line" | "never" | {}) | CoreRule) &
                   (
-                    | ((("always-multi-line" | "never" | {}) | CoreRule) &
-                        string)
+                    | ((("always-multi-line" | "never" | {}) | CoreRule) & string)
                     | (("always-multi-line" | "never" | {}) | CoreRule)
                   ),
                 (("always-multi-line" | "never" | {}) | CoreRule) &
                   (
-                    | ((("always-multi-line" | "never" | {}) | CoreRule) &
-                        string)
+                    | ((("always-multi-line" | "never" | {}) | CoreRule) & string)
                     | (("always-multi-line" | "never" | {}) | CoreRule)
-                  ),
+                  )
               ]
           ))
       | ((
@@ -23011,7 +17481,7 @@ export interface Block {
                 (
                   | ((("always-multi-line" | "never" | {}) | CoreRule) & string)
                   | (("always-multi-line" | "never" | {}) | CoreRule)
-                ),
+                )
             ]
         ) &
           string)
@@ -23028,7 +17498,7 @@ export interface Block {
                 (
                   | ((("always-multi-line" | "never" | {}) | CoreRule) & string)
                   | (("always-multi-line" | "never" | {}) | CoreRule)
-                ),
+                )
             ]
         ) &
           unknown[])
@@ -23045,24 +17515,10 @@ export interface Block {
    */
   "block-opening-brace-newline-before"?: (
     | null
-    | (
-        | "always"
-        | "always-single-line"
-        | "never-single-line"
-        | "always-multi-line"
-        | "never-multi-line"
-        | []
-      )
+    | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | [])
     | [
         (
-          | (
-              | "always"
-              | "always-single-line"
-              | "never-single-line"
-              | "always-multi-line"
-              | "never-multi-line"
-              | {}
-            )
+          | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
           | CoreRule
         ) &
           (
@@ -23091,14 +17547,7 @@ export interface Block {
               )
           ),
         (
-          | (
-              | "always"
-              | "always-single-line"
-              | "never-single-line"
-              | "always-multi-line"
-              | "never-multi-line"
-              | {}
-            )
+          | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | {})
           | CoreRule
         ) &
           (
@@ -23125,21 +17574,14 @@ export interface Block {
                   )
                 | CoreRule
               )
-          ),
+          )
       ]
   ) &
     (
       | (null &
           (
             | null
-            | (
-                | "always"
-                | "always-single-line"
-                | "never-single-line"
-                | "always-multi-line"
-                | "never-multi-line"
-                | []
-              )
+            | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | [])
             | [
                 (
                   | (
@@ -23212,19 +17654,12 @@ export interface Block {
                           )
                         | CoreRule
                       )
-                  ),
+                  )
               ]
           ))
       | ((
           | null
-          | (
-              | "always"
-              | "always-single-line"
-              | "never-single-line"
-              | "always-multi-line"
-              | "never-multi-line"
-              | []
-            )
+          | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | [])
           | [
               (
                 | (
@@ -23297,20 +17732,13 @@ export interface Block {
                         )
                       | CoreRule
                     )
-                ),
+                )
             ]
         ) &
           string)
       | ((
           | null
-          | (
-              | "always"
-              | "always-single-line"
-              | "never-single-line"
-              | "always-multi-line"
-              | "never-multi-line"
-              | []
-            )
+          | ("always" | "always-single-line" | "never-single-line" | "always-multi-line" | "never-multi-line" | [])
           | [
               (
                 | (
@@ -23383,7 +17811,7 @@ export interface Block {
                         )
                       | CoreRule
                     )
-                ),
+                )
             ]
         ) &
           unknown[])
@@ -23402,15 +17830,9 @@ export interface Color {
     | ("short" | "long" | [])
     | [
         (("short" | "long" | {}) | CoreRule) &
-          (
-            | ((("short" | "long" | {}) | CoreRule) & string)
-            | (("short" | "long" | {}) | CoreRule)
-          ),
+          (((("short" | "long" | {}) | CoreRule) & string) | (("short" | "long" | {}) | CoreRule)),
         (("short" | "long" | {}) | CoreRule) &
-          (
-            | ((("short" | "long" | {}) | CoreRule) & string)
-            | (("short" | "long" | {}) | CoreRule)
-          ),
+          (((("short" | "long" | {}) | CoreRule) & string) | (("short" | "long" | {}) | CoreRule))
       ]
   ) &
     (
@@ -23420,15 +17842,9 @@ export interface Color {
             | ("short" | "long" | [])
             | [
                 (("short" | "long" | {}) | CoreRule) &
-                  (
-                    | ((("short" | "long" | {}) | CoreRule) & string)
-                    | (("short" | "long" | {}) | CoreRule)
-                  ),
+                  (((("short" | "long" | {}) | CoreRule) & string) | (("short" | "long" | {}) | CoreRule)),
                 (("short" | "long" | {}) | CoreRule) &
-                  (
-                    | ((("short" | "long" | {}) | CoreRule) & string)
-                    | (("short" | "long" | {}) | CoreRule)
-                  ),
+                  (((("short" | "long" | {}) | CoreRule) & string) | (("short" | "long" | {}) | CoreRule))
               ]
           ))
       | ((
@@ -23436,15 +17852,9 @@ export interface Color {
           | ("short" | "long" | [])
           | [
               (("short" | "long" | {}) | CoreRule) &
-                (
-                  | ((("short" | "long" | {}) | CoreRule) & string)
-                  | (("short" | "long" | {}) | CoreRule)
-                ),
+                (((("short" | "long" | {}) | CoreRule) & string) | (("short" | "long" | {}) | CoreRule)),
               (("short" | "long" | {}) | CoreRule) &
-                (
-                  | ((("short" | "long" | {}) | CoreRule) & string)
-                  | (("short" | "long" | {}) | CoreRule)
-                ),
+                (((("short" | "long" | {}) | CoreRule) & string) | (("short" | "long" | {}) | CoreRule))
             ]
         ) &
           string)
@@ -23453,15 +17863,9 @@ export interface Color {
           | ("short" | "long" | [])
           | [
               (("short" | "long" | {}) | CoreRule) &
-                (
-                  | ((("short" | "long" | {}) | CoreRule) & string)
-                  | (("short" | "long" | {}) | CoreRule)
-                ),
+                (((("short" | "long" | {}) | CoreRule) & string) | (("short" | "long" | {}) | CoreRule)),
               (("short" | "long" | {}) | CoreRule) &
-                (
-                  | ((("short" | "long" | {}) | CoreRule) & string)
-                  | (("short" | "long" | {}) | CoreRule)
-                ),
+                (((("short" | "long" | {}) | CoreRule) & string) | (("short" | "long" | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -23482,7 +17886,7 @@ export interface Color {
           (
             | ((("always-where-possible" | "never" | {}) | CoreRule) & string)
             | (("always-where-possible" | "never" | {}) | CoreRule)
-          ),
+          )
       ]
   ) &
     (
@@ -23493,16 +17897,14 @@ export interface Color {
             | [
                 (("always-where-possible" | "never" | {}) | CoreRule) &
                   (
-                    | ((("always-where-possible" | "never" | {}) | CoreRule) &
-                        string)
+                    | ((("always-where-possible" | "never" | {}) | CoreRule) & string)
                     | (("always-where-possible" | "never" | {}) | CoreRule)
                   ),
                 (("always-where-possible" | "never" | {}) | CoreRule) &
                   (
-                    | ((("always-where-possible" | "never" | {}) | CoreRule) &
-                        string)
+                    | ((("always-where-possible" | "never" | {}) | CoreRule) & string)
                     | (("always-where-possible" | "never" | {}) | CoreRule)
-                  ),
+                  )
               ]
           ))
       | ((
@@ -23511,16 +17913,14 @@ export interface Color {
           | [
               (("always-where-possible" | "never" | {}) | CoreRule) &
                 (
-                  | ((("always-where-possible" | "never" | {}) | CoreRule) &
-                      string)
+                  | ((("always-where-possible" | "never" | {}) | CoreRule) & string)
                   | (("always-where-possible" | "never" | {}) | CoreRule)
                 ),
               (("always-where-possible" | "never" | {}) | CoreRule) &
                 (
-                  | ((("always-where-possible" | "never" | {}) | CoreRule) &
-                      string)
+                  | ((("always-where-possible" | "never" | {}) | CoreRule) & string)
                   | (("always-where-possible" | "never" | {}) | CoreRule)
-                ),
+                )
             ]
         ) &
           string)
@@ -23530,16 +17930,14 @@ export interface Color {
           | [
               (("always-where-possible" | "never" | {}) | CoreRule) &
                 (
-                  | ((("always-where-possible" | "never" | {}) | CoreRule) &
-                      string)
+                  | ((("always-where-possible" | "never" | {}) | CoreRule) & string)
                   | (("always-where-possible" | "never" | {}) | CoreRule)
                 ),
               (("always-where-possible" | "never" | {}) | CoreRule) &
                 (
-                  | ((("always-where-possible" | "never" | {}) | CoreRule) &
-                      string)
+                  | ((("always-where-possible" | "never" | {}) | CoreRule) & string)
                   | (("always-where-possible" | "never" | {}) | CoreRule)
-                ),
+                )
             ]
         ) &
           unknown[])
@@ -23557,15 +17955,9 @@ export interface Comment {
     | ("always" | "never" | [])
     | [
         (("always" | "never" | {}) | CoreRule) &
-          (
-            | ((("always" | "never" | {}) | CoreRule) & string)
-            | (("always" | "never" | {}) | CoreRule)
-          ),
+          (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
         (("always" | "never" | {}) | CoreRule) &
-          (
-            | ((("always" | "never" | {}) | CoreRule) & string)
-            | (("always" | "never" | {}) | CoreRule)
-          ),
+          (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
       ]
   ) &
     (
@@ -23575,15 +17967,9 @@ export interface Comment {
             | ("always" | "never" | [])
             | [
                 (("always" | "never" | {}) | CoreRule) &
-                  (
-                    | ((("always" | "never" | {}) | CoreRule) & string)
-                    | (("always" | "never" | {}) | CoreRule)
-                  ),
+                  (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
                 (("always" | "never" | {}) | CoreRule) &
-                  (
-                    | ((("always" | "never" | {}) | CoreRule) & string)
-                    | (("always" | "never" | {}) | CoreRule)
-                  ),
+                  (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
               ]
           ))
       | ((
@@ -23591,15 +17977,9 @@ export interface Comment {
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ) &
           string)
@@ -23608,15 +17988,9 @@ export interface Comment {
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -23639,15 +18013,9 @@ export interface CustomProperty {
     | ("always" | "never" | [])
     | [
         (("always" | "never" | {}) | CoreRule) &
-          (
-            | ((("always" | "never" | {}) | CoreRule) & string)
-            | (("always" | "never" | {}) | CoreRule)
-          ),
+          (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
         (("always" | "never" | {}) | CoreRule) &
-          (
-            | ((("always" | "never" | {}) | CoreRule) & string)
-            | (("always" | "never" | {}) | CoreRule)
-          ),
+          (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
       ]
   ) &
     (
@@ -23657,15 +18025,9 @@ export interface CustomProperty {
             | ("always" | "never" | [])
             | [
                 (("always" | "never" | {}) | CoreRule) &
-                  (
-                    | ((("always" | "never" | {}) | CoreRule) & string)
-                    | (("always" | "never" | {}) | CoreRule)
-                  ),
+                  (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
                 (("always" | "never" | {}) | CoreRule) &
-                  (
-                    | ((("always" | "never" | {}) | CoreRule) & string)
-                    | (("always" | "never" | {}) | CoreRule)
-                  ),
+                  (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
               ]
           ))
       | ((
@@ -23673,15 +18035,9 @@ export interface CustomProperty {
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ) &
           string)
@@ -23690,15 +18046,9 @@ export interface CustomProperty {
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -23720,16 +18070,14 @@ export interface Declaration {
     | [
         (("always" | "never" | "always-single-line" | {}) | CoreRule) &
           (
-            | ((("always" | "never" | "always-single-line" | {}) | CoreRule) &
-                string)
+            | ((("always" | "never" | "always-single-line" | {}) | CoreRule) & string)
             | (("always" | "never" | "always-single-line" | {}) | CoreRule)
           ),
         (("always" | "never" | "always-single-line" | {}) | CoreRule) &
           (
-            | ((("always" | "never" | "always-single-line" | {}) | CoreRule) &
-                string)
+            | ((("always" | "never" | "always-single-line" | {}) | CoreRule) & string)
             | (("always" | "never" | "always-single-line" | {}) | CoreRule)
-          ),
+          )
       ]
   ) &
     (
@@ -23740,28 +18088,14 @@ export interface Declaration {
             | [
                 (("always" | "never" | "always-single-line" | {}) | CoreRule) &
                   (
-                    | ((
-                        | ("always" | "never" | "always-single-line" | {})
-                        | CoreRule
-                      ) &
-                        string)
-                    | (
-                        | ("always" | "never" | "always-single-line" | {})
-                        | CoreRule
-                      )
+                    | ((("always" | "never" | "always-single-line" | {}) | CoreRule) & string)
+                    | (("always" | "never" | "always-single-line" | {}) | CoreRule)
                   ),
                 (("always" | "never" | "always-single-line" | {}) | CoreRule) &
                   (
-                    | ((
-                        | ("always" | "never" | "always-single-line" | {})
-                        | CoreRule
-                      ) &
-                        string)
-                    | (
-                        | ("always" | "never" | "always-single-line" | {})
-                        | CoreRule
-                      )
-                  ),
+                    | ((("always" | "never" | "always-single-line" | {}) | CoreRule) & string)
+                    | (("always" | "never" | "always-single-line" | {}) | CoreRule)
+                  )
               ]
           ))
       | ((
@@ -23770,28 +18104,14 @@ export interface Declaration {
           | [
               (("always" | "never" | "always-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | ("always" | "never" | "always-single-line" | {})
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | ("always" | "never" | "always-single-line" | {})
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | {}) | CoreRule)
                 ),
               (("always" | "never" | "always-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | ("always" | "never" | "always-single-line" | {})
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | ("always" | "never" | "always-single-line" | {})
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | {}) | CoreRule)
+                )
             ]
         ) &
           string)
@@ -23801,28 +18121,14 @@ export interface Declaration {
           | [
               (("always" | "never" | "always-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | ("always" | "never" | "always-single-line" | {})
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | ("always" | "never" | "always-single-line" | {})
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | {}) | CoreRule)
                 ),
               (("always" | "never" | "always-single-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | ("always" | "never" | "always-single-line" | {})
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | ("always" | "never" | "always-single-line" | {})
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-single-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-single-line" | {}) | CoreRule)
+                )
             ]
         ) &
           unknown[])
@@ -23836,15 +18142,9 @@ export interface Declaration {
     | ("always" | "never" | [])
     | [
         (("always" | "never" | {}) | CoreRule) &
-          (
-            | ((("always" | "never" | {}) | CoreRule) & string)
-            | (("always" | "never" | {}) | CoreRule)
-          ),
+          (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
         (("always" | "never" | {}) | CoreRule) &
-          (
-            | ((("always" | "never" | {}) | CoreRule) & string)
-            | (("always" | "never" | {}) | CoreRule)
-          ),
+          (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
       ]
   ) &
     (
@@ -23854,15 +18154,9 @@ export interface Declaration {
             | ("always" | "never" | [])
             | [
                 (("always" | "never" | {}) | CoreRule) &
-                  (
-                    | ((("always" | "never" | {}) | CoreRule) & string)
-                    | (("always" | "never" | {}) | CoreRule)
-                  ),
+                  (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
                 (("always" | "never" | {}) | CoreRule) &
-                  (
-                    | ((("always" | "never" | {}) | CoreRule) & string)
-                    | (("always" | "never" | {}) | CoreRule)
-                  ),
+                  (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
               ]
           ))
       | ((
@@ -23870,15 +18164,9 @@ export interface Declaration {
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ) &
           string)
@@ -23887,15 +18175,9 @@ export interface Declaration {
           | ("always" | "never" | [])
           | [
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)),
               (("always" | "never" | {}) | CoreRule) &
-                (
-                  | ((("always" | "never" | {}) | CoreRule) & string)
-                  | (("always" | "never" | {}) | CoreRule)
-                ),
+                (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -23915,10 +18197,8 @@ export interface DeclarationBlock {
     | null
     | (true | [])
     | [
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
       ]
   ) &
     (
@@ -23927,16 +18207,8 @@ export interface DeclarationBlock {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | (boolean &
@@ -23944,32 +18216,16 @@ export interface DeclarationBlock {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -23982,10 +18238,8 @@ export interface DeclarationBlock {
     | null
     | (true | [])
     | [
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
       ]
   ) &
     (
@@ -23994,16 +18248,8 @@ export interface DeclarationBlock {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | (boolean &
@@ -24011,32 +18257,16 @@ export interface DeclarationBlock {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -24049,62 +18279,18 @@ export interface DeclarationBlock {
     | null
     | ("alphabetical" | [])
     | [
-        (
-          | ("alphabetical" | [] | {})
-          | string
-          | SimpleArrayStringRule
-          | CoreRule
-        ) &
+        (("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) &
           (
-            | ((
-                | ("alphabetical" | [] | {})
-                | string
-                | SimpleArrayStringRule
-                | CoreRule
-              ) &
-                string)
-            | ((
-                | ("alphabetical" | [] | {})
-                | string
-                | SimpleArrayStringRule
-                | CoreRule
-              ) &
-                unknown[])
-            | (
-                | ("alphabetical" | [] | {})
-                | string
-                | SimpleArrayStringRule
-                | CoreRule
-              )
+            | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & string)
+            | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & unknown[])
+            | (("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule)
           ),
-        ...((
-          | ("alphabetical" | [] | {})
-          | string
-          | SimpleArrayStringRule
-          | CoreRule
-        ) &
+        ...((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) &
           (
-            | ((
-                | ("alphabetical" | [] | {})
-                | string
-                | SimpleArrayStringRule
-                | CoreRule
-              ) &
-                string)
-            | ((
-                | ("alphabetical" | [] | {})
-                | string
-                | SimpleArrayStringRule
-                | CoreRule
-              ) &
-                unknown[])
-            | (
-                | ("alphabetical" | [] | {})
-                | string
-                | SimpleArrayStringRule
-                | CoreRule
-              )
-          ))[],
+            | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & string)
+            | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & unknown[])
+            | (("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule)
+          ))[]
       ]
   ) &
     (
@@ -24113,124 +18299,36 @@ export interface DeclarationBlock {
             | null
             | ("alphabetical" | [])
             | [
-                (
-                  | ("alphabetical" | [] | {})
-                  | string
-                  | SimpleArrayStringRule
-                  | CoreRule
-                ) &
+                (("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) &
                   (
-                    | ((
-                        | ("alphabetical" | [] | {})
-                        | string
-                        | SimpleArrayStringRule
-                        | CoreRule
-                      ) &
-                        string)
-                    | ((
-                        | ("alphabetical" | [] | {})
-                        | string
-                        | SimpleArrayStringRule
-                        | CoreRule
-                      ) &
-                        unknown[])
-                    | (
-                        | ("alphabetical" | [] | {})
-                        | string
-                        | SimpleArrayStringRule
-                        | CoreRule
-                      )
+                    | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & string)
+                    | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & unknown[])
+                    | (("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule)
                   ),
-                ...((
-                  | ("alphabetical" | [] | {})
-                  | string
-                  | SimpleArrayStringRule
-                  | CoreRule
-                ) &
+                ...((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) &
                   (
-                    | ((
-                        | ("alphabetical" | [] | {})
-                        | string
-                        | SimpleArrayStringRule
-                        | CoreRule
-                      ) &
-                        string)
-                    | ((
-                        | ("alphabetical" | [] | {})
-                        | string
-                        | SimpleArrayStringRule
-                        | CoreRule
-                      ) &
-                        unknown[])
-                    | (
-                        | ("alphabetical" | [] | {})
-                        | string
-                        | SimpleArrayStringRule
-                        | CoreRule
-                      )
-                  ))[],
+                    | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & string)
+                    | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & unknown[])
+                    | (("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule)
+                  ))[]
               ]
           ))
       | ((
           | null
           | ("alphabetical" | [])
           | [
-              (
-                | ("alphabetical" | [] | {})
-                | string
-                | SimpleArrayStringRule
-                | CoreRule
-              ) &
+              (("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) &
                 (
-                  | ((
-                      | ("alphabetical" | [] | {})
-                      | string
-                      | SimpleArrayStringRule
-                      | CoreRule
-                    ) &
-                      string)
-                  | ((
-                      | ("alphabetical" | [] | {})
-                      | string
-                      | SimpleArrayStringRule
-                      | CoreRule
-                    ) &
-                      unknown[])
-                  | (
-                      | ("alphabetical" | [] | {})
-                      | string
-                      | SimpleArrayStringRule
-                      | CoreRule
-                    )
+                  | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & string)
+                  | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & unknown[])
+                  | (("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule)
                 ),
-              ...((
-                | ("alphabetical" | [] | {})
-                | string
-                | SimpleArrayStringRule
-                | CoreRule
-              ) &
+              ...((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) &
                 (
-                  | ((
-                      | ("alphabetical" | [] | {})
-                      | string
-                      | SimpleArrayStringRule
-                      | CoreRule
-                    ) &
-                      string)
-                  | ((
-                      | ("alphabetical" | [] | {})
-                      | string
-                      | SimpleArrayStringRule
-                      | CoreRule
-                    ) &
-                      unknown[])
-                  | (
-                      | ("alphabetical" | [] | {})
-                      | string
-                      | SimpleArrayStringRule
-                      | CoreRule
-                    )
-                ))[],
+                  | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & string)
+                  | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & unknown[])
+                  | (("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule)
+                ))[]
             ]
         ) &
           string)
@@ -24238,62 +18336,18 @@ export interface DeclarationBlock {
           | null
           | ("alphabetical" | [])
           | [
-              (
-                | ("alphabetical" | [] | {})
-                | string
-                | SimpleArrayStringRule
-                | CoreRule
-              ) &
+              (("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) &
                 (
-                  | ((
-                      | ("alphabetical" | [] | {})
-                      | string
-                      | SimpleArrayStringRule
-                      | CoreRule
-                    ) &
-                      string)
-                  | ((
-                      | ("alphabetical" | [] | {})
-                      | string
-                      | SimpleArrayStringRule
-                      | CoreRule
-                    ) &
-                      unknown[])
-                  | (
-                      | ("alphabetical" | [] | {})
-                      | string
-                      | SimpleArrayStringRule
-                      | CoreRule
-                    )
+                  | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & string)
+                  | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & unknown[])
+                  | (("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule)
                 ),
-              ...((
-                | ("alphabetical" | [] | {})
-                | string
-                | SimpleArrayStringRule
-                | CoreRule
-              ) &
+              ...((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) &
                 (
-                  | ((
-                      | ("alphabetical" | [] | {})
-                      | string
-                      | SimpleArrayStringRule
-                      | CoreRule
-                    ) &
-                      string)
-                  | ((
-                      | ("alphabetical" | [] | {})
-                      | string
-                      | SimpleArrayStringRule
-                      | CoreRule
-                    ) &
-                      unknown[])
-                  | (
-                      | ("alphabetical" | [] | {})
-                      | string
-                      | SimpleArrayStringRule
-                      | CoreRule
-                    )
-                ))[],
+                  | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & string)
+                  | ((("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule) & unknown[])
+                  | (("alphabetical" | [] | {}) | string | SimpleArrayStringRule | CoreRule)
+                ))[]
             ]
         ) &
           unknown[])
@@ -24312,289 +18366,95 @@ export interface Font {
    */
   "font-family-name-quotes"?: (
     | null
-    | (
-        | "always-where-required"
-        | "always-where-recommended"
-        | "always-unless-keyword"
-        | []
-      )
+    | ("always-where-required" | "always-where-recommended" | "always-unless-keyword" | [])
     | [
-        (
-          | (
-              | "always-where-required"
-              | "always-where-recommended"
-              | "always-unless-keyword"
-              | {}
-            )
-          | CoreRule
-        ) &
+        (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule) &
           (
-            | ((
-                | (
-                    | "always-where-required"
-                    | "always-where-recommended"
-                    | "always-unless-keyword"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+            | ((("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule) &
                 string)
-            | (
-                | (
-                    | "always-where-required"
-                    | "always-where-recommended"
-                    | "always-unless-keyword"
-                    | {}
-                  )
-                | CoreRule
-              )
+            | (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule)
           ),
-        (
-          | (
-              | "always-where-required"
-              | "always-where-recommended"
-              | "always-unless-keyword"
-              | {}
-            )
-          | CoreRule
-        ) &
+        (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule) &
           (
-            | ((
-                | (
-                    | "always-where-required"
-                    | "always-where-recommended"
-                    | "always-unless-keyword"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+            | ((("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule) &
                 string)
-            | (
-                | (
-                    | "always-where-required"
-                    | "always-where-recommended"
-                    | "always-unless-keyword"
-                    | {}
-                  )
-                | CoreRule
-              )
-          ),
+            | (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule)
+          )
       ]
   ) &
     (
       | (null &
           (
             | null
-            | (
-                | "always-where-required"
-                | "always-where-recommended"
-                | "always-unless-keyword"
-                | []
-              )
+            | ("always-where-required" | "always-where-recommended" | "always-unless-keyword" | [])
             | [
-                (
-                  | (
-                      | "always-where-required"
-                      | "always-where-recommended"
-                      | "always-unless-keyword"
-                      | {}
-                    )
-                  | CoreRule
-                ) &
+                (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule) &
                   (
                     | ((
-                        | (
-                            | "always-where-required"
-                            | "always-where-recommended"
-                            | "always-unless-keyword"
-                            | {}
-                          )
+                        | ("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {})
                         | CoreRule
                       ) &
                         string)
-                    | (
-                        | (
-                            | "always-where-required"
-                            | "always-where-recommended"
-                            | "always-unless-keyword"
-                            | {}
-                          )
-                        | CoreRule
-                      )
+                    | (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule)
                   ),
-                (
-                  | (
-                      | "always-where-required"
-                      | "always-where-recommended"
-                      | "always-unless-keyword"
-                      | {}
-                    )
-                  | CoreRule
-                ) &
+                (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule) &
                   (
                     | ((
-                        | (
-                            | "always-where-required"
-                            | "always-where-recommended"
-                            | "always-unless-keyword"
-                            | {}
-                          )
+                        | ("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {})
                         | CoreRule
                       ) &
                         string)
-                    | (
-                        | (
-                            | "always-where-required"
-                            | "always-where-recommended"
-                            | "always-unless-keyword"
-                            | {}
-                          )
-                        | CoreRule
-                      )
-                  ),
+                    | (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule)
+                  )
               ]
           ))
       | ((
           | null
-          | (
-              | "always-where-required"
-              | "always-where-recommended"
-              | "always-unless-keyword"
-              | []
-            )
+          | ("always-where-required" | "always-where-recommended" | "always-unless-keyword" | [])
           | [
-              (
-                | (
-                    | "always-where-required"
-                    | "always-where-recommended"
-                    | "always-unless-keyword"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule) &
                 (
                   | ((
-                      | (
-                          | "always-where-required"
-                          | "always-where-recommended"
-                          | "always-unless-keyword"
-                          | {}
-                        )
+                      | ("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {})
                       | CoreRule
                     ) &
                       string)
-                  | (
-                      | (
-                          | "always-where-required"
-                          | "always-where-recommended"
-                          | "always-unless-keyword"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always-where-required"
-                    | "always-where-recommended"
-                    | "always-unless-keyword"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule) &
                 (
                   | ((
-                      | (
-                          | "always-where-required"
-                          | "always-where-recommended"
-                          | "always-unless-keyword"
-                          | {}
-                        )
+                      | ("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {})
                       | CoreRule
                     ) &
                       string)
-                  | (
-                      | (
-                          | "always-where-required"
-                          | "always-where-recommended"
-                          | "always-unless-keyword"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule)
+                )
             ]
         ) &
           string)
       | ((
           | null
-          | (
-              | "always-where-required"
-              | "always-where-recommended"
-              | "always-unless-keyword"
-              | []
-            )
+          | ("always-where-required" | "always-where-recommended" | "always-unless-keyword" | [])
           | [
-              (
-                | (
-                    | "always-where-required"
-                    | "always-where-recommended"
-                    | "always-unless-keyword"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule) &
                 (
                   | ((
-                      | (
-                          | "always-where-required"
-                          | "always-where-recommended"
-                          | "always-unless-keyword"
-                          | {}
-                        )
+                      | ("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {})
                       | CoreRule
                     ) &
                       string)
-                  | (
-                      | (
-                          | "always-where-required"
-                          | "always-where-recommended"
-                          | "always-unless-keyword"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always-where-required"
-                    | "always-where-recommended"
-                    | "always-unless-keyword"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule) &
                 (
                   | ((
-                      | (
-                          | "always-where-required"
-                          | "always-where-recommended"
-                          | "always-unless-keyword"
-                          | {}
-                        )
+                      | ("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {})
                       | CoreRule
                     ) &
                       string)
-                  | (
-                      | (
-                          | "always-where-required"
-                          | "always-where-recommended"
-                          | "always-unless-keyword"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | (("always-where-required" | "always-where-recommended" | "always-unless-keyword" | {}) | CoreRule)
+                )
             ]
         ) &
           unknown[])
@@ -24615,7 +18475,7 @@ export interface Font {
           (
             | ((("numeric" | "named-where-possible" | {}) | CoreRule) & string)
             | (("numeric" | "named-where-possible" | {}) | CoreRule)
-          ),
+          )
       ]
   ) &
     (
@@ -24626,16 +18486,14 @@ export interface Font {
             | [
                 (("numeric" | "named-where-possible" | {}) | CoreRule) &
                   (
-                    | ((("numeric" | "named-where-possible" | {}) | CoreRule) &
-                        string)
+                    | ((("numeric" | "named-where-possible" | {}) | CoreRule) & string)
                     | (("numeric" | "named-where-possible" | {}) | CoreRule)
                   ),
                 (("numeric" | "named-where-possible" | {}) | CoreRule) &
                   (
-                    | ((("numeric" | "named-where-possible" | {}) | CoreRule) &
-                        string)
+                    | ((("numeric" | "named-where-possible" | {}) | CoreRule) & string)
                     | (("numeric" | "named-where-possible" | {}) | CoreRule)
-                  ),
+                  )
               ]
           ))
       | ((
@@ -24644,16 +18502,14 @@ export interface Font {
           | [
               (("numeric" | "named-where-possible" | {}) | CoreRule) &
                 (
-                  | ((("numeric" | "named-where-possible" | {}) | CoreRule) &
-                      string)
+                  | ((("numeric" | "named-where-possible" | {}) | CoreRule) & string)
                   | (("numeric" | "named-where-possible" | {}) | CoreRule)
                 ),
               (("numeric" | "named-where-possible" | {}) | CoreRule) &
                 (
-                  | ((("numeric" | "named-where-possible" | {}) | CoreRule) &
-                      string)
+                  | ((("numeric" | "named-where-possible" | {}) | CoreRule) & string)
                   | (("numeric" | "named-where-possible" | {}) | CoreRule)
-                ),
+                )
             ]
         ) &
           string)
@@ -24663,16 +18519,14 @@ export interface Font {
           | [
               (("numeric" | "named-where-possible" | {}) | CoreRule) &
                 (
-                  | ((("numeric" | "named-where-possible" | {}) | CoreRule) &
-                      string)
+                  | ((("numeric" | "named-where-possible" | {}) | CoreRule) & string)
                   | (("numeric" | "named-where-possible" | {}) | CoreRule)
                 ),
               (("numeric" | "named-where-possible" | {}) | CoreRule) &
                 (
-                  | ((("numeric" | "named-where-possible" | {}) | CoreRule) &
-                      string)
+                  | ((("numeric" | "named-where-possible" | {}) | CoreRule) & string)
                   | (("numeric" | "named-where-possible" | {}) | CoreRule)
-                ),
+                )
             ]
         ) &
           unknown[])
@@ -24696,15 +18550,9 @@ export interface Function {
     | ("lower" | "upper" | [])
     | [
         (("lower" | "upper" | {}) | CoreRule) &
-          (
-            | ((("lower" | "upper" | {}) | CoreRule) & string)
-            | (("lower" | "upper" | {}) | CoreRule)
-          ),
+          (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
         (("lower" | "upper" | {}) | CoreRule) &
-          (
-            | ((("lower" | "upper" | {}) | CoreRule) & string)
-            | (("lower" | "upper" | {}) | CoreRule)
-          ),
+          (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
       ]
   ) &
     (
@@ -24714,15 +18562,9 @@ export interface Function {
             | ("lower" | "upper" | [])
             | [
                 (("lower" | "upper" | {}) | CoreRule) &
-                  (
-                    | ((("lower" | "upper" | {}) | CoreRule) & string)
-                    | (("lower" | "upper" | {}) | CoreRule)
-                  ),
+                  (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
                 (("lower" | "upper" | {}) | CoreRule) &
-                  (
-                    | ((("lower" | "upper" | {}) | CoreRule) & string)
-                    | (("lower" | "upper" | {}) | CoreRule)
-                  ),
+                  (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
               ]
           ))
       | ((
@@ -24730,15 +18572,9 @@ export interface Function {
           | ("lower" | "upper" | [])
           | [
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
             ]
         ) &
           string)
@@ -24747,15 +18583,9 @@ export interface Function {
           | ("lower" | "upper" | [])
           | [
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -24790,7 +18620,7 @@ export interface GeneralSheet {
             | ((number | ("tab" | {}) | CoreRule) & number)
             | ((number | ("tab" | {}) | CoreRule) & string)
             | (number | ("tab" | {}) | CoreRule)
-          ),
+          )
       ]
   ) &
     (
@@ -24811,7 +18641,7 @@ export interface GeneralSheet {
                     | ((number | ("tab" | {}) | CoreRule) & number)
                     | ((number | ("tab" | {}) | CoreRule) & string)
                     | (number | ("tab" | {}) | CoreRule)
-                  ),
+                  )
               ]
           ))
       | (number &
@@ -24831,7 +18661,7 @@ export interface GeneralSheet {
                     | ((number | ("tab" | {}) | CoreRule) & number)
                     | ((number | ("tab" | {}) | CoreRule) & string)
                     | (number | ("tab" | {}) | CoreRule)
-                  ),
+                  )
               ]
           ))
       | ((
@@ -24850,7 +18680,7 @@ export interface GeneralSheet {
                   | ((number | ("tab" | {}) | CoreRule) & number)
                   | ((number | ("tab" | {}) | CoreRule) & string)
                   | (number | ("tab" | {}) | CoreRule)
-                ),
+                )
             ]
         ) &
           string)
@@ -24870,7 +18700,7 @@ export interface GeneralSheet {
                   | ((number | ("tab" | {}) | CoreRule) & number)
                   | ((number | ("tab" | {}) | CoreRule) & string)
                   | (number | ("tab" | {}) | CoreRule)
-                ),
+                )
             ]
         ) &
           unknown[])
@@ -24882,10 +18712,8 @@ export interface GeneralSheet {
   "max-line-length"?: (
     | (null | number)
     | [
-        (number | CoreRule) &
-          (((number | CoreRule) & number) | (number | CoreRule)),
-        (number | CoreRule) &
-          (((number | CoreRule) & number) | (number | CoreRule)),
+        (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule)),
+        (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule))
       ]
   ) &
     (
@@ -24893,29 +18721,23 @@ export interface GeneralSheet {
           (
             | (null | number)
             | [
-                (number | CoreRule) &
-                  (((number | CoreRule) & number) | (number | CoreRule)),
-                (number | CoreRule) &
-                  (((number | CoreRule) & number) | (number | CoreRule)),
+                (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule)),
+                (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule))
               ]
           ))
       | (number &
           (
             | (null | number)
             | [
-                (number | CoreRule) &
-                  (((number | CoreRule) & number) | (number | CoreRule)),
-                (number | CoreRule) &
-                  (((number | CoreRule) & number) | (number | CoreRule)),
+                (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule)),
+                (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule))
               ]
           ))
       | ((
           | (null | number)
           | [
-              (number | CoreRule) &
-                (((number | CoreRule) & number) | (number | CoreRule)),
-              (number | CoreRule) &
-                (((number | CoreRule) & number) | (number | CoreRule)),
+              (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule)),
+              (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule))
             ]
         ) &
           unknown[])
@@ -24926,10 +18748,8 @@ export interface GeneralSheet {
   "max-nesting-depth"?: (
     | (null | number)
     | [
-        (number | CoreRule) &
-          (((number | CoreRule) & number) | (number | CoreRule)),
-        (number | CoreRule) &
-          (((number | CoreRule) & number) | (number | CoreRule)),
+        (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule)),
+        (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule))
       ]
   ) &
     (
@@ -24937,29 +18757,23 @@ export interface GeneralSheet {
           (
             | (null | number)
             | [
-                (number | CoreRule) &
-                  (((number | CoreRule) & number) | (number | CoreRule)),
-                (number | CoreRule) &
-                  (((number | CoreRule) & number) | (number | CoreRule)),
+                (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule)),
+                (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule))
               ]
           ))
       | (number &
           (
             | (null | number)
             | [
-                (number | CoreRule) &
-                  (((number | CoreRule) & number) | (number | CoreRule)),
-                (number | CoreRule) &
-                  (((number | CoreRule) & number) | (number | CoreRule)),
+                (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule)),
+                (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule))
               ]
           ))
       | ((
           | (null | number)
           | [
-              (number | CoreRule) &
-                (((number | CoreRule) & number) | (number | CoreRule)),
-              (number | CoreRule) &
-                (((number | CoreRule) & number) | (number | CoreRule)),
+              (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule)),
+              (number | CoreRule) & (((number | CoreRule) & number) | (number | CoreRule))
             ]
         ) &
           unknown[])
@@ -24971,10 +18785,8 @@ export interface GeneralSheet {
     | null
     | (true | [])
     | [
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
       ]
   ) &
     (
@@ -24983,16 +18795,8 @@ export interface GeneralSheet {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | (boolean &
@@ -25000,32 +18804,16 @@ export interface GeneralSheet {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -25040,10 +18828,8 @@ export interface GeneralSheet {
     | null
     | (true | [])
     | [
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
       ]
   ) &
     (
@@ -25052,16 +18838,8 @@ export interface GeneralSheet {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | (boolean &
@@ -25069,32 +18847,16 @@ export interface GeneralSheet {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -25107,10 +18869,8 @@ export interface GeneralSheet {
     | null
     | (true | [])
     | [
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
       ]
   ) &
     (
@@ -25119,16 +18879,8 @@ export interface GeneralSheet {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | (boolean &
@@ -25136,32 +18888,16 @@ export interface GeneralSheet {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -25177,10 +18913,8 @@ export interface GeneralSheet {
     | null
     | (true | [])
     | [
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
       ]
   ) &
     (
@@ -25189,16 +18923,8 @@ export interface GeneralSheet {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | (boolean &
@@ -25206,32 +18932,16 @@ export interface GeneralSheet {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -25257,10 +18967,8 @@ export interface MediaFeature {
     | null
     | (true | [])
     | [
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
       ]
   ) &
     (
@@ -25269,16 +18977,8 @@ export interface MediaFeature {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | (boolean &
@@ -25286,32 +18986,16 @@ export interface MediaFeature {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -25346,10 +19030,8 @@ export interface Property {
     | null
     | (true | [])
     | [
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
       ]
   ) &
     (
@@ -25358,16 +19040,8 @@ export interface Property {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | (boolean &
@@ -25375,32 +19049,16 @@ export interface Property {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -25421,212 +19079,50 @@ export interface Rule {
     | null
     | ("always" | "never" | "always-multi-line" | "never-multi-line" | [])
     | [
-        (
-          | ("always" | "never" | "always-multi-line" | "never-multi-line" | {})
-          | CoreRule
-        ) &
+        (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
           (
-            | ((
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
-                string)
-            | (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              )
+            | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+            | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
           ),
-        (
-          | ("always" | "never" | "always-multi-line" | "never-multi-line" | {})
-          | CoreRule
-        ) &
+        (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
           (
-            | ((
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
-                string)
-            | (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              )
-          ),
+            | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+            | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+          )
       ]
   ) &
     (
       | (null &
           (
             | null
-            | (
-                | "always"
-                | "never"
-                | "always-multi-line"
-                | "never-multi-line"
-                | []
-              )
+            | ("always" | "never" | "always-multi-line" | "never-multi-line" | [])
             | [
-                (
-                  | (
-                      | "always"
-                      | "never"
-                      | "always-multi-line"
-                      | "never-multi-line"
-                      | {}
-                    )
-                  | CoreRule
-                ) &
+                (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                   (
-                    | ((
-                        | (
-                            | "always"
-                            | "never"
-                            | "always-multi-line"
-                            | "never-multi-line"
-                            | {}
-                          )
-                        | CoreRule
-                      ) &
-                        string)
-                    | (
-                        | (
-                            | "always"
-                            | "never"
-                            | "always-multi-line"
-                            | "never-multi-line"
-                            | {}
-                          )
-                        | CoreRule
-                      )
+                    | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                    | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                   ),
-                (
-                  | (
-                      | "always"
-                      | "never"
-                      | "always-multi-line"
-                      | "never-multi-line"
-                      | {}
-                    )
-                  | CoreRule
-                ) &
+                (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                   (
-                    | ((
-                        | (
-                            | "always"
-                            | "never"
-                            | "always-multi-line"
-                            | "never-multi-line"
-                            | {}
-                          )
-                        | CoreRule
-                      ) &
-                        string)
-                    | (
-                        | (
-                            | "always"
-                            | "never"
-                            | "always-multi-line"
-                            | "never-multi-line"
-                            | {}
-                          )
-                        | CoreRule
-                      )
-                  ),
+                    | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                    | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                  )
               ]
           ))
       | ((
           | null
           | ("always" | "never" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ) &
           string)
@@ -25634,72 +19130,16 @@ export interface Rule {
           | null
           | ("always" | "never" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ) &
           unknown[])
@@ -25711,212 +19151,50 @@ export interface Rule {
     | null
     | ("always" | "never" | "always-multi-line" | "never-multi-line" | [])
     | [
-        (
-          | ("always" | "never" | "always-multi-line" | "never-multi-line" | {})
-          | CoreRule
-        ) &
+        (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
           (
-            | ((
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
-                string)
-            | (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              )
+            | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+            | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
           ),
-        (
-          | ("always" | "never" | "always-multi-line" | "never-multi-line" | {})
-          | CoreRule
-        ) &
+        (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
           (
-            | ((
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
-                string)
-            | (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              )
-          ),
+            | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+            | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+          )
       ]
   ) &
     (
       | (null &
           (
             | null
-            | (
-                | "always"
-                | "never"
-                | "always-multi-line"
-                | "never-multi-line"
-                | []
-              )
+            | ("always" | "never" | "always-multi-line" | "never-multi-line" | [])
             | [
-                (
-                  | (
-                      | "always"
-                      | "never"
-                      | "always-multi-line"
-                      | "never-multi-line"
-                      | {}
-                    )
-                  | CoreRule
-                ) &
+                (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                   (
-                    | ((
-                        | (
-                            | "always"
-                            | "never"
-                            | "always-multi-line"
-                            | "never-multi-line"
-                            | {}
-                          )
-                        | CoreRule
-                      ) &
-                        string)
-                    | (
-                        | (
-                            | "always"
-                            | "never"
-                            | "always-multi-line"
-                            | "never-multi-line"
-                            | {}
-                          )
-                        | CoreRule
-                      )
+                    | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                    | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                   ),
-                (
-                  | (
-                      | "always"
-                      | "never"
-                      | "always-multi-line"
-                      | "never-multi-line"
-                      | {}
-                    )
-                  | CoreRule
-                ) &
+                (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                   (
-                    | ((
-                        | (
-                            | "always"
-                            | "never"
-                            | "always-multi-line"
-                            | "never-multi-line"
-                            | {}
-                          )
-                        | CoreRule
-                      ) &
-                        string)
-                    | (
-                        | (
-                            | "always"
-                            | "never"
-                            | "always-multi-line"
-                            | "never-multi-line"
-                            | {}
-                          )
-                        | CoreRule
-                      )
-                  ),
+                    | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                    | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                  )
               ]
           ))
       | ((
           | null
           | ("always" | "never" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ) &
           string)
@@ -25924,72 +19202,16 @@ export interface Rule {
           | null
           | ("always" | "never" | "always-multi-line" | "never-multi-line" | [])
           | [
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
+                  | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
                 ),
-              (
-                | (
-                    | "always"
-                    | "never"
-                    | "always-multi-line"
-                    | "never-multi-line"
-                    | {}
-                  )
-                | CoreRule
-              ) &
+              (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) &
                 (
-                  | ((
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    ) &
-                      string)
-                  | (
-                      | (
-                          | "always"
-                          | "never"
-                          | "always-multi-line"
-                          | "never-multi-line"
-                          | {}
-                        )
-                      | CoreRule
-                    )
-                ),
+                  | ((("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule) & string)
+                  | (("always" | "never" | "always-multi-line" | "never-multi-line" | {}) | CoreRule)
+                )
             ]
         ) &
           unknown[])
@@ -26009,10 +19231,8 @@ export interface Selector {
   "selector-class-pattern"?: (
     | (null | string)
     | [
-        (string | CoreRule) &
-          (((string | CoreRule) & string) | (string | CoreRule)),
-        (string | CoreRule) &
-          (((string | CoreRule) & string) | (string | CoreRule)),
+        (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)),
+        (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))
       ]
   ) &
     (
@@ -26020,29 +19240,23 @@ export interface Selector {
           (
             | (null | string)
             | [
-                (string | CoreRule) &
-                  (((string | CoreRule) & string) | (string | CoreRule)),
-                (string | CoreRule) &
-                  (((string | CoreRule) & string) | (string | CoreRule)),
+                (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)),
+                (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))
               ]
           ))
       | ((
           | (null | string)
           | [
-              (string | CoreRule) &
-                (((string | CoreRule) & string) | (string | CoreRule)),
-              (string | CoreRule) &
-                (((string | CoreRule) & string) | (string | CoreRule)),
+              (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)),
+              (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))
             ]
         ) &
           string)
       | ((
           | (null | string)
           | [
-              (string | CoreRule) &
-                (((string | CoreRule) & string) | (string | CoreRule)),
-              (string | CoreRule) &
-                (((string | CoreRule) & string) | (string | CoreRule)),
+              (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)),
+              (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))
             ]
         ) &
           unknown[])
@@ -26064,10 +19278,8 @@ export interface Selector {
     | null
     | (true | [])
     | [
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
       ]
   ) &
     (
@@ -26076,16 +19288,8 @@ export interface Selector {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | (boolean &
@@ -26093,32 +19297,16 @@ export interface Selector {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -26130,10 +19318,8 @@ export interface Selector {
     | null
     | (true | [])
     | [
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
       ]
   ) &
     (
@@ -26142,16 +19328,8 @@ export interface Selector {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | (boolean &
@@ -26159,32 +19337,16 @@ export interface Selector {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -26199,10 +19361,8 @@ export interface Selector {
     | null
     | (true | [])
     | [
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
       ]
   ) &
     (
@@ -26211,16 +19371,8 @@ export interface Selector {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | (boolean &
@@ -26228,32 +19380,16 @@ export interface Selector {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -26269,10 +19405,8 @@ export interface Selector {
     | null
     | (true | [])
     | [
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
       ]
   ) &
     (
@@ -26281,16 +19415,8 @@ export interface Selector {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | (boolean &
@@ -26298,32 +19424,16 @@ export interface Selector {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -26337,10 +19447,8 @@ export interface Selector {
     | null
     | (true | [])
     | [
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
       ]
   ) &
     (
@@ -26349,16 +19457,8 @@ export interface Selector {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | (boolean &
@@ -26366,32 +19466,16 @@ export interface Selector {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -26432,7 +19516,7 @@ export interface StylelintDisableComment {
           (
             | ((("always-before" | "always-after" | {}) | CoreRule) & string)
             | (("always-before" | "always-after" | {}) | CoreRule)
-          ),
+          )
       ]
   ) &
     (
@@ -26443,16 +19527,14 @@ export interface StylelintDisableComment {
             | [
                 (("always-before" | "always-after" | {}) | CoreRule) &
                   (
-                    | ((("always-before" | "always-after" | {}) | CoreRule) &
-                        string)
+                    | ((("always-before" | "always-after" | {}) | CoreRule) & string)
                     | (("always-before" | "always-after" | {}) | CoreRule)
                   ),
                 (("always-before" | "always-after" | {}) | CoreRule) &
                   (
-                    | ((("always-before" | "always-after" | {}) | CoreRule) &
-                        string)
+                    | ((("always-before" | "always-after" | {}) | CoreRule) & string)
                     | (("always-before" | "always-after" | {}) | CoreRule)
-                  ),
+                  )
               ]
           ))
       | ((
@@ -26461,16 +19543,14 @@ export interface StylelintDisableComment {
           | [
               (("always-before" | "always-after" | {}) | CoreRule) &
                 (
-                  | ((("always-before" | "always-after" | {}) | CoreRule) &
-                      string)
+                  | ((("always-before" | "always-after" | {}) | CoreRule) & string)
                   | (("always-before" | "always-after" | {}) | CoreRule)
                 ),
               (("always-before" | "always-after" | {}) | CoreRule) &
                 (
-                  | ((("always-before" | "always-after" | {}) | CoreRule) &
-                      string)
+                  | ((("always-before" | "always-after" | {}) | CoreRule) & string)
                   | (("always-before" | "always-after" | {}) | CoreRule)
-                ),
+                )
             ]
         ) &
           string)
@@ -26480,16 +19560,14 @@ export interface StylelintDisableComment {
           | [
               (("always-before" | "always-after" | {}) | CoreRule) &
                 (
-                  | ((("always-before" | "always-after" | {}) | CoreRule) &
-                      string)
+                  | ((("always-before" | "always-after" | {}) | CoreRule) & string)
                   | (("always-before" | "always-after" | {}) | CoreRule)
                 ),
               (("always-before" | "always-after" | {}) | CoreRule) &
                 (
-                  | ((("always-before" | "always-after" | {}) | CoreRule) &
-                      string)
+                  | ((("always-before" | "always-after" | {}) | CoreRule) & string)
                   | (("always-before" | "always-after" | {}) | CoreRule)
-                ),
+                )
             ]
         ) &
           unknown[])
@@ -26510,10 +19588,8 @@ export interface Unit {
     | null
     | (true | [])
     | [
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
-        ((true | {}) | CoreRule) &
-          ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+        ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
       ]
   ) &
     (
@@ -26522,16 +19598,8 @@ export interface Unit {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | (boolean &
@@ -26539,32 +19607,16 @@ export interface Unit {
             | null
             | (true | [])
             | [
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
-                ((true | {}) | CoreRule) &
-                  (
-                    | (((true | {}) | CoreRule) & boolean)
-                    | ((true | {}) | CoreRule)
-                  ),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+                ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
               ]
           ))
       | ((
           | null
           | (true | [])
           | [
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
-              ((true | {}) | CoreRule) &
-                (
-                  | (((true | {}) | CoreRule) & boolean)
-                  | ((true | {}) | CoreRule)
-                ),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)),
+              ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -26581,15 +19633,9 @@ export interface Value {
     | ("lower" | "upper" | [])
     | [
         (("lower" | "upper" | {}) | CoreRule) &
-          (
-            | ((("lower" | "upper" | {}) | CoreRule) & string)
-            | (("lower" | "upper" | {}) | CoreRule)
-          ),
+          (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
         (("lower" | "upper" | {}) | CoreRule) &
-          (
-            | ((("lower" | "upper" | {}) | CoreRule) & string)
-            | (("lower" | "upper" | {}) | CoreRule)
-          ),
+          (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
       ]
   ) &
     (
@@ -26599,15 +19645,9 @@ export interface Value {
             | ("lower" | "upper" | [])
             | [
                 (("lower" | "upper" | {}) | CoreRule) &
-                  (
-                    | ((("lower" | "upper" | {}) | CoreRule) & string)
-                    | (("lower" | "upper" | {}) | CoreRule)
-                  ),
+                  (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
                 (("lower" | "upper" | {}) | CoreRule) &
-                  (
-                    | ((("lower" | "upper" | {}) | CoreRule) & string)
-                    | (("lower" | "upper" | {}) | CoreRule)
-                  ),
+                  (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
               ]
           ))
       | ((
@@ -26615,15 +19655,9 @@ export interface Value {
           | ("lower" | "upper" | [])
           | [
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
             ]
         ) &
           string)
@@ -26632,15 +19666,9 @@ export interface Value {
           | ("lower" | "upper" | [])
           | [
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule)),
               (("lower" | "upper" | {}) | CoreRule) &
-                (
-                  | ((("lower" | "upper" | {}) | CoreRule) & string)
-                  | (("lower" | "upper" | {}) | CoreRule)
-                ),
+                (((("lower" | "upper" | {}) | CoreRule) & string) | (("lower" | "upper" | {}) | CoreRule))
             ]
         ) &
           unknown[])
@@ -26741,7 +19769,7 @@ export interface Paths {
    * This interface was referenced by `Paths`'s JSON-Schema definition
    * via the `patternProperty` "/$".
    */
-  [k: string]: string | undefined;
+  [k: string]: (string) | undefined;
 }
 export interface SemanticReleaseSchema {
   /**
@@ -27053,19 +20081,7 @@ export interface HttpsJsonSchemastoreOrgJscpdJson {
        * badge label color (name or RGB code without #); see https://github.com/badgen/badgen/blob/master/src/color-presets.ts
        */
       labelColor?:
-        | (
-            | "green"
-            | "blue"
-            | "red"
-            | "yellow"
-            | "orange"
-            | "purple"
-            | "pink"
-            | "grey"
-            | "gray"
-            | "cyan"
-            | "black"
-          )
+        | ("green" | "blue" | "red" | "yellow" | "orange" | "purple" | "pink" | "grey" | "gray" | "cyan" | "black")
         | string;
       /**
        * badge value text (URL-encoding needed for spaces or special characters, default: duplication %)
@@ -27075,19 +20091,7 @@ export interface HttpsJsonSchemastoreOrgJscpdJson {
        * badge color (name or RGB code without #, default: green if beneath threshold, red if above threshold, grey if threshold not set); see https://github.com/badgen/badgen/blob/master/src/color-presets.ts
        */
       color?:
-        | (
-            | "green"
-            | "blue"
-            | "red"
-            | "yellow"
-            | "orange"
-            | "purple"
-            | "pink"
-            | "grey"
-            | "gray"
-            | "cyan"
-            | "black"
-          )
+        | ("green" | "blue" | "red" | "yellow" | "orange" | "purple" | "pink" | "grey" | "gray" | "cyan" | "black")
         | string;
       /**
        * badge look: flat or classic
@@ -27113,4 +20117,4 @@ export interface HttpsJsonSchemastoreOrgJscpdJson {
   exitCode?: number;
 }
 
-export default PackageJson;
+export type { PackageJson as default };

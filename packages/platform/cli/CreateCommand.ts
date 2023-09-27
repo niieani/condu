@@ -177,8 +177,10 @@ function getMatches({
     ) {
       const conventionParts = convention.nameConvention.split("*");
       const [left, right, ...rest] = conventionParts;
-      if (!left || !right || rest.length > 0) {
-        throw new Error(`Invalid nameConvention: ${convention.nameConvention}`);
+      if (left === undefined || right === undefined || rest.length > 0) {
+        throw new Error(
+          `Invalid nameConvention: ${convention.nameConvention}.`,
+        );
       }
       if (partialPath.startsWith(left) && partialPath.endsWith(right)) {
         const dirName = partialPath.slice(

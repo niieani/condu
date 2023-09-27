@@ -1283,4 +1283,4 @@ export interface ReusableWorkflowCallJob {
   concurrency?: string | Concurrency;
 }
 
-export default GithubWorkflow;
+export type { GithubWorkflow as default };
