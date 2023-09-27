@@ -2,6 +2,7 @@ import { gitignore } from "../packages/features/gitignore/gitignore.js";
 import { typescript } from "../packages/features/typescript/typescript.js";
 import { moon } from "../packages/features/moon/moon.js";
 import { moonCi } from "../packages/features/ci-github-actions/moon.js";
+import { eslint } from "../packages/features/eslint/eslint.js";
 import { configure } from "../packages/platform/core/configTypes.js";
 
 export default configure({
@@ -13,5 +14,11 @@ export default configure({
   conventions: {
     sourceDir: ".",
   },
-  features: [typescript(), moon(), moonCi(), gitignore({ ignore: [".swc/"] })],
+  features: [
+    typescript(),
+    eslint(),
+    moon(),
+    moonCi(),
+    gitignore({ ignore: [".swc/"] }),
+  ],
 });

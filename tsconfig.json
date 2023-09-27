@@ -1,9 +1,11 @@
 {
   "extends": "./tsconfig.options.json",
-  "files": [],
   "references": [
     {
       "path": "packages/features/ci-github-actions"
+    },
+    {
+      "path": "packages/features/eslint"
     },
     {
       "path": "packages/features/gitignore"

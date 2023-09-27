@@ -1,6 +1,8 @@
 import { defineFeature } from "../../platform/core/defineFeature.js";
 import type tsconfig from "../../platform/schema-types/schemas/tsconfig.js";
 
+import a from "abc";
+
 export const typescript = ({ tsconfig }: { tsconfig?: tsconfig } = {}) =>
   defineFeature({
     name: "typescript",
@@ -63,7 +65,11 @@ export const typescript = ({ tsconfig }: { tsconfig?: tsconfig } = {}) =>
           path: "tsconfig.json",
           content: {
             extends: "./tsconfig.options.json",
-            files: [],
+            // files: [],
+            // "ts-node": {
+            //   esm: true,
+            //   experimentalResolver: true,
+            // },
           } satisfies tsconfig,
         },
       ],

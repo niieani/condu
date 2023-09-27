@@ -37,7 +37,7 @@ async function updateSchemas() {
       ts = ts.replace(/} & Person1;/g, `} | Person1;`);
     }
 
-    ts += `\nexport default ${topLevelSchemaNameSource};\n`;
+    ts += `\nexport type { ${topLevelSchemaNameSource} as default };\n`;
 
     promises.push(
       fs

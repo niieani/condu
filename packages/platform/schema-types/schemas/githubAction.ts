@@ -419,4 +419,4 @@ export interface RunsDocker {
   args?: string[];
 }
 
-export default GithubAction;
+export type { GithubAction as default };

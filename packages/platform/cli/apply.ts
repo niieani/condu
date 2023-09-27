@@ -3,6 +3,7 @@ import path from "path";
 import { ensureDependency } from "./toolchain.js";
 import type {
   CollectedState,
+  DependencyDef,
   FileDef,
   RepoConfigWithInferredValues,
   StateFlags,
@@ -95,7 +96,7 @@ export function writeFiles(files: readonly FileDef[], rootDir: string) {
 const WORKSPACE = "[WORKSPACE]";
 
 const defaultPackageManager = "yarn";
-const defaultNodeVersion = "20.4.0";
+const defaultNodeVersion = "20.7.0";
 
 export async function apply(options: LoadConfigOptions = {}) {
   const project = await loadProject(options);
@@ -216,12 +217,24 @@ export async function apply(options: LoadConfigOptions = {}) {
     await writeFiles(files, targetWorkspace.dir);
   }
 
-  for (const packageName of collectedState.devDependencies) {
+  for (const packageNameOrDef of collectedState.devDependencies) {
+    let dependencyDef: DependencyDef;
+    if (typeof packageNameOrDef === "string") {
+      const [packageAliasPart, versionOrTag] = packageNameOrDef
+        .slice(1)
+        .split("@", 2) as [string, string | undefined];
+      dependencyDef = {
+        packageAlias: `${packageNameOrDef[0]}${packageAliasPart}`,
+        versionOrTag,
+      };
+    } else {
+      dependencyDef = packageNameOrDef;
+    }
     // TODO parallelize?
     didChangeManifest ||= await ensureDependency({
-      packageName,
       manifest,
       target: "devDependencies",
+      ...dependencyDef,
     });
   }
 
