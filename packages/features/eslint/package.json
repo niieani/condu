@@ -4,5 +4,11 @@
   "main": "esm/main.js",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "eslint-plugin-import": "npm:eslint-plugin-i@^2.28.1",
+    "@typescript-eslint/eslint-plugin": "6.7.3",
+    "@typescript-eslint/parser": "6.7.3",
+    "@repo/core": "*"
   }
 }

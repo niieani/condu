@@ -1,7 +1,5 @@
-import { defineFeature } from "../../platform/core/defineFeature.js";
-import type tsconfig from "../../platform/schema-types/schemas/tsconfig.js";
-
-import a from "abc";
+import { defineFeature } from "@repo/core/defineFeature.js";
+import type tsconfig from "@repo/schema-types/schemas/tsconfig.js";
 
 export const typescript = ({ tsconfig }: { tsconfig?: tsconfig } = {}) =>
   defineFeature({

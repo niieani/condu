@@ -1,4 +1,4 @@
-import { defineFeature } from "../../platform/core/defineFeature.js";
+import { defineFeature } from "@repo/core/defineFeature.js";
 import type {
   PartialVcsConfig,
   PartialToolchainConfig as Toolchain,
@@ -8,9 +8,9 @@ import type {
 
 // import type Toolchain from "./schemas/toolchain.js";
 // import type Workspace from "./schemas/workspace.js";
-import { otherSchemas as schemas } from "../../platform/schema-types/utils/schemas.js";
-import { getMoonWorkspaceProjectsFromConventionConfig } from "../../platform/cli/getProjectGlobsFromMoonConfig.js";
-import { getDefaultGitBranch } from "../../platform/core/utils/getDefaultGitBranch.js";
+import { otherSchemas as schemas } from "@repo/schema-types/utils/schemas.js";
+import { getMoonWorkspaceProjectsFromConventionConfig } from "@repo/cli/getProjectGlobsFromMoonConfig.js";
+import { getDefaultGitBranch } from "@repo/core/utils/getDefaultGitBranch.js";
 
 // TODO: add opinionated defaults for toolchain and workspace
 // TODO: use a shared config property for typescript, etc.

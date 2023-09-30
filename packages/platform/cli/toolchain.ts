@@ -2,14 +2,14 @@ import { spinner } from "zx";
 // import semver from "semver";
 import { readProjectManifest } from "@pnpm/read-project-manifest";
 import { createNpmResolver } from "@pnpm/npm-resolver";
-import { getCacheDir } from "../core/utils/dirs.js";
+import { getCacheDir } from "@repo/core/utils/dirs.js";
 import { createFetchFromRegistry } from "@pnpm/fetch";
 import { createGetAuthHeaderByURI } from "@pnpm/network.auth-header";
 import path from "path";
-import { findUp } from "../core/utils/findUp.js";
+import { findUp } from "@repo/core/utils/findUp.js";
 import { $ } from "./zx.js";
-import type PackageJson from "../schema-types/schemas/packageJson.js";
-import type { DependencyDef } from "../core/configTypes.js";
+import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
+import type { DependencyDef } from "@repo/core/configTypes.js";
 
 const registry = "https://registry.npmjs.org/";
 const resolveFromNpm = createNpmResolver(

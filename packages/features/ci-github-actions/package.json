@@ -4,5 +4,10 @@
   "main": "esm/main.js",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@repo/core": "*",
+    "@repo/schema-types": "*",
+    "remeda": "1.27.0"
   }
 }

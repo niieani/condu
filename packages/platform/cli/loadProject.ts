@@ -1,12 +1,12 @@
 import path from "path";
 import { getManifest } from "./toolchain.js";
 import { CORE_NAME } from "./constants.js";
-import { CONFIGURED, ConfiguredRepoConfig } from "../core/configTypes.js";
+import { CONFIGURED, ConfiguredRepoConfig } from "@repo/core/configTypes.js";
 import {
   WorkspaceProjectDefined,
   getProjectDefinitionsFromConventionConfig,
 } from "./getProjectGlobsFromMoonConfig.js";
-import type PackageJson from "../schema-types/schemas/packageJson.js";
+import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
 // import { ProjectManifest } from "@pnpm/types";
 
 export interface LoadConfigOptions {

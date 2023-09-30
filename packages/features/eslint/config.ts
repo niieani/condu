@@ -1,14 +1,22 @@
 import type { Linter, ESLint } from "eslint";
 import importPlugin from "eslint-plugin-import";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import typescriptParser from "@typescript-eslint/parser";
-import type { ParserOptions } from "@typescript-eslint/parser";
+import typescriptParser, {
+  type ParserOptions,
+} from "@typescript-eslint/parser";
+import noExtraneousDependencies from "./rules/no-extraneous-dependencies.cjs";
 
 export default [
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
     plugins: {
-      import: importPlugin,
+      import: {
+        ...importPlugin,
+        rules: {
+          ...importPlugin.rules,
+          "no-extraneous-dependencies": noExtraneousDependencies,
+        },
+      },
       "@typescript-eslint": typescriptEslint as unknown as ESLint.Plugin,
     },
     languageOptions: {
@@ -28,6 +36,24 @@ export default [
       // turn on errors for missing imports
       "import/no-unresolved": "error",
       "import/no-relative-packages": "error",
+      "import/no-duplicates": ["error", { "prefer-inline": true }],
+      "import/no-extraneous-dependencies": [
+        "error",
+        // TODO: make dynamic based on conventions
+        {
+          devDependencies: ["**/*.test.js"],
+          autoFixVersionMapping: [
+            ["@repo", "*"],
+            ["json-schema-to-typescript", "*"],
+          ],
+          autoFixFallback: "=",
+        },
+      ],
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        { disallowTypeAnnotations: false },
+      ],
+      "@typescript-eslint/no-import-type-side-effects": "error",
     },
     settings: {
       "import/parsers": {
