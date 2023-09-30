@@ -7,13 +7,13 @@ import type {
   FileDef,
   RepoConfigWithInferredValues,
   StateFlags,
-} from "../core/configTypes.js";
+} from "@repo/core/configTypes.js";
 import { groupBy, equals } from "remeda";
 import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
 import { type LoadConfigOptions, loadProject } from "./loadProject.js";
-import { getDefaultGitBranch } from "../core/utils/getDefaultGitBranch.js";
+import { getDefaultGitBranch } from "@repo/core/utils/getDefaultGitBranch.js";
 import yaml from "yaml";
-import { nonEmpty } from "../core/utils/filter.js";
+import { nonEmpty } from "@repo/core/utils/filter.js";
 
 export async function collectState(
   config: RepoConfigWithInferredValues,

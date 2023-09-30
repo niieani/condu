@@ -1,6 +1,6 @@
 import type { PartialTaskConfig } from "@moonrepo/types";
-import { type WorkspaceProjectsConvention } from "../cli/getProjectGlobsFromMoonConfig.js";
-import type PackageJson from "../schema-types/schemas/packageJson.js";
+import { type WorkspaceProjectsConvention } from "@repo/cli/getProjectGlobsFromMoonConfig.js";
+import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
 
 export interface DependencyDef {
   packageAlias: string;

@@ -5,7 +5,7 @@ import { loadProject } from "./loadProject.js";
 import fs from "node:fs/promises";
 import { satisfies } from "semver";
 // import { PackageManifest } from "@pnpm/types";
-import type PackageJson from "../schema-types/schemas/packageJson.js";
+import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
 import sortPackageJson from "sort-package-json";
 import path from "node:path";
 

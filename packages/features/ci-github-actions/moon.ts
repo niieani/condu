@@ -1,13 +1,13 @@
-import { defineFeature } from "../../platform/core/defineFeature.js";
-import GithubWorkflow from "../../platform/schema-types/schemas/githubWorkflow.js";
+import { defineFeature } from "@repo/core/defineFeature.js";
+import type GithubWorkflow from "@repo/schema-types/schemas/githubWorkflow.js";
 import type {
   PartialTaskConfig,
   PartialInheritedTasksConfig as Tasks,
 } from "@moonrepo/types";
-import { otherSchemas as schemas } from "../../platform/schema-types/utils/schemas.js";
-import { groupBy, mapValues } from "remeda";
-import { Task } from "../../platform/core/configTypes.js";
-import { nonEmpty } from "../../platform/core/utils/filter.js";
+import { otherSchemas as schemas } from "@repo/schema-types/utils/schemas.js";
+import { mapValues, groupBy } from "remeda";
+import type { Task } from "@repo/core/configTypes.js";
+import { nonEmpty } from "@repo/core/utils/filter.js";
 
 export const moonCi = ({}: {} = {}) =>
   defineFeature({
