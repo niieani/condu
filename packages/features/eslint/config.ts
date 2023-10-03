@@ -8,6 +8,7 @@ import noExtraneousDependencies from "./rules/no-extraneous-dependencies.cjs";
 
 export default [
   {
+    // TODO: use files from config
     files: ["**/*.{js,jsx,ts,tsx}"],
     plugins: {
       import: {
@@ -43,8 +44,8 @@ export default [
         {
           devDependencies: ["**/*.test.js"],
           autoFixVersionMapping: [
-            ["@repo", "*"],
-            ["json-schema-to-typescript", "*"],
+            ["@repo/", "workspace:*"],
+            ["@repo-feature/", "workspace:*"],
           ],
           autoFixFallback: "=",
         },

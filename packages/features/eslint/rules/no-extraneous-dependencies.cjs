@@ -19,13 +19,14 @@ const {
 } = require("eslint-plugin-import/lib/core/packagePath");
 const docsUrl = require("eslint-plugin-import/lib/docsUrl").default;
 
-// TODO: because autofixes are evaluated eagerly, it's not possible to do this correctly using eslint
-//       instead we can try to create a typescript language service plugin that does this,
-//       and use TS autofixing
+// because autofixes are evaluated eagerly, it's not possible to do this correctly using eslint
 // this is a nasty hack that depends on the fact that eslint's SourceCodeFixer passes the text as is
 // the code hasn't changed for the past 5 years, so it should be safe for the time being
 // there's a call to startsWith(BOM) on the autofix text, which we can use to trigger the autofix
 // see eslint/lib/linter/source-code-fixer.js#L98
+
+// TODO: we could try to create a typescript language service plugin that does this,
+// and make it into a TS autofix instead
 
 class LazyAutofix extends String {
   applied = false;
@@ -348,7 +349,10 @@ function reportIfMissing(
   const pkgName = realPackageName || importPackageName;
   const [, autoFixVersionOrPrefix] = depsOptions.autoFixVersionMapping?.find(
     ([nameOrScope]) => {
-      return pkgName === nameOrScope || pkgName.startsWith(`${nameOrScope}/`);
+      return (
+        pkgName === nameOrScope ||
+        (nameOrScope.endsWith("/") && pkgName.startsWith(nameOrScope))
+      );
     },
   ) ?? [, depsOptions.autoFixFallback];
 

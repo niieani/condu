@@ -6,8 +6,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@repo/core": "*",
-    "@repo/schema-types": "*",
+    "@repo/core": "workspace:*",
+    "@repo/schema-types": "workspace:*",
     "remeda": "1.27.0"
   }
 }

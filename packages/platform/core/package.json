@@ -1,4 +1,5 @@
 {
   "name": "@repo/core",
-  "type": "module"
+  "type": "module",
+  "main": "esm/main.js"
 }
