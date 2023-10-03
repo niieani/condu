@@ -4,5 +4,8 @@
   "main": "esm/main.js",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@repo/core": "workspace:*"
   }
 }

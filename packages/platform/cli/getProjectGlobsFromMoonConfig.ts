@@ -93,7 +93,7 @@ export const getMoonWorkspaceProjectsFromConventionConfig = (
 
 export const getProjectGlobsFromMoonConfig = (
   projects?: PartialWorkspaceProjects,
-) => {
+): readonly string[] => {
   if (!projects) {
     return [];
   }

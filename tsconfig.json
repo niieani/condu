@@ -2,6 +2,9 @@
   "extends": "./tsconfig.options.json",
   "references": [
     {
+      "path": "packages/features/auto"
+    },
+    {
       "path": "packages/features/ci-github-actions"
     },
     {
@@ -11,6 +14,9 @@
       "path": "packages/features/gitignore"
     },
     {
+      "path": "packages/features/lerna"
+    },
+    {
       "path": "packages/features/moon"
     },
     {
@@ -18,6 +24,9 @@
     },
     {
       "path": "packages/features/vitest"
+    },
+    {
+      "path": "packages/platform/auto-plugin-package-structure"
     },
     {
       "path": "packages/platform/cli"

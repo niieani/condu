@@ -10,7 +10,7 @@ import type {
 } from "@repo/core/configTypes.js";
 import { groupBy, equals } from "remeda";
 import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
-import { type LoadConfigOptions, loadProject } from "./loadProject.js";
+import { type LoadConfigOptions, loadRepoProject } from "./loadProject.js";
 import { getDefaultGitBranch } from "@repo/core/utils/getDefaultGitBranch.js";
 import yaml from "yaml";
 import { nonEmpty } from "@repo/core/utils/filter.js";
@@ -99,7 +99,7 @@ const defaultPackageManager = "yarn";
 const defaultNodeVersion = "20.7.0";
 
 export async function apply(options: LoadConfigOptions = {}) {
-  const project = await loadProject(options);
+  const project = await loadRepoProject(options);
   if (!project) {
     return;
   }

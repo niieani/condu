@@ -1,13 +1,13 @@
-import { type BaseContext, Command, Option } from "clipanion";
+import { Command, Option } from "clipanion";
 import { equals } from "remeda";
 import type { WorkspaceProjectDefined } from "./getProjectGlobsFromMoonConfig.js";
-import { loadProject } from "./loadProject.js";
+import { loadRepoProject } from "./loadProject.js";
 import fs from "node:fs/promises";
-import { satisfies } from "semver";
 // import { PackageManifest } from "@pnpm/types";
 import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
 import sortPackageJson from "sort-package-json";
 import path from "node:path";
+import { createCommandContext } from "./createCommandContext.js";
 
 type CommandContext = {
   log: (message: string) => void;
@@ -19,58 +19,70 @@ type CommandContext = {
 // const gitUser = (await $`git config user.name`).stdout.trim();
 // const gitEmail = (await $`git config user.email`).stdout.trim();
 
-export async function createCommand({
+export function getSingleMatch({
   partialPath,
-  description,
   name,
-  context,
-}: {
-  partialPath: string;
-  description?: string;
-  name?: string;
-  context: CommandContext;
-}) {
-  const project = await loadProject();
-  if (!project) {
-    context.error(`Unable to load project`);
-    return 1;
-  }
-  const { projectConventions, manifest, projectDir } = project;
-
+  projectConventions,
+}: MatchOptions & {
+  projectConventions: WorkspaceProjectDefined[];
+}): Match {
   const conventionMatches = partialPath.startsWith("./")
-    ? [{ path: partialPath, name: name ?? partialPath }]
-    : getMatches({
+    ? [{ path: partialPath.slice(2), name: name ?? partialPath.slice(2) }]
+    : getConventionMatches({
         projectConventions,
         partialPath,
         name,
       });
 
   if (conventionMatches.length > 1) {
-    context.error(
-      `Multiple possible paths for the new package were inferred from the workspace config:`,
+    throw new Error(
+      `Multiple possible paths for the package were inferred from the workspace config:\n` +
+        `- ${conventionMatches
+          .map(({ path, name }) => `${path} (as ${name})`)
+          .join("\n- ")}\n\n` +
+        `Please prefix your package name with its parent directory to disambiguate.`,
     );
-    context.error(
-      `- ${conventionMatches
-        .map(({ path, name }) => `${path} (as ${name})`)
-        .join("\n- ")}\n`,
-    );
-    context.error(
-      `Please prefix your package name with its parent directory to disambiguate.`,
-    );
-    return 1;
   }
 
   const [match] = conventionMatches;
 
   if (!match) {
-    context.error(
-      `Full path for the new package could not be inferred from the workspace config and the provided partial path.`,
+    throw new Error(
+      `Full path for the new package could not be inferred from the workspace config and the provided partial path.\n` +
+        `If you're trying to provide the full path relative to the workspace, prefix it with './', e.g. ./${partialPath}`,
     );
-    context.error(
-      `If you're trying to provide the full path relative to the workspace, prefix it with './', e.g. ./${partialPath}`,
-    );
-    return 1;
   }
+
+  return match;
+}
+
+export interface MatchOptions {
+  partialPath: string;
+  name?: string;
+}
+
+export interface CreateOptions extends MatchOptions {
+  description?: string;
+  context: CommandContext;
+}
+
+export async function createCommand({
+  partialPath,
+  description,
+  name,
+  context,
+}: CreateOptions) {
+  const project = await loadRepoProject();
+  if (!project) {
+    throw new Error(`Unable to load project`);
+  }
+  const { projectConventions, manifest, projectDir } = project;
+
+  const match = getSingleMatch({
+    projectConventions,
+    partialPath,
+    name,
+  });
 
   context.log(`Will create package ${match.name} at ${match.path}`);
 
@@ -79,11 +91,6 @@ export async function createCommand({
   // and the user can always edit the package.json after creation
   await createPackage({ match, manifest, description, projectDir, context });
 }
-
-const createCommandContext = (context: BaseContext) => ({
-  log: (message: string) => context.stdout.write(message + "\n"),
-  error: (message: string) => context.stderr.write(message + "\n"),
-});
 
 export class CreateCommand extends Command {
   static override paths = [["create"]];
@@ -106,6 +113,13 @@ interface ConventionMatch {
   name: string;
 }
 
+type Match =
+  | ConventionMatch
+  | {
+      path: string;
+      name: string;
+    };
+
 export async function createPackage({
   match,
   manifest,
@@ -113,14 +127,13 @@ export async function createPackage({
   projectDir,
   context,
 }: {
-  match: ConventionMatch | { path: string; name: string };
+  match: Match;
   manifest: PackageJson;
   description: string | undefined;
   projectDir: string;
   context: CommandContext;
 }) {
-  const modulePath = path.join(projectDir, match.path);
-  await fs.mkdir(modulePath, { recursive: true });
+  const modulePath = path.normalize(path.join(projectDir, match.path));
   const packageJsonPath = path.join(modulePath, "package.json");
   const existingPackageJson = await fs
     .readFile(packageJsonPath)
@@ -131,6 +144,9 @@ export async function createPackage({
     context.log(
       `Package ${match.name} already exists. Filling in missing fields only.`,
     );
+  } else {
+    // might need to create the directory
+    await fs.mkdir(modulePath, { recursive: true });
   }
 
   const packageJson: PackageJson = sortPackageJson({
@@ -155,7 +171,7 @@ export async function createPackage({
   );
 }
 
-function getMatches({
+function getConventionMatches({
   projectConventions,
   partialPath,
   name,
