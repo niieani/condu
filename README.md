@@ -67,7 +67,7 @@ The ecosystem moves too fast, and there are no configuration management tools in
     - library-esm (build + creates esm/package.json with type: "module")
     - library-cjs (build + creates cjs/package.json with type: "commonjs")
     - library-umd (webpack, single file -- needs config for globalName, optionally output file)
-    - [denoland/dnt](https://twitter.com/deno_land/status/1676264059585560578?t=1rx7LS3Juh3biPdKhzLuow&s=19) for compiling maybe?
+    - [denoland/dnt](https://twitter.com/deno_land/status/1676264059585560578) for compiling maybe?
     - web-vite
     - app-electron
     - app-react-native (use Ignite? w/ expo)
@@ -83,7 +83,8 @@ The ecosystem moves too fast, and there are no configuration management tools in
     - github actions
       - conditionally creates testing + release based on other strategies
   - package release strategies
-    - semantic-release / better: [auto](https://github.com/intuit/auto)
+    - semantic-release
+    - [auto](https://github.com/intuit/auto)
   - dependency update automation
     - renovate
     - dependabot
@@ -98,6 +99,10 @@ The ecosystem moves too fast, and there are no configuration management tools in
 
 - Config:
   - add custom strategies via .config/strategies/... -- could re-export existing ones with custom config
+
+## API
+
+Just like VSCode plugins can "contribute" features, commands, settings, `repo` plugins can contribute features, tasks, files to `repo`. They can also use shared config scope to coordinate what they output.
 
 something like:
 

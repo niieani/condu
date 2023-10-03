@@ -1,0 +1,12 @@
+{
+  "name": "@repo/auto-plugin-package-structure",
+  "type": "module",
+  "main": "esm/main.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@auto-it/core": "^11.0.4",
+    "auto": "^11.0.4"
+  }
+}
