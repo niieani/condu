@@ -11,7 +11,7 @@
 import { describe, expect, beforeEach, afterEach, it, vi } from "vitest";
 import type { Mock } from "vitest";
 import { type Project } from "./loadProject.js";
-import { loadProject } from "./loadProject.js";
+import { loadRepoProject } from "./loadProject.js";
 import { override, restore } from "swc-mockify/src/mockify.js";
 import { createCommand, createPackage } from "./CreateCommand.js";
 import {
@@ -36,7 +36,7 @@ describe("createCommand", () => {
   afterEach(() => {
     logMock.mockClear();
     errorMock.mockClear();
-    restore(loadProject);
+    restore(loadRepoProject);
   });
 
   it("should log an error if project cannot be loaded", async () => {
@@ -44,7 +44,7 @@ describe("createCommand", () => {
     const partialPath = "./path/to/package";
     const mockLoadProject = vi.fn();
 
-    override(loadProject, mockLoadProject);
+    override(loadRepoProject, mockLoadProject);
 
     await createCommand({ partialPath, context });
 
@@ -61,7 +61,7 @@ describe("createCommand", () => {
       projectConventions: [] satisfies WorkspaceProjectDefined[],
     } as any;
 
-    override(loadProject, async () => project);
+    override(loadRepoProject, async () => project);
 
     await createCommand({ partialPath, context });
 
@@ -84,7 +84,7 @@ describe("createCommand", () => {
         { parentPath: "./two", nameConvention: "@two/*" },
       ]),
     } as any;
-    override(loadProject, async () => project);
+    override(loadRepoProject, async () => project);
 
     await createCommand({ partialPath, context });
 
@@ -112,7 +112,7 @@ describe("createCommand", () => {
       ]),
     } as any;
 
-    override(loadProject, async () => project);
+    override(loadRepoProject, async () => project);
     // skip actually creating anything:
     override(createPackage, async () => {
       // throw new Error("should not be called");

@@ -10,10 +10,8 @@ export default function rc(): AutoRc {
         "npm",
         {
           exact: true,
-          // will need to use lerna's --directory flag to publish when building to a temp folder
-          // earlier option was the publishFolder, which is now deprecated,
-          // when the build is within the package's folder, e.g. only contents of 'build' will be published
-          // publishFolder
+          // best not to set the deprecated 'publishFolder' here
+          // instead configure 'publish.directory' in lerna.json
         } satisfies INpmConfig,
       ],
     ],

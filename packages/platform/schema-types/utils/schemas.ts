@@ -13,4 +13,6 @@ export const schemas = {
     "https://github.com/SchemaStore/schemastore/raw/master/src/schemas/json/github-workflow.json",
   githubAction:
     "https://github.com/SchemaStore/schemastore/raw/master/src/schemas/json/github-action.json",
+  lerna:
+    "https://raw.githubusercontent.com/lerna/lerna/main/packages/lerna/schemas/lerna-schema.json",
 };

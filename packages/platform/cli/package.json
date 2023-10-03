@@ -1,4 +1,17 @@
 {
   "name": "@repo/cli",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@pnpm/workspace.find-packages": "1.0.10",
+    "@repo/core": "workspace:*",
+    "clipanion": "4.0.0-rc.2",
+    "remeda": "1.27.0",
+    "sort-package-json": "2.5.1",
+    "ts-pattern": "5.0.5",
+    "yaml": "2.3.2",
+    "zx": "7.2.3"
+  },
+  "devDependencies": {
+    "ts-pattern": "^5.0.5"
+  }
 }

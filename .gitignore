@@ -10,4 +10,5 @@ eslint.config.js
 .moon/toolchain.yml
 .moon/workspace.yml
 .moon/tasks.yml
+lerna.json
 .swc/

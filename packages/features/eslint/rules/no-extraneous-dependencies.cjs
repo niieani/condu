@@ -356,6 +356,7 @@ function reportIfMissing(
     },
   ) ?? [, depsOptions.autoFixFallback];
 
+  // TODO: add support for @types - should check both the type and the real package
   const canAutofix =
     autoFixVersionOrPrefix &&
     (!realPackageName || realPackageName === importPackageName) &&
@@ -370,17 +371,16 @@ function reportIfMissing(
             cwd: path.dirname(resolved),
             normalize: false,
           });
-          let importedPackageContent =
+          const importedPackageContent =
             dependencyJsonCache.get(importedPackageJsonPath) ??
             readJSON(importedPackageJsonPath, false);
-          if (importPackageContent) {
+
+          if (importedPackageContent) {
             dependencyJsonCache.set(
               importedPackageJsonPath,
               importedPackageContent,
             );
-          }
-          if (
-            !importedPackageContent ||
+          } else if (
             !importedPackageContent.name ||
             importedPackageContent.name !== pkgName
           ) {

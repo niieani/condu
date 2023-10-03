@@ -1,19 +1,22 @@
 import path from "path";
 import { getManifest } from "./toolchain.js";
 import { CORE_NAME } from "./constants.js";
-import { CONFIGURED, ConfiguredRepoConfig } from "@repo/core/configTypes.js";
 import {
-  WorkspaceProjectDefined,
+  CONFIGURED,
+  type ConfiguredRepoConfig,
+} from "@repo/core/configTypes.js";
+import {
   getProjectDefinitionsFromConventionConfig,
+  type WorkspaceProjectDefined,
 } from "./getProjectGlobsFromMoonConfig.js";
 import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
-// import { ProjectManifest } from "@pnpm/types";
+import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
 
 export interface LoadConfigOptions {
   startDir?: string;
 }
 
-type WriteManifestFn = (
+export type WriteManifestFn = (
   manifest: PackageJson,
   force?: boolean,
 ) => Promise<void>;
@@ -28,7 +31,7 @@ export type Project = Omit<
   writeProjectManifest: WriteManifestFn;
 };
 
-export async function loadProject({
+export async function loadRepoProject({
   startDir = process.cwd(),
 }: LoadConfigOptions = {}): Promise<Project | undefined> {
   const { manifest, writeProjectManifest, projectDir } = await getManifest(
@@ -62,3 +65,17 @@ export async function loadProject({
     config,
   };
 }
+
+export const getWorkspacePackages = async (project: Project) => {
+  // note: could use 'moon query projects --json' instead
+  // though that would lock us into 'moon'
+  const packages: readonly object[] = await findWorkspacePackagesNoCheck(
+    project.projectDir,
+    { patterns: project.projectConventions.map(({ glob }) => glob) },
+  );
+  return packages as readonly {
+    dir: string;
+    manifest: PackageJson;
+    writeProjectManifest: WriteManifestFn;
+  }[];
+};
