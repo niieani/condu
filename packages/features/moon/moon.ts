@@ -114,7 +114,6 @@ export const moon = ({
                   ...defaultToolchain.typescript,
                   syncProjectReferences: true,
                   syncProjectReferencesToPaths: true,
-                  routeOutDirToCache: true,
                   createMissingConfig: true,
                   rootOptionsConfigFileName: "tsconfig.options.json",
                   ...toolchain?.typescript,

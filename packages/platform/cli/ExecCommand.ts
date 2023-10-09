@@ -63,13 +63,20 @@ export class ExecCommand extends Command {
 
     const context = createCommandContext(this.context);
     const statusCode = await new Promise<number>((resolve) => {
-      context.log(`${pkg.manifest.name}: ${executable} ${args.join(" ")}`);
+      const currentDirectory = cwd
+        ? path.isAbsolute(cwd)
+          ? cwd
+          : path.normalize(path.join(process.cwd(), cwd))
+        : packageNamePart
+        ? pkg.dir
+        : process.cwd();
+      context.log(
+        `${
+          pkg.manifest.name
+        }: \ncd ${currentDirectory}\n${executable} ${args.join(" ")}`,
+      );
       const subProcess = spawn(executable, args, {
-        cwd: cwd
-          ? path.isAbsolute(cwd)
-            ? cwd
-            : path.normalize(path.join(process.cwd(), cwd))
-          : pkg.dir,
+        cwd: currentDirectory,
         stdio: "inherit",
         shell: true,
       });
@@ -111,7 +118,7 @@ export async function findExistingPackage({
 
   if (!matched) {
     const packages = [
-      { manifest, dir: project.projectDir },
+      { manifest, dir: project.dir },
       ...(await getWorkspacePackages(project)),
     ];
     matched = find(

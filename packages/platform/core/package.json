@@ -1,5 +1,8 @@
 {
   "name": "@repo/core",
   "type": "module",
-  "main": "esm/main.js"
+  "main": "esm/main.js",
+  "dependencies": {
+    "async-memoize-one": "1.1.5"
+  }
 }

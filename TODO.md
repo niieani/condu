@@ -5,9 +5,17 @@ MVP
 - [x] typescript references
 - [x] scaffolding new packages in monorepo (Create package command)
 - [x] GitHub Actions
-- [ ] automatically add missing workspace dependencies to package.json
+- [x] automatically add missing workspace dependencies to package.json
 - [ ] vitest
-- [ ] TS building for release
+- [ ] TS building for release - all files can be in the
+  - [ ] copy all source files into the dist folder, except configs
+  - [ ] for CJS pass: simply build with `module: commonjs`, no changes necessary
+  - [ ] for ESM pass:
+    - [ ] all the in-project references (relative or imports from existing monorepo ids) can be auto renamed to .mts
+      - [ ] regexp for imports and re-exports (export from)
+    - [ ] build
+  - [ ] adjust the "sources" in the .map files
+  - [ ] output will have: .ts, .js, .js.map, .d.ts, .mjs, .d.mts, .mjs.map + all other files
 - [ ] semantic-release (use [Auto](https://github.com/intuit/auto) instead for mono-repo support)
 - [ ] CI build and test using moon
 

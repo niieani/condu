@@ -2594,6 +2594,8 @@ __metadata:
 "@repo-feature/typescript@workspace:packages/features/typescript":
   version: 0.0.0-use.local
   resolution: "@repo-feature/typescript@workspace:packages/features/typescript"
+  dependencies:
+    "@repo/core": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -2618,9 +2620,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@repo/cli@workspace:packages/platform/cli"
   dependencies:
+    "@pnpm/types": "npm:9.2.0"
     "@pnpm/workspace.find-packages": "npm:1.0.10"
     "@repo/core": "workspace:*"
-    clipanion: "npm:4.0.0-rc.2"
+    async-memoize-one: "npm:^1.1.5"
+    clipanion: "patch:clipanion@npm%3A4.0.0-rc.2#~/.yarn/patches/clipanion-npm-4.0.0-rc.2-ad27d804c4.patch"
     remeda: "npm:1.27.0"
     sort-package-json: "npm:2.5.1"
     ts-pattern: "npm:^5.0.5"
@@ -2632,6 +2636,8 @@ __metadata:
 "@repo/core@workspace:*, @repo/core@workspace:packages/platform/core":
   version: 0.0.0-use.local
   resolution: "@repo/core@workspace:packages/platform/core"
+  dependencies:
+    async-memoize-one: "npm:1.1.5"
   languageName: unknown
   linkType: soft
 
@@ -3779,7 +3785,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async-memoize-one@npm:^1.1.5":
+"async-memoize-one@npm:1.1.5, async-memoize-one@npm:^1.1.5":
   version: 1.1.5
   resolution: "async-memoize-one@npm:1.1.5"
   dependencies:
@@ -4385,6 +4391,17 @@ __metadata:
   peerDependencies:
     typanion: "*"
   checksum: 00a478d46f2983eba02b059a16a3c1fc3f1de2a056d2f75386e253c5e8b01322fdbdd1db1dfdb57ccc81d8fd57c5fc9890ee96003b5702ac5692f1397c2c9c6b
+  languageName: node
+  linkType: hard
+
+"clipanion@patch:clipanion@npm%3A4.0.0-rc.2#~/.yarn/patches/clipanion-npm-4.0.0-rc.2-ad27d804c4.patch":
+  version: 4.0.0-rc.2
+  resolution: "clipanion@patch:clipanion@npm%3A4.0.0-rc.2#~/.yarn/patches/clipanion-npm-4.0.0-rc.2-ad27d804c4.patch::version=4.0.0-rc.2&hash=c93b4e"
+  dependencies:
+    typanion: "npm:^3.8.0"
+  peerDependencies:
+    typanion: "*"
+  checksum: baf56cb86f343b15eaad9a5d0f2e3c2ee6eb88cc0af4f3c4bb94310440218bdb4f7fa5d753dda2b6a6881fda835ecab9596b95ea2b0a4d8f793869cdcf3a78b5
   languageName: node
   linkType: hard
 

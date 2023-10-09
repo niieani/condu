@@ -1,4 +1,7 @@
 {
   "name": "@repo-feature/typescript",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@repo/core": "workspace:*"
+  }
 }

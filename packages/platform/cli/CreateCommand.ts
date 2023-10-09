@@ -76,7 +76,7 @@ export async function createCommand({
   if (!project) {
     throw new Error(`Unable to load project`);
   }
-  const { projectConventions, manifest, projectDir } = project;
+  const { projectConventions, manifest, dir: projectDir } = project;
 
   const match = getSingleMatch({
     projectConventions,
