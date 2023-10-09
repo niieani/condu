@@ -71,19 +71,8 @@ export async function loadRepoProject({
   );
 
   const project: Project = {
-    manifest: {
-      ...manifest,
-      kind: "workspace",
-      path: projectDir,
-    } as RepoPackageJson,
-    writeProjectManifest: (
-      { path, kind, ...pJson }: Partial<RepoPackageJson>,
-      force?: boolean,
-    ) =>
-      writeProjectManifest(
-        { ...manifest, ...(pJson as ProjectManifest) },
-        force,
-      ),
+    manifest,
+    writeProjectManifest,
     projectDir,
     projectConventions,
     dir: ".",
@@ -102,16 +91,28 @@ export const getWorkspacePackages = async (
   const packages = await findWorkspacePackagesNoCheck(project.projectDir, {
     patterns: project.projectConventions.map(({ glob }) => glob).sort(),
   });
-  return packages.map(({ dir, manifest, writeProjectManifest }) => ({
-    dir,
-    manifest: { ...manifest, kind: "package", path: dir } as RepoPackageJson,
-    writeProjectManifest: (
-      { path, kind, ...pJson }: Partial<RepoPackageJson>,
-      force?: boolean,
-    ) =>
-      writeProjectManifest(
-        { ...manifest, ...(pJson as ProjectManifest) },
-        force,
-      ),
-  }));
+  return packages.flatMap(({ dir, manifest, writeProjectManifest }) => {
+    const relativePath = path.relative(project.projectDir, dir);
+    if (relativePath === "") {
+      // skip workspace package
+      return [];
+    }
+    return {
+      dir: relativePath,
+      manifest: {
+        ...(manifest as PackageJson),
+        kind: "package",
+        path: dir,
+        workspacePath: relativePath,
+      } satisfies RepoPackageJson,
+      writeProjectManifest: (
+        { path, workspacePath, kind, ...pJson }: Partial<RepoPackageJson>,
+        force?: boolean,
+      ) =>
+        writeProjectManifest(
+          { ...manifest, ...(pJson as ProjectManifest) },
+          force,
+        ),
+    };
+  });
 };

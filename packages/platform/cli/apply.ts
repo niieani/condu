@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { ensureDependency } from "./toolchain.js";
 import type {
+  CollectedFileDef,
   CollectedState,
   DependencyDef,
   FileDef,
@@ -26,6 +27,7 @@ export async function collectState(
     tasks: [],
   };
 
+  const { project } = config;
   // TODO: topo-sort features by `order` config
 
   const flags: { [K in keyof StateFlags]?: string } = {};
@@ -34,7 +36,34 @@ export async function collectState(
     // const featureConfig = feature.order;
     const featureState = await feature.actionFn(config, state);
     if (featureState.files) {
-      state.files.push(...featureState.files.filter(nonEmpty));
+      const flattenedFiles = (
+        await Promise.all(
+          featureState.files.map(async (file): Promise<CollectedFileDef[]> => {
+            if (!file) return [];
+            const matchPackage = file.matchPackage;
+            if (!matchPackage) {
+              return [{ ...file, targetDir: ".", target: project.manifest }];
+            }
+            const packages = [
+              ...(await project.getWorkspacePackages()),
+              project,
+            ];
+            console.log(
+              "packages",
+              packages.map(({ manifest }) => manifest.workspacePath),
+            );
+            const isMatchingPackage = isMatching(matchPackage);
+
+            // TODO: check if any packages matched and maybe add a warning if zero matches?
+            return packages.flatMap((pkg) =>
+              isMatchingPackage(pkg.manifest)
+                ? [{ ...file, targetDir: pkg.dir, target: pkg.manifest }]
+                : [],
+            );
+          }),
+        )
+      ).flat();
+      state.files.push(...flattenedFiles);
     }
     if (featureState.tasks) {
       if (flags.preventAdditionalTasks) {
@@ -89,9 +118,9 @@ const writeFileFromDef = async (
       ? resolvedContent
       : stringify(resolvedContent, file.path);
 
-  console.log(`Writing ${file.path}`);
+  console.log(`Writing ${targetPath}`);
   await fs.mkdir(parentDir, { recursive: true });
-  return fs.writeFile(path.join(rootDir, file.path), content);
+  return fs.writeFile(targetPath, content);
 };
 
 export function writeFiles(
@@ -110,6 +139,17 @@ export function writeFiles(
 
 const defaultPackageManager = "yarn";
 const defaultNodeVersion = "20.7.0";
+const DEFAULT_SOURCE_EXTENSIONS = [
+  "ts",
+  "tsx",
+  "mts",
+  "cts",
+  "js",
+  "jsx",
+  "mjs",
+  "cjs",
+  "json",
+];
 
 export async function apply(options: LoadConfigOptions = {}) {
   const project = await loadRepoProject(options);
@@ -181,52 +221,17 @@ export async function apply(options: LoadConfigOptions = {}) {
     conventions: {
       ...config.conventions,
       sourceDir: config.conventions?.sourceDir ?? "src",
-      sourceExtensions: config.conventions?.sourceExtensions ?? [
-        "ts",
-        "tsx",
-        "mts",
-        "cts",
-        "js",
-        "jsx",
-        "mjs",
-        "cjs",
-        "json",
-      ],
+      sourceExtensions:
+        config.conventions?.sourceExtensions ?? DEFAULT_SOURCE_EXTENSIONS,
     },
-    manifest,
     workspaceDir: projectDir,
+    project,
   });
 
-  const flattenedFiles = (
-    await Promise.all(
-      collectedState.files.map(
-        async (
-          file,
-        ): Promise<
-          (FileDef & {
-            targetDir: string;
-            target: RepoPackageJson;
-          })[]
-        > => {
-          const matchPackage = file.matchPackage;
-          if (!matchPackage) {
-            return [{ ...file, targetDir: ".", target: project.manifest }];
-          }
-          const packages = [...(await project.getWorkspacePackages()), project];
-          const isMatchingPackage = isMatching(matchPackage);
-
-          // TODO: check if any packages matched and maybe add a warning if zero matches?
-          return packages.flatMap((pkg) =>
-            isMatchingPackage(pkg.manifest)
-              ? [{ ...file, targetDir: pkg.dir, target: pkg.manifest }]
-              : [],
-          );
-        },
-      ),
-    )
-  ).flat();
-
-  const filesByPackageDir = groupBy(flattenedFiles, (file) => file.targetDir);
+  const filesByPackageDir = groupBy(
+    collectedState.files,
+    (file) => file.targetDir,
+  );
 
   for (const [targetPackageDir, files] of Object.entries(filesByPackageDir)) {
     const { target } = files[0];

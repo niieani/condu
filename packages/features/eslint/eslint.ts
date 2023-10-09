@@ -9,7 +9,7 @@ export const eslint = ({}: {} = {}) =>
         {
           path: "eslint.config.js",
           content: `import config from '@repo-feature/eslint/config.${
-            config.manifest.name === "toolchain" ? "ts" : "js"
+            config.project.manifest.name === "toolchain" ? "ts" : "js"
           }';
 export default config;`,
         },

@@ -2,6 +2,7 @@ import type { PartialProjectConfig, PartialTaskConfig } from "@moonrepo/types";
 import type { WorkspaceProjectsConvention } from "@repo/cli/getProjectGlobsFromMoonConfig.js";
 import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
 import type { Pattern } from "ts-pattern";
+import type { Project } from "@repo/cli/loadProject.js";
 
 export interface DependencyDef {
   packageAlias: string;
@@ -35,7 +36,7 @@ export interface FileDef {
       ) => Promise<T> | T);
   path: string;
   /** ts-pattern for package.jsons that the file should be created/updated in */
-  matchPackage?: Pattern.Pattern<RepoPackageJson>;
+  matchPackage?: Pattern.Pattern<RepoPackageJson> | Partial<RepoPackageJson>;
 }
 
 /*
@@ -53,12 +54,19 @@ export interface RepoPackageJson extends PackageJson {
   repo?: RepoPackageConfig;
   /** absolute directory of the package */
   path: string;
+  /** relative directory of the package (from workspace dir) */
+  workspacePath: string;
   kind: "workspace" | "package";
+}
+
+export interface CollectedFileDef extends FileDef {
+  targetDir: string;
+  target: RepoPackageJson;
 }
 
 export interface CollectedState {
   /** these files will be created during execution */
-  files: FileDef[];
+  files: CollectedFileDef[];
   /** we'll ensure these dependencies are installed during execution */
   devDependencies: (string | DependencyDef)[];
   tasks: Task[];
@@ -74,13 +82,14 @@ export type ToIntermediateState<T> = {
     : T[P];
 };
 
-export type State = ToIntermediateState<CollectedState> & {
+export type State = ToIntermediateState<Omit<CollectedState, "files">> & {
+  files?: ReadonlyArray<FileDef | false | undefined>;
   flags?: ReadonlyArray<keyof StateFlags>;
 };
 
 export type FeatureActionFn = (
   config: RepoConfigWithInferredValues,
-  state: State,
+  state: CollectedState,
 ) => Partial<State> | Promise<Partial<State>>;
 
 export interface FeatureDefinition {
@@ -136,9 +145,9 @@ export const configure = (config: RepoConfig): ConfiguredRepoConfig => ({
 });
 
 export interface RepoConfigWithInferredValues extends RepoConfig {
-  manifest: PackageJson;
   workspaceDir: string;
   conventions: Required<Conventions>;
   git: Required<GitConfig>;
   node: Required<NodeConfig>;
+  project: Omit<Project, "writeProjectManifest">;
 }
