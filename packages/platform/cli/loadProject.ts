@@ -4,6 +4,7 @@ import { CORE_NAME } from "./constants.js";
 import {
   CONFIGURED,
   type ConfiguredRepoConfig,
+  type RepoPackageJson,
 } from "@repo/core/configTypes.js";
 import {
   getProjectDefinitionsFromConventionConfig,
@@ -11,25 +12,37 @@ import {
 } from "./getProjectGlobsFromMoonConfig.js";
 import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
 import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
+import memoizeOne from "async-memoize-one";
+import type { ProjectManifest } from "@pnpm/types";
 
 export interface LoadConfigOptions {
   startDir?: string;
 }
 
 export type WriteManifestFn = (
-  manifest: PackageJson,
+  manifest: RepoPackageJson | PackageJson,
   force?: boolean,
 ) => Promise<void>;
 
-export type Project = Omit<
-  Awaited<ReturnType<typeof getManifest>>,
-  "fileName" | "manifest" | "writeProjectManifest"
-> & {
-  manifest: PackageJson;
-  projectConventions: WorkspaceProjectDefined[];
-  config: ConfiguredRepoConfig;
+interface WorkspacePackage {
+  /** relative directory of the package from the projectDir */
+  dir: string;
+  manifest: RepoPackageJson;
   writeProjectManifest: WriteManifestFn;
-};
+}
+
+export interface Project
+  extends WorkspacePackage,
+    Omit<
+      Awaited<ReturnType<typeof getManifest>>,
+      "fileName" | "manifest" | "writeProjectManifest"
+    > {
+  projectConventions: WorkspaceProjectDefined[];
+  /** absolute path to the project */
+  projectDir: string;
+  config: ConfiguredRepoConfig;
+  getWorkspacePackages: () => Promise<readonly WorkspacePackage[]>;
+}
 
 export async function loadRepoProject({
   startDir = process.cwd(),
@@ -57,25 +70,48 @@ export async function loadRepoProject({
     config.projects,
   );
 
-  return {
-    manifest: manifest as PackageJson,
-    writeProjectManifest: writeProjectManifest as WriteManifestFn,
+  const project: Project = {
+    manifest: {
+      ...manifest,
+      kind: "workspace",
+      path: projectDir,
+    } as RepoPackageJson,
+    writeProjectManifest: (
+      { path, kind, ...pJson }: Partial<RepoPackageJson>,
+      force?: boolean,
+    ) =>
+      writeProjectManifest(
+        { ...manifest, ...(pJson as ProjectManifest) },
+        force,
+      ),
     projectDir,
     projectConventions,
+    dir: ".",
     config,
+    getWorkspacePackages: memoizeOne(() => getWorkspacePackages(project)),
   };
+
+  return project;
 }
 
-export const getWorkspacePackages = async (project: Project) => {
+export const getWorkspacePackages = async (
+  project: Pick<Project, "projectConventions" | "projectDir">,
+) => {
   // note: could use 'moon query projects --json' instead
   // though that would lock us into 'moon'
-  const packages: readonly object[] = await findWorkspacePackagesNoCheck(
-    project.projectDir,
-    { patterns: project.projectConventions.map(({ glob }) => glob) },
-  );
-  return packages as readonly {
-    dir: string;
-    manifest: PackageJson;
-    writeProjectManifest: WriteManifestFn;
-  }[];
+  const packages = await findWorkspacePackagesNoCheck(project.projectDir, {
+    patterns: project.projectConventions.map(({ glob }) => glob).sort(),
+  });
+  return packages.map(({ dir, manifest, writeProjectManifest }) => ({
+    dir,
+    manifest: { ...manifest, kind: "package", path: dir } as RepoPackageJson,
+    writeProjectManifest: (
+      { path, kind, ...pJson }: Partial<RepoPackageJson>,
+      force?: boolean,
+    ) =>
+      writeProjectManifest(
+        { ...manifest, ...(pJson as ProjectManifest) },
+        force,
+      ),
+  }));
 };

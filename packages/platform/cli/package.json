@@ -2,14 +2,18 @@
   "name": "@repo/cli",
   "type": "module",
   "dependencies": {
+    "@pnpm/types": "9.2.0",
     "@pnpm/workspace.find-packages": "1.0.10",
     "@repo/core": "workspace:*",
-    "clipanion": "4.0.0-rc.2",
+    "async-memoize-one": "^1.1.5",
+    "clipanion": "patch:clipanion@npm%3A4.0.0-rc.2#~/.yarn/patches/clipanion-npm-4.0.0-rc.2-ad27d804c4.patch",
     "remeda": "1.27.0",
     "sort-package-json": "2.5.1",
     "ts-pattern": "5.0.5",
     "yaml": "2.3.2",
-    "zx": "7.2.3"
+    "zx": "7.2.3",
+    "vitest": "0.34.5",
+    "swc-mockify": "0.1.0"
   },
   "devDependencies": {
     "ts-pattern": "^5.0.5"

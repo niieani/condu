@@ -1,6 +1,7 @@
-import type { PartialTaskConfig } from "@moonrepo/types";
-import { type WorkspaceProjectsConvention } from "@repo/cli/getProjectGlobsFromMoonConfig.js";
+import type { PartialProjectConfig, PartialTaskConfig } from "@moonrepo/types";
+import type { WorkspaceProjectsConvention } from "@repo/cli/getProjectGlobsFromMoonConfig.js";
 import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
+import type { Pattern } from "ts-pattern";
 
 export interface DependencyDef {
   packageAlias: string;
@@ -25,11 +26,34 @@ export interface FileDef {
   /** should this file be published when making a distributable package */
   publish?: boolean;
   /** if passed in an object, the correct stringifier is chosen based on the file extension */
-  content?: string | object;
+  // TODO: support function (previousContent, packageJson) => string | object
+  content?:
+    | string
+    | object
+    | (<T extends string | object>(
+        manifest: RepoPackageJson,
+      ) => Promise<T> | T);
   path: string;
-  /** list of target packages inside of which the file will be created/updated */
-  // TODO: maybe it should support targetting by package.json keywords?
-  targetPackages?: string[];
+  /** ts-pattern for package.jsons that the file should be created/updated in */
+  matchPackage?: Pattern.Pattern<RepoPackageJson>;
+}
+
+/*
+what if enabling the features is done by a simple list file (defaults),
+but if you want to customize, you then create a config file?
+*/
+
+export interface RepoPackageConfig
+  extends Pick<
+    PartialProjectConfig,
+    "language" | "platform" | "tags" | "type"
+  > {}
+
+export interface RepoPackageJson extends PackageJson {
+  repo?: RepoPackageConfig;
+  /** absolute directory of the package */
+  path: string;
+  kind: "workspace" | "package";
 }
 
 export interface CollectedState {

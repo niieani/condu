@@ -8,11 +8,18 @@
 //   jest as vi,
 // } from "bun:test";
 // import type { Mock } from "bun:test";
-import { describe, expect, beforeEach, afterEach, it, vi } from "vitest";
-import type { Mock } from "vitest";
-import { type Project } from "./loadProject.js";
-import { loadRepoProject } from "./loadProject.js";
+import {
+  describe,
+  expect,
+  beforeEach,
+  afterEach,
+  it,
+  vi,
+  type Mock,
+} from "vitest";
+import { loadRepoProject, type Project } from "./loadProject.js";
 import { override, restore } from "swc-mockify/src/mockify.js";
+
 import { createCommand, createPackage } from "./CreateCommand.js";
 import {
   type WorkspaceProjectDefined,
@@ -46,12 +53,11 @@ describe("createCommand", () => {
 
     override(loadRepoProject, mockLoadProject);
 
-    await createCommand({ partialPath, context });
+    await expect(
+      createCommand({ partialPath, context }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot('"Unable to load project"');
 
-    // expect(errorMock).toHaveBeenCalled();
-    expect(errorMock).toHaveBeenCalledWith("Unable to load project");
     expect(mockLoadProject).toHaveBeenCalled();
-    expect(logMock).not.toHaveBeenCalled();
   });
 
   it("should log an error if no convention matches found", async () => {
@@ -63,16 +69,11 @@ describe("createCommand", () => {
 
     override(loadRepoProject, async () => project);
 
-    await createCommand({ partialPath, context });
-
-    expect(errorMock).toHaveBeenCalledWith(
-      "Full path for the new package could not be inferred from the workspace config and the provided partial path.",
-    );
-    expect(errorMock).toHaveBeenCalledWith(
-      "If you're trying to provide the full path relative to the workspace, prefix it with './', e.g. ./" +
-        partialPath,
-    );
-    expect(logMock).not.toHaveBeenCalled();
+    await expect(createCommand({ partialPath, context })).rejects
+      .toThrowErrorMatchingInlineSnapshot(`
+        "Full path for the new package could not be inferred from the workspace config and the provided partial path.
+        If you're trying to provide the full path relative to the workspace, prefix it with './', e.g. ./package"
+      `);
   });
 
   it("should log an error if multiple convention matches found", async () => {
@@ -86,21 +87,15 @@ describe("createCommand", () => {
     } as any;
     override(loadRepoProject, async () => project);
 
-    await createCommand({ partialPath, context });
+    await expect(
+      createCommand({ partialPath, context }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+        "Multiple possible paths for the package were inferred from the workspace config:
+        - ./one/package (as @one/package)
+        - ./two/package (as @two/package)
 
-    expect(errorMock).toHaveBeenNthCalledWith(
-      1,
-      "Multiple possible paths for the new package were inferred from the workspace config:",
-    );
-    expect(errorMock).toHaveBeenNthCalledWith(
-      2,
-      "- ./one/package (as @one/package)\n- ./two/package (as @two/package)\n",
-    );
-    expect(errorMock).toHaveBeenNthCalledWith(
-      3,
-      "Please prefix your package name with its parent directory to disambiguate.",
-    );
-    expect(logMock).not.toHaveBeenCalled();
+        Please prefix your package name with its parent directory to disambiguate."
+      `);
   });
 
   it("should log the package name and path if a single convention match found", async () => {

@@ -6,6 +6,7 @@ import type {
   DependencyDef,
   FileDef,
   RepoConfigWithInferredValues,
+  RepoPackageJson,
   StateFlags,
 } from "@repo/core/configTypes.js";
 import { groupBy, equals } from "remeda";
@@ -14,6 +15,7 @@ import { type LoadConfigOptions, loadRepoProject } from "./loadProject.js";
 import { getDefaultGitBranch } from "@repo/core/utils/getDefaultGitBranch.js";
 import yaml from "yaml";
 import { nonEmpty } from "@repo/core/utils/filter.js";
+import { isMatching } from "ts-pattern";
 
 export async function collectState(
   config: RepoConfigWithInferredValues,
@@ -68,32 +70,43 @@ const stringify = (obj: unknown, filePath: string) =>
     ? yaml.stringify(obj)
     : JSON.stringify(obj, null, 2);
 
-const writeFileFromDef = async (file: FileDef, rootDir: string) => {
-  if (typeof file.content === "undefined") {
+const writeFileFromDef = async (
+  file: FileDef,
+  rootDir: string,
+  manifest: RepoPackageJson,
+) => {
+  const resolvedContent =
+    typeof file.content === "function"
+      ? await file.content(manifest)
+      : file.content;
+  if (resolvedContent === "undefined") {
     return;
   }
-  const content =
-    typeof file.content === "string"
-      ? file.content
-      : stringify(file.content, file.path);
-  console.log(`Writing ${file.path}`);
   const targetPath = path.join(rootDir, file.path);
   const parentDir = path.dirname(targetPath);
+  const content =
+    typeof resolvedContent === "string"
+      ? resolvedContent
+      : stringify(resolvedContent, file.path);
+
+  console.log(`Writing ${file.path}`);
   await fs.mkdir(parentDir, { recursive: true });
   return fs.writeFile(path.join(rootDir, file.path), content);
 };
 
-export function writeFiles(files: readonly FileDef[], rootDir: string) {
+export function writeFiles(
+  files: readonly FileDef[],
+  rootDir: string,
+  manifest: RepoPackageJson,
+) {
   return Promise.allSettled(
     files.map((file) =>
       // TODO: add logging
       // TODO: add manual diffing with confirmation that change is ok
-      writeFileFromDef(file, rootDir),
+      writeFileFromDef(file, rootDir, manifest),
     ),
   );
 }
-
-const WORKSPACE = "[WORKSPACE]";
 
 const defaultPackageManager = "yarn";
 const defaultNodeVersion = "20.7.0";
@@ -110,6 +123,7 @@ export async function apply(options: LoadConfigOptions = {}) {
     projectDir,
     config,
     projectConventions,
+    getWorkspacePackages,
   } = project;
 
   const projectGlobs = projectConventions.map((project) => project.glob).sort();
@@ -121,16 +135,9 @@ export async function apply(options: LoadConfigOptions = {}) {
   //   `Errors in config file`,
   // );
 
-  const workspaces =
-    projectGlobs.length > 0
-      ? await findWorkspacePackagesNoCheck(projectDir, {
-          patterns: projectGlobs,
-        })
-      : [];
-
   let didChangeManifest = false;
 
-  const defaultBranch =
+  const defaultBranch: string =
     config.git?.defaultBranch ?? (await getDefaultGitBranch(projectDir));
   const { packageManager, engines } = manifest;
   const [packageManagerName, packageManagerVersion] = packageManager?.split(
@@ -190,31 +197,45 @@ export async function apply(options: LoadConfigOptions = {}) {
     workspaceDir: projectDir,
   });
 
-  const flattenedFiles = collectedState.files.flatMap((file) =>
-    file
-      ? (file.targetPackages ?? [WORKSPACE]).map((targetPackage) => ({
-          ...file,
-          targetPackage,
-        }))
-      : [],
-  );
-  const filesByPackage = groupBy(flattenedFiles, (file) => file.targetPackage);
+  const flattenedFiles = (
+    await Promise.all(
+      collectedState.files.map(
+        async (
+          file,
+        ): Promise<
+          (FileDef & {
+            targetDir: string;
+            target: RepoPackageJson;
+          })[]
+        > => {
+          const matchPackage = file.matchPackage;
+          if (!matchPackage) {
+            return [{ ...file, targetDir: ".", target: project.manifest }];
+          }
+          const packages = [...(await project.getWorkspacePackages()), project];
+          const isMatchingPackage = isMatching(matchPackage);
 
-  for (const [targetPackage, files] of Object.entries(filesByPackage)) {
-    if (targetPackage === WORKSPACE) {
-      await writeFiles(files, projectDir);
+          // TODO: check if any packages matched and maybe add a warning if zero matches?
+          return packages.flatMap((pkg) =>
+            isMatchingPackage(pkg.manifest)
+              ? [{ ...file, targetDir: pkg.dir, target: pkg.manifest }]
+              : [],
+          );
+        },
+      ),
+    )
+  ).flat();
+
+  const filesByPackageDir = groupBy(flattenedFiles, (file) => file.targetDir);
+
+  for (const [targetPackageDir, files] of Object.entries(filesByPackageDir)) {
+    const { target } = files[0];
+    if (targetPackageDir === ".") {
+      await writeFiles(files, projectDir, target);
       continue;
     }
-    // TODO: since we take the workspace list from package.json, we need to make sure 'moon' is applied before (race condition?)
-    // otherwise, we should transform 'config.projects' into a list of workspaces
-    const targetWorkspace = workspaces.find(
-      (workspace) => workspace.manifest.name === targetPackage,
-    );
-    if (!targetWorkspace) {
-      console.error(`Unable to find workspace ${targetPackage}`);
-      continue;
-    }
-    await writeFiles(files, targetWorkspace.dir);
+
+    await writeFiles(files, path.join(projectDir, targetPackageDir), target);
   }
 
   for (const packageNameOrDef of collectedState.devDependencies) {

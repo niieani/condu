@@ -8,6 +8,9 @@ import path from "node:path";
 const { version, description, name } = require("../../../package.json");
 
 const [node, app, ...args] = process.argv;
+if (!node || !app) {
+  throw new Error(`Unable to determine binary name`);
+}
 
 const cli = new Cli({
   binaryLabel: name,
