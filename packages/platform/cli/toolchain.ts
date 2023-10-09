@@ -9,7 +9,8 @@ import path from "path";
 import { findUp } from "@repo/core/utils/findUp.js";
 import { $ } from "./zx.js";
 import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
-import type { DependencyDef } from "@repo/core/configTypes.js";
+import type { DependencyDef, RepoPackageJson } from "@repo/core/configTypes.js";
+import type { ProjectManifest } from "@pnpm/types";
 
 const registry = "https://registry.npmjs.org/";
 const resolveFromNpm = createNpmResolver(
@@ -61,8 +62,26 @@ export async function getManifest(cwd: string) {
   );
   const projectDir = manifestPath ? path.dirname(manifestPath) : cwd;
 
-  const manifestWrapper = await readProjectManifest(projectDir);
-  return { ...manifestWrapper, projectDir };
+  const { manifest, writeProjectManifest, ...manifestWrapper } =
+    await readProjectManifest(projectDir);
+  return {
+    ...manifestWrapper,
+    manifest: {
+      ...(manifest as PackageJson),
+      kind: "workspace",
+      path: projectDir,
+      workspacePath: ".",
+    } satisfies RepoPackageJson,
+    writeProjectManifest: (
+      { path, kind, ...pJson }: Partial<RepoPackageJson>,
+      force?: boolean,
+    ) =>
+      writeProjectManifest(
+        { ...manifest, ...(pJson as ProjectManifest) },
+        force,
+      ),
+    projectDir,
+  };
 }
 
 export async function ensureDependency({

@@ -1,5 +1,6 @@
 import { defineFeature } from "@repo/core/defineFeature.js";
 import { nonEmpty } from "@repo/core/utils/filter.js";
+import path from "node:path";
 
 export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
   defineFeature({
@@ -17,8 +18,10 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
             // ignore all generated files:
             ...state.files
               .filter(nonEmpty)
-              .flatMap(({ path, type }) =>
-                type === "committed" ? [] : [path],
+              // TODO: intelligently group in-package files by workspaces globs
+              // and only add exceptions if file isn't generated AND exists
+              .flatMap(({ path: p, type, target: { workspacePath } }) =>
+                type === "committed" ? [] : [path.join(workspacePath, p)],
               ),
             ...ignore,
           ].join("\n"),

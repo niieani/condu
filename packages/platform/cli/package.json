@@ -13,7 +13,11 @@
     "yaml": "2.3.2",
     "zx": "7.2.3",
     "vitest": "0.34.5",
-    "swc-mockify": "0.1.0"
+    "swc-mockify": "0.1.0",
+    "@pnpm/read-project-manifest": "5.0.6",
+    "@pnpm/npm-resolver": "16.0.10",
+    "@pnpm/fetch": "7.0.3",
+    "@pnpm/network.auth-header": "2.0.5"
   },
   "devDependencies": {
     "ts-pattern": "^5.0.5"
