@@ -2,6 +2,7 @@
   "name": "@repo-feature/gitignore",
   "type": "module",
   "dependencies": {
-    "@repo/core": "workspace:*"
+    "@repo/core": "workspace:*",
+    "remeda": "1.27.0"
   }
 }

@@ -1,26 +1,22 @@
 .DS_Store
 node_modules
 .yarn/cache
-tsconfig.options.json
-tsconfig.json
-packages/features/auto/tsconfig.json
-packages/features/ci-github-actions/tsconfig.json
-packages/features/eslint/tsconfig.json
-packages/features/gitignore/tsconfig.json
-packages/features/lerna/tsconfig.json
-packages/features/moon/tsconfig.json
-packages/features/typescript/tsconfig.json
-packages/features/vitest/tsconfig.json
-packages/platform/auto-plugin-package-structure/tsconfig.json
-packages/platform/cli/tsconfig.json
-packages/platform/core/tsconfig.json
-packages/platform/schema-types/tsconfig.json
-eslint.config.js
-.moon/
-.moon/cache
-.moon/docker
-.moon/toolchain.yml
-.moon/workspace.yml
-.moon/tasks.yml
-lerna.json
+# typescript:
+/tsconfig.options.json
+/tsconfig.json
+/packages/features/*/tsconfig.json
+/packages/platform/*/tsconfig.json
+# eslint:
+/eslint.config.js
+# moon:
+/.moon/
+/.moon/cache
+/.moon/docker
+/.moon/toolchain.yml
+/.moon/workspace.yml
+# moonCi:
+/.moon/tasks.yml
+# lerna:
+/lerna.json
+# custom ignore patterns:
 .swc/

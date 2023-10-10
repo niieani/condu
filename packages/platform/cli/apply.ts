@@ -42,24 +42,54 @@ export async function collectState(
             if (!file) return [];
             const matchPackage = file.matchPackage;
             if (!matchPackage) {
-              return [{ ...file, targetDir: ".", target: project.manifest }];
+              return [
+                {
+                  ...file,
+                  targetDir: ".",
+                  target: project.manifest,
+                  featureName: feature.name,
+                },
+              ];
             }
             const packages = [
               ...(await project.getWorkspacePackages()),
               project,
             ];
-            console.log(
-              "packages",
-              packages.map(({ manifest }) => manifest.workspacePath),
-            );
             const isMatchingPackage = isMatching(matchPackage);
+            const matchAllPackages =
+              Object.keys(matchPackage).length === 1 &&
+              "kind" in matchPackage &&
+              matchPackage.kind === "package";
 
             // TODO: check if any packages matched and maybe add a warning if zero matches?
-            return packages.flatMap((pkg) =>
+            const matches = packages.flatMap((pkg) =>
               isMatchingPackage(pkg.manifest)
-                ? [{ ...file, targetDir: pkg.dir, target: pkg.manifest }]
+                ? [
+                    {
+                      ...file,
+                      targetDir: pkg.dir,
+                      target: pkg.manifest,
+                      featureName: feature.name,
+                      skipIgnore: matchAllPackages,
+                    },
+                  ]
                 : [],
             );
+
+            return matchAllPackages
+              ? [
+                  ...matches,
+                  // this one is used by the gitignore-like features, as it doesn't contain 'content'
+                  ...project.projectConventions.map((convention) => ({
+                    path: file.path,
+                    publish: file.publish,
+                    type: file.type,
+                    featureName: feature.name,
+                    targetDir: convention.glob,
+                    target: project.manifest,
+                  })),
+                ]
+              : matches;
           }),
         )
       ).flat();
@@ -228,13 +258,15 @@ export async function apply(options: LoadConfigOptions = {}) {
     project,
   });
 
-  const filesByPackageDir = groupBy(
-    collectedState.files,
-    (file) => file.targetDir,
+  const writableFiles = collectedState.files.filter(({ targetDir, content }) =>
+    Boolean(targetDir && content),
   );
+  const filesByPackageDir = groupBy(writableFiles, (file) => file.targetDir);
 
   for (const [targetPackageDir, files] of Object.entries(filesByPackageDir)) {
     const { target } = files[0];
+    if (!target) continue;
+
     if (targetPackageDir === ".") {
       await writeFiles(files, projectDir, target);
       continue;

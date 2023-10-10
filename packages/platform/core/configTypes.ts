@@ -60,6 +60,14 @@ export interface RepoPackageJson extends PackageJson {
 }
 
 export interface CollectedFileDef extends FileDef {
+  featureName: string;
+  /**
+   * set to true if the file should not be ignored,
+   * or list the feature names by which it should be ignored
+   *
+   * prefer to use type: 'committed' instead, this is used internally
+   **/
+  skipIgnore?: boolean | string[];
   targetDir: string;
   target: RepoPackageJson;
 }
