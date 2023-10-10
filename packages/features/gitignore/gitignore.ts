@@ -1,6 +1,6 @@
 import { defineFeature } from "@repo/core/defineFeature.js";
-import { nonEmpty } from "@repo/core/utils/filter.js";
 import path from "node:path";
+import { groupBy } from "remeda";
 
 export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
   defineFeature({
@@ -10,21 +10,35 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
       files: [
         {
           path: ".gitignore",
-          content: [
-            ".DS_Store",
-            "node_modules",
-            // TODO: extract to yarn() feature
-            ".yarn/cache",
-            // ignore all generated files:
-            ...state.files
-              .filter(nonEmpty)
-              // TODO: intelligently group in-package files by workspaces globs
-              // and only add exceptions if file isn't generated AND exists
-              .flatMap(({ path: p, type, target: { workspacePath } }) =>
-                type === "committed" ? [] : [path.join(workspacePath, p)],
+          content: () => {
+            const filesByFeature = groupBy(
+              state.files.filter(
+                ({ type, skipIgnore }) => type !== "committed" && !skipIgnore,
               ),
-            ...ignore,
-          ].join("\n"),
+              ({ featureName }) => featureName,
+            );
+            const entriesFromFeatures = Object.entries(filesByFeature).flatMap(
+              ([featureName, files]) => {
+                if (featureName === "gitignore") return [];
+                return [
+                  `# ${featureName}:`,
+                  ...files.map(
+                    ({ path: p, targetDir }) => `/${path.join(targetDir, p)}`,
+                  ),
+                ];
+              },
+            );
+            return [
+              ".DS_Store",
+              "node_modules",
+              // TODO: extract to yarn() feature
+              ".yarn/cache",
+              // ignore all generated files:
+              ...entriesFromFeatures,
+              ...(ignore.length > 0 ? ["# custom ignore patterns:"] : []),
+              ...ignore,
+            ].join("\n");
+          },
         },
       ],
     }),

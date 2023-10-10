@@ -47,7 +47,7 @@ export default [
             ["@repo/", "workspace:*"],
             ["@repo-feature/", "workspace:*"],
           ],
-          autoFixFallback: "=",
+          autoFixFallback: "^",
         },
       ],
       "@typescript-eslint/consistent-type-imports": [
