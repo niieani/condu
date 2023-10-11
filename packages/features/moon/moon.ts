@@ -121,6 +121,7 @@ export const moon = ({
               }),
               node: {
                 version: config.node.version,
+                packageManager: config.node.packageManager.name,
                 [config.node.packageManager.name]: {
                   version: config.node.packageManager.version,
                 },

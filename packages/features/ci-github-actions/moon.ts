@@ -43,32 +43,6 @@ export const moonCi = ({}: {} = {}) =>
         },
       };
 
-      const taskList = state.tasks.filter(nonEmpty);
-      const tasksByType: Record<Task["type"], [Task, ...Task[]]> = groupBy(
-        taskList,
-        (t) => t.type,
-      );
-      const typeTasks = mapValues(
-        tasksByType,
-        (tasks): PartialTaskConfig =>
-          // this groups all the tasks of the same type into a single task
-          // so that all the features implementing the same task type (e.g. 'test') can be run in parallel
-          ({
-            // self-referencing task: https://moonrepo.dev/docs/concepts/target#self-
-            deps: tasks.flatMap((t) => `~:${t.name}`),
-          }),
-      );
-      const tasks = taskList.map(({ name, definition }) => {
-        if (name in typeTasks) {
-          throw new Error(
-            `Task name '${name}' is reserved for the task type '${definition.type}'`,
-          );
-        }
-        return [name, definition] as const;
-      });
-
-      const sourceExtensionsConcatenated =
-        config.conventions.sourceExtensions.join(",");
       return {
         files: [
           {
@@ -79,18 +53,44 @@ export const moonCi = ({}: {} = {}) =>
           },
           {
             path: ".moon/tasks.yml",
-            content: {
-              $schema: schemas.tasks,
-              fileGroups: {
-                sources: [
-                  `${config.conventions.sourceDir}/**/*.{${sourceExtensionsConcatenated}}`,
-                ],
-                tests: [
-                  `${config.conventions.sourceDir}/**/*.test.{${sourceExtensionsConcatenated}}`,
-                ],
-              },
-              tasks: { ...typeTasks, ...Object.fromEntries(tasks) },
-            } satisfies Tasks,
+            content: () => {
+              const taskList = state.tasks.filter(nonEmpty);
+              const tasksByType: Record<Task["type"], [Task, ...Task[]]> =
+                groupBy(taskList, (t) => t.type);
+              const typeTasks = mapValues(
+                tasksByType,
+                (tasks): PartialTaskConfig =>
+                  // this groups all the tasks of the same type into a single task
+                  // so that all the features implementing the same task type (e.g. 'test') can be run in parallel
+                  ({
+                    // self-referencing task: https://moonrepo.dev/docs/concepts/target#self-
+                    deps: tasks.flatMap((t) => `~:${t.name}`),
+                  }),
+              );
+              const tasks = taskList.map(({ name, definition }) => {
+                if (name in typeTasks) {
+                  throw new Error(
+                    `Task name '${name}' is reserved for the task type '${definition.type}'`,
+                  );
+                }
+                return [name, definition] as const;
+              });
+
+              const sourceExtensionsConcatenated =
+                config.conventions.sourceExtensions.join(",");
+              return {
+                $schema: schemas.tasks,
+                fileGroups: {
+                  sources: [
+                    `${config.conventions.sourceDir}/**/*.{${sourceExtensionsConcatenated}}`,
+                  ],
+                  tests: [
+                    `${config.conventions.sourceDir}/**/*.test.{${sourceExtensionsConcatenated}}`,
+                  ],
+                },
+                tasks: { ...typeTasks, ...Object.fromEntries(tasks) },
+              } satisfies Tasks;
+            },
           },
         ],
         flags: ["preventAdditionalTasks"],

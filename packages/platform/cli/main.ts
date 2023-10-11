@@ -18,9 +18,9 @@ const cli = new Cli({
   binaryVersion: version,
 });
 
-cli.register(Builtins.VersionCommand);
-cli.register(Builtins.HelpCommand);
 cli.register(ApplyCommand);
 cli.register(CreateCommand);
 cli.register(ExecCommand);
+cli.register(Builtins.VersionCommand);
+cli.register(Builtins.HelpCommand);
 cli.runExit(args);

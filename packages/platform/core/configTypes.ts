@@ -26,7 +26,14 @@ export interface FileDef {
   type?: "ephemeral" | "committed";
   /** should this file be published when making a distributable package */
   publish?: boolean;
-  /** if passed in an object, the correct stringifier is chosen based on the file extension */
+  /**
+   * if you need to access 'state' (e.g. to list all files or tasks),
+   * using a function is preferable, as it will be executed *after* all the state had been collected,
+   * rather than during its collection, as is the case with pure string or object.
+   *
+   * if returned an object, the correct stringifier is chosen based on the file extension
+   * if a string is returned, it will be written as-is
+   **/
   // TODO: support function (previousContent, packageJson) => string | object
   content?:
     | string
@@ -97,6 +104,10 @@ export type State = ToIntermediateState<Omit<CollectedState, "files">> & {
 
 export type FeatureActionFn = (
   config: RepoConfigWithInferredValues,
+  /**
+   * TODO: consider lifting 'state' argument to 'content' function of files
+   * since the state here is only "collected till now"
+   **/
   state: CollectedState,
 ) => Partial<State> | Promise<Partial<State>>;
 
