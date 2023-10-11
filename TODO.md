@@ -6,18 +6,30 @@ MVP
 - [x] scaffolding new packages in monorepo (Create package command)
 - [x] GitHub Actions
 - [x] automatically add missing workspace dependencies to package.json
-- [ ] vitest
 - [ ] TS building for release - all files can be in the
   - [ ] copy all source files into the dist folder, except configs
   - [ ] for CJS pass: simply build with `module: commonjs`, no changes necessary
   - [ ] for ESM pass:
+    - [ ] build as ESM
     - [ ] all the in-project references (relative or imports from existing monorepo ids) can be auto renamed to .mts
-      - [ ] regexp for imports and re-exports (export from)
-    - [ ] build
+      - [ ] make a list of all files as if imported using package name (e.g. '@thing/package/file.js')
+      - [ ] for each package, make additionally a list of all files
+      - [ ] for each file in each package, make a list of possible relative paths for other files (e.g. '../file.js')
+      - [ ] regexp replace all instances of the above with the '.mjs' extension
+      - [ ] since the extension is mandatory, failure is very unlikely. even if the filename is common, like './calc.js', it is unlikely this string would be used for anything other than an import from/export from
   - [ ] adjust the "sources" in the .map files
   - [ ] output will have: .ts, .js, .js.map, .d.ts, .mjs, .d.mts, .mjs.map + all other files
+  - [ ] important [thread about this](https://github.com/microsoft/TypeScript/issues/49462)
 - [ ] semantic-release (use [Auto](https://github.com/intuit/auto) instead for mono-repo support)
+- [ ] pre-release
+  - [ ] copy LICENSE to each package
+- [ ] add validation for feature dependencies (e.g. "auto" feature depends on "lerna")
+  - maybe not dependencies, but see below - contributed state?
+- [ ] add shared state for features (features can contribute to it and build on top of each other's state)
+  - perhaps features contribute individual settings, like in vscode - providing a required schema - that way we could validate that the dependent state is valid
+- [ ] vitest
 - [ ] CI build and test using moon
+- [ ] similar tool: https://packemon.dev/
 
 - shippable state -
 

@@ -7,6 +7,15 @@ export const typescript = ({ tsconfig }: { tsconfig?: tsconfig } = {}) =>
     name: "typescript",
     order: { priority: "beginning" },
     actionFn: (config, state) => ({
+      tasks: [
+        {
+          type: "build",
+          name: "tsc-esm",
+          definition: {
+            command: "tsc --project tsconfig.json",
+          },
+        },
+      ],
       files: [
         {
           path: config.projects ? "tsconfig.options.json" : "tsconfig.json",
