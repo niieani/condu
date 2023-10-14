@@ -7,5 +7,9 @@
   },
   "dependencies": {
     "@repo/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/env-ci": "^3.1.2",
+    "@types/signale": "^1.4.5"
   }
 }

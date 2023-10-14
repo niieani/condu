@@ -2,7 +2,7 @@
   "name": "@repo/cli",
   "type": "module",
   "dependencies": {
-    "@pnpm/fetch": "7.0.3",
+    "@pnpm/fetch": "patch:@pnpm/fetch@npm%3A7.0.3#~/.yarn/patches/@pnpm-fetch-npm-7.0.3-9f1373965c.patch",
     "@pnpm/network.auth-header": "2.0.5",
     "@pnpm/npm-resolver": "16.0.10",
     "@pnpm/read-project-manifest": "5.0.6",

@@ -1,0 +1,12 @@
+{
+  "name": "@repo/update-specifiers",
+  "type": "module",
+  "main": "esm/main.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "ts-morph": "^20.0.0",
+    "@ts-morph/common": "^0.21.0"
+  }
+}

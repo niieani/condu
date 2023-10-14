@@ -16,7 +16,14 @@ export default configure({
     sourceDir: ".",
   },
   features: [
-    typescript(),
+    typescript({
+      tsconfig: {
+        compilerOptions: {
+          outDir: "dist",
+          skipLibCheck: true,
+        },
+      },
+    }),
     eslint(),
     moon(),
     moonCi(),

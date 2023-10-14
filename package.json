@@ -2,7 +2,7 @@
   "name": "toolchain",
   "version": "1.0.0",
   "dependencies": {
-    "@pnpm/fetch": "^7.0.3",
+    "@pnpm/fetch": "patch:@pnpm/fetch@npm%3A7.0.3#~/.yarn/patches/@pnpm-fetch-npm-7.0.3-9f1373965c.patch",
     "@pnpm/logger": "^5.0.0",
     "@pnpm/network.auth-header": "^2.0.5",
     "@pnpm/npm-resolver": "^16.0.10",
@@ -13,7 +13,7 @@
     "async-memoize-one": "^1.1.5",
     "fp-ts": "^2.16.1",
     "io-ts": "^2.2.20",
-    "json-schema-to-typescript": "^13.1.1",
+    "json-schema-to-typescript": "patch:json-schema-to-typescript@npm%3A13.1.1#~/.yarn/patches/json-schema-to-typescript-npm-13.1.1-55a260b512.patch",
     "remeda": "^1.27.1",
     "semver": "^7.5.4",
     "sort-package-json": "^2.6.0",
@@ -58,5 +58,9 @@
   "workspaces": [
     "packages/features/*",
     "packages/platform/*"
-  ]
+  ],
+  "resolutions": {
+    "@bcherny/json-schema-ref-parser@npm:10.0.5-fork": "patch:@bcherny/json-schema-ref-parser@npm%3A10.0.5-fork#~/.yarn/patches/@bcherny-json-schema-ref-parser-npm-10.0.5-fork-2de1c30409.patch",
+    "@pnpm/fetching-types@npm:5.0.0": "patch:@pnpm/fetching-types@npm%3A5.0.0#~/.yarn/patches/@pnpm-fetching-types-npm-5.0.0-d10b510b05.patch"
+  }
 }
