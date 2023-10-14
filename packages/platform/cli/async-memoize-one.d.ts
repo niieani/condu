@@ -5,7 +5,7 @@ declare module "async-memoize-one" {
     cachePromiseRejection?: boolean;
   }
 
-  function memoizeOne<T extends (...args: unknown[]) => unknown>(
+  function memoizeOne<T extends (...args: any[]) => any>(
     fn: T,
     isEqual?: EqualityFn,
     options?: Options,

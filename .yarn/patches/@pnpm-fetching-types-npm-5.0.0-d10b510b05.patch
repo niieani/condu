@@ -1,0 +1,10 @@
+diff --git a/lib/index.d.ts b/lib/index.d.ts
+index f2d50ed220a2b8d9918083a09873de4ebe15a3d5..17779c0179c61d47ac73e94fe6309f7758e3883c 100644
+--- a/lib/index.d.ts
++++ b/lib/index.d.ts
+@@ -1,4 +1,5 @@
+ import { type RetryTimeoutOptions } from '@zkochan/retry';
++// @ts-expect-error https://github.com/microsoft/TypeScript/issues/52529
+ import { type Response } from 'node-fetch';
+ export type { RetryTimeoutOptions };
+ export type FetchFromRegistry = (url: string, opts?: {

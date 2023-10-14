@@ -4,5 +4,8 @@
   "main": "esm/main.js",
   "dependencies": {
     "async-memoize-one": "1.1.5"
+  },
+  "devDependencies": {
+    "node-fetch": "^3.3.2"
   }
 }

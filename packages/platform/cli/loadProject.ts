@@ -1,3 +1,5 @@
+/// <reference path="./async-memoize-one.d.ts" />
+
 import path from "path";
 import { getManifest } from "./toolchain.js";
 import { CORE_NAME } from "./constants.js";
@@ -24,7 +26,7 @@ export type WriteManifestFn = (
   force?: boolean,
 ) => Promise<void>;
 
-interface WorkspacePackage {
+export interface WorkspacePackage {
   /** relative directory of the package from the projectDir */
   dir: string;
   manifest: RepoPackageJson;

@@ -14,7 +14,7 @@ async function updateSchemas() {
   for (const [name, url] of Object.entries(schemas)) {
     const schema = await fetch(url).then((res) => res.json());
     let topLevelSchemaNameSource = schema.title ?? schema.$id ?? schema.id;
-    const createdName = `${name[0].toUpperCase()}${name.slice(1)}`;
+    const createdName = `${name.slice(0, 1).toUpperCase()}${name.slice(1)}`;
     if (!isValidIdentifier(topLevelSchemaNameSource)) {
       topLevelSchemaNameSource = createdName;
       schema.title = createdName;
