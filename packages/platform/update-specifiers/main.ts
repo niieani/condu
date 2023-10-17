@@ -36,6 +36,12 @@ type TargetMapping = {
 
 // tsConfigContent.options.allowImportingTsExtensions
 
+interface ChangeSet {
+  start: number;
+  end: number;
+  newText: string;
+}
+
 const renameSpecifiers = async ({
   tsConfigFilePath,
   fsExtensionMapping,
@@ -95,10 +101,7 @@ const renameSpecifiers = async ({
 
   const processedTsConfigs = new Set<string>();
   processedTsConfigs.add(standardizedTsConfigPath);
-  const tsConfigPathToRemappedProjectAndFiles = new Map<
-    string,
-    [Project, SourceFile[]]
-  >();
+  const tsConfigPathToRemappedProjectAndFiles = new Map<string, Project>();
 
   const globalProject = new Project({
     fileSystem: fsHost,
@@ -112,6 +115,8 @@ const renameSpecifiers = async ({
   // const fileNamesToAdd: string[] = [];
   const sourceFiles: SourceFile[] = [];
   const modifiedSourceFiles: SourceFile[] = [];
+
+  const changeSets = new Map<SourceFile, ChangeSet[]>();
 
   for (const ref of resolvedReferences) {
     if (!ref) continue;
@@ -129,11 +134,10 @@ const renameSpecifiers = async ({
     ref.commandLine.fileNames.forEach((fileName) => {
       if (!fileName.startsWith(baseDir)) {
         // only add files belonging to this project
-        console.log("outside??", fileName);
         return;
       }
-      console.log("added", fileName);
-      theseSourceFiles.push(globalProject.addSourceFileAtPath(fileName));
+      const sourceFile = globalProject.addSourceFileAtPath(fileName);
+      theseSourceFiles.push(sourceFile);
     });
     sourceFiles.push(...theseSourceFiles);
 
@@ -155,11 +159,14 @@ const renameSpecifiers = async ({
 
     // remappedProject.getProgram().compilerObject.getCompilerOptions()
 
-    tsConfigPathToRemappedProjectAndFiles.set(tsConfigPath, [
-      remappedProject,
-      theseSourceFiles,
-    ]);
+    tsConfigPathToRemappedProjectAndFiles.set(tsConfigPath, remappedProject);
   }
+
+  updateChangeSets({
+    emittedExtensionMapping,
+    sourceFiles,
+    changeSets,
+  });
 
   // const sourceFiles = globalProject.addSourceFilesAtPaths(fileNamesToAdd);
 
@@ -176,28 +183,81 @@ const renameSpecifiers = async ({
   //   },
   // });
 
-  for (const [
-    tsConfigPath,
-    [remappedProject, sourceFiles],
-  ] of tsConfigPathToRemappedProjectAndFiles) {
-    console.log("processing", tsConfigPath);
-    const newFiles = processProject({
-      sourceFiles,
-      fsExtensionMapping,
-      emittedExtensionMapping,
-      remappedProject,
-    });
+  await Promise.all(
+    Array.from(tsConfigPathToRemappedProjectAndFiles).flatMap(
+      ([tsConfigPath, remappedProject]) => {
+        const projectDir = path.dirname(tsConfigPath);
+        const newFiles = processProject({
+          // sourceFiles,
+          changeSets,
+          projectDir,
+          fsExtensionMapping,
+          // emittedExtensionMapping,
+          remappedProject,
+        });
 
-    modifiedSourceFiles.push(...newFiles);
+        return newFiles.flatMap((file) => {
+          const baseName = file.getBaseName();
+          const emit = file.getEmitOutput();
+          const sourceText = file.getFullText();
+          let sourceTextEmitted = false;
 
-    // await globalRemappedProject.emit();
-    // const result = remappedProject.emitToMemory();
-    // result.getFiles().forEach((file) => {
-    //   console.log("wrote", file.filePath);
-    // });
-  }
+          const outputFiles = emit.getOutputFiles();
 
-  // return;
+          console.log(
+            "compiled",
+            path.basename(projectDir),
+            path.basename(file.getFilePath()),
+            "=>",
+            outputFiles.map((f) =>
+              path.relative(
+                path.dirname(standardizedTsConfigPath),
+                f.getFilePath(),
+              ),
+            ),
+          );
+
+          return outputFiles.map(async (emittedFile) => {
+            const filePath = emittedFile.getFilePath();
+            const fileDir = path.dirname(filePath);
+            await fsHost.mkdir(fileDir);
+            await Promise.all([
+              fsHost.writeFile(filePath, emittedFile.getText()),
+              !sourceTextEmitted &&
+                fsHost
+                  .writeFile(path.join(fileDir, baseName), sourceText)
+                  .then(() => {
+                    sourceTextEmitted = true;
+                  }),
+            ]);
+          });
+        });
+      },
+    ),
+  );
+
+  // for (const [
+  //   tsConfigPath,
+  //   [remappedProject, sourceFiles],
+  // ] of tsConfigPathToRemappedProjectAndFiles) {
+  //   console.log("processing", tsConfigPath);
+  //   const newFiles = processProject({
+  //     // sourceFiles,
+  //     changeSets,
+  //     projectDir: path.dirname(tsConfigPath),
+  //     fsExtensionMapping,
+  //     // emittedExtensionMapping,
+  //     remappedProject,
+  //   });
+
+  //   // modifiedSourceFiles.push(...newFiles);
+
+  //   // await globalRemappedProject.emit();
+  //   // const result = remappedProject.emitToMemory();
+  //   // result.getFiles().forEach((file) => {
+  //   //   console.log("wrote", file.filePath);
+  //   // });
+  // }
 
   // const modifiedSourceFiles = processProject({
   //   sourceFiles,
@@ -213,31 +273,9 @@ const renameSpecifiers = async ({
   // opts.mapRoot = file.getDirectoryPath();
 
   // compile:
-  await Promise.all(
-    // globalRemappedProject.getSourceFiles().flatMap((file) => {
-    modifiedSourceFiles.flatMap((file) => {
-      console.log("compiling", file.getFilePath());
-      const baseName = file.getBaseName();
-      const emit = file.getEmitOutput();
-      const sourceText = file.getFullText();
-      let sourceTextEmitted = false;
-      return emit.getOutputFiles().map(async (emittedFile) => {
-        const filePath = emittedFile.getFilePath();
-        const fileDir = path.dirname(filePath);
-        // await fsHost.mkdir(fileDir);
-        // await Promise.all([
-        //   fsHost.writeFile(filePath, emittedFile.getText()),
-        //   !sourceTextEmitted &&
-        //     fsHost
-        //       .writeFile(path.join(fileDir, baseName), sourceText)
-        //       .then(() => {
-        //         sourceTextEmitted = true;
-        //       }),
-        // ]);
-        console.log("wrote", filePath);
-      });
-    }),
-  );
+  // await Promise.all(
+  //   // globalRemappedProject.getSourceFiles().flatMap((file) => {,
+  // );
 
   // const res = globalRemappedProject.emitToMemory({
   //   // targetSourceFile: globalRemappedProject.getSourceFile(() => true),
@@ -269,26 +307,20 @@ renameSpecifiers({
   emittedExtensionMapping: { ".ts": ".mjs" },
 });
 
-function processProject({
+function updateChangeSets({
   sourceFiles,
-  fsExtensionMapping,
   emittedExtensionMapping,
-  remappedProject,
+  changeSets,
 }: {
   sourceFiles: SourceFile[];
-  /** how to map extensions in the file system before building */
-  fsExtensionMapping: TargetMapping;
   /** how to map the import and export specifiers in the emitted files */
   emittedExtensionMapping: TargetMapping;
-  remappedProject: Project;
+  changeSets: Map<SourceFile, ChangeSet[]>;
 }) {
-  const changeSets = new Map<
-    SourceFile,
-    { start: number; end: number; newText: string }[]
-  >();
   for (const sourceFile of sourceFiles) {
     const sourceExtension = sourceFile.getExtension();
 
+    // ensure every file has a changeset (even if empty)
     const changeSet = changeSets.get(sourceFile) ?? [];
     changeSets.set(sourceFile, changeSet);
 
@@ -331,9 +363,27 @@ function processProject({
       // because it is very slow
     }
   }
+}
 
+function processProject({
+  fsExtensionMapping,
+  remappedProject,
+  projectDir,
+  changeSets,
+}: {
+  /** how to map extensions in the file system before building */
+  fsExtensionMapping: TargetMapping;
+  changeSets: Map<SourceFile, ChangeSet[]>;
+  remappedProject: Project;
+  projectDir: string;
+}) {
   const newSourceFiles: SourceFile[] = [];
+
   for (const [sourceFile, changeSet] of changeSets) {
+    if (!sourceFile.getFilePath().startsWith(projectDir)) {
+      // only add files belonging to this project
+      continue;
+    }
     // if (sourceFile.getBaseName() !== "loadProject.ts") {
     //   continue;
     // }
@@ -348,7 +398,7 @@ function processProject({
         sourceFile.getFilePath(),
         contents,
         {
-          overwrite: true,
+          // overwrite: true,
           scriptKind: sourceFile.getScriptKind(),
         },
       );
