@@ -153,6 +153,10 @@ const gitignore = ({ ignore }: { ignore?: string[] } = {}) =>
 
 ## simple CLI to manage the repo
 
+alternative names:
+
+- condu (with the CLI command: `co`)
+
 ```shell
 $ repo use test-jest test-eslint
 
