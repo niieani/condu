@@ -8,6 +8,7 @@ import {
 import {
   TransactionalFileSystem,
   RealFileSystemHost,
+  InMemoryFileSystemHost,
   TsConfigResolver,
 } from "@ts-morph/common";
 import path from "node:path";
@@ -53,6 +54,7 @@ const renameSpecifiers = async ({
     skipLoadingLibFiles: true,
     libFolderPath: undefined,
   });
+  const memoryFs = new InMemoryFileSystemHost();
 
   const standardizedTsConfigPath =
     tfsHost.getStandardizedAbsolutePath(tsConfigFilePath);
@@ -98,94 +100,123 @@ const renameSpecifiers = async ({
     [Project, SourceFile[]]
   >();
 
-  const globalProject = new Project({ tsConfigFilePath });
+  const globalProject = new Project({
+    fileSystem: fsHost,
+    tsConfigFilePath,
+  });
   const resolvedReferences = tsProgram.getResolvedProjectReferences();
 
   // TODO: support non-composite projects
   if (!resolvedReferences) return;
 
-  const fileNamesToAdd: string[] = [];
-  let sourceFiles: SourceFile[] = [];
+  // const fileNamesToAdd: string[] = [];
+  const sourceFiles: SourceFile[] = [];
+  const modifiedSourceFiles: SourceFile[] = [];
+
   for (const ref of resolvedReferences) {
     if (!ref) continue;
     const tsConfigPath = ref.sourceFile.fileName;
     if (processedTsConfigs.has(tsConfigPath)) continue;
     processedTsConfigs.add(tsConfigPath);
 
-    console.log("ref", tsConfigPath);
-    fileNamesToAdd.push(...ref.commandLine.fileNames);
+    const baseDir = path.dirname(tsConfigPath);
 
+    console.log("ref", tsConfigPath);
+    // console.log("ref", tsConfigPath, ref.commandLine.fileNames);
+    // fileNamesToAdd.push(...ref.commandLine.fileNames);
+
+    const theseSourceFiles: SourceFile[] = [];
     ref.commandLine.fileNames.forEach((fileName) => {
-      sourceFiles.push(globalProject.addSourceFileAtPath(fileName));
+      if (!fileName.startsWith(baseDir)) {
+        // only add files belonging to this project
+        console.log("outside??", fileName);
+        return;
+      }
+      console.log("added", fileName);
+      theseSourceFiles.push(globalProject.addSourceFileAtPath(fileName));
     });
+    sourceFiles.push(...theseSourceFiles);
 
     // const sourceFiles = globalProject.addSourceFilesFromTsConfig(tsConfigPath);
 
-    // const remappedProject = new Project({
-    //   // useInMemoryFileSystem: true,
-    //   tsConfigFilePath: tsConfigPath,
-    //   skipAddingFilesFromTsConfig: true,
-    // });
+    const remappedProject = new Project({
+      // useInMemoryFileSystem: true,
+      fileSystem: memoryFs,
+      // tsConfigFilePath: tsConfigPath,
+      compilerOptions: {
+        ...ref.commandLine.options,
+        project: tsConfigPath,
+      },
+      skipAddingFilesFromTsConfig: true,
+      skipFileDependencyResolution: true,
+      skipLoadingLibFiles: true,
+      // tsConfigFilePath: tsConfigPath,
+    });
 
-    // tsConfigPathToRemappedProjectAndFiles.set(tsConfigPath, [
-    //   remappedProject,
-    //   sourceFiles,
-    // ]);
-    // console.log(
-    //   tsConfigPath,
-    //   srcFiles.map((f) => f.getFilePath()),
-    // );
-    // ref?.commandLine.projectReferences[0].
+    // remappedProject.getProgram().compilerObject.getCompilerOptions()
+
+    tsConfigPathToRemappedProjectAndFiles.set(tsConfigPath, [
+      remappedProject,
+      theseSourceFiles,
+    ]);
   }
 
   // const sourceFiles = globalProject.addSourceFilesAtPaths(fileNamesToAdd);
 
   // console.log({ sourceFiles: sourceFiles.map((f) => f.getFilePath()) });
 
-  const globalRemappedProject = new Project({
-    useInMemoryFileSystem: true,
-    skipAddingFilesFromTsConfig: true,
-    compilerOptions: {
-      ...tsConfigContent.options,
-      sourceRoot: undefined,
-      mapRoot: "./",
-    },
-  });
+  // const globalRemappedProject = new Project({
+  //   fileSystem: memoryFs,
+  //   // useInMemoryFileSystem: true,
+  //   skipAddingFilesFromTsConfig: true,
+  //   compilerOptions: {
+  //     ...tsConfigContent.options,
+  //     sourceRoot: undefined,
+  //     mapRoot: "./",
+  //   },
+  // });
 
-  // for (const [
-  //   tsConfigPath,
-  //   [remappedProject, sourceFiles],
-  // ] of tsConfigPathToRemappedProjectAndFiles) {
-  //   console.log("processing", tsConfigPath);
-  //   await processProject({
-  //     sourceFiles,
-  //     fsExtensionMapping,
-  //     emittedExtensionMapping,
-  //     remappedProject,
-  //   });
-  //   // await globalRemappedProject.emit();
-  //   const result = remappedProject.emitToMemory();
-  //   result.getFiles().forEach((file) => {
-  //     console.log("wrote", file.filePath);
-  //   });
-  // }
+  for (const [
+    tsConfigPath,
+    [remappedProject, sourceFiles],
+  ] of tsConfigPathToRemappedProjectAndFiles) {
+    console.log("processing", tsConfigPath);
+    const newFiles = processProject({
+      sourceFiles,
+      fsExtensionMapping,
+      emittedExtensionMapping,
+      remappedProject,
+    });
 
-  // const sourceFiles = globalProject.getSourceFiles();
+    modifiedSourceFiles.push(...newFiles);
 
-  processProject({
-    sourceFiles,
-    fsExtensionMapping,
-    emittedExtensionMapping,
-    remappedProject: globalRemappedProject,
-  });
+    // await globalRemappedProject.emit();
+    // const result = remappedProject.emitToMemory();
+    // result.getFiles().forEach((file) => {
+    //   console.log("wrote", file.filePath);
+    // });
+  }
+
+  // return;
+
+  // const modifiedSourceFiles = processProject({
+  //   sourceFiles,
+  //   fsExtensionMapping,
+  //   emittedExtensionMapping,
+  //   remappedProject: globalRemappedProject,
+  // });
 
   // const opts = globalRemappedProject
   //   .getProgram()
   //   .compilerObject.getCompilerOptions();
-  // opts.mapRoot = "packages/features/auto";
+  // // opts.mapRoot = fileDir;
+  // opts.mapRoot = file.getDirectoryPath();
 
+  // compile:
   await Promise.all(
-    globalRemappedProject.getSourceFiles().flatMap((file) => {
+    // globalRemappedProject.getSourceFiles().flatMap((file) => {
+    modifiedSourceFiles.flatMap((file) => {
+      console.log("compiling", file.getFilePath());
       const baseName = file.getBaseName();
       const emit = file.getEmitOutput();
       const sourceText = file.getFullText();
@@ -193,12 +224,16 @@ const renameSpecifiers = async ({
       return emit.getOutputFiles().map(async (emittedFile) => {
         const filePath = emittedFile.getFilePath();
         const fileDir = path.dirname(filePath);
-        await fsHost.mkdir(fileDir);
-        await fsHost.writeFile(filePath, emittedFile.getText());
-        if (!sourceTextEmitted) {
-          await fsHost.writeFile(path.join(fileDir, baseName), sourceText);
-          sourceTextEmitted = true;
-        }
+        // await fsHost.mkdir(fileDir);
+        // await Promise.all([
+        //   fsHost.writeFile(filePath, emittedFile.getText()),
+        //   !sourceTextEmitted &&
+        //     fsHost
+        //       .writeFile(path.join(fileDir, baseName), sourceText)
+        //       .then(() => {
+        //         sourceTextEmitted = true;
+        //       }),
+        // ]);
         console.log("wrote", filePath);
       });
     }),
@@ -297,6 +332,7 @@ function processProject({
     }
   }
 
+  const newSourceFiles: SourceFile[] = [];
   for (const [sourceFile, changeSet] of changeSets) {
     // if (sourceFile.getBaseName() !== "loadProject.ts") {
     //   continue;
@@ -316,6 +352,7 @@ function processProject({
           scriptKind: sourceFile.getScriptKind(),
         },
       );
+      newSourceFiles.push(newFile);
       if (sourceExtension === ".mjs" || sourceExtension === ".mts") {
         // TODO: what about package.json "type"?
         newFile.compilerNode.impliedNodeFormat = ts.ModuleKind.ESNext;
@@ -344,6 +381,7 @@ function processProject({
       newContents,
       { scriptKind: sourceFile.getScriptKind() },
     );
+    newSourceFiles.push(newSourceFile);
 
     if (targetExtension === ".mjs" || targetExtension === ".mts") {
       newSourceFile.compilerNode.impliedNodeFormat = ts.ModuleKind.ESNext;
@@ -357,6 +395,8 @@ function processProject({
 
     // console.log(`Renamed ${filePath} to ${targetFilePath}`);
   }
+
+  return newSourceFiles;
 
   // this fails now, because files is [] for the composite project
   // after this sourcemaps are broken, because they refer to the non-existing .mts files

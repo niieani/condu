@@ -8,18 +8,19 @@ MVP
 - [x] automatically add missing workspace dependencies to package.json
 - [x] Individual Package overrides
 - [ ] TS building for release - all files can be in the
-  - [ ] copy all source files into the dist folder, except configs
+  - [ ] make a script to copy all source files into the dist folder, except configs
+  - [ ] might need to settle for .cjs + .js for now if we want to use tsc --build for default esm build
   - [ ] for CJS pass: simply build with `module: commonjs`, no changes necessary
   - [ ] for ESM pass:
-    - [ ] build as ESM
-    - [ ] all the in-project references (relative or imports from existing monorepo ids) can be auto renamed to .mts
-      - [ ] make a list of all files as if imported using package name (e.g. '@thing/package/file.js')
-      - [ ] for each package, make additionally a list of all files
-      - [ ] for each file in each package, make a list of possible relative paths for other files (e.g. '../file.js')
-      - [ ] regexp replace all instances of the above with the '.mjs' extension
-      - [ ] since the extension is mandatory, failure is very unlikely. even if the filename is common, like './calc.js', it is unlikely this string would be used for anything other than an import from/export from
-  - [ ] adjust the "sources" in the .map files
-  - [ ] output will have: .ts, .js, .js.map, .d.ts, .mjs, .d.mts, .mjs.map + all other files
+    - [x] build as ESM
+    - [x] all the in-project references (relative or imports from existing monorepo ids) can be auto renamed to .mts
+      - [x] make a list of all files as if imported using package name (e.g. '@thing/package/file.js')
+      - [x] for each package, make additionally a list of all files
+      - [x] for each file in each package, make a list of possible relative paths for other files (e.g. '../file.js')
+      - [x] regexp replace all instances of the above with the '.mjs' extension
+      - [x] since the extension is mandatory, failure is very unlikely. even if the filename is common, like './calc.js', it is unlikely this string would be used for anything other than an import from/export from
+  - [x] adjust the "sources" in the .map files
+  - [x] output will have: .ts, .js, .js.map, .d.ts, .mjs, .d.mts, .mjs.map + all other files
   - [ ] important [thread about this](https://github.com/microsoft/TypeScript/issues/49462)
 - [ ] semantic-release (use [Auto](https://github.com/intuit/auto) instead for mono-repo support)
 - [ ] pre-release
@@ -45,3 +46,4 @@ Later:
 - [ ] Customizable package source directory (so we can skip src in mono repo), when publishing copy src into the publish directory. Hmm will semantic publishing work if we copy sources?
 - [ ] State file to track changes made to the repo by the tool, and show diff before applying (for upgrading)
 - [ ] Migration tool - should remove files from gitignore from committed files
+- [ ] Docs: Great collection of [CLI websites](https://news.ycombinator.com/item?id=26878936) on HN
