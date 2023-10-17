@@ -149,17 +149,6 @@ const renameSpecifiers = async ({
     changeSets,
   });
 
-  // const globalRemappedProject = new Project({
-  //   fileSystem: memoryFs,
-  //   // useInMemoryFileSystem: true,
-  //   skipAddingFilesFromTsConfig: true,
-  //   compilerOptions: {
-  //     ...tsConfigContent.options,
-  //     sourceRoot: undefined,
-  //     mapRoot: "./",
-  //   },
-  // });
-
   await Promise.all(
     Array.from(tsConfigPathToRemappedProject).flatMap(
       ([tsConfigPath, remappedProject]) => {
@@ -171,20 +160,12 @@ const renameSpecifiers = async ({
           remappedProject,
         });
 
-        const emit = remappedProject.emitToMemory();
-        return emit.getFiles().flatMap(async (file) => {
-          console.log(
-            "compiled",
-            path.basename(projectDir),
-            path.relative(
-              path.dirname(standardizedTsConfigPath),
-              file.filePath,
-            ),
+        const preemitDiag =
+          remappedProject.formatDiagnosticsWithColorAndContext(
+            remappedProject.getPreEmitDiagnostics(),
           );
-          const fileDir = path.dirname(file.filePath);
-          await fsHost.mkdir(fileDir);
-          await Promise.all([fsHost.writeFile(file.filePath, file.text)]);
-        });
+
+        // console.log(preemitDiag);
 
         return newFiles.flatMap((file) => {
           const baseName = file.getBaseName();
@@ -194,18 +175,18 @@ const renameSpecifiers = async ({
 
           const outputFiles = emit.getOutputFiles();
 
-          console.log(
-            "compiled",
-            path.basename(projectDir),
-            path.basename(file.getFilePath()),
-            "=>",
-            outputFiles.map((f) =>
-              path.relative(
-                path.dirname(standardizedTsConfigPath),
-                f.getFilePath(),
-              ),
-            ),
-          );
+          // console.log(
+          //   "compiled",
+          //   path.basename(projectDir),
+          //   path.basename(file.getFilePath()),
+          //   "=>",
+          //   outputFiles.map((f) =>
+          //     path.relative(
+          //       path.dirname(standardizedTsConfigPath),
+          //       f.getFilePath(),
+          //     ),
+          //   ),
+          // );
 
           // return outputFiles.map(async (emittedFile) => {
           //   const filePath = emittedFile.getFilePath();
