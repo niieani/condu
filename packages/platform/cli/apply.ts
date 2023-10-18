@@ -158,7 +158,7 @@ const writeFileFromDef = async ({
   manifest: RepoPackageJson;
   projectDir: string;
   previouslyWrittenFiles: Map<string, CachedWrittenFile>;
-}): Promise<WrittenFile | undefined> => {
+}): Promise<(() => Promise<WrittenFile>) | WrittenFile | undefined> => {
   const targetPath = path.join(rootDir, file.path);
   const pathFromProjectDir = path.relative(projectDir, targetPath);
 
@@ -173,64 +173,83 @@ const writeFileFromDef = async ({
 
   if (typeof resolvedContent === "undefined") {
     if (previouslyWritten) {
-      console.log(`Deleting, no longer needed: ${targetPath}`);
+      console.log(`Deleting, no longer needed: ${pathFromProjectDir}`);
       await fs.rm(targetPath);
     }
     // nothing to add to cache state:
     return;
   }
-  const parentDir = path.dirname(targetPath);
   const content =
     typeof resolvedContent === "string"
       ? resolvedContent
       : stringify(resolvedContent, file.path);
 
-  if (previouslyWritten && !previouslyWritten.manuallyChanged) {
-    console.log(`Already fresh: ${targetPath}`);
+  if (
+    previouslyWritten &&
+    !previouslyWritten.manuallyChanged &&
+    content === previouslyWritten.content
+  ) {
+    console.log(`Already fresh: ${pathFromProjectDir}`);
     return previouslyWritten;
   }
 
   if (typeof previouslyWritten?.manuallyChanged === "object") {
-    console.log(`Manual changes present in ${targetPath}:`);
-    printUnifiedDiff(
-      previouslyWritten.manuallyChanged.content,
-      content,
-      process.stdout,
-    );
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-    });
-    const rawAnswer = await rl.question(
-      "Do you want to overwrite the file? (y/n)",
-    );
-    rl.close();
-    const shouldOverwrite = match(rawAnswer)
-      .with(P.union("y", "Y", P.string.regex(/yes/i)), () => true)
-      .otherwise(() => false);
-    if (!shouldOverwrite) {
-      console.log(`Skipping: ${targetPath}`);
-      return {
-        path: file.path,
-        writtenAt: previouslyWritten.writtenAt,
-        content: previouslyWritten.content,
-      };
-    }
+    const manuallyChanged = previouslyWritten.manuallyChanged;
+    // this needs to happen sequentially, because we're prompting the user for input:
+    return async () => {
+      console.log(`Manual changes present in ${pathFromProjectDir}:`);
+      printUnifiedDiff(manuallyChanged.content, content, process.stdout);
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+      const rawAnswer = await rl.question(
+        "Do you want to overwrite the file? (y/n)",
+      );
+      rl.close();
+      const shouldOverwrite = match(rawAnswer)
+        .with(P.union("y", "Y", P.string.regex(/yes/i)), () => true)
+        .otherwise(() => false);
+
+      if (shouldOverwrite) {
+        return write({ targetPath, content, pathFromProjectDir });
+      } else {
+        console.log(`Skipping: ${pathFromProjectDir}`);
+        return {
+          path: file.path,
+          writtenAt: previouslyWritten.writtenAt,
+          content: previouslyWritten.content,
+        };
+      }
+    };
   }
 
+  return write({ targetPath, content, pathFromProjectDir });
+};
+
+async function write({
+  targetPath,
+  content,
+  pathFromProjectDir,
+}: {
+  targetPath: string;
+  content: string;
+  pathFromProjectDir: string;
+}): Promise<WrittenFile> {
   console.log(`Writing: ${targetPath}`);
+  const parentDir = path.dirname(targetPath);
   await fs.mkdir(parentDir, { recursive: true });
   await fs.writeFile(targetPath, content);
   const stat = await fs.stat(targetPath);
-
-  return {
+  const result: WrittenFile = {
     path: pathFromProjectDir,
     content,
     writtenAt: stat.mtimeMs,
   };
-};
+  return result;
+}
 
-export function writeFiles({
+export async function writeFiles({
   files,
   targetPackageDir,
   manifest,
@@ -244,7 +263,7 @@ export function writeFiles({
   previouslyWrittenFiles: Map<string, CachedWrittenFile>;
 }) {
   const rootDir = path.join(projectDir, targetPackageDir);
-  return Promise.all(
+  const filesOrFns = await Promise.all(
     files.map((file) =>
       // TODO: add logging
       // TODO: add manual diffing with confirmation that change is ok
@@ -257,6 +276,15 @@ export function writeFiles({
       }),
     ),
   );
+  const writtenFiles: WrittenFile[] = [];
+  // this needs to happen sequentially, because we're prompting the user for input
+  for (const fileOrFn of filesOrFns) {
+    if (!fileOrFn) continue;
+    writtenFiles.push(
+      typeof fileOrFn === "function" ? await fileOrFn() : fileOrFn,
+    );
+  }
+  return writtenFiles;
 }
 
 const DEFAULT_PACKAGE_MANAGER = "yarn";
@@ -286,18 +314,29 @@ async function readPreviouslyWrittenFileCache(
       await Promise.all(
         cache.map(
           async (file): Promise<readonly [string, CachedWrittenFile]> => {
+            const fileName = path.basename(file.path);
+            if (fileName === "tsconfig.json") {
+              // TODO: how do we handle tsconfig edited by moon?
+              // ignore changes for now
+              return [file.path, file];
+            }
             const fullPath = path.join(projectDir, file.path);
             const stat = await fs.stat(fullPath).catch(() => undefined);
+            if (!stat) {
+              return [file.path, { ...file, manuallyChanged: "deleted" }];
+            }
+            const newContent = (await fs.readFile(fullPath)).toString();
             return [
               file.path,
               {
                 ...file,
                 manuallyChanged: !stat
                   ? "deleted"
-                  : stat?.atimeMs !== file.writtenAt
+                  : stat?.atimeMs !== file.writtenAt &&
+                    newContent !== file.content
                   ? {
                       at: stat.atimeMs,
-                      content: (await fs.readFile(fullPath)).toString(),
+                      content: newContent,
                     }
                   : undefined,
               },
@@ -381,7 +420,7 @@ export async function apply(options: LoadConfigOptions = {}) {
     conventions: {
       ...config.conventions,
       sourceDir: config.conventions?.sourceDir ?? "src",
-      distDir: config.conventions?.sourceDir ?? "dist",
+      distDir: config.conventions?.distDir ?? "dist",
       sourceExtensions:
         config.conventions?.sourceExtensions ?? DEFAULT_SOURCE_EXTENSIONS,
     },
@@ -412,11 +451,19 @@ export async function apply(options: LoadConfigOptions = {}) {
       manifest: target,
       previouslyWrittenFiles,
     });
-    for (const file of written) {
-      if (!file) continue;
-      writtenFiles.push(file);
-    }
+
+    writtenFiles.push(...written);
   }
+
+  // anything that's left in 'previouslyWrittenFiles' is no longer being generated, and should be deleted:
+  await Promise.all(
+    [...previouslyWrittenFiles.values()].map(async (file) => {
+      if (file.manuallyChanged) return;
+      const fullPath = path.join(projectDir, file.path);
+      console.log(`Deleting, no longer needed: ${file.path}`);
+      await fs.rm(fullPath);
+    }),
+  );
 
   await writeFiles({
     files: [{ path: FILE_STATE_PATH, content: writtenFiles }],

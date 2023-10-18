@@ -21,3 +21,4 @@ dist
 /lerna.json
 # custom ignore patterns:
 .swc/
+.config/.cache/
