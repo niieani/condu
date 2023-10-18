@@ -3,7 +3,8 @@ import { Cli, Builtins } from "clipanion";
 import { ApplyCommand } from "./ApplyCommand.js";
 import { CreateCommand } from "./CreateCommand.js";
 import { ExecCommand } from "./ExecCommand.js";
-import path from "node:path";
+import * as path from "node:path";
+import { BuildTypeScriptCommand } from "./BuildTypeScript.js";
 
 const { version, description, name } = require("../../../package.json");
 
@@ -21,6 +22,7 @@ const cli = new Cli({
 cli.register(ApplyCommand);
 cli.register(CreateCommand);
 cli.register(ExecCommand);
+cli.register(BuildTypeScriptCommand);
 cli.register(Builtins.VersionCommand);
 cli.register(Builtins.HelpCommand);
 cli.runExit(args);

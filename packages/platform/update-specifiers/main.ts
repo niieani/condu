@@ -6,7 +6,7 @@ import {
   TsConfigResolver,
   type FileSystemHost,
 } from "@ts-morph/common";
-import path from "node:path";
+import * as path from "node:path";
 
 const extensionRegexp = /^\.[cm]?[tj]sx?/i;
 
@@ -82,7 +82,6 @@ const renameSpecifiers = async ({
   });
 
   const processedTsConfigs = new Set<string>();
-  processedTsConfigs.add(standardizedTsConfigPath);
 
   const tsConfigPathToRemappedProject = new Set<
     ts.CompilerOptions & { project: string }
