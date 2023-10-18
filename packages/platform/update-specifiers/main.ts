@@ -1,16 +1,10 @@
-import {
-  Project,
-  type SourceFile,
-  getCompilerOptionsFromTsConfig,
-  ts,
-  type FileSystemHost,
-} from "ts-morph";
+import { type SourceFile, Project, ts } from "ts-morph";
 import {
   TransactionalFileSystem,
   RealFileSystemHost,
   InMemoryFileSystemHost,
   TsConfigResolver,
-  type RuntimeDirEntry,
+  type FileSystemHost,
 } from "@ts-morph/common";
 import path from "node:path";
 
@@ -49,110 +43,25 @@ type PrivateTsConfigResolver = Omit<
   parseJsonConfigFileContent: () => ts.ParsedCommandLine;
 };
 
-class OverlayMemoryOnReadOnlyRealFileSystem
-  extends InMemoryFileSystemHost
-  implements FileSystemHost
-{
-  constructor(private readonly realFs: FileSystemHost) {
-    super();
-  }
-
-  override async directoryExists(dirPath: string): Promise<boolean> {
-    const memResult = await super.directoryExists(dirPath);
-    if (memResult) return true;
-    return this.realFs.directoryExists(dirPath);
-  }
-
-  override directoryExistsSync(dirPath: string): boolean {
-    const memResult = super.directoryExistsSync(dirPath);
-    if (memResult) return true;
-    return this.realFs.directoryExistsSync(dirPath);
-  }
-
-  override async fileExists(filePath: string): Promise<boolean> {
-    const memResult = await super.fileExists(filePath);
-    if (memResult) return true;
-    return this.realFs.fileExists(filePath);
-  }
-
-  override fileExistsSync(filePath: string): boolean {
-    const memResult = super.fileExistsSync(filePath);
-    if (memResult) return true;
-    return this.realFs.fileExistsSync(filePath);
-  }
-
-  override getCurrentDirectory(): string {
-    return this.realFs.getCurrentDirectory();
-  }
-
-  override async readFile(
-    filePath: string,
-    encoding?: string,
-  ): Promise<string> {
-    const memResult = await super
-      .readFile(filePath, encoding)
-      .catch(() => undefined);
-    if (memResult !== undefined) return memResult;
-    return this.realFs.readFile(filePath, encoding);
-  }
-
-  override readFileSync(
-    filePath: string,
-    encoding?: string | undefined,
-  ): string {
-    try {
-      const memResult = super.readFileSync(filePath, encoding);
-      if (memResult) return memResult;
-    } catch {
-      // ignore
-    }
-    return this.realFs.readFileSync(filePath, encoding);
-  }
-
-  override realpathSync(path: string): string {
-    try {
-      const memResult = super.realpathSync(path);
-      if (memResult) return memResult;
-    } catch {
-      // ignore
-    }
-    return this.realFs.realpathSync(path);
-  }
-
-  override readDirSync(dirPath: string): RuntimeDirEntry[] {
-    try {
-      const memResult = super.readDirSync(dirPath);
-      if (memResult.length) return memResult;
-    } catch {
-      // ignore
-    }
-    return this.realFs.readDirSync(dirPath);
-  }
-
-  override async glob(patterns: readonly string[]): Promise<string[]> {
-    const memResult = await super.glob(patterns);
-    if (memResult.length) return memResult;
-    return this.realFs.glob(patterns);
-  }
-}
-
 const renameSpecifiers = async ({
   tsConfigFilePath,
   fsExtensionMapping,
   emittedExtensionMapping,
+  fsHost = new RealFileSystemHost(),
+  // new OverlayMemoryOnReadOnlyRealFileSystem(fsHost)
+  virtualFs = new InMemoryFileSystemHost(),
 }: {
+  fsHost?: FileSystemHost;
+  virtualFs?: FileSystemHost;
   tsConfigFilePath: string;
   fsExtensionMapping: TargetMapping;
   emittedExtensionMapping: TargetMapping;
 }) => {
-  const fsHost = new RealFileSystemHost();
   const tfsHost = new TransactionalFileSystem({
     fileSystem: fsHost,
     skipLoadingLibFiles: true,
     libFolderPath: undefined,
   });
-  // const memoryFs = new OverlayMemoryOnReadOnlyRealFileSystem(fsHost);
-  const memoryFs = new InMemoryFileSystemHost();
 
   const standardizedTsConfigPath =
     tfsHost.getStandardizedAbsolutePath(tsConfigFilePath);
@@ -175,8 +84,17 @@ const renameSpecifiers = async ({
   const processedTsConfigs = new Set<string>();
   processedTsConfigs.add(standardizedTsConfigPath);
 
-  const tsConfigPathToRemappedProject = new Map<string, Project>();
+  const tsConfigPathToRemappedProject = new Set<
+    ts.CompilerOptions & { project: string }
+  >();
 
+  /**
+   * one massive pseudo-project that contains all the files from all the referenced TS projects
+   * this is to enable us to map out all the references between files
+   * and rename them all at once
+   * the downside of this is that it might not scale for extremely large projects
+   * might be worth testing with TypeScript's own codebase
+   **/
   const globalProject = new Project({
     fileSystem: fsHost,
     tsConfigFilePath,
@@ -189,7 +107,7 @@ const renameSpecifiers = async ({
     },
   ];
 
-  const sourceFiles: SourceFile[] = [];
+  const sourceFiles = new Set<SourceFile>();
 
   // TODO: we might want to do this recursively, so that we can support nested/complex projects
   for (const ref of projects) {
@@ -201,8 +119,7 @@ const renameSpecifiers = async ({
 
     const dirName = path.dirname(tsConfigPath);
 
-    console.log("ref", tsConfigPath);
-    // console.log("ref", tsConfigPath, ref.commandLine.fileNames);
+    console.log("loading project", path.relative(process.cwd(), tsConfigPath));
 
     ref.commandLine.fileNames.forEach((fileName) => {
       if (!fileName.startsWith(dirName)) {
@@ -210,104 +127,112 @@ const renameSpecifiers = async ({
         return;
       }
       const sourceFile = globalProject.addSourceFileAtPath(fileName);
-      sourceFiles.push(sourceFile);
+      sourceFiles.add(sourceFile);
     });
 
+    // this also works, but is (possibly) slower:
     // const sourceFiles = globalProject.addSourceFilesFromTsConfig(tsConfigPath);
 
-    // a temporary project that holds the sources with remapped extensions
-    const remappedProject = new Project({
-      // TODO: do we need to allow access to real `package.json`s and `tsconfig.json`s in MemFS?
-      fileSystem: memoryFs,
-      compilerOptions: {
-        ...ref.commandLine.options,
-        project: tsConfigPath,
-      },
-      skipAddingFilesFromTsConfig: true,
-      // skipFileDependencyResolution: true,
-      // skipLoadingLibFiles: true,
+    tsConfigPathToRemappedProject.add({
+      ...ref.commandLine.options,
+      project: tsConfigPath,
     });
-
-    tsConfigPathToRemappedProject.set(tsConfigPath, remappedProject);
   }
 
-  const changeSets = new Map<SourceFile, ChangeSet[]>();
-
-  updateChangeSets({
+  const changeSets = updateChangeSets({
     emittedExtensionMapping,
     sourceFiles,
-    changeSets,
   });
 
   await Promise.all(
-    Array.from(tsConfigPathToRemappedProject).flatMap(
-      ([tsConfigPath, remappedProject]) => {
-        const projectDir = path.dirname(tsConfigPath);
-        const newFiles = processProject({
-          changeSets,
-          projectDir,
-          fsExtensionMapping,
-          remappedProject,
+    Array.from(tsConfigPathToRemappedProject).flatMap((compilerOptions) => {
+      const tsConfigPath = compilerOptions.project;
+      const projectDir = path.dirname(tsConfigPath);
+      const newFileSpecs = getNewSourcesWithinProject({
+        changeSets,
+        fsExtensionMapping,
+        // TODO: consider using the original 'ref.commandLine.fileNames' instead of a projectDir jail
+        projectDir,
+      });
+
+      // a temporary in-memory TS project that holds the sources with remapped extensions
+      const remappedProject = new Project({
+        // TODO: do we need to allow access to real `package.json`s and `tsconfig.json`s in MemFS?
+        // we can do that by using our overlay fs, but maybe we'd need to limit it to only those files?
+        fileSystem: virtualFs,
+        compilerOptions,
+        skipAddingFilesFromTsConfig: true,
+        skipFileDependencyResolution: true,
+        skipLoadingLibFiles: true,
+      });
+
+      const newFiles = newFileSpecs.map((fileSpec) => {
+        const newSourceFile = remappedProject.createSourceFile(
+          fileSpec.filePath,
+          fileSpec.contents,
+          { scriptKind: fileSpec.scriptKind },
+        );
+        newSourceFile.compilerNode.impliedNodeFormat =
+          fileSpec.impliedNodeFormat;
+        return newSourceFile;
+      });
+
+      // const preemitDiag =
+      //   remappedProject.formatDiagnosticsWithColorAndContext(
+      //     remappedProject.getPreEmitDiagnostics(),
+      //   );
+      // console.log(preemitDiag);
+
+      return newFiles.flatMap((file) => {
+        const baseName = file.getBaseName();
+        const emit = file.getEmitOutput();
+        const sourceText = file.getFullText();
+        let sourceTextEmitted = false;
+
+        const outputFiles = emit.getOutputFiles();
+
+        // console.log(
+        //   "compiled",
+        //   path.basename(projectDir),
+        //   path.basename(file.getFilePath()),
+        //   "=>",
+        //   outputFiles.map((f) =>
+        //     path.relative(
+        //       path.dirname(standardizedTsConfigPath),
+        //       f.getFilePath(),
+        //     ),
+        //   ),
+        // );
+
+        return outputFiles.map(async (emittedFile) => {
+          const filePath = emittedFile.getFilePath();
+          const fileDir = path.dirname(filePath);
+          await fsHost.mkdir(fileDir);
+          await Promise.all([
+            fsHost.writeFile(filePath, emittedFile.getText()),
+            !sourceTextEmitted &&
+              fsHost
+                .writeFile(path.join(fileDir, baseName), sourceText)
+                .then(() => {
+                  sourceTextEmitted = true;
+                }),
+          ]);
         });
-
-        // const preemitDiag =
-        //   remappedProject.formatDiagnosticsWithColorAndContext(
-        //     remappedProject.getPreEmitDiagnostics(),
-        //   );
-
-        // console.log(preemitDiag);
-
-        return newFiles.flatMap((file) => {
-          const baseName = file.getBaseName();
-          const emit = file.getEmitOutput();
-          const sourceText = file.getFullText();
-          let sourceTextEmitted = false;
-
-          const outputFiles = emit.getOutputFiles();
-
-          // console.log(
-          //   "compiled",
-          //   path.basename(projectDir),
-          //   path.basename(file.getFilePath()),
-          //   "=>",
-          //   outputFiles.map((f) =>
-          //     path.relative(
-          //       path.dirname(standardizedTsConfigPath),
-          //       f.getFilePath(),
-          //     ),
-          //   ),
-          // );
-
-          return outputFiles.map(async (emittedFile) => {
-            const filePath = emittedFile.getFilePath();
-            const fileDir = path.dirname(filePath);
-            await fsHost.mkdir(fileDir);
-            await Promise.all([
-              fsHost.writeFile(filePath, emittedFile.getText()),
-              !sourceTextEmitted &&
-                fsHost
-                  .writeFile(path.join(fileDir, baseName), sourceText)
-                  .then(() => {
-                    sourceTextEmitted = true;
-                  }),
-            ]);
-          });
-        });
-      },
-    ),
+      });
+    }),
   );
 };
 
 function updateChangeSets({
   sourceFiles,
   emittedExtensionMapping,
-  changeSets,
 }: {
-  sourceFiles: SourceFile[];
+  sourceFiles: Set<SourceFile>;
   /** how to map the import and export specifiers in the emitted files */
   emittedExtensionMapping: TargetMapping;
-  changeSets: Map<SourceFile, ChangeSet[]>;
 }) {
+  const changeSets = new Map<SourceFile, ChangeSet[]>();
+
   for (const sourceFile of sourceFiles) {
     const sourceExtension = sourceFile.getExtension();
 
@@ -354,30 +279,35 @@ function updateChangeSets({
       // because it is very slow
     }
   }
+
+  return changeSets;
 }
 
-function processProject({
+type NewSourceFileSpec = {
+  filePath: string;
+  contents: string;
+  scriptKind: ts.ScriptKind;
+  changed: boolean;
+} & Pick<ts.SourceFile, "impliedNodeFormat">;
+
+function getNewSourcesWithinProject({
   fsExtensionMapping,
-  remappedProject,
-  projectDir,
   changeSets,
+  projectDir,
 }: {
   /** how to map extensions in the file system before building */
   fsExtensionMapping: TargetMapping;
   changeSets: Map<SourceFile, ChangeSet[]>;
-  remappedProject: Project;
   projectDir: string;
-}) {
-  const newSourceFiles: SourceFile[] = [];
+}): NewSourceFileSpec[] {
+  const newSourceFiles: NewSourceFileSpec[] = [];
 
   for (const [sourceFile, changeSet] of changeSets) {
-    if (!sourceFile.getFilePath().startsWith(projectDir)) {
+    const filePath = sourceFile.getFilePath();
+    if (!filePath.startsWith(projectDir)) {
       // only add files belonging to this project
       continue;
     }
-    // if (sourceFile.getBaseName() !== "loadProject.ts") {
-    //   continue;
-    // }
     const contents = sourceFile.getFullText();
     const sourceExtension = sourceFile.getExtension();
 
@@ -385,20 +315,17 @@ function processProject({
       !isMappableExtension(sourceExtension) ||
       !fsExtensionMapping[sourceExtension]
     ) {
-      const newFile = remappedProject.createSourceFile(
-        sourceFile.getFilePath(),
+      newSourceFiles.push({
+        filePath,
         contents,
-        {
-          // overwrite: true,
-          scriptKind: sourceFile.getScriptKind(),
-        },
-      );
-      newSourceFiles.push(newFile);
-      if (sourceExtension === ".mjs" || sourceExtension === ".mts") {
-        // TODO: what about package.json "type"?
-        // TODO: should we change logic when allowImportingTsExtensions is true?
-        newFile.compilerNode.impliedNodeFormat = ts.ModuleKind.ESNext;
-      }
+        scriptKind: sourceFile.getScriptKind(),
+        changed: false,
+        impliedNodeFormat:
+          sourceFile.compilerNode.impliedNodeFormat ??
+          (sourceExtension === ".mjs" || sourceExtension === ".mts"
+            ? ts.ModuleKind.ESNext
+            : undefined),
+      });
       continue;
     }
     const targetExtension = fsExtensionMapping[sourceExtension]!;
@@ -418,35 +345,28 @@ function processProject({
 
     const targetFilePath = `${sourceFile.getDirectoryPath()}/${sourceFile.getBaseNameWithoutExtension()}${targetExtension}`;
 
-    const newSourceFile = remappedProject.createSourceFile(
-      targetFilePath,
-      newContents,
-      { scriptKind: sourceFile.getScriptKind() },
-    );
-    newSourceFiles.push(newSourceFile);
+    newSourceFiles.push({
+      filePath: targetFilePath,
+      contents: newContents,
+      scriptKind: sourceFile.getScriptKind(),
+      changed: true,
+      impliedNodeFormat:
+        targetExtension === ".mjs" || targetExtension === ".mts"
+          ? ts.ModuleKind.ESNext
+          : undefined,
+    });
 
-    if (targetExtension === ".mjs" || targetExtension === ".mts") {
-      newSourceFile.compilerNode.impliedNodeFormat = ts.ModuleKind.ESNext;
-    }
+    // const newSourceFile2 = remappedProject.createSourceFile(
+    //   targetFilePath,
+    //   newContents,
+    //   { scriptKind: sourceFile.getScriptKind() },
+    // );
+    // if (targetExtension === ".mjs" || targetExtension === ".mts") {
+    //   newSourceFile2.compilerNode.impliedNodeFormat = ts.ModuleKind.ESNext;
+    // }
   }
 
   return newSourceFiles;
-
-  // this fails now, because files is [] for the composite project
-  // after this sourcemaps are broken, because they refer to the non-existing .mts files
-  // maybe we iterate over each referenced project and emit files for each project?
-  // downsides: performance might be bad? projects might also have same files referenced
-  // although currently it looks like references aren't loaded at all, so might be ok?
-  // not sure how it compiles though without resolving the references?
-  // const result = await remappedProject.emit();
-  // result.getDiagnostics().forEach((diagnostic) => {
-  //   console.log(
-  //     diagnostic.getCode(),
-  //     diagnostic.getSourceFile()?.getBaseName(),
-  //     diagnostic.getLineNumber(),
-  //     diagnostic.getMessageText(),
-  //   );
-  // });
 }
 
 function replaceExtensionInLiteral(
@@ -462,6 +382,11 @@ function replaceExtensionInLiteral(
     .slice(lastOccurrenceIndex + fileNameNoExtension.length)
     .match(extensionRegexp)?.[0];
   if (!oldExtension) {
+    // TODO: what about the case of implicit extensions?
+    // not recommended for now, but we might want to support it
+    // then the caveats are that:
+    // - the literal could be pointing at a directory (expecting /index)
+    // - the literal could be pointing at a file without an extension
     return literal;
   }
 
@@ -475,8 +400,25 @@ function replaceExtensionInLiteral(
   );
 }
 
-renameSpecifiers({
-  tsConfigFilePath: "./tsconfig.json",
-  fsExtensionMapping: { ".ts": ".cts" },
-  emittedExtensionMapping: { ".ts": ".cjs" },
-});
+const presets = {
+  "ts-to-cts": {
+    fsExtensionMapping: { ".ts": ".cts", ".js": ".cjs" },
+    emittedExtensionMapping: { ".ts": ".cjs", ".js": ".cjs" },
+  },
+  "to-to-mts": {
+    fsExtensionMapping: { ".ts": ".mts", ".js": ".mjs" },
+    emittedExtensionMapping: { ".ts": ".mjs", ".js": ".mjs" },
+  },
+} as const;
+
+export const buildRemappedProject = async ({
+  tsConfigFilePath,
+  mappingPreset,
+}: {
+  tsConfigFilePath: string;
+  mappingPreset: "ts-to-cts" | "to-to-mts";
+}) =>
+  renameSpecifiers({
+    tsConfigFilePath,
+    ...presets[mappingPreset],
+  });

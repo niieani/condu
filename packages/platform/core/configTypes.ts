@@ -38,7 +38,7 @@ export interface FileDef {
   content?:
     | string
     | object
-    | (<T extends string | object>(
+    | (<T extends string | object = string | object>(
         manifest: RepoPackageJson,
       ) => Promise<T> | T);
   path: string;
@@ -124,6 +124,7 @@ interface Conventions {
   /** @default 'src' */
   sourceDir?: string;
   sourceExtensions?: string[];
+  distDir?: string;
 }
 
 type GitConfig = {

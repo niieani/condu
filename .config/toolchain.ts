@@ -19,7 +19,6 @@ export default configure({
     typescript({
       tsconfig: {
         compilerOptions: {
-          outDir: "dist",
           skipLibCheck: true,
         },
       },

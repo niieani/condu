@@ -17,6 +17,7 @@ import { getDefaultGitBranch } from "@repo/core/utils/getDefaultGitBranch.js";
 import yaml from "yaml";
 import { nonEmpty } from "@repo/core/utils/filter.js";
 import { isMatching } from "ts-pattern";
+import type { satisfies } from "semver";
 
 export async function collectState(
   config: RepoConfigWithInferredValues,
@@ -129,16 +130,28 @@ const stringify = (obj: unknown, filePath: string) =>
     ? yaml.stringify(obj)
     : JSON.stringify(obj, null, 2);
 
-const writeFileFromDef = async (
-  file: FileDef,
-  rootDir: string,
-  manifest: RepoPackageJson,
-) => {
+interface WrittenFile {
+  path: string;
+  content: string;
+  writtenAt: number;
+}
+
+const writeFileFromDef = async ({
+  file,
+  rootDir,
+  manifest,
+  projectDir,
+}: {
+  file: FileDef;
+  rootDir: string;
+  manifest: RepoPackageJson;
+  projectDir: string;
+}): Promise<WrittenFile | undefined> => {
   const resolvedContent =
     typeof file.content === "function"
-      ? await file.content(manifest)
+      ? ((await file.content(manifest)) as string | object | undefined)
       : file.content;
-  if (resolvedContent === "undefined") {
+  if (typeof resolvedContent === "undefined") {
     return;
   }
   const targetPath = path.join(rootDir, file.path);
@@ -150,19 +163,32 @@ const writeFileFromDef = async (
 
   console.log(`Writing ${targetPath}`);
   await fs.mkdir(parentDir, { recursive: true });
-  return fs.writeFile(targetPath, content);
+  await fs.writeFile(targetPath, content);
+  const stat = await fs.stat(targetPath);
+  return {
+    path: path.relative(projectDir, targetPath),
+    content,
+    writtenAt: stat.mtimeMs,
+  };
 };
 
-export function writeFiles(
-  files: readonly FileDef[],
-  rootDir: string,
-  manifest: RepoPackageJson,
-) {
-  return Promise.allSettled(
+export function writeFiles({
+  files,
+  targetPackageDir,
+  manifest,
+  projectDir,
+}: {
+  files: readonly FileDef[];
+  targetPackageDir: string;
+  manifest: RepoPackageJson;
+  projectDir: string;
+}) {
+  const rootDir = path.join(projectDir, targetPackageDir);
+  return Promise.all(
     files.map((file) =>
       // TODO: add logging
       // TODO: add manual diffing with confirmation that change is ok
-      writeFileFromDef(file, rootDir, manifest),
+      writeFileFromDef({ file, rootDir, manifest, projectDir }),
     ),
   );
 }
@@ -251,6 +277,7 @@ export async function apply(options: LoadConfigOptions = {}) {
     conventions: {
       ...config.conventions,
       sourceDir: config.conventions?.sourceDir ?? "src",
+      distDir: config.conventions?.sourceDir ?? "dist",
       sourceExtensions:
         config.conventions?.sourceExtensions ?? DEFAULT_SOURCE_EXTENSIONS,
     },
@@ -267,12 +294,12 @@ export async function apply(options: LoadConfigOptions = {}) {
     const { target } = files[0];
     if (!target) continue;
 
-    if (targetPackageDir === ".") {
-      await writeFiles(files, projectDir, target);
-      continue;
-    }
-
-    await writeFiles(files, path.join(projectDir, targetPackageDir), target);
+    await writeFiles({
+      files,
+      targetPackageDir,
+      manifest: target,
+      projectDir,
+    });
   }
 
   for (const packageNameOrDef of collectedState.devDependencies) {

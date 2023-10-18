@@ -14,6 +14,21 @@ type CommandContext = {
   error: (message: string) => void;
 };
 
+export class CreateCommand extends Command {
+  static override paths = [["create"]];
+
+  partialPath = Option.String({ required: true });
+  name = Option.String("--as");
+
+  async execute() {
+    return await createCommand({
+      partialPath: this.partialPath,
+      name: this.name,
+      context: createCommandContext(this.context),
+    });
+  }
+}
+
 // import { $ } from "zx";
 
 // const gitUser = (await $`git config user.name`).stdout.trim();
@@ -90,21 +105,6 @@ export async function createCommand({
   // maybe not, since the workflow should be as simple as possible
   // and the user can always edit the package.json after creation
   await createPackage({ match, manifest, description, projectDir, context });
-}
-
-export class CreateCommand extends Command {
-  static override paths = [["create"]];
-
-  partialPath = Option.String({ required: true });
-  name = Option.String("--as");
-
-  async execute() {
-    return await createCommand({
-      partialPath: this.partialPath,
-      name: this.name,
-      context: createCommandContext(this.context),
-    });
-  }
 }
 
 interface ConventionMatch {
