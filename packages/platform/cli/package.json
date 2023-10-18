@@ -9,16 +9,17 @@
     "@pnpm/types": "9.2.0",
     "@pnpm/workspace.find-packages": "1.0.10",
     "@repo/core": "workspace:*",
+    "@repo/update-specifiers": "workspace:*",
     "async-memoize-one": "^1.1.5",
     "clipanion": "patch:clipanion@npm%3A4.0.0-rc.2#~/.yarn/patches/clipanion-npm-4.0.0-rc.2-ad27d804c4.patch",
+    "print-diff": "^2.0.0",
     "remeda": "1.27.0",
     "sort-package-json": "2.5.1",
     "swc-mockify": "portal:../../../../mockify/swc-mockify",
     "ts-pattern": "5.0.5",
     "vitest": "0.34.5",
     "yaml": "2.3.2",
-    "zx": "7.2.3",
-    "@repo/update-specifiers": "workspace:*"
+    "zx": "7.2.3"
   },
   "devDependencies": {
     "ts-pattern": "^5.0.5"

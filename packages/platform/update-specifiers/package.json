@@ -6,7 +6,7 @@
     "access": "public"
   },
   "dependencies": {
-    "ts-morph": "^20.0.0",
-    "@ts-morph/common": "^0.21.0"
+    "@ts-morph/common": "^0.21.0",
+    "ts-morph": "^20.0.0"
   }
 }

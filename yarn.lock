@@ -2639,8 +2639,10 @@ __metadata:
     "@pnpm/types": "npm:9.2.0"
     "@pnpm/workspace.find-packages": "npm:1.0.10"
     "@repo/core": "workspace:*"
+    "@repo/update-specifiers": "workspace:*"
     async-memoize-one: "npm:^1.1.5"
     clipanion: "patch:clipanion@npm%3A4.0.0-rc.2#~/.yarn/patches/clipanion-npm-4.0.0-rc.2-ad27d804c4.patch"
+    print-diff: "npm:^2.0.0"
     remeda: "npm:1.27.0"
     sort-package-json: "npm:2.5.1"
     swc-mockify: "portal:../../../../mockify/swc-mockify"
@@ -2656,7 +2658,10 @@ __metadata:
   resolution: "@repo/core@workspace:packages/platform/core"
   dependencies:
     async-memoize-one: "npm:1.1.5"
+    fp-ts: "npm:^2.16.1"
+    io-ts: "npm:^2.2.20"
     node-fetch: "npm:^3.3.2"
+    remeda: "npm:^1.27.1"
   languageName: unknown
   linkType: soft
 
@@ -2668,10 +2673,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@repo/update-specifiers@workspace:packages/platform/update-specifiers":
+"@repo/update-specifiers@workspace:*, @repo/update-specifiers@workspace:packages/platform/update-specifiers":
   version: 0.0.0-use.local
   resolution: "@repo/update-specifiers@workspace:packages/platform/update-specifiers"
   dependencies:
+    "@ts-morph/common": "npm:^0.21.0"
     ts-morph: "npm:^20.0.0"
   languageName: unknown
   linkType: soft
@@ -2885,7 +2891,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ts-morph/common@npm:~0.21.0":
+"@ts-morph/common@npm:^0.21.0, @ts-morph/common@npm:~0.21.0":
   version: 0.21.0
   resolution: "@ts-morph/common@npm:0.21.0"
   dependencies:
@@ -5125,6 +5131,13 @@ __metadata:
   version: 4.0.2
   resolution: "diff@npm:4.0.2"
   checksum: ec09ec2101934ca5966355a229d77afcad5911c92e2a77413efda5455636c4cf2ce84057e2d7715227a2eeeda04255b849bd3ae3a4dd22eb22e86e76456df069
+  languageName: node
+  linkType: hard
+
+"diff@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "diff@npm:5.1.0"
+  checksum: f4557032a98b2967fe27b1a91dfcf8ebb6b9a24b1afe616b5c2312465100b861e9b8d4da374be535f2d6b967ce2f53826d7f6edc2a0d32b2ab55abc96acc2f9d
   languageName: node
   linkType: hard
 
@@ -9826,6 +9839,15 @@ __metadata:
   dependencies:
     parse-ms: "npm:^2.1.0"
   checksum: a39aac23cc7dae7a94c70518ab8b6c6db0894a7b84c81ee7abc8778c5ec8bae2d1e71ba991ff641732b38433724bfbdbb37bd3a00418637f797c072e06fe8b4c
+  languageName: node
+  linkType: hard
+
+"print-diff@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "print-diff@npm:2.0.0"
+  dependencies:
+    diff: "npm:^5.1.0"
+  checksum: 516d9a342d416ba8a94f46f40b0ba25082d8390345f98dc77991d6eeebb6e3470608b25fddfaf4e5ee6618b53604577b687fb493984539af222410c21f45f735
   languageName: node
   linkType: hard
 

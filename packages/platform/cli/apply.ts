@@ -16,8 +16,9 @@ import { type LoadConfigOptions, loadRepoProject } from "./loadProject.js";
 import { getDefaultGitBranch } from "@repo/core/utils/getDefaultGitBranch.js";
 import yaml from "yaml";
 import { nonEmpty } from "@repo/core/utils/filter.js";
-import { isMatching } from "ts-pattern";
-import type { satisfies } from "semver";
+import { P, isMatching, match } from "ts-pattern";
+import { printUnifiedDiff } from "print-diff";
+import readline from "node:readline/promises";
 
 export async function collectState(
   config: RepoConfigWithInferredValues,
@@ -136,37 +137,94 @@ interface WrittenFile {
   writtenAt: number;
 }
 
+interface CachedWrittenFile extends WrittenFile {
+  manuallyChanged?:
+    | {
+        at: number;
+        content: string;
+      }
+    | "deleted";
+}
+
 const writeFileFromDef = async ({
   file,
   rootDir,
   manifest,
   projectDir,
+  previouslyWrittenFiles,
 }: {
   file: FileDef;
   rootDir: string;
   manifest: RepoPackageJson;
   projectDir: string;
+  previouslyWrittenFiles: Map<string, CachedWrittenFile>;
 }): Promise<WrittenFile | undefined> => {
+  const targetPath = path.join(rootDir, file.path);
+  const pathFromProjectDir = path.relative(projectDir, targetPath);
+
+  const previouslyWritten = previouslyWrittenFiles.get(pathFromProjectDir);
+  // marking as handled:
+  previouslyWrittenFiles.delete(pathFromProjectDir);
+
   const resolvedContent =
     typeof file.content === "function"
       ? ((await file.content(manifest)) as string | object | undefined)
       : file.content;
+
   if (typeof resolvedContent === "undefined") {
+    if (previouslyWritten) {
+      console.log(`Deleting, no longer needed: ${targetPath}`);
+      await fs.rm(targetPath);
+    }
+    // nothing to add to cache state:
     return;
   }
-  const targetPath = path.join(rootDir, file.path);
   const parentDir = path.dirname(targetPath);
   const content =
     typeof resolvedContent === "string"
       ? resolvedContent
       : stringify(resolvedContent, file.path);
 
-  console.log(`Writing ${targetPath}`);
+  if (previouslyWritten && !previouslyWritten.manuallyChanged) {
+    console.log(`Already fresh: ${targetPath}`);
+    return previouslyWritten;
+  }
+
+  if (typeof previouslyWritten?.manuallyChanged === "object") {
+    console.log(`Manual changes present in ${targetPath}:`);
+    printUnifiedDiff(
+      previouslyWritten.manuallyChanged.content,
+      content,
+      process.stdout,
+    );
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+    const rawAnswer = await rl.question(
+      "Do you want to overwrite the file? (y/n)",
+    );
+    rl.close();
+    const shouldOverwrite = match(rawAnswer)
+      .with(P.union("y", "Y", P.string.regex(/yes/i)), () => true)
+      .otherwise(() => false);
+    if (!shouldOverwrite) {
+      console.log(`Skipping: ${targetPath}`);
+      return {
+        path: file.path,
+        writtenAt: previouslyWritten.writtenAt,
+        content: previouslyWritten.content,
+      };
+    }
+  }
+
+  console.log(`Writing: ${targetPath}`);
   await fs.mkdir(parentDir, { recursive: true });
   await fs.writeFile(targetPath, content);
   const stat = await fs.stat(targetPath);
+
   return {
-    path: path.relative(projectDir, targetPath),
+    path: pathFromProjectDir,
     content,
     writtenAt: stat.mtimeMs,
   };
@@ -177,24 +235,33 @@ export function writeFiles({
   targetPackageDir,
   manifest,
   projectDir,
+  previouslyWrittenFiles,
 }: {
   files: readonly FileDef[];
   targetPackageDir: string;
   manifest: RepoPackageJson;
   projectDir: string;
+  previouslyWrittenFiles: Map<string, CachedWrittenFile>;
 }) {
   const rootDir = path.join(projectDir, targetPackageDir);
   return Promise.all(
     files.map((file) =>
       // TODO: add logging
       // TODO: add manual diffing with confirmation that change is ok
-      writeFileFromDef({ file, rootDir, manifest, projectDir }),
+      writeFileFromDef({
+        file,
+        rootDir,
+        manifest,
+        projectDir,
+        previouslyWrittenFiles,
+      }),
     ),
   );
 }
 
-const defaultPackageManager = "yarn";
-const defaultNodeVersion = "20.7.0";
+const DEFAULT_PACKAGE_MANAGER = "yarn";
+// TODO: fetch latest version?
+const DEFAULT_NODE_VERSION = "20.7.0";
 const DEFAULT_SOURCE_EXTENSIONS = [
   "ts",
   "tsx",
@@ -206,6 +273,43 @@ const DEFAULT_SOURCE_EXTENSIONS = [
   "cjs",
   "json",
 ];
+
+const FILE_STATE_PATH = ".config/.cache/files.json";
+
+async function readPreviouslyWrittenFileCache(
+  projectDir: string,
+): Promise<Map<string, CachedWrittenFile>> {
+  try {
+    const file = await fs.readFile(path.join(projectDir, FILE_STATE_PATH));
+    const cache = JSON.parse(file.toString()) as WrittenFile[];
+    return new Map(
+      await Promise.all(
+        cache.map(
+          async (file): Promise<readonly [string, CachedWrittenFile]> => {
+            const fullPath = path.join(projectDir, file.path);
+            const stat = await fs.stat(fullPath).catch(() => undefined);
+            return [
+              file.path,
+              {
+                ...file,
+                manuallyChanged: !stat
+                  ? "deleted"
+                  : stat?.atimeMs !== file.writtenAt
+                  ? {
+                      at: stat.atimeMs,
+                      content: (await fs.readFile(fullPath)).toString(),
+                    }
+                  : undefined,
+              },
+            ] as const;
+          },
+        ),
+      ),
+    );
+  } catch (e) {
+    return new Map();
+  }
+}
 
 export async function apply(options: LoadConfigOptions = {}) {
   const project = await loadRepoProject(options);
@@ -238,8 +342,8 @@ export async function apply(options: LoadConfigOptions = {}) {
   const { packageManager, engines } = manifest;
   const [packageManagerName, packageManagerVersion] = packageManager?.split(
     "@",
-  ) ?? [defaultPackageManager];
-  const nodeVersion = engines?.node ?? defaultNodeVersion;
+  ) ?? [DEFAULT_PACKAGE_MANAGER];
+  const nodeVersion = engines?.node ?? DEFAULT_NODE_VERSION;
 
   // sync defined workspaces to package.json
   if (
@@ -269,7 +373,7 @@ export async function apply(options: LoadConfigOptions = {}) {
           }
         : {
             packageManager: {
-              name: defaultPackageManager,
+              name: DEFAULT_PACKAGE_MANAGER,
             },
           }),
       version: nodeVersion,
@@ -290,17 +394,37 @@ export async function apply(options: LoadConfigOptions = {}) {
   );
   const filesByPackageDir = groupBy(writableFiles, (file) => file.targetDir);
 
+  // TODO: provide the manually changed previouslyWrittenFiles to respective features
+  // TODO: would need to add feature name to each cache entry
+  const previouslyWrittenFiles = await readPreviouslyWrittenFileCache(
+    projectDir,
+  );
+
+  const writtenFiles: WrittenFile[] = [];
   for (const [targetPackageDir, files] of Object.entries(filesByPackageDir)) {
-    const { target } = files[0];
+    const [{ target }] = files;
     if (!target) continue;
 
-    await writeFiles({
+    const written = await writeFiles({
       files,
+      projectDir,
       targetPackageDir,
       manifest: target,
-      projectDir,
+      previouslyWrittenFiles,
     });
+    for (const file of written) {
+      if (!file) continue;
+      writtenFiles.push(file);
+    }
   }
+
+  await writeFiles({
+    files: [{ path: FILE_STATE_PATH, content: writtenFiles }],
+    manifest,
+    projectDir,
+    targetPackageDir: ".",
+    previouslyWrittenFiles: new Map(),
+  });
 
   for (const packageNameOrDef of collectedState.devDependencies) {
     let dependencyDef: DependencyDef;
