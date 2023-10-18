@@ -3,10 +3,7 @@ node_modules
 dist
 .yarn/cache
 # typescript:
-/tsconfig.options.json
 /tsconfig.json
-/packages/features/*/tsconfig.json
-/packages/platform/*/tsconfig.json
 # eslint:
 /eslint.config.js
 # moon:

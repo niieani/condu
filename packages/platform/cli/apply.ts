@@ -460,7 +460,7 @@ export async function apply(options: LoadConfigOptions = {}) {
     [...previouslyWrittenFiles.values()].map(async (file) => {
       if (file.manuallyChanged) return;
       const fullPath = path.join(projectDir, file.path);
-      console.log(`Deleting, no longer needed: ${file.path}`);
+      console.log(`Deleting, no longer needed: ${fullPath}`);
       await fs.rm(fullPath);
     }),
   );

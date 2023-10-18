@@ -2,11 +2,11 @@ import { Command, Option } from "clipanion";
 import { equals } from "remeda";
 import type { WorkspaceProjectDefined } from "./getProjectGlobsFromMoonConfig.js";
 import { loadRepoProject } from "./loadProject.js";
-import fs from "node:fs/promises";
+import * as fs from "node:fs/promises";
 // import { PackageManifest } from "@pnpm/types";
 import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
 import sortPackageJson from "sort-package-json";
-import path from "node:path";
+import * as path from "node:path";
 import { createCommandContext } from "./createCommandContext.js";
 
 type CommandContext = {

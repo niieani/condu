@@ -49,7 +49,7 @@ export const typescript = ({
         ],
         files: [
           {
-            path: config.projects ? "tsconfig.options.json" : "tsconfig.json",
+            path: isComposite ? "tsconfig.options.json" : "tsconfig.json",
             content: {
               ...tsconfig,
               compilerOptions: {
@@ -90,6 +90,17 @@ export const typescript = ({
                       // TODO: incremental: true
                       // optional perf optimization:
                       // assumeChangesOnlyAffectDirectDependencies: true,
+                    }
+                  : config.projects
+                  ? {
+                      // TODO: infer normalized project conventions from config.projects
+                      paths: Object.fromEntries(
+                        config.projects?.map((p) =>
+                          typeof p === "object" && "parentPath" in p
+                            ? [p.nameConvention, [`./${p.parentPath}/*`]]
+                            : [],
+                        ),
+                      ),
                     }
                   : {}),
                 // TODO: this should be true for projects that use external compilers
