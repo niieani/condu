@@ -20,6 +20,7 @@ export default configure({
       tsconfig: {
         compilerOptions: {
           skipLibCheck: true,
+          composite: false,
         },
       },
     }),
@@ -27,6 +28,6 @@ export default configure({
     moon(),
     moonCi(),
     lerna(),
-    gitignore({ ignore: [".swc/"] }),
+    gitignore({ ignore: [".swc/", ".config/.cache/"] }),
   ],
 });

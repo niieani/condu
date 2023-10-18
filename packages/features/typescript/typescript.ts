@@ -68,6 +68,7 @@ export const typescript = ({
                 // noUnusedParameters: true,
                 resolveJsonModule: true,
                 rootDir: config.conventions.sourceDir,
+                outDir: config.conventions.distDir,
                 // mapRoot is overridden because the directory that we publish
                 // is not the same as the directory that we compile to
                 // we publish all the sources next to the compiled output for simplicity of consumption
@@ -91,7 +92,6 @@ export const typescript = ({
                       // assumeChangesOnlyAffectDirectDependencies: true,
                     }
                   : {}),
-                dist: config.conventions.distDir,
                 // TODO: this should be true for projects that use external compilers
                 // emitDeclarationOnly: true,
                 // strongly encourage importHelpers: true
