@@ -10,7 +10,6 @@ import type {
 // import type Workspace from "./schemas/workspace.js";
 import { otherSchemas as schemas } from "@repo/schema-types/utils/schemas.js";
 import { getMoonWorkspaceProjectsFromConventionConfig } from "@repo/cli/getProjectGlobsFromMoonConfig.js";
-import { getDefaultGitBranch } from "@repo/core/utils/getDefaultGitBranch.js";
 
 // TODO: add opinionated defaults for toolchain and workspace
 // TODO: use a shared config property for typescript, etc.
@@ -112,9 +111,10 @@ export const moon = ({
               ...(config.projects && {
                 typescript: {
                   ...defaultToolchain.typescript,
-                  syncProjectReferences: true,
-                  syncProjectReferencesToPaths: true,
-                  createMissingConfig: true,
+                  // TODO: implement this in repo, so we don't repend on moon for it:
+                  // syncProjectReferences: true,
+                  // syncProjectReferencesToPaths: true,
+                  // createMissingConfig: true,
                   rootOptionsConfigFileName: "tsconfig.options.json",
                   ...toolchain?.typescript,
                 },
