@@ -7,8 +7,8 @@ import {
 } from "./loadProject.js";
 import { getSingleMatch } from "./CreateCommand.js";
 import { match } from "ts-pattern";
-import path from "node:path";
-import fs from "node:fs/promises";
+import * as path from "node:path";
+import * as fs from "node:fs/promises";
 import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
 import { filter, find } from "remeda";
 import { safeFn } from "@repo/core/utils/safeFn.js";
