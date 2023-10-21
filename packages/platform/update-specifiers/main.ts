@@ -138,7 +138,7 @@ const renameSpecifiers = async ({
     });
   }
 
-  const changeSets = updateChangeSets({
+  const changeSets = createChangeSets({
     emittedExtensionMapping,
     sourceFiles,
   });
@@ -222,12 +222,16 @@ const renameSpecifiers = async ({
   );
 };
 
-function updateChangeSets({
+function createChangeSets({
   sourceFiles,
   emittedExtensionMapping,
 }: {
   sourceFiles: Set<SourceFile>;
-  /** how to map the import and export specifiers in the emitted files */
+  /**
+   * how to change import and export specifiers in the emitted files
+   * the keys are the extension of files present in the filesystem,
+   * the values are the extensions that should be present in the source code after mapping
+   **/
   emittedExtensionMapping: TargetMapping;
 }) {
   const changeSets = new Map<SourceFile, ChangeSet[]>();
@@ -261,15 +265,18 @@ function updateChangeSets({
     for (const literal of referencingLiterals) {
       const referencingSourceFile = literal.getSourceFile();
       const changeSet = changeSets.get(referencingSourceFile) ?? [];
-      const newText = replaceExtensionInLiteral(
-        literal.getText(),
+      // omit the quotes (first and last character)
+      const literalPath = literal.getText().slice(1, -1);
+      const updatedPath = replaceExtensionInPathReference(
+        literalPath,
         sourceFile.getBaseNameWithoutExtension(),
         targetEmitExtension,
       );
       changeSet.push({
-        start: literal.getStart(),
-        end: literal.getEnd(),
-        newText,
+        // omit the quotes (first and last character)
+        start: literal.getStart() + 1,
+        end: literal.getEnd() - 1,
+        newText: updatedPath,
       });
 
       changeSets.set(referencingSourceFile, changeSet);
@@ -368,16 +375,16 @@ function getNewSourcesWithinProject({
   return newSourceFiles;
 }
 
-function replaceExtensionInLiteral(
-  literal: string,
+function replaceExtensionInPathReference(
+  pathRef: string,
   fileNameNoExtension: string,
   newExtension: string,
 ) {
-  const lastOccurrenceIndex = literal.lastIndexOf(fileNameNoExtension);
+  const lastOccurrenceIndex = pathRef.lastIndexOf(fileNameNoExtension);
   if (lastOccurrenceIndex === -1) {
-    return literal;
+    return `${pathRef}${newExtension}`;
   }
-  const oldExtension = literal
+  const oldExtension = pathRef
     .slice(lastOccurrenceIndex + fileNameNoExtension.length)
     .match(extensionRegexp)?.[0];
   if (!oldExtension) {
@@ -386,14 +393,14 @@ function replaceExtensionInLiteral(
     // then the caveats are that:
     // - the literal could be pointing at a directory (expecting /index)
     // - the literal could be pointing at a file without an extension
-    return literal;
+    return pathRef;
   }
 
   return (
-    literal.slice(0, lastOccurrenceIndex) +
+    pathRef.slice(0, lastOccurrenceIndex) +
     fileNameNoExtension +
     newExtension +
-    literal.slice(
+    pathRef.slice(
       lastOccurrenceIndex + fileNameNoExtension.length + oldExtension.length,
     )
   );

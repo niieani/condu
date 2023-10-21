@@ -23,7 +23,7 @@ Override only the parts you need to in your given project, and keep the rest up 
 Scaffolding seems great at first, but isn't good enough, because it's not maintainable.
 The ecosystem moves too fast, and there are no configuration management tools in the JavaScript ecosystem.
 
-`repo` fixes [this](https://twitter.com/WarrenInTheBuff/status/1672839156647575552) and [this](https://deno.com/blog/node-config-hell) and [this](https://www.youtube.com/watch?v=wYdnJPYFTIE).
+`repo` fixes [this](https://twitter.com/WarrenInTheBuff/status/1672839156647575552) and [this](https://deno.com/blog/node-config-hell) and [this](https://www.youtube.com/watch?v=wYdnJPYFTIE), and [this](https://x.com/_swanson/status/1715073746073973203?s=61&t=JtRF6B8eIiof-jxZY_xABA).
 
 `repo` is here to help out.
 

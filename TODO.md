@@ -9,6 +9,7 @@ MVP
 - [x] Individual Package overrides
 - [ ] TS building for release - all files can be in the
   - [ ] make a script to copy all source files into the dist folder, except configs
+  - [ ] to get good quality errors, a wild idea would be to just dump the generated .cts files for build, and then remove them after build. maybe this could be done in the memoryFS that's overlaid on top of the real FS, where we use memFS only for the project directory, and the rest is real FS? or better yet, exclude from real FS specifically all the renamed files only. Mocked FS and we just run real `tsc --build` inside of it?
   - [ ] might need to settle for .cjs + .js for now if we want to use tsc --build for default esm build
   - [ ] for main pass: simply build project with tsc, no changes necessary
   - [ ] for other pass:
@@ -52,3 +53,4 @@ Later:
 - [ ] Migration tool - should remove files from gitignore from committed files
 - [ ] Docs: Great collection of [CLI websites](https://news.ycombinator.com/item?id=26878936) on HN
 - [ ] TS: add a pure JavaScript with TSDoc mode
+- [ ] adding arbitrary github action files from config (which means generating them from code is possible)

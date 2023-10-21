@@ -5,7 +5,7 @@ import { createNpmResolver } from "@pnpm/npm-resolver";
 import { getCacheDir } from "@repo/core/utils/dirs.js";
 import { createFetchFromRegistry } from "@pnpm/fetch";
 import { createGetAuthHeaderByURI } from "@pnpm/network.auth-header";
-import path from "path";
+import * as path from "node:path";
 import { findUp } from "@repo/core/utils/findUp.js";
 import { $ } from "./zx.js";
 import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
