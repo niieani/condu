@@ -166,6 +166,7 @@ export const configure = (config: RepoConfig): ConfiguredRepoConfig => ({
 
 export interface RepoConfigWithInferredValues extends RepoConfig {
   workspaceDir: string;
+  configDir: string;
   conventions: Required<Conventions>;
   git: Required<GitConfig>;
   node: Required<NodeConfig>;

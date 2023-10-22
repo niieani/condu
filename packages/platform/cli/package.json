@@ -3,25 +3,22 @@
   "type": "module",
   "dependencies": {
     "@pnpm/fetch": "patch:@pnpm/fetch@npm%3A7.0.3#~/.yarn/patches/@pnpm-fetch-npm-7.0.3-9f1373965c.patch",
-    "@pnpm/network.auth-header": "2.0.5",
-    "@pnpm/npm-resolver": "16.0.10",
-    "@pnpm/read-project-manifest": "5.0.6",
-    "@pnpm/types": "9.2.0",
-    "@pnpm/workspace.find-packages": "1.0.10",
+    "@pnpm/network.auth-header": "^2.0.5",
+    "@pnpm/npm-resolver": "^16.0.12",
+    "@pnpm/read-project-manifest": "^5.0.7",
+    "@pnpm/types": "^9.3.0",
+    "@pnpm/workspace.find-packages": "^1.0.14",
     "@repo/core": "workspace:*",
     "@repo/update-specifiers": "workspace:*",
     "async-memoize-one": "^1.1.5",
     "clipanion": "patch:clipanion@npm%3A4.0.0-rc.2#~/.yarn/patches/clipanion-npm-4.0.0-rc.2-ad27d804c4.patch",
     "print-diff": "^2.0.0",
-    "remeda": "1.27.0",
-    "sort-package-json": "2.5.1",
+    "remeda": "^1.27.1",
+    "sort-package-json": "^2.6.0",
     "swc-mockify": "portal:../../../../mockify/swc-mockify",
-    "ts-pattern": "5.0.5",
-    "vitest": "0.34.5",
-    "yaml": "2.3.2",
-    "zx": "7.2.3"
-  },
-  "devDependencies": {
-    "ts-pattern": "^5.0.5"
+    "ts-pattern": "^5.0.5",
+    "vitest": "0.34.6",
+    "yaml": "^2.3.3",
+    "zx": "^7.2.3"
   }
 }

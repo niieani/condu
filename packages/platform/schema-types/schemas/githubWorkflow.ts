@@ -1122,7 +1122,7 @@ export interface NormalJob {
     /**
      * When set to true, GitHub cancels all in-progress jobs if any matrix job fails. Default: true
      */
-    "fail-fast"?: boolean;
+    "fail-fast"?: boolean | string;
     /**
      * The maximum number of jobs that can run simultaneously when using a matrix job strategy. By default, GitHub will maximize the number of jobs run in parallel depending on the available runners on GitHub-hosted virtual machines.
      */
@@ -1269,7 +1269,7 @@ export interface ReusableWorkflowCallJob {
     /**
      * When set to true, GitHub cancels all in-progress jobs if any matrix job fails. Default: true
      */
-    "fail-fast"?: boolean;
+    "fail-fast"?: boolean | string;
     /**
      * The maximum number of jobs that can run simultaneously when using a matrix job strategy. By default, GitHub will maximize the number of jobs run in parallel depending on the available runners on GitHub-hosted virtual machines.
      */

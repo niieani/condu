@@ -4,6 +4,7 @@ import { moon } from "@repo-feature/moon/moon.js";
 import { moonCi } from "@repo-feature/ci-github-actions/moon.js";
 import { eslint } from "@repo-feature/eslint/eslint.js";
 import { lerna } from "@repo-feature/lerna/lerna.js";
+import { yarn } from "@repo-feature/yarn/yarn.js";
 import { configure } from "@repo/core/configTypes.js";
 
 export default configure({
@@ -16,6 +17,7 @@ export default configure({
     sourceDir: ".",
   },
   features: [
+    yarn(),
     typescript({
       tsconfig: {
         compilerOptions: {

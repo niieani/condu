@@ -1,7 +1,6 @@
 import { defineFeature } from "@repo/core/defineFeature.js";
 import type TSConfig from "@repo/schema-types/schemas/tsconfig.js";
-import path from "node:path";
-import type { satisfies } from "semver";
+import * as path from "node:path";
 
 const commonJsFirstPreset = {
   module: "CommonJS",
@@ -15,7 +14,7 @@ const esmFirstPreset = {
   // most recommended way, because it's compatible with most tools (requires .js imports)
   moduleResolution: "NodeNext",
   verbatimModuleSyntax: true,
-  esModuleInterop: false,
+  // esModuleInterop: false,
 } satisfies TSConfig["compilerOptions"];
 
 const presets = {
@@ -34,6 +33,9 @@ export const typescript = ({
     name: "typescript",
     order: { priority: "beginning" },
     actionFn: (config, state) => {
+      // TODO: explain pros and cons of composite projects
+      // cons: slower, more memory, no incremental builds
+      // pros: more responsive to changes in other projects, auto-import suggestions from other projects
       const isComposite =
         config.projects && tsconfig?.compilerOptions?.composite !== false;
       const selectedPreset = presets[preset ?? "esm-first"];
@@ -78,6 +80,7 @@ export const typescript = ({
                 declaration: true,
                 declarationMap: true,
                 sourceMap: true,
+                // TODO: make 'importHelpers: true' default for applications, and false for libraries
                 // recommended, because it allows using custom transpilers:
                 verbatimModuleSyntax: true,
                 forceConsistentCasingInFileNames: true,

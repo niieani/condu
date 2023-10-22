@@ -3,6 +3,6 @@
   "type": "module",
   "dependencies": {
     "@repo/core": "workspace:*",
-    "remeda": "1.27.0"
+    "remeda": "^1.27.1"
   }
 }

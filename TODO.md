@@ -7,6 +7,7 @@ MVP
 - [x] GitHub Actions
 - [x] automatically add missing workspace dependencies to package.json
 - [x] Individual Package overrides
+- [ ] yarn constraints
 - [ ] TS building for release - all files can be in the
   - [ ] make a script to copy all source files into the dist folder, except configs
   - [ ] to get good quality errors, a wild idea would be to just dump the generated .cts files for build, and then remove them after build. maybe this could be done in the memoryFS that's overlaid on top of the real FS, where we use memFS only for the project directory, and the rest is real FS? or better yet, exclude from real FS specifically all the renamed files only. Mocked FS and we just run real `tsc --build` inside of it?
@@ -22,10 +23,10 @@ MVP
       - [x] since the extension is mandatory, failure is very unlikely. even if the filename is common, like './calc.js', it is unlikely this string would be used for anything other than an import from/export from
   - [x] adjust the "sources" in the .map files
   - [x] output will have: .ts, .js, .js.map, .d.ts, .mjs, .d.mts, .mjs.map + all other files
+  - [x] solve source map references, still relative to the root, instead of always next to the file
   - [ ] important [thread about this](https://github.com/microsoft/TypeScript/issues/49462)
-  - [ ] solve source map references, still relative to the root, instead of always next to the file
   - [ ] allow CJS building via SWC
-  - [ ] verify that TSX works
+  - [ ] verify that TSX works (typescript doesn't like `const x = <x>() => {}` because it thinks it's a JSX tag, [which is supported in mts/cts by default](https://github.com/microsoft/TypeScript/issues/44442))
 - [ ] semantic-release (use [Auto](https://github.com/intuit/auto) instead for mono-repo support)
 - [ ] pre-release
   - [ ] copy LICENSE to each package

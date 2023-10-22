@@ -15,4 +15,6 @@ export const schemas = {
     "https://github.com/SchemaStore/schemastore/raw/master/src/schemas/json/github-action.json",
   lerna:
     "https://raw.githubusercontent.com/lerna/lerna/main/packages/lerna/schemas/lerna-schema.json",
+  yarnrc:
+    "https://github.com/yarnpkg/berry/raw/master/packages/docusaurus/static/configuration/yarnrc.json",
 };

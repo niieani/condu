@@ -17,6 +17,7 @@ export default config;`,
       devDependencies: [
         "eslint",
         "eslint-plugin-import@npm:eslint-plugin-i@latest",
+        "eslint-plugin-unicorn",
         "eslint-import-resolver-typescript",
         "@typescript-eslint/parser",
         "@typescript-eslint/eslint-plugin",

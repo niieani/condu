@@ -296,6 +296,10 @@ export interface Lerna {
        */
       conventionalGraduate?: string | boolean | string[];
       /**
+       * Forces all packages specified by --conventional-graduate to bump their version whether or not they are a prerelease or have changes since the previous version. Relevant for `lerna changed` and `lerna version`.
+       */
+      forceConventionalGraduate?: boolean;
+      /**
        * During `lerna changed` and `lerna version`, always include targeted packages when detecting changed packages, skipping default logic.
        */
       forcePublish?: string | boolean | string[];
@@ -1250,6 +1254,10 @@ export interface Lerna {
        */
       conventionalGraduate?: string | boolean | string[];
       /**
+       * Forces all packages specified by --conventional-graduate to bump their version whether or not they are a prerelease or have changes since the previous version. Relevant for `lerna changed` and `lerna version`.
+       */
+      forceConventionalGraduate?: boolean;
+      /**
        * During `lerna version`, version changed packages as prereleases when using --conventional-commits.
        */
       conventionalPrerelease?: string | boolean | string[];
@@ -1286,6 +1294,10 @@ export interface Lerna {
        * During `lerna bootstrap`, `lerna publish`, and `lerna version`, don't run ANY lifecycle scripts in bootstrapped packages.
        */
       ignoreScripts?: boolean;
+      /**
+       * During `lerna version` when true output is provided in json format.
+       */
+      json?: boolean;
       /**
        * For `lerna version`, the custom commit message to use when creating the version commit.
        */

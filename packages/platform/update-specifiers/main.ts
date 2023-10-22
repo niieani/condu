@@ -161,8 +161,8 @@ const renameSpecifiers = async ({
         fileSystem: virtualFs,
         compilerOptions,
         skipAddingFilesFromTsConfig: true,
-        skipFileDependencyResolution: true,
-        skipLoadingLibFiles: true,
+        // skipFileDependencyResolution: true,
+        // skipLoadingLibFiles: true,
       });
 
       const newFiles = newFileSpecs.map((fileSpec) => {
@@ -176,10 +176,9 @@ const renameSpecifiers = async ({
         return newSourceFile;
       });
 
-      // const preemitDiag =
-      //   remappedProject.formatDiagnosticsWithColorAndContext(
-      //     remappedProject.getPreEmitDiagnostics(),
-      //   );
+      // const preemitDiag = remappedProject.formatDiagnosticsWithColorAndContext(
+      //   remappedProject.getPreEmitDiagnostics(),
+      // );
       // console.log(preemitDiag);
 
       return newFiles.flatMap((file) => {

@@ -5,6 +5,7 @@ import typescriptParser, {
   type ParserOptions,
 } from "@typescript-eslint/parser";
 import noExtraneousDependencies from "./rules/no-extraneous-dependencies.cjs";
+import unicornPlugin from "eslint-plugin-unicorn";
 
 export default [
   {
@@ -18,6 +19,7 @@ export default [
           "no-extraneous-dependencies": noExtraneousDependencies,
         },
       },
+      unicorn: unicornPlugin,
       "@typescript-eslint": typescriptEslint as unknown as ESLint.Plugin,
     },
     languageOptions: {
@@ -55,6 +57,37 @@ export default [
         { disallowTypeAnnotations: false },
       ],
       "@typescript-eslint/no-import-type-side-effects": "error",
+      //
+      "unicorn/prefer-node-protocol": "error",
+      "unicorn/prefer-regexp-test": "error",
+      "unicorn/better-regex": "error",
+      "unicorn/new-for-builtins": "error",
+      "unicorn/consistent-function-scoping": "error",
+      "unicorn/custom-error-definition": "error",
+      "unicorn/escape-case": "error",
+
+      // TODO: opinionated rules (these should not be defaults)
+      "unicorn/no-null": "error",
+      "unicorn/no-typeof-undefined": "error",
+      "unicorn/filename-case": [
+        "error",
+        {
+          cases: {
+            camelCase: true,
+            pascalCase: true,
+          },
+          ignore: [`\\.d\\.ts$`],
+        },
+      ],
+      "unicorn/no-abusive-eslint-disable": "error",
+      "unicorn/no-array-for-each": "error",
+      "unicorn/no-array-method-this-argument": "error",
+      "unicorn/no-document-cookie": "error",
+      "unicorn/no-for-loop": "error",
+      "unicorn/no-hex-escape": "error",
+      "unicorn/no-instanceof-array": "error",
+      "unicorn/no-invalid-remove-event-listener": "error",
+      // TODO: review the rest https://github.com/sindresorhus/eslint-plugin-unicorn/tree/main?tab=readme-ov-file
     },
     settings: {
       "import/parsers": {
