@@ -27,6 +27,8 @@ The ecosystem moves too fast, and there are no configuration management tools in
 
 `repo` is here to help out.
 
+Embrace convention over configuration, but allow for easy configuration overrides.
+
 - Simple repo management system:
 
   - Immutable/reconstructable configs (nix-os philosophy)
@@ -59,6 +61,7 @@ The ecosystem moves too fast, and there are no configuration management tools in
     - gitignore, npmignore, etc.
   - typescript
     - auto-project references
+    - passes [arethetypeswrong](https://arethetypeswrong.github.io/) tests with flying colors
   - dummy config strategies (doesn't do anything, but multiple strategies can use the config)
     - target strategy (node/web/react)
     - execution strategy (cli/browser/service/none)

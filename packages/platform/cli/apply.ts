@@ -302,7 +302,8 @@ const DEFAULT_SOURCE_EXTENSIONS = [
   "json",
 ];
 
-const FILE_STATE_PATH = ".config/.cache/files.json";
+const CONFIG_DIR = ".config";
+const FILE_STATE_PATH = `${CONFIG_DIR}/.cache/files.json`;
 
 async function readPreviouslyWrittenFileCache(
   projectDir: string,
@@ -425,6 +426,7 @@ export async function apply(options: LoadConfigOptions = {}) {
         config.conventions?.sourceExtensions ?? DEFAULT_SOURCE_EXTENSIONS,
     },
     workspaceDir: projectDir,
+    configDir: path.join(projectDir, CONFIG_DIR),
     project,
   });
 

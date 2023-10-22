@@ -2,6 +2,9 @@
 node_modules
 dist
 .yarn/cache
+# yarn:
+/.yarnrc.yml
+/yarn.config.cjs
 # typescript:
 /tsconfig.json
 # eslint:
