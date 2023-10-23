@@ -164,16 +164,17 @@ interface CachedWrittenFile extends WrittenFile {
     | "deleted";
 }
 
-const getGetExistingContent = (targetPath: string) => async () => {
-  const extension = path.extname(targetPath);
-  return async (): Promise<string | object | undefined> => {
+const getGetExistingContent =
+  (targetPath: string, onExecuted: () => void) =>
+  async (): Promise<string | object | undefined> => {
+    onExecuted();
+    const extension = path.extname(targetPath);
     const file = (await fs.readFile(targetPath)).toString();
     return match(extension)
       .with(P.string.regex(/\.ya?ml$/i), () => yaml.parse(file))
       .with(P.string.regex(/\.json5?$/i), () => commentJson.parse(file))
       .otherwise(() => file);
   };
-};
 
 const writeFileFromDef = async ({
   file,
@@ -195,11 +196,17 @@ const writeFileFromDef = async ({
   // marking as handled:
   previouslyWrittenFiles.delete(pathFromProjectDir);
 
+  let usedExistingContent = false;
   const resolvedContent =
     typeof file.content === "function"
       ? ((await file.content({
           manifest,
-          getExistingContent: getGetExistingContent(targetPath),
+          getExistingContentAndMarkAsUserEditable: getGetExistingContent(
+            targetPath,
+            () => {
+              usedExistingContent = true;
+            },
+          ),
         })) as string | object | undefined)
       : file.content;
 
@@ -226,7 +233,11 @@ const writeFileFromDef = async ({
     return previouslyWritten;
   }
 
-  if (typeof previouslyWritten?.manuallyChanged === "object") {
+  // only show diff if we're not "enhancing" a manually editable file
+  if (
+    typeof previouslyWritten?.manuallyChanged === "object" &&
+    !usedExistingContent
+  ) {
     const manuallyChanged = previouslyWritten.manuallyChanged;
     // this needs to happen sequentially, because we're prompting the user for input:
     return async () => {
