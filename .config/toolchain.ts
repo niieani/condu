@@ -31,7 +31,14 @@ export default configure({
     moon(),
     moonCi(),
     lerna(),
-    vscode(),
+    vscode({
+      suggestedConfig: {
+        "eslint.experimental.useFlatConfig": true,
+        "eslint.ignoreUntitled": true,
+        "eslint.useESLintClass": true,
+        "eslint.execArgv": ["--loader", "./node_modules/tsx/dist/loader.mjs"],
+      },
+    }),
     gitignore({ ignore: [".swc/", ".config/.cache/"] }),
   ],
 });
