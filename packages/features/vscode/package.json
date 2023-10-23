@@ -1,0 +1,12 @@
+{
+  "name": "@repo-feature/vscode",
+  "type": "module",
+  "main": "esm/main.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@repo/core": "workspace:*",
+    "comment-json": "^4.2.3"
+  }
+}

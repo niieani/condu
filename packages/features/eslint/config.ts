@@ -11,6 +11,7 @@ export default [
   {
     // TODO: use files from config
     files: ["**/*.{js,jsx,ts,tsx}"],
+    ignores: ["**/*.{gen,generated}.{js,jsx,ts,tsx}"],
     plugins: {
       import: {
         ...importPlugin,

@@ -4,10 +4,11 @@ import type { WorkspaceProjectDefined } from "./getProjectGlobsFromMoonConfig.js
 import { loadRepoProject } from "./loadProject.js";
 import * as fs from "node:fs/promises";
 // import { PackageManifest } from "@pnpm/types";
-import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
+import type PackageJson from "@repo/schema-types/schemas/packageJson.gen.js";
 import sortPackageJson from "sort-package-json";
 import * as path from "node:path";
 import { createCommandContext } from "./createCommandContext.js";
+import { $ } from "./zx.js";
 
 type CommandContext = {
   log: (message: string) => void;
@@ -164,7 +165,15 @@ export async function createPackage({
     ...existingPackageJson,
   });
 
-  await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
+  await fs.writeFile(
+    packageJsonPath,
+    JSON.stringify(packageJson, undefined, 2),
+  );
+
+  if (!existingPackageJson) {
+    // run yarn to link the new package
+    await $`yarn`;
+  }
 
   context.log(
     `${existingPackageJson ? "Updated" : "Created"} package ${match.name}`,

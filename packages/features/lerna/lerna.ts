@@ -1,5 +1,5 @@
 import { defineFeature } from "@repo/core/defineFeature.js";
-import type Lerna from "@repo/schema-types/schemas/lerna.js";
+import type Lerna from "@repo/schema-types/schemas/lerna.gen.js";
 
 export const lerna = ({}: {} = {}) =>
   defineFeature({

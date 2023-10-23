@@ -9,7 +9,7 @@ import { getSingleMatch } from "./CreateCommand.js";
 import { match } from "ts-pattern";
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
-import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
+import type PackageJson from "@repo/schema-types/schemas/packageJson.gen.js";
 import { filter, find } from "remeda";
 import { safeFn } from "@repo/core/utils/safeFn.js";
 import { which } from "zx";

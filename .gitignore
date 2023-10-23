@@ -1,9 +1,8 @@
 .DS_Store
 node_modules
 dist
-.yarn/cache
 # yarn:
-/.yarnrc.yml
+/.yarn/cache/
 /yarn.config.cjs
 # typescript:
 /tsconfig.json
@@ -19,6 +18,8 @@ dist
 /.moon/tasks.yml
 # lerna:
 /lerna.json
+# vscode:
+/.vscode/settings.json
 # custom ignore patterns:
 .swc/
 .config/.cache/

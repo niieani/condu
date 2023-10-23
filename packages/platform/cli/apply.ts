@@ -1,5 +1,5 @@
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
 import { ensureDependency } from "./toolchain.js";
 import type {
   CollectedFileDef,
@@ -11,14 +11,32 @@ import type {
   StateFlags,
 } from "@repo/core/configTypes.js";
 import { groupBy, equals } from "remeda";
-import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
 import { type LoadConfigOptions, loadRepoProject } from "./loadProject.js";
 import { getDefaultGitBranch } from "@repo/core/utils/getDefaultGitBranch.js";
 import yaml from "yaml";
+import commentJson from "comment-json";
 import { nonEmpty } from "@repo/core/utils/filter.js";
 import { P, isMatching, match } from "ts-pattern";
 import { printUnifiedDiff } from "print-diff";
 import readline from "node:readline/promises";
+
+const DEFAULT_PACKAGE_MANAGER = "yarn";
+// TODO: fetch latest version?
+const DEFAULT_NODE_VERSION = "20.7.0";
+const DEFAULT_SOURCE_EXTENSIONS = [
+  "ts",
+  "tsx",
+  "mts",
+  "cts",
+  "js",
+  "jsx",
+  "mjs",
+  "cjs",
+  "json",
+];
+
+const CONFIG_DIR = ".config";
+const FILE_STATE_PATH = `${CONFIG_DIR}/.cache/files.json`;
 
 export async function collectState(
   config: RepoConfigWithInferredValues,
@@ -127,9 +145,9 @@ export async function collectState(
 }
 
 const stringify = (obj: unknown, filePath: string) =>
-  filePath.match(/\.ya?ml$/i)
+  /\.ya?ml$/i.test(filePath)
     ? yaml.stringify(obj)
-    : JSON.stringify(obj, null, 2);
+    : commentJson.stringify(obj, undefined, 2);
 
 interface WrittenFile {
   path: string;
@@ -145,6 +163,17 @@ interface CachedWrittenFile extends WrittenFile {
       }
     | "deleted";
 }
+
+const getGetExistingContent = (targetPath: string) => async () => {
+  const extension = path.extname(targetPath);
+  return async (): Promise<string | object | undefined> => {
+    const file = (await fs.readFile(targetPath)).toString();
+    return match(extension)
+      .with(P.string.regex(/\.ya?ml$/i), () => yaml.parse(file))
+      .with(P.string.regex(/\.json5?$/i), () => commentJson.parse(file))
+      .otherwise(() => file);
+  };
+};
 
 const writeFileFromDef = async ({
   file,
@@ -168,10 +197,13 @@ const writeFileFromDef = async ({
 
   const resolvedContent =
     typeof file.content === "function"
-      ? ((await file.content(manifest)) as string | object | undefined)
+      ? ((await file.content({
+          manifest,
+          getExistingContent: getGetExistingContent(targetPath),
+        })) as string | object | undefined)
       : file.content;
 
-  if (typeof resolvedContent === "undefined") {
+  if (resolvedContent === undefined) {
     if (previouslyWritten) {
       console.log(`Deleting, no longer needed: ${pathFromProjectDir}`);
       await fs.rm(targetPath);
@@ -179,6 +211,7 @@ const writeFileFromDef = async ({
     // nothing to add to cache state:
     return;
   }
+
   const content =
     typeof resolvedContent === "string"
       ? resolvedContent
@@ -265,8 +298,6 @@ export async function writeFiles({
   const rootDir = path.join(projectDir, targetPackageDir);
   const filesOrFns = await Promise.all(
     files.map((file) =>
-      // TODO: add logging
-      // TODO: add manual diffing with confirmation that change is ok
       writeFileFromDef({
         file,
         rootDir,
@@ -286,24 +317,6 @@ export async function writeFiles({
   }
   return writtenFiles;
 }
-
-const DEFAULT_PACKAGE_MANAGER = "yarn";
-// TODO: fetch latest version?
-const DEFAULT_NODE_VERSION = "20.7.0";
-const DEFAULT_SOURCE_EXTENSIONS = [
-  "ts",
-  "tsx",
-  "mts",
-  "cts",
-  "js",
-  "jsx",
-  "mjs",
-  "cjs",
-  "json",
-];
-
-const CONFIG_DIR = ".config";
-const FILE_STATE_PATH = `${CONFIG_DIR}/.cache/files.json`;
 
 async function readPreviouslyWrittenFileCache(
   projectDir: string,

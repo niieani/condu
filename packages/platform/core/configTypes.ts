@@ -1,6 +1,6 @@
 import type { PartialProjectConfig, PartialTaskConfig } from "@moonrepo/types";
 import type { WorkspaceProjectsConvention } from "@repo/cli/getProjectGlobsFromMoonConfig.js";
-import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
+import type PackageJson from "@repo/schema-types/schemas/packageJson.gen.js";
 import type { Pattern } from "ts-pattern";
 import type { Project } from "@repo/cli/loadProject.js";
 
@@ -38,9 +38,14 @@ export interface FileDef {
   content?:
     | string
     | object
-    | (<T extends string | object = string | object>(
-        manifest: RepoPackageJson,
-      ) => Promise<T> | T);
+    | ((opts: {
+        manifest: RepoPackageJson;
+        getExistingContent: () =>
+          | Promise<string | object | undefined>
+          | string
+          | object
+          | undefined;
+      }) => Promise<string | object> | string | object);
   path: string;
   /** ts-pattern for package.jsons that the file should be created/updated in */
   matchPackage?: Pattern.Pattern<RepoPackageJson> | Partial<RepoPackageJson>;

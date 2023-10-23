@@ -3,6 +3,7 @@
   "type": "module",
   "dependencies": {
     "@pnpm/fetch": "patch:@pnpm/fetch@npm%3A7.0.3#~/.yarn/patches/@pnpm-fetch-npm-7.0.3-9f1373965c.patch",
+    "@pnpm/logger": "^5.0.0",
     "@pnpm/network.auth-header": "^2.0.5",
     "@pnpm/npm-resolver": "^16.0.12",
     "@pnpm/read-project-manifest": "^5.0.7",
@@ -12,6 +13,7 @@
     "@repo/update-specifiers": "workspace:*",
     "async-memoize-one": "^1.1.5",
     "clipanion": "patch:clipanion@npm%3A4.0.0-rc.2#~/.yarn/patches/clipanion-npm-4.0.0-rc.2-ad27d804c4.patch",
+    "comment-json": "^4.2.3",
     "print-diff": "^2.0.0",
     "remeda": "^1.27.1",
     "sort-package-json": "^2.6.0",

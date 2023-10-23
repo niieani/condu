@@ -8,7 +8,7 @@ import { createGetAuthHeaderByURI } from "@pnpm/network.auth-header";
 import * as path from "node:path";
 import { findUp } from "@repo/core/utils/findUp.js";
 import { $ } from "./zx.js";
-import type PackageJson from "@repo/schema-types/schemas/packageJson.js";
+import type PackageJson from "@repo/schema-types/schemas/packageJson.gen.js";
 import type { DependencyDef, RepoPackageJson } from "@repo/core/configTypes.js";
 import type { ProjectManifest } from "@pnpm/types";
 

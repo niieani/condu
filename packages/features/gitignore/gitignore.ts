@@ -32,8 +32,6 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
               ".DS_Store",
               "node_modules",
               "dist",
-              // TODO: extract to yarn() feature
-              ".yarn/cache",
               // ignore all generated files:
               ...entriesFromFeatures,
               ...(ignore.length > 0 ? ["# custom ignore patterns:"] : []),
