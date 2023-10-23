@@ -63,3 +63,4 @@ Later:
 - [ ] config file - store local overrides diffing
   - i.e. if you manually change a YAML/JSON config file, we store the diff in .config, and then when we regenerate the config, we apply the diff on top of it
 - [ ] move `@repo/core` dependency listing in features to peerDependencies
+- [ ] create package.json's automatically on apply if they don't exist, then run yarn!
