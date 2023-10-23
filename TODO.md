@@ -7,11 +7,12 @@ MVP
 - [x] GitHub Actions
 - [x] automatically add missing workspace dependencies to package.json
 - [x] Individual Package overrides
-- [ ] yarn constraints
+- [x] yarn constraints
 - [ ] TS building for release - all files can be in the
   - [ ] make a script to copy all source files into the dist folder, except configs
   - [ ] to get good quality errors, a wild idea would be to just dump the generated .cts files for build, and then remove them after build. maybe this could be done in the memoryFS that's overlaid on top of the real FS, where we use memFS only for the project directory, and the rest is real FS? or better yet, exclude from real FS specifically all the renamed files only. Mocked FS and we just run real `tsc --build` inside of it?
   - [ ] might need to settle for .cjs + .js for now if we want to use tsc --build for default esm build
+    - this is also the future, since cjs is going away
   - [ ] for main pass: simply build project with tsc, no changes necessary
   - [ ] for other pass:
     - [x] build as ESM
@@ -29,7 +30,8 @@ MVP
   - [ ] verify that TSX works (typescript doesn't like `const x = <x>() => {}` because it thinks it's a JSX tag, [which is supported in mts/cts by default](https://github.com/microsoft/TypeScript/issues/44442))
 - [ ] semantic-release (use [Auto](https://github.com/intuit/auto) instead for mono-repo support)
 - [ ] pre-release
-  - [ ] copy LICENSE to each package
+  - [ ] copy/generate LICENSE to each package
+  - [ ] set correct package.json fields
 - [ ] add validation for feature dependencies (e.g. "auto" feature depends on "lerna")
   - maybe not dependencies, but see below - contributed state?
 - [ ] add shared state for features (features can contribute to it and build on top of each other's state)
@@ -37,6 +39,9 @@ MVP
 - [ ] vitest
 - [ ] CI build and test using moon
 - [ ] similar tool: https://packemon.dev/
+- [ ] vscode auto-ignore generated files
+
+  - use https://www.npmjs.com/package/comment-json to keep the comments and only amend input if it exists
 
 - shippable state -
 
@@ -55,3 +60,6 @@ Later:
 - [ ] Docs: Great collection of [CLI websites](https://news.ycombinator.com/item?id=26878936) on HN
 - [ ] TS: add a pure JavaScript with TSDoc mode
 - [ ] adding arbitrary github action files from config (which means generating them from code is possible)
+- [ ] config file - store local overrides diffing
+  - i.e. if you manually change a YAML/JSON config file, we store the diff in .config, and then when we regenerate the config, we apply the diff on top of it
+- [ ] move `@repo/core` dependency listing in features to peerDependencies

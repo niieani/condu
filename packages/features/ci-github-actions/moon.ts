@@ -1,5 +1,5 @@
 import { defineFeature } from "@repo/core/defineFeature.js";
-import type GithubWorkflow from "@repo/schema-types/schemas/githubWorkflow.js";
+import type GithubWorkflow from "@repo/schema-types/schemas/githubWorkflow.gen.js";
 import type {
   PartialTaskConfig,
   PartialInheritedTasksConfig as Tasks,

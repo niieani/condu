@@ -5,6 +5,7 @@ import { moonCi } from "@repo-feature/ci-github-actions/moon.js";
 import { eslint } from "@repo-feature/eslint/eslint.js";
 import { lerna } from "@repo-feature/lerna/lerna.js";
 import { yarn } from "@repo-feature/yarn/yarn.js";
+import { vscode } from "@repo-feature/vscode/vscode.js";
 import { configure } from "@repo/core/configTypes.js";
 
 export default configure({
@@ -30,6 +31,7 @@ export default configure({
     moon(),
     moonCi(),
     lerna(),
+    vscode(),
     gitignore({ ignore: [".swc/", ".config/.cache/"] }),
   ],
 });

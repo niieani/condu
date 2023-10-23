@@ -1,5 +1,5 @@
 import { defineFeature } from "@repo/core/defineFeature.js";
-import type TSConfig from "@repo/schema-types/schemas/tsconfig.js";
+import type TSConfig from "@repo/schema-types/schemas/tsconfig.gen.js";
 import * as path from "node:path";
 
 const commonJsFirstPreset = {
@@ -138,7 +138,7 @@ export const typescript = ({
           isComposite && {
             path: "tsconfig.json",
             matchPackage: { kind: "package" },
-            content: (manifest) => {
+            content: ({ manifest }) => {
               const pathToWorkspaceDir = path.relative(
                 manifest.path,
                 config.workspaceDir,

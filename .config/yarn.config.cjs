@@ -36,8 +36,12 @@ function ensureDependencies(dependencies) {
     }
     const version = versions.get(dep.ident);
     if (version) {
-      dep.update(version);
-    } else {
+      // TODO: perhaps we can allow for wider/compatible ranges?
+      // i.e. if all packages satisfy the same range, then it's okay if they differ
+      if (dep.range !== "*") {
+        dep.update(version);
+      }
+    } else if (dep.range !== "*") {
       versions.set(dep.ident, dep.range);
     }
   }
