@@ -17,4 +17,8 @@ export const schemas = {
     "https://raw.githubusercontent.com/lerna/lerna/main/packages/lerna/schemas/lerna-schema.json",
   yarnrc:
     "https://github.com/yarnpkg/berry/raw/master/packages/docusaurus/static/configuration/yarnrc.json",
+  vscodeSettingsWorkspace:
+    "https://github.com/wraith13/vscode-schemas/raw/master/en/latest/schemas/settings/workspace.json",
+  // vscodeSettingsResourceLanguage:
+  //   "https://github.com/wraith13/vscode-schemas/raw/master/en/latest/schemas/settings/resourceLanguage.json",
 };
