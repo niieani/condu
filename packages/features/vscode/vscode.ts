@@ -2,10 +2,19 @@ import { defineFeature } from "@repo/core/defineFeature.js";
 import { assign } from "comment-json";
 import type VscodeSettingsWorkspace from "@repo/schema-types/schemas/vscodeSettingsWorkspace.gen.js";
 import { inspect } from "node:util";
+import path from "node:path";
 
 export const vscode = ({
+  suggestedConfig = {},
+  enforcedConfig = {},
   hideGeneratedFiles = true,
-}: { hideGeneratedFiles?: boolean } = {}) =>
+}: {
+  hideGeneratedFiles?: boolean;
+  /** these settings will be added by default, but can be manually overwritten */
+  suggestedConfig?: VscodeSettingsWorkspace;
+  /** these settings will always override the user's preferences; avoid using in most cases */
+  enforcedConfig?: VscodeSettingsWorkspace;
+} = {}) =>
   defineFeature({
     name: "vscode",
     order: { priority: "end" },
@@ -15,39 +24,47 @@ export const vscode = ({
         files: [
           {
             path: ".vscode/settings.json",
-            content: async ({ getExistingContent }) =>
+            content: async ({
+              getExistingContentAndMarkAsUserEditable: getExistingContent,
+            }) =>
               // TODO: enable other plugins to contribute to this one, e.g. eslint:
               // "eslint.experimental.useFlatConfig": true,
               // "eslint.ignoreUntitled": true,
               // "eslint.useESLintClass": true,
               {
-                const existingContent = (await getExistingContent()) as
-                  | VscodeSettingsWorkspace
-                  | undefined;
-                console.log(inspect(existingContent, true));
-                return assign(existingContent, {
+                const existingContent =
+                  ((await getExistingContent()) as VscodeSettingsWorkspace) ??
+                  {};
+                const withEnforcedConfig = assign(existingContent, {
+                  ...enforcedConfig,
                   "files.exclude": {
-                    ...existingContent?.["files.exclude"],
-                    "**/.git": true,
-                    "**/.svn": true,
-                    "**/.hg": true,
-                    "**/CVS": true,
-                    "**/.DS_Store": true,
-                    "**/Thumbs.db": true,
-                    "**/.ruby-lsp": true,
+                    // ...existingContent?.["files.exclude"],
+                    // these are defaults that we want to keep:
+                    // "**/.git": true,
+                    // "**/.svn": true,
+                    // "**/.hg": true,
+                    // "**/CVS": true,
+                    // "**/.DS_Store": true,
+                    // "**/Thumbs.db": true,
+                    // "**/.ruby-lsp": true,
                     ...Object.fromEntries(
                       state.files
                         .filter(
-                          ({ type, skipIgnore }) =>
-                            type !== "committed" && !skipIgnore,
+                          ({ type, skipIgnore, featureName }) =>
+                            type !== "committed" &&
+                            !skipIgnore &&
+                            featureName !== "vscode",
                         )
                         .map(({ path: p, targetDir }) => [
-                          `${targetDir}/${p}`,
+                          // remove leading './' from path
+                          path.normalize(path.join(targetDir, p)),
                           true,
                         ]),
                     ),
+                    ...enforcedConfig?.["files.exclude"],
                   },
                 } satisfies VscodeSettingsWorkspace);
+                return assign(suggestedConfig, withEnforcedConfig);
               },
           },
         ],
