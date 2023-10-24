@@ -1,5 +1,4 @@
 import type { PartialWorkspaceProjects } from "@moonrepo/types";
-import { partition } from "remeda";
 
 interface ParentDirectoryProjectConvention {
   /**

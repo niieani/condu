@@ -1,11 +1,11 @@
 import { Command, Option } from "clipanion";
-import { createCommandContext } from "./createCommandContext.js";
+import { createCommandContext } from "../createCommandContext.js";
 import {
   getWorkspacePackages,
   loadRepoProject,
   type Project,
-} from "./loadProject.js";
-import { getSingleMatch } from "./CreateCommand.js";
+} from "../loadProject.js";
+import { getSingleMatch } from "../matchPackage.js";
 import { match } from "ts-pattern";
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
@@ -134,7 +134,7 @@ export async function findExistingPackage({
       );
       if (matches.length > 1) {
         throw new Error(
-          `Ambigious matches found for ${partialPackage}:\n- ${matches
+          `Ambiguous matches found for ${partialPackage}:\n- ${matches
             .map(({ manifest }) => manifest.name)
             .join("\n- ")}`,
         );

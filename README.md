@@ -91,6 +91,11 @@ Embrace convention over configuration, but allow for easy configuration override
   - dependency update automation
     - renovate
     - dependabot
+  - dependency management strategies
+    - lerna
+    - yarn workspaces
+    - pnpm
+    - syncpack (ensuring version ranges sync across packages)
   - ide strategy
     - vscode
       - automatically hide all generated config files from the folder, but create symlinks in .config so they can be previewed in the IDE
@@ -99,6 +104,8 @@ Embrace convention over configuration, but allow for easy configuration override
     - storybook
   - static hosting strategy
     - github pages
+  - security
+    - support [npm package provenance](https://github.blog/2023-04-19-introducing-npm-package-provenance/) OOTB
 
 - Config:
   - add custom strategies via .config/strategies/... -- could re-export existing ones with custom config

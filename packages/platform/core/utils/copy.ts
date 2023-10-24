@@ -85,13 +85,3 @@ export const copyFiles = async ({
   // TODO: could show progress bar
   await Promise.all(work);
 };
-
-const copyForRelease = async () => {
-  await copyFiles({
-    sourceDir: "packages",
-    targetDir: "dist/packages",
-    // do not keep test files, fixtures, d.ts files, tsconfig.json
-    filter: ({ entry: { name } }) => !name.startsWith("."),
-  });
-  // in addition, copy LICENSE if it doesn't exist
-};

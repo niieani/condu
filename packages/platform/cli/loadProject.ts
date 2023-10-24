@@ -1,6 +1,6 @@
 /// <reference path="./async-memoize-one.d.ts" />
 
-import path from "path";
+import path from "node:path";
 import { getManifest } from "./toolchain.js";
 import { CORE_NAME } from "./constants.js";
 import {

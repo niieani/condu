@@ -1,10 +1,11 @@
 #!/usr/bin/env bun
 import { Cli, Builtins } from "clipanion";
-import { ApplyCommand } from "./ApplyCommand.js";
-import { CreateCommand } from "./CreateCommand.js";
-import { ExecCommand } from "./ExecCommand.js";
+import { ApplyCommand } from "./commands/apply/ApplyCommand.js";
+import { CreateCommand } from "./commands/create/CreateCommand.js";
+import { ExecCommand } from "./commands/ExecCommand.js";
 import * as path from "node:path";
-import { BuildTypeScriptCommand } from "./BuildTypeScript.js";
+import { BuildTypeScriptCommand } from "./commands/BuildTypeScriptCommand.js";
+import { BeforeReleaseCommand } from "./commands/BeforeReleaseCommand.js";
 
 const { version, description, name } = require("../../../package.json");
 
@@ -23,6 +24,7 @@ cli.register(ApplyCommand);
 cli.register(CreateCommand);
 cli.register(ExecCommand);
 cli.register(BuildTypeScriptCommand);
+cli.register(BeforeReleaseCommand);
 cli.register(Builtins.VersionCommand);
 cli.register(Builtins.HelpCommand);
 cli.runExit(args);
