@@ -58,8 +58,11 @@ export default [
         { disallowTypeAnnotations: false },
       ],
       "@typescript-eslint/no-import-type-side-effects": "error",
-      //
+      // for compatibility with deno, we want node: prefixes
+      // https://docs.deno.com/runtime/manual/node/node_specifiers
       "unicorn/prefer-node-protocol": "error",
+
+      // others:
       "unicorn/prefer-regexp-test": "error",
       "unicorn/better-regex": "error",
       "unicorn/new-for-builtins": "error",

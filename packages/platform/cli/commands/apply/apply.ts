@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { ensureDependency } from "./toolchain.js";
+import { ensureDependency } from "../../toolchain.js";
 import type {
   CollectedFileDef,
   CollectedState,
@@ -11,7 +11,7 @@ import type {
   StateFlags,
 } from "@repo/core/configTypes.js";
 import { groupBy, equals } from "remeda";
-import { type LoadConfigOptions, loadRepoProject } from "./loadProject.js";
+import { type LoadConfigOptions, loadRepoProject } from "../../loadProject.js";
 import { getDefaultGitBranch } from "@repo/core/utils/getDefaultGitBranch.js";
 import yaml from "yaml";
 import commentJson from "comment-json";

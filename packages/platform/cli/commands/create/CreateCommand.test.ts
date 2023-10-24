@@ -17,14 +17,14 @@ import {
   vi,
   type Mock,
 } from "vitest";
-import { loadRepoProject, type Project } from "./loadProject.js";
+import { loadRepoProject, type Project } from "../../loadProject.js";
 import { override, restore } from "swc-mockify/src/mockify.js";
 
 import { createCommand, createPackage } from "./CreateCommand.js";
 import {
   type WorkspaceProjectDefined,
   getProjectDefinitionsFromConventionConfig,
-} from "./getProjectGlobsFromMoonConfig.js";
+} from "../../getProjectGlobsFromMoonConfig.js";
 // import { createCommand } from "./CreateCommand.js";
 
 describe("createCommand", () => {
@@ -87,9 +87,8 @@ describe("createCommand", () => {
     } as any;
     override(loadRepoProject, async () => project);
 
-    await expect(
-      createCommand({ partialPath, context }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+    await expect(createCommand({ partialPath, context })).rejects
+      .toThrowErrorMatchingInlineSnapshot(`
         "Multiple possible paths for the package were inferred from the workspace config:
         - ./one/package (as @one/package)
         - ./two/package (as @two/package)
