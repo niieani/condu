@@ -8,7 +8,7 @@ import {
 } from "@ts-morph/common";
 import * as path from "node:path";
 
-const extensionRegexp = /^\.[cm]?[tj]sx?/i;
+const extensionRegexp = /^\.[cm]?[jt]sx?/i;
 
 const extensions = [
   ".js",
@@ -120,14 +120,14 @@ const renameSpecifiers = async ({
 
     console.log("loading project", path.relative(process.cwd(), tsConfigPath));
 
-    ref.commandLine.fileNames.forEach((fileName) => {
+    for (const fileName of ref.commandLine.fileNames) {
       if (!fileName.startsWith(dirName)) {
         // only add files belonging to this project
-        return;
+        continue;
       }
       const sourceFile = globalProject.addSourceFileAtPath(fileName);
       sourceFiles.add(sourceFile);
-    });
+    }
 
     // this also works, but is (possibly) slower:
     // const sourceFiles = globalProject.addSourceFilesFromTsConfig(tsConfigPath);
@@ -360,15 +360,6 @@ function getNewSourcesWithinProject({
           ? ts.ModuleKind.ESNext
           : undefined,
     });
-
-    // const newSourceFile2 = remappedProject.createSourceFile(
-    //   targetFilePath,
-    //   newContents,
-    //   { scriptKind: sourceFile.getScriptKind() },
-    // );
-    // if (targetExtension === ".mjs" || targetExtension === ".mts") {
-    //   newSourceFile2.compilerNode.impliedNodeFormat = ts.ModuleKind.ESNext;
-    // }
   }
 
   return newSourceFiles;

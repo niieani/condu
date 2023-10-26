@@ -1,5 +1,4 @@
 import { Command, Option } from "clipanion";
-import { equals } from "remeda";
 import type { WorkspaceProjectDefined } from "../getProjectGlobsFromMoonConfig.js";
 import { loadRepoProject } from "../loadProject.js";
 import * as fs from "node:fs/promises";
@@ -46,6 +45,7 @@ export class BeforeReleaseCommand extends Command {
       const { dir: packageDir, manifest } = pkg;
       const packageDistDir = path.join(distDir, packageDir);
       const sourceDir = path.join(projectDir, packageDir);
+      console.log(`Copying ${packageDir} for ${manifest.name} to ${target}`);
       // copy all the project files
       await copyFiles({
         sourceDir,

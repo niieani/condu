@@ -8,6 +8,6 @@
   "dependencies": {
     "@repo/core": "workspace:*",
     "@repo/schema-types": "workspace:*",
-    "remeda": "^1.27.1"
+    "remeda": "^1.28.0"
   }
 }
