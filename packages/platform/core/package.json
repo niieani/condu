@@ -3,10 +3,10 @@
   "type": "module",
   "main": "esm/main.js",
   "dependencies": {
-    "async-memoize-one": "^1.1.5",
+    "async-memoize-one": "^1.1.6",
     "fp-ts": "^2.16.1",
     "io-ts": "^2.2.20",
-    "remeda": "^1.27.1"
+    "remeda": "^1.28.0"
   },
   "devDependencies": {
     "node-fetch": "^3.3.2"
