@@ -31,7 +31,7 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
             return [
               ".DS_Store",
               "node_modules",
-              "dist",
+              config.conventions.buildDir,
               // ignore all generated files:
               ...entriesFromFeatures,
               ...(ignore.length > 0 ? ["# custom ignore patterns:"] : []),

@@ -2684,6 +2684,7 @@ __metadata:
     print-diff: "npm:^2.0.0"
     remeda: "npm:^1.28.0"
     sort-package-json: "npm:^2.6.0"
+    spdx-license-list: "npm:^6.7.0"
     swc-mockify: "portal:../../../../mockify/swc-mockify"
     ts-pattern: "npm:^5.0.5"
     vitest: "npm:0.34.6"
@@ -11037,6 +11038,13 @@ __metadata:
   version: 3.0.15
   resolution: "spdx-license-ids@npm:3.0.15"
   checksum: 1d44fa43d2024d4533816ceffac983149f9c76214698033496e13f6224d7fe6e61649a2bb9eb6c88b5f7f71bc19cc5f0aed3dba75b430e27c06e0f71cc251959
+  languageName: node
+  linkType: hard
+
+"spdx-license-list@npm:^6.7.0":
+  version: 6.7.0
+  resolution: "spdx-license-list@npm:6.7.0"
+  checksum: 1c09663b7eae79b4ae57de2f2baeb57e8ff8e0297ebb45d73edf16d9f9c4deba06dcc5f2146025520344898c96293169cbe0a69b33ae33578a28a815f791ee33
   languageName: node
   linkType: hard
 

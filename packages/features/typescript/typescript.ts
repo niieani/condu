@@ -70,7 +70,7 @@ export const typescript = ({
                 // noUnusedParameters: true,
                 resolveJsonModule: true,
                 rootDir: config.conventions.sourceDir,
-                outDir: config.conventions.distDir,
+                outDir: config.conventions.buildDir,
                 // mapRoot is overridden because the directory that we publish
                 // is not the same as the directory that we compile to
                 // we publish all the sources next to the compiled output for simplicity of consumption
@@ -149,7 +149,7 @@ export const typescript = ({
                 compilerOptions: {
                   outDir: path.join(
                     pathToWorkspaceDir,
-                    config.conventions.distDir,
+                    config.conventions.buildDir,
                     path.relative(config.project.dir, manifest.path),
                   ),
                   // required so that when using tsc --build it doesn't create nested dist directories
