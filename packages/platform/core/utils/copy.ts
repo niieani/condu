@@ -62,23 +62,25 @@ export const copyFiles = async ({
   } of walkDirectoryRecursively(sourceDir, filter)) {
     const relativePathToDir = path.relative(sourceDir, directoryPath);
     const thisTargetDir = path.join(targetDir, relativePathToDir);
+    const targetFilePath = path.join(thisTargetDir, fileName);
     work.push(
       (async (): Promise<void> => {
         if (!createdDirectories.has(thisTargetDir)) {
           // recursive shouldn't be necessary since we're walking directories in order
-          await fs.mkdir(thisTargetDir /*, { recursive: true }*/);
+          await fs.mkdir(thisTargetDir, { recursive: true });
           createdDirectories.add(thisTargetDir);
         }
         const sourceFilePath = path.join(directoryPath, fileName);
-        const targetFilePath = path.join(thisTargetDir, fileName);
         await fs.copyFile(
           sourceFilePath,
           targetFilePath,
           // use copy-on-write strategy for performance if supported
           fs.constants.COPYFILE_FICLONE,
         );
-        console.log(`copied ${sourceFilePath} to ${targetFilePath}`);
-      })(),
+        console.log(`Copied ${targetFilePath}`);
+      })().catch((error) => {
+        console.error(`Error copying ${targetFilePath}:\n${error.message}`);
+      }),
     );
   }
 

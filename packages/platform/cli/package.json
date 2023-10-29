@@ -17,6 +17,7 @@
     "print-diff": "^2.0.0",
     "remeda": "^1.28.0",
     "sort-package-json": "^2.6.0",
+    "spdx-license-list": "^6.7.0",
     "swc-mockify": "portal:../../../../mockify/swc-mockify",
     "ts-pattern": "^5.0.5",
     "vitest": "0.34.6",

@@ -129,7 +129,7 @@ interface Conventions {
   /** @default 'src' */
   sourceDir?: string;
   sourceExtensions?: string[];
-  distDir?: string;
+  buildDir?: string;
 }
 
 type GitConfig = {

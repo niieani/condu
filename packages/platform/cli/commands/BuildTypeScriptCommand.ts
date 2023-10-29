@@ -12,6 +12,5 @@ export class BuildTypeScriptCommand extends Command {
       tsConfigFilePath: this.project ?? "tsconfig.json",
       mappingPreset: this.preset === "ts-to-mts" ? "to-to-mts" : "ts-to-cts",
     });
-    // this.context.stdout.write(`Hello ${this.name}!\n`);
   }
 }
