@@ -22,6 +22,10 @@ const presets = {
   "esm-first": esmFirstPreset,
 };
 
+// TODO: contribute a feature to vscode to enable:
+// "typescript.tsserver.experimental.enableProjectDiagnostics": true
+// see https://github.com/microsoft/vscode/issues/13953
+
 export const typescript = ({
   tsconfig,
   preset,
@@ -75,7 +79,8 @@ export const typescript = ({
                 // is not the same as the directory that we compile to
                 // we publish all the sources next to the compiled output for simplicity of consumption
                 // TODO: does this interfere with local runners like ts-node / tsx?
-                mapRoot: ".",
+                // mapRoot: ".",
+                // sourceRoot: ".",
                 // sourceRoot: config.conventions.sourceDir,
                 declaration: true,
                 declarationMap: true,

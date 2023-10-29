@@ -9,12 +9,12 @@ MVP
 - [x] Individual Package overrides
 - [x] yarn constraints
 - [ ] TS building for release - all files can be in the
-  - [ ] make a script to copy all source files into the dist folder, except configs
-  - [ ] to get good quality errors, a wild idea would be to just dump the generated .cts files for build, and then remove them after build. maybe this could be done in the memoryFS that's overlaid on top of the real FS, where we use memFS only for the project directory, and the rest is real FS? or better yet, exclude from real FS specifically all the renamed files only. Mocked FS and we just run real `tsc --build` inside of it?
-  - [ ] might need to settle for .cjs + .js for now if we want to use tsc --build for default esm build
+  - [x] make a script to copy all source files into the dist folder, except configs
+  - [x] might need to settle for .cjs + .js for now if we want to use tsc --build for default esm build
     - this is also the future, since cjs is going away
-  - [ ] for main pass: simply build project with tsc, no changes necessary
-  - [ ] for other pass:
+  - [x] for main pass: simply build project with tsc
+    - [ ] post-build need to update .map files to have the correct paths, as sourceMappingURL is incorrect and needs to be corrected to use the adjecent .map file
+  - [x] for other pass:
     - [x] build as ESM
     - [x] all the in-project references (relative or imports from existing monorepo ids) can be auto renamed to .mts
       - [x] make a list of all files as if imported using package name (e.g. '@thing/package/file.js')
@@ -26,12 +26,14 @@ MVP
   - [x] output will have: .ts, .js, .js.map, .d.ts, .mjs, .d.mts, .mjs.map + all other files
   - [x] solve source map references, still relative to the root, instead of always next to the file
   - [ ] important [thread about this](https://github.com/microsoft/TypeScript/issues/49462)
-  - [ ] allow CJS building via SWC
-  - [ ] verify that TSX works (typescript doesn't like `const x = <x>() => {}` because it thinks it's a JSX tag, [which is supported in mts/cts by default](https://github.com/microsoft/TypeScript/issues/44442))
+  - [ ] verify that `const x = <x>() => {}` works, because TS thinks it's a JSX tag, [which is supported in mts/cts by default](https://github.com/microsoft/TypeScript/issues/44442))
 - [ ] semantic-release (use [Auto](https://github.com/intuit/auto) instead for mono-repo support)
 - [ ] pre-release
   - [ ] copy/generate LICENSE to each package
   - [ ] set correct package.json fields
+    - [ ] generate correct entry points (like https://github.com/isaacs/tshy)
+    - [ ] conventional entry point:
+      - use `index.ts`, `main.ts` or `${packageName}.ts` if they exist (set camelCase or kebab-case in "conventions" - use it also for file name linting defaults)
 - [ ] add validation for feature dependencies (e.g. "auto" feature depends on "lerna")
   - maybe not dependencies, but see below - contributed state?
 - [ ] add shared state for features (features can contribute to it and build on top of each other's state)
@@ -40,8 +42,7 @@ MVP
 - [ ] CI build and test using moon
 - [ ] similar tool: https://packemon.dev/
 - [ ] vscode auto-ignore generated files
-
-  - use https://www.npmjs.com/package/comment-json to keep the comments and only amend input if it exists
+- [x] use https://www.npmjs.com/package/comment-json to keep the comments and only amend input if it exists
 
 - shippable state -
 
@@ -49,6 +50,7 @@ Later:
 
 - [ ] 2 modes for running TypeScript that you could toggle between - with workspace references, or single-project
   - small projects don't need the overhead/downsides of workspace references
+- [ ] allow CJS building via SWC (automatically polyfills a bunch of things, and warns on top level await)
 - [ ] when running `apply`, cli should clear previously generated files that are no longer needed
 - [ ] should there be 2 default modes for TS? one targetting a more relaxed environment (apps), one targetting more strict ESM?
 - [ ] will Deno work with the ESM output out of the box?
@@ -64,3 +66,6 @@ Later:
   - i.e. if you manually change a YAML/JSON config file, we store the diff in .config, and then when we regenerate the config, we apply the diff on top of it
 - [ ] move `@repo/core` dependency listing in features to peerDependencies
 - [ ] create package.json's automatically on apply if they don't exist, then run yarn!
+- [ ] website
+- [ ] Product Hunt release
+- [ ] to get good quality TS errors for both .cjs and .mjs, a wild idea would be to just dump the generated .cts files for build, and then remove them after build. maybe this could be done in the memoryFS that's overlaid on top of the real FS, where we use memFS only for the project directory, and the rest is real FS? or better yet, exclude from real FS specifically all the renamed files only. Mocked FS and we just run real `tsc --build` inside of it?

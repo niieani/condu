@@ -5,7 +5,7 @@ import type {
   CollectedFileDef,
   CollectedState,
   DependencyDef,
-  RepoConfigWithInferredValues,
+  RepoConfigWithInferredValuesAndProject,
   StateFlags,
 } from "@repo/core/configTypes.js";
 import { groupBy, equals } from "remeda";
@@ -19,15 +19,9 @@ import {
   writeFiles,
   type WrittenFile,
 } from "./readWrite.js";
-import {
-  DEFAULT_PACKAGE_MANAGER,
-  DEFAULT_NODE_VERSION,
-  DEFAULT_SOURCE_EXTENSIONS,
-  CONFIG_DIR,
-} from "./constants.js";
 
 export async function collectState(
-  config: RepoConfigWithInferredValues,
+  config: RepoConfigWithInferredValuesAndProject,
 ): Promise<CollectedState> {
   const state: CollectedState = {
     files: [],
@@ -36,7 +30,7 @@ export async function collectState(
   };
 
   const { project } = config;
-  // TODO: topo-sort features by `order` config
+  // TODO: topo-sort features by `order` config, or support soft dependencies between features
 
   const flags: { [K in keyof StateFlags]?: string } = {};
 
@@ -157,14 +151,6 @@ export async function apply(options: LoadConfigOptions = {}) {
 
   let didChangeManifest = false;
 
-  const defaultBranch: string =
-    config.git?.defaultBranch ?? (await getDefaultGitBranch(projectDir));
-  const { packageManager, engines } = manifest;
-  const [packageManagerName, packageManagerVersion] = packageManager?.split(
-    "@",
-  ) ?? [DEFAULT_PACKAGE_MANAGER];
-  const nodeVersion = engines?.node ?? DEFAULT_NODE_VERSION;
-
   // sync defined workspaces to package.json
   if (
     !Array.isArray(manifest.workspaces) ||
@@ -175,40 +161,7 @@ export async function apply(options: LoadConfigOptions = {}) {
     didChangeManifest = true;
   }
 
-  const collectedState = await collectState({
-    ...config,
-    git: {
-      ...config.git,
-      defaultBranch,
-    },
-    node: {
-      ...(packageManagerName === "yarn" ||
-      packageManagerName === "pnpm" ||
-      packageManagerName === "npm"
-        ? {
-            packageManager: {
-              name: packageManagerName,
-              version: packageManagerVersion,
-            },
-          }
-        : {
-            packageManager: {
-              name: DEFAULT_PACKAGE_MANAGER,
-            },
-          }),
-      version: nodeVersion,
-    },
-    conventions: {
-      ...config.conventions,
-      sourceDir: config.conventions?.sourceDir ?? "src",
-      buildDir: config.conventions?.buildDir ?? "dist",
-      sourceExtensions:
-        config.conventions?.sourceExtensions ?? DEFAULT_SOURCE_EXTENSIONS,
-    },
-    workspaceDir: projectDir,
-    configDir: path.join(projectDir, CONFIG_DIR),
-    project,
-  });
+  const collectedState = await collectState({ ...config, project });
 
   const writableFiles = collectedState.files.filter(({ targetDir, content }) =>
     Boolean(targetDir && content),

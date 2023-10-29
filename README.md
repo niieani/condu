@@ -99,6 +99,7 @@ Embrace convention over configuration, but allow for easy configuration override
   - ide strategy
     - vscode
       - automatically hide all generated config files from the folder, but create symlinks in .config so they can be previewed in the IDE
+      - local workspace settings ([#40233](https://github.com/microsoft/vscode/issues/40233))
   - project website/docs strategy
     - docusaurus
     - storybook
@@ -191,3 +192,12 @@ const config = {
 
 - [eslint resolver](https://github.com/import-js/eslint-import-resolver-typescript)
 - potentially eslint-plugin-i
+
+## other things to talk about:
+
+- I consider the default of `exports` [encapsulation](https://nodejs.org/api/packages.html#package-entry-points) harmful to the Node JS ecosystem. `exports` are usually set without much attention to detail, leading to conservative settings - often times you need to use an utility of a dependency, rather than a function exposed on the main API, yet you can't access that utility due to the encapsulation. It is also not a real guarrantee of privacy, since as Node itself mentions:
+
+> It is not a strong encapsulation since a direct require of any absolute subpath of the package such as require('/path/to/node_modules/pkg/subpath.js') will still load subpath.js.
+
+- Files named 'index' or 'main' are not too useful, prefer using real names (automation)
+- default exports are considered an anti-pattern due to complexities with ESM/CJS interop
