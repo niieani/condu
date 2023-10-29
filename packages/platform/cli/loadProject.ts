@@ -6,6 +6,8 @@ import { CORE_NAME } from "./constants.js";
 import {
   CONFIGURED,
   type ConfiguredRepoConfig,
+  type RepoConfigWithInferredValues,
+  type RepoConfigWithInferredValuesAndProject,
   type RepoPackageJson,
 } from "@repo/core/configTypes.js";
 import {
@@ -16,6 +18,13 @@ import type PackageJson from "@repo/schema-types/schemas/packageJson.gen.js";
 import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
 import memoizeOne from "async-memoize-one";
 import type { ProjectManifest } from "@pnpm/types";
+import {
+  CONFIG_DIR,
+  DEFAULT_NODE_VERSION,
+  DEFAULT_PACKAGE_MANAGER,
+  DEFAULT_SOURCE_EXTENSIONS,
+} from "./commands/apply/constants.js";
+import { getDefaultGitBranch } from "@repo/core/utils/getDefaultGitBranch.js";
 
 export interface LoadConfigOptions {
   startDir?: string;
@@ -42,7 +51,7 @@ export interface Project
   projectConventions: WorkspaceProjectDefined[];
   /** absolute path to the project */
   projectDir: string;
-  config: ConfiguredRepoConfig;
+  config: RepoConfigWithInferredValues;
   getWorkspacePackages: () => Promise<readonly WorkspacePackage[]>;
 }
 
@@ -72,13 +81,55 @@ export async function loadRepoProject({
     config.projects,
   );
 
+  const defaultBranch: string =
+    config.git?.defaultBranch ?? (await getDefaultGitBranch(projectDir));
+  const { packageManager, engines } = manifest;
+  const [packageManagerName, packageManagerVersion] = packageManager?.split(
+    "@",
+  ) ?? [DEFAULT_PACKAGE_MANAGER];
+  const nodeVersion = engines?.node ?? DEFAULT_NODE_VERSION;
+
+  const configWithInferredValues: RepoConfigWithInferredValues = {
+    ...config,
+    git: {
+      ...config.git,
+      defaultBranch,
+    },
+    node: {
+      ...(packageManagerName === "yarn" ||
+      packageManagerName === "pnpm" ||
+      packageManagerName === "npm"
+        ? {
+            packageManager: {
+              name: packageManagerName,
+              version: packageManagerVersion,
+            },
+          }
+        : {
+            packageManager: {
+              name: DEFAULT_PACKAGE_MANAGER,
+            },
+          }),
+      version: nodeVersion,
+    },
+    conventions: {
+      ...config.conventions,
+      sourceDir: config.conventions?.sourceDir ?? "src",
+      buildDir: config.conventions?.buildDir ?? "build",
+      sourceExtensions:
+        config.conventions?.sourceExtensions ?? DEFAULT_SOURCE_EXTENSIONS,
+    },
+    workspaceDir: projectDir,
+    configDir: path.join(projectDir, CONFIG_DIR),
+  } as const;
+
   const project: Project = {
     manifest,
     writeProjectManifest,
     projectDir,
     projectConventions,
     dir: ".",
-    config,
+    config: configWithInferredValues,
     getWorkspacePackages: memoizeOne(() => getWorkspacePackages(project)),
   };
 

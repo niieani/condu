@@ -22,6 +22,17 @@ const extensions = [
 ] as const;
 type Extension = (typeof extensions)[number];
 
+// https://github.com/microsoft/TypeScript/blob/514f7e639a2a8466c075c766ee9857a30ed4e196/src/harness/documentsUtil.ts#L43C1-L53C1
+export interface RawSourceMap {
+  version: number;
+  file: string;
+  sourceRoot?: string;
+  sources: string[];
+  sourcesContent?: string[];
+  names: string[];
+  mappings: string;
+}
+
 const isMappableExtension = (extension: string): extension is Extension =>
   extensions.includes(extension as Extension);
 
@@ -204,10 +215,18 @@ const renameSpecifiers = async ({
 
         return outputFiles.map(async (emittedFile) => {
           const filePath = emittedFile.getFilePath();
+          let contents = emittedFile.getText();
+          const extension = path.extname(filePath);
+          if (extension === ".map") {
+            const map = correctMapSourcesToRelateToAdjacentFiles(
+              JSON.parse(contents),
+            );
+            contents = JSON.stringify(map);
+          }
           const fileDir = path.dirname(filePath);
           await fsHost.mkdir(fileDir);
           await Promise.all([
-            fsHost.writeFile(filePath, emittedFile.getText()),
+            fsHost.writeFile(filePath, contents),
             !sourceTextEmitted &&
               fsHost
                 .writeFile(path.join(fileDir, baseName), sourceText)
@@ -220,6 +239,13 @@ const renameSpecifiers = async ({
     }),
   );
 };
+
+function correctMapSourcesToRelateToAdjacentFiles(map: RawSourceMap) {
+  map.sources = map.sources.map((source) =>
+    source.startsWith(".") ? path.basename(source) : source,
+  );
+  return map;
+}
 
 function createChangeSets({
   sourceFiles,

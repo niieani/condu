@@ -108,7 +108,7 @@ export type State = ToIntermediateState<Omit<CollectedState, "files">> & {
 };
 
 export type FeatureActionFn = (
-  config: RepoConfigWithInferredValues,
+  config: RepoConfigWithInferredValuesAndProject,
   /**
    * TODO: consider lifting 'state' argument to 'content' function of files
    * since the state here is only "collected till now"
@@ -169,11 +169,15 @@ export const configure = (config: RepoConfig): ConfiguredRepoConfig => ({
   [CONFIGURED]: true,
 });
 
-export interface RepoConfigWithInferredValues extends RepoConfig {
+export interface RepoConfigWithInferredValues extends ConfiguredRepoConfig {
   workspaceDir: string;
   configDir: string;
   conventions: Required<Conventions>;
   git: Required<GitConfig>;
   node: Required<NodeConfig>;
+}
+
+export interface RepoConfigWithInferredValuesAndProject
+  extends RepoConfigWithInferredValues {
   project: Omit<Project, "writeProjectManifest">;
 }
