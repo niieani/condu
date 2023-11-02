@@ -1,8 +1,12 @@
 {
-  "name": "@repo-feature/vitest",
+  "name": "@repo-feature/library-bundle",
+  "license": "MIT",
   "type": "module",
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "webpack": "^5.89.0"
   },
   "dependencies": {
     "@repo/core": "workspace:*"

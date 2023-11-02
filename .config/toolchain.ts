@@ -6,6 +6,7 @@ import { eslint } from "@repo-feature/eslint/eslint.js";
 import { lerna } from "@repo-feature/lerna/lerna.js";
 import { yarn } from "@repo-feature/yarn/yarn.js";
 import { vscode } from "@repo-feature/vscode/vscode.js";
+import { libraryBundle } from "@repo-feature/library-bundle/libraryBundle.js";
 import { configure } from "@repo/core/configTypes.js";
 
 export default configure({
@@ -27,11 +28,18 @@ export default configure({
         },
       },
     }),
+    libraryBundle({
+      id: "cli",
+      package: "@repo/cli",
+      entry: "main.ts",
+      moduleTarget: "esm",
+    }),
     eslint(),
     moon(),
     moonCi(),
     lerna(),
     vscode({
+      hideGeneratedFiles: false,
       suggestedConfig: {
         "eslint.experimental.useFlatConfig": true,
         "eslint.ignoreUntitled": true,

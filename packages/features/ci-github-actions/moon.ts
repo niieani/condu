@@ -37,7 +37,12 @@ export const moonCi = ({}: {} = {}) =>
                 },
               },
               { run: `${config.node.packageManager.name} install --immutable` },
-              { run: `./node_modules/@moonrepo/cli/moon ci` },
+              {
+                run: `./node_modules/@moonrepo/cli/moon ci`,
+                env: {
+                  MOON_TOOLCHAIN_FORCE_GLOBALS: "true",
+                },
+              },
             ],
           },
         },

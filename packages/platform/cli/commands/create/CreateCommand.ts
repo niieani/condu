@@ -108,13 +108,12 @@ export async function createPackage({
 
   const packageJson: PackageJson = sortPackageJson({
     name: match.name,
+    description,
+    type: "module",
     // copy author from workspace package.json
     author: manifest.author,
     license: manifest.license,
-    description,
-    type: "module",
     contributors: manifest.contributors,
-    main: "esm/main.js",
     publishConfig: {
       access: "public",
     },

@@ -123,6 +123,13 @@ export const typescript = ({
                     include: tsconfig?.include ?? [
                       config.conventions.sourceDir,
                     ],
+                    // these are the defaults, so we don't need to specify them explicitly:
+                    // exclude: tsconfig?.exclude ?? [
+                    //   "node_modules",
+                    //   "bower_components",
+                    //   "jspm_packages",
+                    //   config.conventions.buildDir,
+                    // ],
                   }),
             } satisfies TSConfig,
           },

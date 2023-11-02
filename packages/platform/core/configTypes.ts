@@ -12,6 +12,7 @@ export interface DependencyDef {
 }
 
 export interface Task {
+  // TODO: allow matching which package the task belongs to, like with Files (matchPackage)
   name: string;
   type: "test" | "build" | "publish" | "format" | "start";
   definition: PartialTaskConfig;
@@ -158,7 +159,7 @@ export interface RepoConfig {
   conventions?: Conventions;
 }
 
-export const CONFIGURED = Symbol("Configured");
+export const CONFIGURED = Symbol.for("Configured");
 
 export interface ConfiguredRepoConfig extends RepoConfig {
   [CONFIGURED]: true;

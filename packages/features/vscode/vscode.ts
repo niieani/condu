@@ -34,19 +34,8 @@ export const vscode = ({
                 const existingContent =
                   ((await getExistingContent()) as VscodeSettingsWorkspace) ??
                   {};
-                const withEnforcedConfig = assign(existingContent, {
-                  ...enforcedConfig,
-                  "files.exclude": {
-                    // ...existingContent?.["files.exclude"],
-                    // these are defaults that we want to keep:
-                    // "**/.git": true,
-                    // "**/.svn": true,
-                    // "**/.hg": true,
-                    // "**/CVS": true,
-                    // "**/.DS_Store": true,
-                    // "**/Thumbs.db": true,
-                    // "**/.ruby-lsp": true,
-                    ...Object.fromEntries(
+                const excludedFiles = hideGeneratedFiles
+                  ? Object.fromEntries(
                       state.files
                         .filter(
                           ({ type, skipIgnore, featureName }) =>
@@ -59,8 +48,25 @@ export const vscode = ({
                           path.normalize(path.join(targetDir, p)),
                           true,
                         ]),
-                    ),
+                    )
+                  : {};
+                const withEnforcedConfig = assign(existingContent, {
+                  ...enforcedConfig,
+                  "files.exclude": {
+                    // ...existingContent?.["files.exclude"],
+                    // these are defaults that we want to keep:
+                    // "**/.git": true,
+                    // "**/.svn": true,
+                    // "**/.hg": true,
+                    // "**/CVS": true,
+                    // "**/.DS_Store": true,
+                    // "**/Thumbs.db": true,
+                    // "**/.ruby-lsp": true,
+                    ...excludedFiles,
                     ...enforcedConfig?.["files.exclude"],
+                  },
+                  "search.exclude": {
+                    [config.conventions.buildDir]: true,
                   },
                 } satisfies VscodeSettingsWorkspace);
                 return assign(suggestedConfig, withEnforcedConfig);

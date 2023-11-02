@@ -1,7 +1,6 @@
 {
   "name": "@repo/update-specifiers",
   "type": "module",
-  "main": "esm/main.js",
   "publishConfig": {
     "access": "public"
   },

@@ -2,13 +2,13 @@
   "name": "@repo/cli",
   "type": "module",
   "dependencies": {
-    "@pnpm/fetch": "patch:@pnpm/fetch@npm%3A7.0.3#~/.yarn/patches/@pnpm-fetch-npm-7.0.3-9f1373965c.patch",
+    "@pnpm/fetch": "patch:@pnpm/fetch@npm%3A7.0.5#~/.yarn/patches/@pnpm-fetch-npm-7.0.3-9f1373965c.patch",
     "@pnpm/logger": "^5.0.0",
     "@pnpm/network.auth-header": "^2.0.5",
-    "@pnpm/npm-resolver": "^16.0.13",
+    "@pnpm/npm-resolver": "^17.0.0",
     "@pnpm/read-project-manifest": "^5.0.8",
     "@pnpm/types": "^9.4.0",
-    "@pnpm/workspace.find-packages": "^1.1.0",
+    "@pnpm/workspace.find-packages": "^1.1.1",
     "@repo/core": "workspace:*",
     "@repo/update-specifiers": "workspace:*",
     "async-memoize-one": "^1.1.6",
@@ -17,17 +17,11 @@
     "print-diff": "^2.0.0",
     "remeda": "^1.28.0",
     "sort-package-json": "^2.6.0",
-    "spdx-license-list": "^6.7.0",
+    "spdx-license-list": "^6.8.0",
     "swc-mockify": "portal:../../../../mockify/swc-mockify",
     "ts-pattern": "^5.0.5",
     "vitest": "0.34.6",
     "yaml": "^2.3.3",
     "zx": "^7.2.3"
-  },
-  "source": "main.ts",
-  "targets": {
-    "module": {
-      "includeNodeModules": true
-    }
   }
 }
