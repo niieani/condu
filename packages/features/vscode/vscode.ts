@@ -1,7 +1,6 @@
 import { defineFeature } from "@repo/core/defineFeature.js";
 import { assign } from "comment-json";
 import type VscodeSettingsWorkspace from "@repo/schema-types/schemas/vscodeSettingsWorkspace.gen.js";
-import { inspect } from "node:util";
 import path from "node:path";
 
 export const vscode = ({

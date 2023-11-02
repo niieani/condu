@@ -174,6 +174,7 @@ async function prepareBuildDirectoryPackages({
           pathToDir === "" ? "." : `./${pathToDir}`,
           {
             types: `./${suffixedPath}${basename}.d.ts`,
+            source: `./${suffixedPath}${entry}`,
             bun: `./${suffixedPath}${entry}`,
             import: `./${suffixedPath}${basename}.js`,
             // TODO: support CJS-first projects (i.e. 'js' is CJS, '.mjs' is ESM)
@@ -200,6 +201,7 @@ async function prepareBuildDirectoryPackages({
       },
       main: entrySources["."]?.require,
       module: entrySources["."]?.import,
+      source: entrySources["."]?.source,
       types: entrySources["."]?.types,
       // TODO: funding
       // TODO: support CJF-first projects
@@ -238,6 +240,7 @@ async function prepareBuildDirectoryPackages({
           await fs.writeFile(
             licenseFilePath,
             licenseDefinition.licenseText
+              // TODO: add start year based on git history
               .replace("<year>", new Date().getFullYear().toString())
               .replace("<copyright holders>", manifest.author?.name ?? ""),
           );

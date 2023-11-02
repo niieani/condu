@@ -29,7 +29,7 @@ MVP
   - [ ] verify that `const x = <x>() => {}` works, because TS thinks it's a JSX tag, [which is supported in mts/cts by default](https://github.com/microsoft/TypeScript/issues/44442))
 - [ ] semantic-release (use [Auto](https://github.com/intuit/auto) instead for mono-repo support)
 - [ ] pre-release
-  - [ ] copy/generate LICENSE to each package
+  - [x] copy/generate LICENSE to each package
   - [ ] set correct package.json fields
     - [ ] generate correct entry points (like https://github.com/isaacs/tshy)
     - [ ] conventional entry point:
