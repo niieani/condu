@@ -48,6 +48,9 @@ MVP
 
 Later:
 
+- [ ] error reporting for features
+- [ ] should we collocate per-package build config in the respective packages, or keep them global?
+  - [ ] if yes, then how do we do it? `.config` folder per package?
 - [ ] 2 modes for running TypeScript that you could toggle between - with workspace references, or single-project
   - small projects don't need the overhead/downsides of workspace references
 - [ ] allow CJS building via SWC (automatically polyfills a bunch of things, and warns on top level await)

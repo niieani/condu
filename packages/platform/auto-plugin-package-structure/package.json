@@ -1,7 +1,6 @@
 {
   "name": "@repo/auto-plugin-package-structure",
   "type": "module",
-  "main": "esm/main.js",
   "publishConfig": {
     "access": "public"
   },

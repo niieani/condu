@@ -7,7 +7,6 @@ import {
   CONFIGURED,
   type ConfiguredRepoConfig,
   type RepoConfigWithInferredValues,
-  type RepoConfigWithInferredValuesAndProject,
   type RepoPackageJson,
 } from "@repo/core/configTypes.js";
 import {
@@ -62,7 +61,10 @@ export async function loadRepoProject({
     startDir,
   );
   const configFile = path.join(projectDir, `.config`, `${CORE_NAME}.ts`);
-  const importedConfigFile = await import(configFile).catch((error) => {
+  const importedConfigFile = await import(
+    /* webpackIgnore: true */
+    configFile
+  ).catch((error) => {
     console.error(
       `Unable to load the ${CORE_NAME} config file:\n${error.message}`,
     );

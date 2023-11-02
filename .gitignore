@@ -6,6 +6,8 @@ build
 /yarn.config.cjs
 # typescript:
 /tsconfig.json
+# library-bundle:cli:
+/packages/platform/cli/.config/webpack.config.cjs
 # eslint:
 /eslint.config.js
 # moon:

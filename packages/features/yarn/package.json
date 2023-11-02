@@ -1,7 +1,6 @@
 {
   "name": "@repo-feature/yarn",
   "type": "module",
-  "main": "esm/main.js",
   "publishConfig": {
     "access": "public"
   },
