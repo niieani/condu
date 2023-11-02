@@ -37,6 +37,18 @@ export default configure({
         "eslint.ignoreUntitled": true,
         "eslint.useESLintClass": true,
         "eslint.execArgv": ["--loader", "./node_modules/tsx/dist/loader.mjs"],
+
+        "explorer.fileNesting.enabled": true,
+        "explorer.fileNesting.expand": false,
+        "explorer.fileNesting.patterns": {
+          "*.cts":
+            "${basename}.d.cts,${basename}.d.cts.map,${basename}.cjs,${basename}.cjs.map",
+          "*.ts":
+            "${basename}.d.ts,${basename}.d.ts.map,${basename}.js,${basename}.js.map",
+          "*.mts":
+            "${basename}.d.mts,${basename}.d.mts.map,${basename}.mjs,${basename}.mjs.map",
+        },
+        "explorer.sortOrder": "foldersNestsFiles",
       },
     }),
     gitignore({ ignore: [".swc/", ".config/.cache/"] }),

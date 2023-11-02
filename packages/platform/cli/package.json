@@ -23,5 +23,11 @@
     "vitest": "0.34.6",
     "yaml": "^2.3.3",
     "zx": "^7.2.3"
+  },
+  "source": "main.ts",
+  "targets": {
+    "module": {
+      "includeNodeModules": true
+    }
   }
 }
