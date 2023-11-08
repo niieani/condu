@@ -16,6 +16,11 @@ export interface Task {
   name: string;
   type: "test" | "build" | "publish" | "format" | "start";
   definition: PartialTaskConfig;
+  /**
+   * ts-pattern for selecting which package the task is applicable to
+   * if empty, uses the workspace root
+   * */
+  matchPackage?: Pattern.Pattern<RepoPackageJson> | Partial<RepoPackageJson>;
 }
 
 export interface FileDef {
@@ -64,6 +69,8 @@ export interface RepoPackageConfig
   > {}
 
 export interface RepoPackageJson extends PackageJson {
+  // name is mandatory
+  name: string;
   repo?: RepoPackageConfig;
   /** absolute directory of the package */
   path: string;

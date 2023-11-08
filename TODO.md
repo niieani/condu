@@ -28,11 +28,12 @@ MVP
   - [ ] important [thread about this](https://github.com/microsoft/TypeScript/issues/49462)
   - [ ] verify that `const x = <x>() => {}` works, because TS thinks it's a JSX tag, [which is supported in mts/cts by default](https://github.com/microsoft/TypeScript/issues/44442))
 - [ ] semantic-release (use [Auto](https://github.com/intuit/auto) instead for mono-repo support)
+- [ ] look at whether we can have global tasks in moonrepo
 - [ ] pre-release
   - [x] copy/generate LICENSE to each package
-  - [ ] set correct package.json fields
-    - [ ] generate correct entry points (like https://github.com/isaacs/tshy)
-    - [ ] conventional entry point:
+  - [x] set correct package.json fields
+    - [x] generate correct entry points (like https://github.com/isaacs/tshy)
+    - [x] conventional entry point:
       - use `index.ts`, `main.ts` or `${packageName}.ts` if they exist (set camelCase or kebab-case in "conventions" - use it also for file name linting defaults)
 - [ ] add validation for feature dependencies (e.g. "auto" feature depends on "lerna")
   - maybe not dependencies, but see below - contributed state?
@@ -49,10 +50,21 @@ MVP
 Later:
 
 - [ ] error reporting for features
+- [ ] unify/clarify naming around projects/workspaces/packages/workspace-root/etc
+- [ ] allow setting default TypeScript extension: '.ts', '.cts', '.mts', '.js' (for building in TSDoc mode), as well as the default extension in imports: 'source' ('.ts') or 'output' ('.js')
+- [ ] allow using one of the large scaffolds (epic-stack, electronforge, ignite red)
 - [ ] should we collocate per-package build config in the respective packages, or keep them global?
   - [ ] if yes, then how do we do it? `.config` folder per package?
+- [ ] for library-bundle:
+  - [ ] option to bundle node_modules or not (with exceptions)
+  - [ ] automatically remove the bundled modules from the built package.json, and maybe add them to optionalPeerDependencies?
+  - [ ] perhaps the bundled package is published separately? e.g. under a package.bundle name? maybe this is overridable?
+  - [ ] consider code-splitting by CLI command, to make the initial load faster?
+- [ ] explain why it's better to ship unbundled - all transpiled files individually - and when bundling actually can make sense (e.g. for applications - CLI, etc.)
 - [ ] 2 modes for running TypeScript that you could toggle between - with workspace references, or single-project
   - small projects don't need the overhead/downsides of workspace references
+- [ ] [rollup-plugin-ts](https://github.com/wessberg/rollup-plugin-ts) ?
+  - [ ] although, see discussion [here](https://github.com/microsoft/TypeScript/issues/4433), apparently it doesn't support declaration maps for now
 - [ ] allow CJS building via SWC (automatically polyfills a bunch of things, and warns on top level await)
 - [ ] when running `apply`, cli should clear previously generated files that are no longer needed
 - [ ] should there be 2 default modes for TS? one targetting a more relaxed environment (apps), one targetting more strict ESM?

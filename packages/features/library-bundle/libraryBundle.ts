@@ -38,12 +38,22 @@ export const libraryBundle = ({
         path.extname(entry),
       )}.bundle.js`;
       const outDir = path.join(config.conventions.buildDir, entryDir);
-      const outDirRelativeToEntry = path.relative(entryDir, outDir);
+      const outDirRelativeToPackage = path.relative(
+        entryDir,
+        matchingPackage.dir,
+      );
       const configExtension =
         config.project.manifest.name === "toolchain" ? "ts" : "js";
       const configPath = `./.config/webpack.config.cjs`;
+      const configPathRelativeToPackage = path.relative(
+        configPath,
+        matchingPackage.dir,
+      );
+
+      // TODO: check if entry exists
 
       return {
+        // TODO: do we want these dependencies to be repo-global or per-package?
         devDependencies: ["webpack", "webpack-cli", "@swc/core", "swc-loader"],
         files: [
           {
@@ -57,13 +67,14 @@ export const libraryBundle = ({
           {
             type: "build",
             name: `build-library-bundle-${id}`,
+            matchPackage: { name: matchingPackage.manifest.name },
             definition: {
               command: "webpack",
               // TODO: add inputs and outputs
               args: [
                 "build",
                 "--config",
-                configPath,
+                configPathRelativeToPackage,
                 "--mode",
                 "production",
                 "--entry",
@@ -80,7 +91,7 @@ export const libraryBundle = ({
                 "--env",
                 `filename=${builtEntryName}`,
                 "--env",
-                `outDir=${outDirRelativeToEntry}`,
+                `outDir=${outDirRelativeToPackage}`,
               ],
             },
           },

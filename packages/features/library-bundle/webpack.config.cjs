@@ -96,10 +96,10 @@ module.exports = (
         raw: true,
       }),
     ],
-    mode: "production",
-    optimization: {
-      concatenateModules: true,
-    },
+    // mode: "production",
+    // optimization: {
+    //   concatenateModules: true,
+    // },
     ...selectedConfig,
     output: {
       ...selectedConfig.output,
@@ -108,9 +108,17 @@ module.exports = (
     },
     devtool: false, //"source-map",
     externalsPresets: {
+      // TODO: manually externalize node and import it as ESM, not require, so that deno might work?
+      // use: import { builtinModules } from 'module';
       node: true,
     },
-    externals: ["typescript", "@ts-morph/common", /^@pnpm\/.*/],
+    externals: [
+      "typescript",
+      "@ts-morph/common",
+      /^@pnpm\/.*/,
+      /^node:/,
+      "spdx-license-list",
+    ],
     stats: {
       errorDetails: true,
     },

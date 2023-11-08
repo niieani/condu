@@ -17,6 +17,7 @@ import { readPreviouslyWrittenFileCache } from "./apply/readWrite.js";
 import { buildRemappedProject } from "@repo/update-specifiers/main.js";
 import spdxLicenseList from "spdx-license-list/full.js";
 import type PackageJson from "@repo/schema-types/schemas/packageJson.gen.js";
+import { correctSourceMaps } from "@repo/core/utils/correctSourceMaps.js";
 
 export class BeforeReleaseCommand extends Command {
   static override paths = [["before-release"]];
@@ -55,6 +56,8 @@ export class BeforeReleaseCommand extends Command {
     const srcDirName = config.conventions.sourceDir;
     const absBuildDir = path.join(projectDir, buildDirName);
 
+    await correctSourceMaps({ buildDir: absBuildDir });
+
     await prepareBuildDirectoryPackages({
       projectDir,
       packageList,
@@ -72,9 +75,10 @@ export class BeforeReleaseCommand extends Command {
     });
   }
 }
-const DECLARATION_FILE_EXT_REGEXP = /\.d\.[cm]?ts$/;
 
+const DECLARATION_FILE_EXT_REGEXP = /\.d\.[cm]?ts$/;
 const TSCONFIG_LIKE_FILENAME_REGEXP = /tsconfig\..*\.json$/;
+
 async function prepareBuildDirectoryPackages({
   projectDir,
   packageList,

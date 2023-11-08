@@ -55,6 +55,7 @@ export default configure({
             "${basename}.d.ts,${basename}.d.ts.map,${basename}.js,${basename}.js.map",
           "*.mts":
             "${basename}.d.mts,${basename}.d.mts.map,${basename}.mjs,${basename}.mjs.map",
+          "*.js": "${basename}.d.ts,${basename}.d.ts.map,${basename}.js.map",
         },
         "explorer.sortOrder": "foldersNestsFiles",
       },
