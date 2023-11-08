@@ -97,6 +97,9 @@ export const moon = ({
     name: "moon",
     order: { priority: "beginning" },
     actionFn: async (config, state) => {
+      const moonWorkspaceProjects =
+        getMoonWorkspaceProjectsFromConventionConfig(config.projects);
+
       return {
         files: [
           { path: ".moon/" },
@@ -134,9 +137,13 @@ export const moon = ({
             content: {
               $schema: schemas.workspace,
               ...workspace,
-              projects: getMoonWorkspaceProjectsFromConventionConfig(
-                config.projects,
-              ),
+              projects: {
+                ...moonWorkspaceProjects,
+                sources: {
+                  ...moonWorkspaceProjects.sources,
+                  [config.project.manifest.name ?? "root"]: ".",
+                },
+              },
               vcs: {
                 defaultBranch: config.git.defaultBranch,
                 ...workspace?.vcs,

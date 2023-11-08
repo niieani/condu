@@ -5,9 +5,10 @@ import type {
   PartialInheritedTasksConfig as Tasks,
 } from "@moonrepo/types";
 import { otherSchemas as schemas } from "@repo/schema-types/utils/schemas.js";
-import { mapValues, groupBy } from "remeda";
-import type { Task } from "@repo/core/configTypes.js";
+import { mapValues, groupBy, uniq, partition } from "remeda";
+import type { FileDef, Task } from "@repo/core/configTypes.js";
 import { nonEmpty } from "@repo/core/utils/filter.js";
+import { match } from "ts-pattern";
 
 export const moonCi = ({}: {} = {}) =>
   defineFeature({
@@ -48,8 +49,78 @@ export const moonCi = ({}: {} = {}) =>
         },
       };
 
+      const projects = [
+        config.project,
+        ...(await config.project.getWorkspacePackages()),
+      ];
+      const taskList = state.tasks;
+      //tasksByPackage
+      const tasksByType: Record<
+        Task["type"],
+        [projectName: string, taskName: string][]
+      > = {
+        build: [],
+        test: [],
+        format: [],
+        publish: [],
+        start: [],
+      };
+      const typeTasks = mapValues(
+        tasksByType,
+        (tasks): PartialTaskConfig =>
+          // this groups all the tasks of the same type into a single task
+          // so that all the features implementing the same task type (e.g. 'test') can be run in parallel
+          ({
+            // ~ is self-referencing task: https://moonrepo.dev/docs/concepts/target#self-
+            deps: tasks.map(
+              ([projectName, taskName]) => `${projectName}:${taskName}`,
+            ),
+          }),
+      );
+      const taskFiles = projects.flatMap((project) => {
+        const tasks = taskList.flatMap((task) => {
+          if (task.name in typeTasks) {
+            throw new Error(
+              `In ${project.manifest.name}: Task name '${task.name}' is reserved for the global task type`,
+            );
+          }
+          return match(project.manifest)
+            .with(task.matchPackage ?? { kind: "workspace" }, () => {
+              tasksByType[task.type].push([project.manifest.name, task.name]);
+              return [[task.name, task.definition]] as const;
+            })
+            .otherwise(() => []);
+        });
+        if (tasks.length === 0 && project.manifest.kind === "package") {
+          return [];
+        }
+        return {
+          path: ".moon/tasks.yml",
+          content: {
+            $schema: schemas.tasks,
+            tasks: Object.fromEntries(tasks),
+          } satisfies Tasks,
+          matchPackage: {
+            name: project.manifest.name,
+            kind: project.manifest.kind,
+          },
+        } as const;
+      });
+
+      const [packageTaskFiles, [workspaceTaskFile]] = partition(
+        taskFiles,
+        ({ matchPackage }) => matchPackage.kind === "package",
+      );
+      if (!workspaceTaskFile) {
+        throw new Error("Impossible state");
+      }
+
+      const sourceExtensionsConcatenated =
+        config.conventions.sourceExtensions.join(",");
+
       return {
         files: [
+          ...packageTaskFiles,
           {
             path: ".github/workflows/ci.yml",
             type: "committed",
@@ -57,45 +128,19 @@ export const moonCi = ({}: {} = {}) =>
             content: ciWorkflow,
           },
           {
-            path: ".moon/tasks.yml",
-            content: () => {
-              const taskList = state.tasks.filter(nonEmpty);
-              const tasksByType: Record<Task["type"], [Task, ...Task[]]> =
-                groupBy(taskList, (t) => t.type);
-              const typeTasks = mapValues(
-                tasksByType,
-                (tasks): PartialTaskConfig =>
-                  // this groups all the tasks of the same type into a single task
-                  // so that all the features implementing the same task type (e.g. 'test') can be run in parallel
-                  ({
-                    // self-referencing task: https://moonrepo.dev/docs/concepts/target#self-
-                    deps: tasks.flatMap((t) => `~:${t.name}`),
-                  }),
-              );
-              const tasks = taskList.map(({ name, definition }) => {
-                if (name in typeTasks) {
-                  throw new Error(
-                    `Task name '${name}' is reserved for the task type '${definition.type}'`,
-                  );
-                }
-                return [name, definition] as const;
-              });
-
-              const sourceExtensionsConcatenated =
-                config.conventions.sourceExtensions.join(",");
-              return {
-                $schema: schemas.tasks,
-                fileGroups: {
-                  sources: [
-                    `${config.conventions.sourceDir}/**/*.{${sourceExtensionsConcatenated}}`,
-                  ],
-                  tests: [
-                    `${config.conventions.sourceDir}/**/*.test.{${sourceExtensionsConcatenated}}`,
-                  ],
-                },
-                tasks: { ...typeTasks, ...Object.fromEntries(tasks) },
-              } satisfies Tasks;
-            },
+            ...workspaceTaskFile,
+            content: {
+              ...workspaceTaskFile.content,
+              fileGroups: {
+                sources: [
+                  `${config.conventions.sourceDir}/**/*.{${sourceExtensionsConcatenated}}`,
+                ],
+                tests: [
+                  `${config.conventions.sourceDir}/**/*.test.{${sourceExtensionsConcatenated}}`,
+                ],
+              },
+              tasks: { ...typeTasks, ...workspaceTaskFile.content.tasks },
+            } satisfies Tasks,
           },
         ],
         flags: ["preventAdditionalTasks"],

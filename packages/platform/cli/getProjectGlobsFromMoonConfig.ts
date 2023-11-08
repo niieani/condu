@@ -1,4 +1,7 @@
-import type { PartialWorkspaceProjects } from "@moonrepo/types";
+import type {
+  PartialWorkspaceProjects,
+  PartialWorkspaceProjectsConfig,
+} from "@moonrepo/types";
 
 interface ParentDirectoryProjectConvention {
   /**
@@ -62,9 +65,12 @@ export const getProjectDefinitionsFromConventionConfig = (
 
 export const getMoonWorkspaceProjectsFromConventionConfig = (
   projects?: WorkspaceProjectsConvention[],
-): PartialWorkspaceProjects => {
+): PartialWorkspaceProjectsConfig => {
   if (!projects) {
-    return [];
+    return {
+      globs: [],
+      sources: {},
+    };
   }
   const globs: string[] = [];
   const sources: Record<string, string> = {};

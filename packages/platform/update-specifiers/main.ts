@@ -7,6 +7,7 @@ import {
   type FileSystemHost,
 } from "@ts-morph/common";
 import * as path from "node:path";
+import { changeSourceMapSourcesToBeRelativeToAdjacentFiles } from "../core/utils/changeSourceMapSourcesToBeRelativeToAdjacentFiles.js";
 
 const extensionRegexp = /^\.[cm]?[jt]sx?/i;
 
@@ -21,17 +22,6 @@ const extensions = [
   ".cts",
 ] as const;
 type Extension = (typeof extensions)[number];
-
-// https://github.com/microsoft/TypeScript/blob/514f7e639a2a8466c075c766ee9857a30ed4e196/src/harness/documentsUtil.ts#L43C1-L53C1
-export interface RawSourceMap {
-  version: number;
-  file: string;
-  sourceRoot?: string;
-  sources: string[];
-  sourcesContent?: string[];
-  names: string[];
-  mappings: string;
-}
 
 const isMappableExtension = (extension: string): extension is Extension =>
   extensions.includes(extension as Extension);
@@ -218,7 +208,7 @@ const renameSpecifiers = async ({
           let contents = emittedFile.getText();
           const extension = path.extname(filePath);
           if (extension === ".map") {
-            const map = correctMapSourcesToRelateToAdjacentFiles(
+            const map = changeSourceMapSourcesToBeRelativeToAdjacentFiles(
               JSON.parse(contents),
             );
             contents = JSON.stringify(map);
@@ -239,13 +229,6 @@ const renameSpecifiers = async ({
     }),
   );
 };
-
-function correctMapSourcesToRelateToAdjacentFiles(map: RawSourceMap) {
-  map.sources = map.sources.map((source) =>
-    source.startsWith(".") ? path.basename(source) : source,
-  );
-  return map;
-}
 
 function createChangeSets({
   sourceFiles,
