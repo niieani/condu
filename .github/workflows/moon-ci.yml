@@ -1,4 +1,4 @@
-name: CI
+name: Moon CI
 on:
   push:
     branches:
@@ -6,7 +6,7 @@ on:
   pull_request: {}
 jobs:
   ci:
-    name: CI
+    name: Moon CI
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

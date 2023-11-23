@@ -2,6 +2,7 @@ export const otherSchemas = {
   toolchain: "https://moonrepo.dev/schemas/toolchain.json",
   workspace: "https://moonrepo.dev/schemas/workspace.json",
   tasks: "https://moonrepo.dev/schemas/tasks.json",
+  project: "https://moonrepo.dev/schemas/project.json",
 };
 
 export const schemas = {

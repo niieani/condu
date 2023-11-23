@@ -1,13 +1,14 @@
 .DS_Store
 node_modules
-build
+/.config/.cache/
+/build/
 # yarn:
 /.yarn/cache/
 /yarn.config.cjs
 # typescript:
 /tsconfig.json
 # library-bundle:cli:
-/packages/platform/cli/.config/webpack.config.cjs
+/packages/platform/cli/.config/generated/webpack.config.cjs
 # eslint:
 /eslint.config.js
 # moon:
@@ -17,11 +18,14 @@ build
 /.moon/toolchain.yml
 /.moon/workspace.yml
 # moonCi:
+/packages/platform/cli/moon.yml
+/moon.yml
 /.moon/tasks.yml
 # lerna:
 /lerna.json
 # vscode:
 /.vscode/settings.json
+# gpt-summarizer:
+/about-the-projects-and-its-source-code.md
 # custom ignore patterns:
 .swc/
-.config/.cache/

@@ -39,16 +39,16 @@ export const libraryBundle = ({
       )}.bundle.js`;
       const outDir = path.join(config.conventions.buildDir, entryDir);
       const outDirRelativeToPackage = path.relative(
-        entryDir,
         matchingPackage.dir,
+        outDir,
       );
       const configExtension =
         config.project.manifest.name === "toolchain" ? "ts" : "js";
-      const configPath = `./.config/webpack.config.cjs`;
-      const configPathRelativeToPackage = path.relative(
-        configPath,
-        matchingPackage.dir,
-      );
+      const configPathRelativeToPackage = `./.config/generated/webpack.config.cjs`;
+      // const configPathRelativeToPackage = path.relative(
+      //   matchingPackage.dir,
+      //   path.join(config.project.dir, configPath),
+      // );
 
       // TODO: check if entry exists
 
@@ -58,7 +58,7 @@ export const libraryBundle = ({
         files: [
           {
             // TODO: use unique filename for each library bundle, need $id to be filename-safe
-            path: configPath,
+            path: configPathRelativeToPackage,
             content: `module.exports = require('@repo-feature/library-bundle/webpack.config.cjs');`,
             matchPackage: { name: matchingPackage.manifest.name },
           },
@@ -70,6 +70,15 @@ export const libraryBundle = ({
             matchPackage: { name: matchingPackage.manifest.name },
             definition: {
               command: "webpack",
+              // TODO: source dir and config only?
+              inputs: [
+                "**/*",
+                "$workspaceRoot/yarn.lock",
+                "$workspaceRoot/features/library-bundle/webpack.config.cjs",
+              ],
+              options: {
+                cache: false,
+              },
               // TODO: add inputs and outputs
               args: [
                 "build",

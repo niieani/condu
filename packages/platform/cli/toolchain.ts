@@ -68,6 +68,7 @@ export async function getManifest(cwd: string) {
     ...manifestWrapper,
     manifest: {
       ...(manifest as PackageJson),
+      name: manifest.name ?? path.basename(projectDir),
       kind: "workspace",
       path: projectDir,
       workspacePath: ".",

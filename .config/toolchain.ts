@@ -7,6 +7,7 @@ import { lerna } from "@repo-feature/lerna/lerna.js";
 import { yarn } from "@repo-feature/yarn/yarn.js";
 import { vscode } from "@repo-feature/vscode/vscode.js";
 import { libraryBundle } from "@repo-feature/library-bundle/libraryBundle.js";
+import { gptSummarizer } from "@repo-feature/gpt-summarizer/gptSummarizer.js";
 import { configure } from "@repo/core/configTypes.js";
 
 export default configure({
@@ -60,6 +61,7 @@ export default configure({
         "explorer.sortOrder": "foldersNestsFiles",
       },
     }),
-    gitignore({ ignore: [".swc/", ".config/.cache/"] }),
+    gptSummarizer(),
+    gitignore({ ignore: [".swc/"] }),
   ],
 });

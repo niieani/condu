@@ -13,10 +13,10 @@ export type PathWhereTheDownloadedPackagesAreStoredOnYourSystem = string
  * Whether or not a cache entry is outdated depends on whether it has been built and checksumed by an earlier release of Yarn, or under a different compression settings. Possible behaviors are:
  * 
  * - If `required-only`, it'll keep using the file as-is, unless the version that generated it was decidedly too old.
- * - If `match-spec`, it'll also rebuild the file if the compression level has changed. If `always`, it'll always regenerate the cache files so they use the current cache version.
- * - If `auto` (the default), it'll act as either `required-only` or `always` depending on whether `enableGlobalCache` is enabled (with `always` being selected in that case).
+ * - If `match-spec`, it'll also rebuild the file if the compression level has changed.
+ * - If `always` (the default), it'll always regenerate the cache files so they use the current cache version.
  */
-export type BehaviorThatYarnShouldFollowWhenItDetectsThatACacheEntryIsOutdated = ("required-only" | "match-spec" | "always" | "auto")
+export type BehaviorThatYarnShouldFollowWhenItDetectsThatACacheEntryIsOutdated = ("required-only" | "match-spec" | "always")
 export type PathToAFileContainingOneOrMultipleCertificateAuthoritySigningCertificates = string
 /**
  * Supports git branches, tags, and commits. The default configuration will compare against master, origin/master, upstream/master, main, origin/main, and upstream/main.
@@ -40,9 +40,11 @@ export type BehaviorThatYarnShouldFollowWhenItDetectsThatACacheEntryHasADifferen
  */
 export type AmountOfGitCloneOperationsThatYarnWillRunAtTheSameTime = number
 /**
- * Possible values go from 0 ("no compression, faster") to 9 ("heavy compression, slower"). The default is 'mixed', which is a variant of 9 where files may be stored uncompressed if the builtin libzip heuristic thinks it will lead to a more sensible result.
+ * Possible values go from `0` ("no compression, faster") to `9` ("heavy compression, slower"). The value `mixed` is a variant of `9` where files are stored uncompressed if the gzip overhead would exceed the size gain.
+ * 
+ * The default is `0`, which tends to be significantly faster to install. Projects using zero-installs are advised to keep it this way, as experiments showed that Git stores uncompressed package archives more efficiently than gzip-compressed ones.
  */
-export type CompressionLevelEmployedForZipArchives = ("mixed" | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9)
+export type CompressionLevelEmployedForZipArchives = (0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | "mixed")
 /**
  * This only matters for Prolog constraints, which are being deprecated. JavaScript constraints will always be read from the `yarn.config.cjs` file.
  */
@@ -65,9 +67,19 @@ export type FolderWhereTheVersioningFilesAreStored = string
  */
 export type DefineWhetherColorsAreAllowedOnTheStandardOutput = boolean
 /**
+ * If true, Yarn will run your constraints right after finishing its installs. This may help decrease the feedback loop delay by catching errors long before your CI would even report them.
+ */
+export type DefineWhetherConstraintsShouldRunOnEveryInstall = boolean
+/**
  * If true (the default), Yarn will store the cache files into a folder located within `globalFolder` instead of respecting `cacheFolder`.
  */
 export type DefineWhetherTheCacheShouldBeSharedBetweenAllLocalProjects = boolean
+/**
+ * If true, Yarn will query the remote registries to validate that the lockfile content matches the remote information. These checks make installs slower, so you should only run them on branches managed by users outside your circle of trust.
+ * 
+ * Yarn will automatically enable the hardened mode on GitHub pull requests from public repository. Should you want to disable it, explicitly set it to `false` in your yarnrc file.
+ */
+export type DefineWhetherYarnShouldAttemptToCheckForMaliciousChanges = boolean
 /**
  * The default is to check the terminal capabilities, but you can manually override it to either `true` or `false`.
  */
@@ -152,6 +164,12 @@ export type DefineAProxyToUseWhenMakingAnHTTPSRequest = string
 export type DefineWhetherYarnPathShouldBeRespectedOrNot = boolean
 export type ArrayOfFilePatternsWhoseContentWonTBeAllowedToChangeIfEnableImmutableInstallsIsSet = string[]
 export type ScopeUsedWhenCreatingPackagesViaTheInitCommand = string
+/**
+ * By default Yarn will automatically inject the variables stored in the `.env.yarn` file, but you can use this setting to change this behavior.
+ * 
+ * Note that adding a question mark at the end of the path will silence the error Yarn would throw should the file be missing, which may come in handy when declaring local configuration files.
+ */
+export type ArrayOfEnvFilesWhichWillGetInjectedIntoAnySubprocessSpawnedByYarn = string[]
 /**
  * The install state file contains a bunch of cached information about your project. It's only used for optimization purposes, and will be recreated if missing (you don't need to add it to Git).
  */
@@ -373,7 +391,9 @@ defaultProtocol?: DefaultProtocolThatShouldBeUsedWhenADependencyRangeIsAPureSemv
 defaultSemverRangePrefix?: DefaultPrefixUsedInSemverRangesCreatedByYarnAddAndSimilarCommands
 deferredVersionFolder?: FolderWhereTheVersioningFilesAreStored
 enableColors?: DefineWhetherColorsAreAllowedOnTheStandardOutput
+enableConstraintsChecks?: DefineWhetherConstraintsShouldRunOnEveryInstall
 enableGlobalCache?: DefineWhetherTheCacheShouldBeSharedBetweenAllLocalProjects
+enableHardenedMode?: DefineWhetherYarnShouldAttemptToCheckForMaliciousChanges
 enableHyperlinks?: DefineWhetherHyperlinksAreAllowedOnTheStandardOutput
 enableImmutableCache?: DefineWhetherToAllowAddingRemovingFilesFromTheCacheOrNot
 enableImmutableInstalls?: DefineWhetherToAllowAddingRemovingEntriesFromTheLockfileOrNot
@@ -405,6 +425,7 @@ ignorePath?: DefineWhetherYarnPathShouldBeRespectedOrNot
 immutablePatterns?: ArrayOfFilePatternsWhoseContentWonTBeAllowedToChangeIfEnableImmutableInstallsIsSet
 initScope?: ScopeUsedWhenCreatingPackagesViaTheInitCommand
 initFields?: AdditionalFieldsToSetWhenCreatingPackagesViaTheInitCommand
+injectEnvironmentFiles?: ArrayOfEnvFilesWhichWillGetInjectedIntoAnySubprocessSpawnedByYarn
 installStatePath?: PathWhereTheInstallStateWillBePersisted
 logFilters?: AlterTheLogLevelsForEmittedMessages
 networkConcurrency?: AmountOfHTTPRequestsThatAreAllowedToRunAtTheSameTime
