@@ -3,6 +3,7 @@ import type GithubWorkflow from "@repo/schema-types/schemas/githubWorkflow.gen.j
 import type {
   PartialTaskConfig,
   PartialInheritedTasksConfig as Tasks,
+  PartialProjectConfig as Project,
 } from "@moonrepo/types";
 import { otherSchemas as schemas } from "@repo/schema-types/utils/schemas.js";
 import { mapValues, groupBy, uniq, partition } from "remeda";
@@ -10,20 +11,22 @@ import type { FileDef, Task } from "@repo/core/configTypes.js";
 import { nonEmpty } from "@repo/core/utils/filter.js";
 import { match } from "ts-pattern";
 
+// TODO: the way this should actually work is it should be a moonCi feature that contributes "ci" commands to state
+// then the Github Actions CI pulls those commands in
 export const moonCi = ({}: {} = {}) =>
   defineFeature({
     name: "moonCi",
     order: { priority: "end" },
     actionFn: async (config, state) => {
       const ciWorkflow: GithubWorkflow = {
-        name: "CI",
+        name: "Moon CI",
         on: {
           push: { branches: [config.git.defaultBranch] },
           pull_request: {},
         },
         jobs: {
           ci: {
-            name: "CI",
+            name: "Moon CI",
             "runs-on": "ubuntu-latest",
             steps: [
               {
@@ -50,11 +53,10 @@ export const moonCi = ({}: {} = {}) =>
       };
 
       const projects = [
-        config.project,
         ...(await config.project.getWorkspacePackages()),
+        config.project,
       ];
       const taskList = state.tasks;
-      //tasksByPackage
       const tasksByType: Record<
         Task["type"],
         [projectName: string, taskName: string][]
@@ -65,21 +67,9 @@ export const moonCi = ({}: {} = {}) =>
         publish: [],
         start: [],
       };
-      const typeTasks = mapValues(
-        tasksByType,
-        (tasks): PartialTaskConfig =>
-          // this groups all the tasks of the same type into a single task
-          // so that all the features implementing the same task type (e.g. 'test') can be run in parallel
-          ({
-            // ~ is self-referencing task: https://moonrepo.dev/docs/concepts/target#self-
-            deps: tasks.map(
-              ([projectName, taskName]) => `${projectName}:${taskName}`,
-            ),
-          }),
-      );
       const taskFiles = projects.flatMap((project) => {
         const tasks = taskList.flatMap((task) => {
-          if (task.name in typeTasks) {
+          if (task.name in tasksByType) {
             throw new Error(
               `In ${project.manifest.name}: Task name '${task.name}' is reserved for the global task type`,
             );
@@ -95,11 +85,31 @@ export const moonCi = ({}: {} = {}) =>
           return [];
         }
         return {
-          path: ".moon/tasks.yml",
+          path: "moon.yml",
           content: {
-            $schema: schemas.tasks,
-            tasks: Object.fromEntries(tasks),
-          } satisfies Tasks,
+            $schema: schemas.project,
+            tasks:
+              project.manifest.kind === "package"
+                ? Object.fromEntries(tasks)
+                : {
+                    ...Object.fromEntries(tasks),
+                    // add in type-tasks
+                    ...mapValues(
+                      tasksByType,
+                      (tasks): PartialTaskConfig =>
+                        // this groups all the tasks of the same type into a single task
+                        // so that all the features implementing the same task type (e.g. 'test') can be run in parallel
+                        ({
+                          // ~ is self-referencing task: https://moonrepo.dev/docs/concepts/target#self-
+                          deps: tasks.map(
+                            ([projectName, taskName]) =>
+                              `${projectName}:${taskName}`,
+                          ),
+                          inputs: [],
+                        }),
+                    ),
+                  },
+          } satisfies Project,
           matchPackage: {
             name: project.manifest.name,
             kind: project.manifest.kind,
@@ -107,30 +117,22 @@ export const moonCi = ({}: {} = {}) =>
         } as const;
       });
 
-      const [packageTaskFiles, [workspaceTaskFile]] = partition(
-        taskFiles,
-        ({ matchPackage }) => matchPackage.kind === "package",
-      );
-      if (!workspaceTaskFile) {
-        throw new Error("Impossible state");
-      }
-
       const sourceExtensionsConcatenated =
         config.conventions.sourceExtensions.join(",");
 
       return {
         files: [
-          ...packageTaskFiles,
+          ...taskFiles,
           {
-            path: ".github/workflows/ci.yml",
+            path: ".github/workflows/moon-ci.yml",
             type: "committed",
             publish: false,
             content: ciWorkflow,
           },
           {
-            ...workspaceTaskFile,
+            path: ".moon/tasks.yml",
             content: {
-              ...workspaceTaskFile.content,
+              $schema: schemas.tasks,
               fileGroups: {
                 sources: [
                   `${config.conventions.sourceDir}/**/*.{${sourceExtensionsConcatenated}}`,
@@ -139,7 +141,6 @@ export const moonCi = ({}: {} = {}) =>
                   `${config.conventions.sourceDir}/**/*.test.{${sourceExtensionsConcatenated}}`,
                 ],
               },
-              tasks: { ...typeTasks, ...workspaceTaskFile.content.tasks },
             } satisfies Tasks,
           },
         ],

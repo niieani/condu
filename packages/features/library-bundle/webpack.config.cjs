@@ -8,6 +8,7 @@ const path = require("node:path");
 // import type { Configuration } from "webpack";
 // import type { LibraryBundleConfig } from "./types.js";
 const webpack = require("webpack");
+const builtin = require("node:module").builtinModules;
 
 module.exports = (
   /** @type {import('./types').LibraryBundleConfig} */
@@ -107,18 +108,44 @@ module.exports = (
       path: path.join(process.cwd(), outDir),
     },
     devtool: false, //"source-map",
-    externalsPresets: {
-      // TODO: manually externalize node and import it as ESM, not require, so that deno might work?
-      // use: import { builtinModules } from 'module';
-      node: true,
+    // externalsPresets: {
+    //   // TODO: manually externalize node and import it as ESM, not require, so that deno might work?
+    //   // use: import { builtinModules } from 'module';
+    //   node: true,
+    // },
+
+    // ...Object.fromEntries(
+    //   builtin.map((name) => [`${name}$`, `external node:${name}`]),
+    // ),
+    externals: async (data) => {
+      const { request, context, getResolve } = data;
+      const externals = [
+        "typescript",
+        "@ts-morph/common",
+        /^@pnpm\/.*/,
+        /^node:/,
+        "spdx-license-list",
+      ];
+      const isExternal = externals.some((external) => {
+        if (typeof external === "string") {
+          return request === external || request.startsWith(`${external}/`);
+        } else if (external instanceof RegExp) {
+          return external.test(request);
+        }
+      });
+      if (isExternal) {
+        return true;
+      }
+      const isBuiltin = builtin.some((name) => {
+        if (request === name || request.startsWith(`${name}/`)) {
+          return true;
+        }
+      });
+      if (isBuiltin) {
+        // rewrite all builtins to use node: prefix
+        return `module node:${request}`;
+      }
     },
-    externals: [
-      "typescript",
-      "@ts-morph/common",
-      /^@pnpm\/.*/,
-      /^node:/,
-      "spdx-license-list",
-    ],
     stats: {
       errorDetails: true,
     },

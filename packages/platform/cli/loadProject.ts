@@ -156,6 +156,7 @@ export const getWorkspacePackages = async (
       dir: relativePath,
       manifest: {
         ...(manifest as PackageJson),
+        name: manifest.name ?? path.basename(dir),
         kind: "package",
         path: dir,
         workspacePath: relativePath,

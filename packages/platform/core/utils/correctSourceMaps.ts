@@ -4,10 +4,7 @@
 
 import fs from "node:fs/promises";
 import path from "node:path";
-import {
-  type FilterFn,
-  walkDirectoryRecursively,
-} from "./walkDirectoryRecursively.js";
+import { walkDirectoryRecursively } from "./walkDirectoryRecursively.js";
 import {
   changeSourceMapSourcesToBeRelativeToAdjacentFiles,
   type RawSourceMap,

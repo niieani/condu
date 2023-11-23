@@ -1,5 +1,5 @@
 import { defineFeature } from "@repo/core/defineFeature.js";
-import path from "node:path";
+import * as path from "node:path";
 import { groupBy } from "remeda";
 
 export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
@@ -31,7 +31,8 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
             return [
               ".DS_Store",
               "node_modules",
-              config.conventions.buildDir,
+              "/.config/.cache/",
+              `/${config.conventions.buildDir}/`,
               // ignore all generated files:
               ...entriesFromFeatures,
               ...(ignore.length > 0 ? ["# custom ignore patterns:"] : []),

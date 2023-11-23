@@ -20,6 +20,7 @@ export const yarn = ({ yarnrc }: { yarnrc?: Yarnrc } = {}) =>
           // we could get rid of one more file ¯\_(ツ)_/¯
           type: "committed",
           content: {
+            enableConstraintsChecks: true,
             ...yarnrc,
             nodeLinker: yarnrc?.nodeLinker ?? "node-modules",
           } satisfies Yarnrc,

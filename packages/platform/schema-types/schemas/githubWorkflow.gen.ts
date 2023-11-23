@@ -429,8 +429,6 @@ export type Name = string
  */
 export type Permissions = (("read-all" | "write-all") | PermissionsEvent)
 export type PermissionsLevel = ("read" | "write" | "none")
-export type Machine = ("linux" | "macos" | "windows")
-export type Architecture = ("ARM32" | "x64" | "x86")
 /**
  * To set custom environment variables, you need to specify the variables in the workflow file. You can define environment variables for a step, job, or entire workflow using the jobs.<job_id>.steps[*].env, jobs.<job_id>.env, and env keywords. For more information, see https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idstepsenv
  */
@@ -710,11 +708,11 @@ permissions?: Permissions
 /**
  * The type of machine to run the job on. The machine can be either a GitHub-hosted runner, or a self-hosted runner.
  */
-"runs-on": (("macos-10.15" | "macos-11" | "macos-12" | "macos-12-xl" | "macos-13" | "macos-13-xl" | "macos-latest" | "macos-latest-xl" | "self-hosted" | "ubuntu-18.04" | "ubuntu-20.04" | "ubuntu-22.04" | "ubuntu-latest" | "ubuntu-latest-4-cores" | "ubuntu-latest-8-cores" | "ubuntu-latest-16-cores" | "windows-2019" | "windows-2022" | "windows-latest" | "windows-latest-8-cores") | ((["self-hosted", ...(string)[]] | ["self-hosted", Machine, ...(string)[]] | ["self-hosted", Architecture, ...(string)[]] | ["self-hosted", Machine, Architecture, ...(string)[]] | ["self-hosted", Architecture, Machine, ...(string)[]] | ["linux", ...(string)[]] | ["windows", ...(string)[]]) & unknown[]) | {
+"runs-on": (string | ([string] & unknown[]) | {
 group?: string
 labels?: (string | string[])
 [k: string]: unknown | undefined
-} | StringContainingExpressionSyntax)
+} | StringContainingExpressionSyntax | ExpressionSyntax)
 /**
  * The environment that the job references.
  */
