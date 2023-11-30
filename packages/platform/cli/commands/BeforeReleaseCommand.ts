@@ -206,7 +206,7 @@ async function prepareBuildDirectoryPackages({
       main: entrySources["."]?.require,
       module: entrySources["."]?.import,
       source: entrySources["."]?.source,
-      types: entrySources["."]?.types,
+      // types: entrySources["."]?.types,
       // TODO: funding
       // TODO: support CJF-first projects
       type: "module",
