@@ -49,6 +49,7 @@ MVP
 - [ ] similar tool: https://packemon.dev/
 - [ ] vscode auto-ignore generated files
 - [x] use https://www.npmjs.com/package/comment-json to keep the comments and only amend input if it exists
+- [ ] bare minimum for repo tool: just copy files from .config to the root and add them to .gitignore
 
 - shippable state -
 

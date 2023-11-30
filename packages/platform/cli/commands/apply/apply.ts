@@ -5,6 +5,7 @@ import type {
   CollectedFileDef,
   CollectedState,
   DependencyDef,
+  Hooks,
   RepoConfigWithInferredValuesAndProject,
   StateFlags,
 } from "@repo/core/configTypes.js";
@@ -20,6 +21,15 @@ import {
   type WrittenFile,
 } from "./readWrite.js";
 
+export const getApplyHook =
+  <TOut>(...fns: ((arg: TOut) => TOut | Promise<TOut>)[]) =>
+  async (arg: TOut): Promise<TOut> => {
+    for (const fn of fns) {
+      arg = await fn(arg);
+    }
+    return arg;
+  };
+
 export async function collectState(
   config: RepoConfigWithInferredValuesAndProject,
 ): Promise<CollectedState> {
@@ -27,6 +37,9 @@ export async function collectState(
     files: [],
     devDependencies: [],
     tasks: [],
+    hooks: {
+      createPublishPackageJson: [],
+    },
   };
 
   const { project } = config;
@@ -37,6 +50,15 @@ export async function collectState(
   for (const feature of config.features) {
     // const featureConfig = feature.order;
     const featureState = await feature.actionFn(config, state);
+
+    if (featureState.hooks) {
+      for (const [_hookName, hookFn] of Object.entries(featureState.hooks)) {
+        const hookName = _hookName as keyof Hooks;
+        state.hooks[hookName] ||= [];
+        state.hooks[hookName].push(hookFn);
+      }
+    }
+
     if (featureState.files) {
       const flattenedFiles = (
         await Promise.all(
@@ -105,6 +127,7 @@ export async function collectState(
       }
       state.tasks.push(...featureState.tasks.filter(nonEmpty));
     }
+    // TODO: support per-package dependencies
     if (featureState.devDependencies) {
       state.devDependencies.push(
         ...featureState.devDependencies.filter(nonEmpty),

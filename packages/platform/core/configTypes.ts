@@ -92,12 +92,21 @@ export interface CollectedFileDef extends FileDef {
   target: RepoPackageJson;
 }
 
+export interface Hooks {
+  createPublishPackageJson: (
+    packageJson: PackageJson,
+  ) => PackageJson | Promise<PackageJson>;
+}
+
 export interface CollectedState {
   /** these files will be created during execution */
   files: CollectedFileDef[];
   /** we'll ensure these dependencies are installed during execution */
   devDependencies: (string | DependencyDef)[];
   tasks: Task[];
+  hooks: {
+    [P in keyof Hooks]: Hooks[P][];
+  };
 }
 
 export interface StateFlags {
@@ -110,9 +119,12 @@ export type ToIntermediateState<T> = {
     : T[P];
 };
 
-export type State = ToIntermediateState<Omit<CollectedState, "files">> & {
+export type State = ToIntermediateState<
+  Omit<CollectedState, "files" | "hooks">
+> & {
   files?: ReadonlyArray<FileDef | false | undefined>;
   flags?: ReadonlyArray<keyof StateFlags>;
+  hooks?: Partial<Hooks>;
 };
 
 export type FeatureActionFn = (
