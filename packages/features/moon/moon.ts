@@ -101,54 +101,58 @@ export const moon = ({
         getMoonWorkspaceProjectsFromConventionConfig(config.projects);
 
       return {
-        files: [
-          { path: ".moon/" },
-          { path: ".moon/cache" },
-          { path: ".moon/docker" },
+        effects: [
           {
-            path: ".moon/toolchain.yml",
-            content: {
-              $schema: schemas.toolchain,
-              ...defaultToolchain,
-              ...toolchain,
-              ...(config.projects && {
-                typescript: {
-                  ...defaultToolchain.typescript,
-                  // TODO: implement this in repo, so we don't repend on moon for it:
-                  // syncProjectReferences: true,
-                  // syncProjectReferencesToPaths: true,
-                  // createMissingConfig: true,
-                  rootOptionsConfigFileName: "tsconfig.options.json",
-                  ...toolchain?.typescript,
-                },
-              }),
-              node: {
-                version: config.node.version,
-                packageManager: config.node.packageManager.name,
-                [config.node.packageManager.name]: {
-                  version: config.node.packageManager.version,
-                },
-                ...toolchain?.node,
+            files: [
+              { path: ".moon/" },
+              { path: ".moon/cache" },
+              { path: ".moon/docker" },
+              {
+                path: ".moon/toolchain.yml",
+                content: {
+                  $schema: schemas.toolchain,
+                  ...defaultToolchain,
+                  ...toolchain,
+                  ...(config.projects && {
+                    typescript: {
+                      ...defaultToolchain.typescript,
+                      // TODO: implement this in repo, so we don't repend on moon for it:
+                      // syncProjectReferences: true,
+                      // syncProjectReferencesToPaths: true,
+                      // createMissingConfig: true,
+                      rootOptionsConfigFileName: "tsconfig.options.json",
+                      ...toolchain?.typescript,
+                    },
+                  }),
+                  node: {
+                    version: config.node.version,
+                    packageManager: config.node.packageManager.name,
+                    [config.node.packageManager.name]: {
+                      version: config.node.packageManager.version,
+                    },
+                    ...toolchain?.node,
+                  },
+                } satisfies Toolchain,
               },
-            } satisfies Toolchain,
-          },
-          {
-            path: ".moon/workspace.yml",
-            content: {
-              $schema: schemas.workspace,
-              ...workspace,
-              projects: {
-                ...moonWorkspaceProjects,
-                sources: {
-                  ...moonWorkspaceProjects.sources,
-                  [config.project.manifest.name ?? "root"]: ".",
-                },
+              {
+                path: ".moon/workspace.yml",
+                content: {
+                  $schema: schemas.workspace,
+                  ...workspace,
+                  projects: {
+                    ...moonWorkspaceProjects,
+                    sources: {
+                      ...moonWorkspaceProjects.sources,
+                      [config.project.manifest.name ?? "root"]: ".",
+                    },
+                  },
+                  vcs: {
+                    defaultBranch: config.git.defaultBranch,
+                    ...workspace?.vcs,
+                  },
+                } satisfies Workspace,
               },
-              vcs: {
-                defaultBranch: config.git.defaultBranch,
-                ...workspace?.vcs,
-              },
-            } satisfies Workspace,
+            ],
           },
         ],
       };

@@ -28,7 +28,7 @@ export const libraryBundle = ({
 
       if (!matchingPackage) {
         console.error(new Error(`Could not find package ${pkgName}`));
-        return {};
+        return;
       }
 
       const entryPath = path.join(matchingPackage.dir, entry);
@@ -53,56 +53,66 @@ export const libraryBundle = ({
       // TODO: check if entry exists
 
       return {
-        // TODO: do we want these dependencies to be repo-global or per-package?
-        devDependencies: ["webpack", "webpack-cli", "@swc/core", "swc-loader"],
-        files: [
+        effects: [
           {
-            // TODO: use unique filename for each library bundle, need $id to be filename-safe
-            path: configPathRelativeToPackage,
-            content: `module.exports = require('@repo-feature/library-bundle/webpack.config.cjs');`,
             matchPackage: { name: matchingPackage.manifest.name },
-          },
-        ],
-        tasks: [
-          {
-            type: "build",
-            name: `build-library-bundle-${id}`,
-            matchPackage: { name: matchingPackage.manifest.name },
-            definition: {
-              command: "webpack",
-              // TODO: source dir and config only?
-              inputs: [
-                "**/*",
-                "$workspaceRoot/yarn.lock",
-                "$workspaceRoot/features/library-bundle/webpack.config.cjs",
-              ],
-              options: {
-                cache: false,
+            // TODO: do we want these dependencies to be repo-global or per-package?
+            devDependencies: [
+              "webpack",
+              "webpack-cli",
+              "@swc/core",
+              "swc-loader",
+            ],
+            files: [
+              {
+                // TODO: use unique filename for each library bundle, need $id to be filename-safe
+                path: configPathRelativeToPackage,
+                content: `module.exports = require('@repo-feature/library-bundle/webpack.config.cjs');`,
               },
-              // TODO: add inputs and outputs
-              args: [
-                "build",
-                "--config",
-                configPathRelativeToPackage,
-                "--mode",
-                "production",
-                "--entry",
-                `./${entry}`,
-                ...(moduleTarget
-                  ? ["--env", `moduleTarget=${moduleTarget}`]
-                  : []),
-                ...(codeTarget ? ["--env", `codeTarget=${codeTarget}`] : []),
-                ...(engineTarget
-                  ? ["--env", `engineTarget=${engineTarget}`]
-                  : []),
-                ...(exportName ? ["--env", `export=${exportName}`] : []),
-                ...(name ? ["--env", `name=${name}`] : []),
-                "--env",
-                `filename=${builtEntryName}`,
-                "--env",
-                `outDir=${outDirRelativeToPackage}`,
-              ],
-            },
+            ],
+            tasks: [
+              {
+                type: "build",
+                name: `build-library-bundle-${id}`,
+                definition: {
+                  command: "webpack",
+                  // TODO: source dir and config only?
+                  inputs: [
+                    "**/*",
+                    "$workspaceRoot/yarn.lock",
+                    "$workspaceRoot/features/library-bundle/webpack.config.cjs",
+                  ],
+                  options: {
+                    cache: false,
+                  },
+                  // TODO: add inputs and outputs
+                  args: [
+                    "build",
+                    "--config",
+                    configPathRelativeToPackage,
+                    "--mode",
+                    "production",
+                    "--entry",
+                    `./${entry}`,
+                    ...(moduleTarget
+                      ? ["--env", `moduleTarget=${moduleTarget}`]
+                      : []),
+                    ...(codeTarget
+                      ? ["--env", `codeTarget=${codeTarget}`]
+                      : []),
+                    ...(engineTarget
+                      ? ["--env", `engineTarget=${engineTarget}`]
+                      : []),
+                    ...(exportName ? ["--env", `export=${exportName}`] : []),
+                    ...(name ? ["--env", `name=${name}`] : []),
+                    "--env",
+                    `filename=${builtEntryName}`,
+                    "--env",
+                    `outDir=${outDirRelativeToPackage}`,
+                  ],
+                },
+              },
+            ],
           },
         ],
       };
