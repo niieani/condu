@@ -7,7 +7,7 @@ import type {
 } from "@moonrepo/types";
 import { otherSchemas as schemas } from "@repo/schema-types/utils/schemas.js";
 import { mapValues, groupBy, uniq, partition } from "remeda";
-import type { FileDef, Task } from "@repo/core/configTypes.js";
+import type { FileDef, State, Task } from "@repo/core/configTypes.js";
 import { nonEmpty } from "@repo/core/utils/filter.js";
 import { match } from "ts-pattern";
 
@@ -67,7 +67,7 @@ export const moonCi = ({}: {} = {}) =>
         publish: [],
         start: [],
       };
-      const taskFiles = projects.flatMap((project) => {
+      const projectStates = projects.flatMap<State>((project) => {
         const tasks = taskList.flatMap((task) => {
           if (task.name in tasksByType) {
             throw new Error(
@@ -85,35 +85,39 @@ export const moonCi = ({}: {} = {}) =>
           return [];
         }
         return {
-          path: "moon.yml",
-          content: {
-            $schema: schemas.project,
-            tasks:
-              project.manifest.kind === "package"
-                ? Object.fromEntries(tasks)
-                : {
-                    ...Object.fromEntries(tasks),
-                    // add in type-tasks
-                    ...mapValues(
-                      tasksByType,
-                      (tasks): PartialTaskConfig =>
-                        // this groups all the tasks of the same type into a single task
-                        // so that all the features implementing the same task type (e.g. 'test') can be run in parallel
-                        ({
-                          // ~ is self-referencing task: https://moonrepo.dev/docs/concepts/target#self-
-                          deps: tasks.map(
-                            ([projectName, taskName]) =>
-                              `${projectName}:${taskName}`,
-                          ),
-                          inputs: [],
-                        }),
-                    ),
-                  },
-          } satisfies Project,
           matchPackage: {
             name: project.manifest.name,
             kind: project.manifest.kind,
           },
+          files: [
+            {
+              path: "moon.yml",
+              content: {
+                $schema: schemas.project,
+                tasks:
+                  project.manifest.kind === "package"
+                    ? Object.fromEntries(tasks)
+                    : {
+                        ...Object.fromEntries(tasks),
+                        // add in type-tasks
+                        ...mapValues(
+                          tasksByType,
+                          (tasks): PartialTaskConfig =>
+                            // this groups all the tasks of the same type into a single task
+                            // so that all the features implementing the same task type (e.g. 'test') can be run in parallel
+                            ({
+                              // ~ is self-referencing task: https://moonrepo.dev/docs/concepts/target#self-
+                              deps: tasks.map(
+                                ([projectName, taskName]) =>
+                                  `${projectName}:${taskName}`,
+                              ),
+                              inputs: [],
+                            }),
+                        ),
+                      },
+              } satisfies Project,
+            },
+          ],
         } as const;
       });
 
@@ -121,29 +125,34 @@ export const moonCi = ({}: {} = {}) =>
         config.conventions.sourceExtensions.join(",");
 
       return {
-        files: [
-          ...taskFiles,
+        effects: [
+          ...projectStates,
           {
-            path: ".github/workflows/moon-ci.yml",
-            type: "committed",
-            publish: false,
-            content: ciWorkflow,
-          },
-          {
-            path: ".moon/tasks.yml",
-            content: {
-              $schema: schemas.tasks,
-              fileGroups: {
-                sources: [
-                  `${config.conventions.sourceDir}/**/*.{${sourceExtensionsConcatenated}}`,
-                ],
-                tests: [
-                  `${config.conventions.sourceDir}/**/*.test.{${sourceExtensionsConcatenated}}`,
-                ],
+            files: [
+              {
+                path: ".github/workflows/moon-ci.yml",
+                type: "committed",
+                publish: false,
+                content: ciWorkflow,
               },
-            } satisfies Tasks,
+              {
+                path: ".moon/tasks.yml",
+                content: {
+                  $schema: schemas.tasks,
+                  fileGroups: {
+                    sources: [
+                      `${config.conventions.sourceDir}/**/*.{${sourceExtensionsConcatenated}}`,
+                    ],
+                    tests: [
+                      `${config.conventions.sourceDir}/**/*.test.{${sourceExtensionsConcatenated}}`,
+                    ],
+                  },
+                } satisfies Tasks,
+              },
+            ],
           },
         ],
+
         flags: ["preventAdditionalTasks"],
       };
     },

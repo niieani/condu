@@ -96,6 +96,18 @@ module.exports = (
         // banner: "#!/usr/bin/env bun",
         raw: true,
       }),
+      new webpack.IgnorePlugin({
+        // resourceRegExp: ,
+        // contextRegExp: /@pnpm\//i,
+        checkResource: (resource, context) => {
+          if (context.includes("@pnpm/")) {
+            console.log(resource, context);
+          }
+          if (context.startsWith("@pnpm/")) {
+            return true;
+          }
+        },
+      }),
     ],
     // mode: "production",
     // optimization: {
@@ -120,10 +132,10 @@ module.exports = (
     externals: async (data) => {
       const { request, context, getResolve } = data;
       const externals = [
+        // /^@pnpm\/.*/,
+        /^node:/,
         "typescript",
         "@ts-morph/common",
-        /^@pnpm\/.*/,
-        /^node:/,
         "spdx-license-list",
       ];
       const isExternal = externals.some((external) => {

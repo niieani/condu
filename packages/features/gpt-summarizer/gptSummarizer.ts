@@ -106,27 +106,31 @@ export const gptSummarizer = ({}: {} = {}) =>
   defineFeature({
     name: "gpt-summarizer",
     order: { priority: "end" },
-    actionFn: (config, state) => {
-      return {
-        files: [
-          {
-            path: summaryFileName,
-            content: async () => {
-              const packages = await config.project.getWorkspacePackages();
-              const summarized = await summarize({
-                rootDir: config.workspaceDir,
-                recursive: false,
-              });
-              let fullSummary = `# Workspace Documentation\n${summarized}\n`;
-              fullSummary += "# Packages\n";
-              for (const { manifest } of packages) {
-                const summarized = await summarize({ rootDir: manifest.path });
-                fullSummary += `## Package ${manifest.name}\n${summarized}\n`;
-              }
-              return fullSummary;
+    actionFn: (config, state) => ({
+      effects: [
+        {
+          files: [
+            {
+              path: summaryFileName,
+              content: async () => {
+                const packages = await config.project.getWorkspacePackages();
+                const summarized = await summarize({
+                  rootDir: config.workspaceDir,
+                  recursive: false,
+                });
+                let fullSummary = `# Workspace Documentation\n${summarized}\n`;
+                fullSummary += "# Packages\n";
+                for (const { manifest } of packages) {
+                  const summarized = await summarize({
+                    rootDir: manifest.path,
+                  });
+                  fullSummary += `## Package ${manifest.name}\n${summarized}\n`;
+                }
+                return fullSummary;
+              },
             },
-          },
-        ],
-      };
-    },
+          ],
+        },
+      ],
+    }),
   });

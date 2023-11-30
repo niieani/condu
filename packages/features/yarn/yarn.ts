@@ -39,8 +39,12 @@ export const yarn = ({ yarnrc }: { yarnrc?: Yarnrc } = {}) =>
         });
       }
       return {
-        files,
-        devDependencies,
+        effects: [
+          {
+            files,
+            devDependencies,
+          },
+        ],
       };
     },
   });

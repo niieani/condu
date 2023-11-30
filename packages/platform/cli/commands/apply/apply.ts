@@ -37,68 +37,57 @@ export async function collectState(
     files: [],
     devDependencies: [],
     tasks: [],
-    hooks: {
-      createPublishPackageJson: [],
-    },
+    hooksByPackage: {},
   };
 
-  const { project } = config;
-  // TODO: topo-sort features by `order` config, or support soft dependencies between features
+  const hooksByPackage: {
+    [packageName: string]: {
+      [P in keyof Hooks]?: Hooks[P][];
+    };
+  } = {};
 
+  const { project, features } = config;
+
+  const workspacePackages = await project.getWorkspacePackages();
+  const packages = [project, ...workspacePackages];
+
+  // TODO: topo-sort features by `order` config, or support soft dependencies between features
   const flags: { [K in keyof StateFlags]?: string } = {};
 
-  for (const feature of config.features) {
-    // const featureConfig = feature.order;
-    const featureState = await feature.actionFn(config, state);
+  for (const feature of features) {
+    // const featureOrder = feature.order;
+    const featureConfig = await feature.actionFn(config, state);
+    if (!featureConfig) continue;
 
-    if (featureState.hooks) {
-      for (const [_hookName, hookFn] of Object.entries(featureState.hooks)) {
-        const hookName = _hookName as keyof Hooks;
-        state.hooks[hookName] ||= [];
-        state.hooks[hookName].push(hookFn);
-      }
-    }
+    for (const featureEffect of featureConfig.effects ?? []) {
+      if (!featureEffect) continue;
 
-    if (featureState.files) {
-      const flattenedFiles = (
-        await Promise.all(
-          featureState.files.map(async (file): Promise<CollectedFileDef[]> => {
+      const matchManifest = isMatching(featureEffect.matchPackage);
+      const matchAllPackages =
+        featureEffect.matchPackage &&
+        Object.keys(featureEffect.matchPackage).length === 1 &&
+        "kind" in featureEffect.matchPackage &&
+        featureEffect.matchPackage.kind === "package";
+
+      // TODO: check if any packages matched and maybe add a warning if zero matches?
+      const matchedPackages = featureEffect.matchPackage
+        ? matchAllPackages
+          ? workspacePackages
+          : packages.filter((pkg) => matchManifest(pkg.manifest))
+        : [project];
+
+      if (featureEffect.files) {
+        const flattenedFiles = featureEffect.files.flatMap(
+          (file): CollectedFileDef[] => {
             if (!file) return [];
-            const matchPackage = file.matchPackage;
-            if (!matchPackage) {
-              return [
-                {
-                  ...file,
-                  targetDir: ".",
-                  target: project.manifest,
-                  featureName: feature.name,
-                },
-              ];
-            }
-            const packages = [
-              ...(await project.getWorkspacePackages()),
-              project,
-            ];
-            const isMatchingPackage = isMatching(matchPackage);
-            const matchAllPackages =
-              Object.keys(matchPackage).length === 1 &&
-              "kind" in matchPackage &&
-              matchPackage.kind === "package";
 
-            // TODO: check if any packages matched and maybe add a warning if zero matches?
-            const matches = packages.flatMap((pkg) =>
-              isMatchingPackage(pkg.manifest)
-                ? [
-                    {
-                      ...file,
-                      targetDir: pkg.dir,
-                      target: pkg.manifest,
-                      featureName: feature.name,
-                      skipIgnore: matchAllPackages,
-                    },
-                  ]
-                : [],
-            );
+            const matches = matchedPackages.map((pkg) => ({
+              ...file,
+              targetDir: pkg.dir,
+              target: pkg.manifest,
+              featureName: feature.name,
+              skipIgnore: matchAllPackages,
+            }));
 
             return matchAllPackages
               ? [
@@ -114,27 +103,63 @@ export async function collectState(
                   })),
                 ]
               : matches;
-          }),
-        )
-      ).flat();
-      state.files.push(...flattenedFiles);
-    }
-    if (featureState.tasks) {
-      if (flags.preventAdditionalTasks) {
-        console.warn(
-          `Feature ${feature.name} adds tasks, but the previously evaluated ${flags.preventAdditionalTasks} feature set the 'preventAdditionalTasks' flag already. This is likely due to the order of features being incorrect.`,
+          },
+        );
+        state.files.push(...flattenedFiles);
+      }
+      if (featureEffect.tasks) {
+        if (flags.preventAdditionalTasks) {
+          console.warn(
+            `Feature ${feature.name} adds tasks, but the previously evaluated ${flags.preventAdditionalTasks} feature set the 'preventAdditionalTasks' flag already. This is likely due to the order of features being incorrect.`,
+          );
+        }
+        for (const taskDef of featureEffect.tasks) {
+          if (!taskDef) continue;
+          state.tasks.push(
+            ...matchedPackages.map((pkg) => ({
+              ...taskDef,
+              target: pkg.manifest,
+              featureName: feature.name,
+            })),
+          );
+        }
+      }
+
+      // TODO: support per-package dependencies, right now all dependencies are repo-global
+      if (featureEffect.devDependencies) {
+        state.devDependencies.push(
+          ...featureEffect.devDependencies.filter(nonEmpty),
         );
       }
-      state.tasks.push(...featureState.tasks.filter(nonEmpty));
+
+      if (featureEffect.hooks) {
+        for (const [_hookName, hookFn] of Object.entries(featureEffect.hooks)) {
+          const hookName = _hookName as keyof Hooks;
+          matchedPackages.forEach((pkg) => {
+            const hooks = (hooksByPackage[pkg.manifest.name] ||= {});
+            hooks[hookName] ||= [];
+            hooks[hookName].push(hookFn);
+          });
+        }
+      }
     }
-    // TODO: support per-package dependencies
-    if (featureState.devDependencies) {
-      state.devDependencies.push(
-        ...featureState.devDependencies.filter(nonEmpty),
-      );
-    }
-    if (featureState.flags) {
-      for (const key of featureState.flags) {
+
+    // map hooks into functions:
+    state.hooksByPackage = Object.fromEntries(
+      Object.entries(hooksByPackage).map(([packageName, hooks]) => [
+        packageName,
+        Object.fromEntries(
+          Object.entries(hooks).map(([hookName, hookFns]) => [
+            hookName,
+            getApplyHook(...hookFns),
+          ]),
+        ),
+      ]),
+    );
+
+    // flags are global
+    if (featureConfig.flags) {
+      for (const key of featureConfig.flags) {
         // first feature to set a flag wins
         flags[key] ||= feature.name;
       }
@@ -256,4 +281,9 @@ export async function apply(options: LoadConfigOptions = {}) {
     await writeProjectManifest(manifest);
     // TODO: run 'yarn install' or whatever the package manager is if manifest changed
   }
+
+  return {
+    project,
+    collectedState,
+  };
 }

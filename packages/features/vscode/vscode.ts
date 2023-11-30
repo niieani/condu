@@ -20,57 +20,61 @@ export const vscode = ({
     actionFn: async (config, state) => {
       // TODO: also, auto-add 'tasks.json' based on the defined tasks
       return {
-        files: [
+        effects: [
           {
-            path: ".vscode/settings.json",
-            content: async ({
-              getExistingContentAndMarkAsUserEditable: getExistingContent,
-            }) =>
-              // TODO: enable other plugins to contribute to this one, e.g. eslint:
-              // "eslint.experimental.useFlatConfig": true,
-              // "eslint.ignoreUntitled": true,
-              // "eslint.useESLintClass": true,
+            files: [
               {
-                const existingContent =
-                  ((await getExistingContent()) as VscodeSettingsWorkspace) ??
-                  {};
-                const excludedFiles = hideGeneratedFiles
-                  ? Object.fromEntries(
-                      state.files
-                        .filter(
-                          ({ type, skipIgnore, featureName }) =>
-                            type !== "committed" &&
-                            !skipIgnore &&
-                            featureName !== "vscode",
+                path: ".vscode/settings.json",
+                content: async ({
+                  getExistingContentAndMarkAsUserEditable: getExistingContent,
+                }) =>
+                  // TODO: enable other plugins to contribute to this one, e.g. eslint:
+                  // "eslint.experimental.useFlatConfig": true,
+                  // "eslint.ignoreUntitled": true,
+                  // "eslint.useESLintClass": true,
+                  {
+                    const existingContent =
+                      ((await getExistingContent()) as VscodeSettingsWorkspace) ??
+                      {};
+                    const excludedFiles = hideGeneratedFiles
+                      ? Object.fromEntries(
+                          state.files
+                            .filter(
+                              ({ type, skipIgnore, featureName }) =>
+                                type !== "committed" &&
+                                !skipIgnore &&
+                                featureName !== "vscode",
+                            )
+                            .map(({ path: p, targetDir }) => [
+                              // remove leading './' from path
+                              path.normalize(path.join(targetDir, p)),
+                              true,
+                            ]),
                         )
-                        .map(({ path: p, targetDir }) => [
-                          // remove leading './' from path
-                          path.normalize(path.join(targetDir, p)),
-                          true,
-                        ]),
-                    )
-                  : {};
-                const withEnforcedConfig = assign(existingContent, {
-                  ...enforcedConfig,
-                  "files.exclude": {
-                    // ...existingContent?.["files.exclude"],
-                    // these are defaults that we want to keep:
-                    // "**/.git": true,
-                    // "**/.svn": true,
-                    // "**/.hg": true,
-                    // "**/CVS": true,
-                    // "**/.DS_Store": true,
-                    // "**/Thumbs.db": true,
-                    // "**/.ruby-lsp": true,
-                    ...excludedFiles,
-                    ...enforcedConfig?.["files.exclude"],
+                      : {};
+                    const withEnforcedConfig = assign(existingContent, {
+                      ...enforcedConfig,
+                      "files.exclude": {
+                        // ...existingContent?.["files.exclude"],
+                        // these are defaults that we want to keep:
+                        // "**/.git": true,
+                        // "**/.svn": true,
+                        // "**/.hg": true,
+                        // "**/CVS": true,
+                        // "**/.DS_Store": true,
+                        // "**/Thumbs.db": true,
+                        // "**/.ruby-lsp": true,
+                        ...excludedFiles,
+                        ...enforcedConfig?.["files.exclude"],
+                      },
+                      "search.exclude": {
+                        [config.conventions.buildDir]: true,
+                      },
+                    } satisfies VscodeSettingsWorkspace);
+                    return assign(suggestedConfig, withEnforcedConfig);
                   },
-                  "search.exclude": {
-                    [config.conventions.buildDir]: true,
-                  },
-                } satisfies VscodeSettingsWorkspace);
-                return assign(suggestedConfig, withEnforcedConfig);
               },
+            ],
           },
         ],
       };

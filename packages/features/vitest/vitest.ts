@@ -4,7 +4,11 @@ export const vitest = ({}: {} = {}) =>
   defineFeature({
     name: "vitest",
     actionFn: (config, state) => ({
-      devDependencies: ["vitest"],
-      files: [],
+      effects: [
+        {
+          devDependencies: ["vitest"],
+          files: [],
+        },
+      ],
     }),
   });

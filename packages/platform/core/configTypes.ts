@@ -16,11 +16,6 @@ export interface Task {
   name: string;
   type: "test" | "build" | "publish" | "format" | "start";
   definition: PartialTaskConfig;
-  /**
-   * ts-pattern for selecting which package the task is applicable to
-   * if empty, uses the workspace root
-   * */
-  matchPackage?: Pattern.Pattern<RepoPackageJson> | Partial<RepoPackageJson>;
 }
 
 export interface FileDef {
@@ -53,8 +48,6 @@ export interface FileDef {
           | undefined;
       }) => Promise<string | object> | string | object);
   path: string;
-  /** ts-pattern for package.jsons that the file should be created/updated in */
-  matchPackage?: Pattern.Pattern<RepoPackageJson> | Partial<RepoPackageJson>;
 }
 
 /*
@@ -77,6 +70,11 @@ export interface RepoPackageJson extends PackageJson {
   /** relative directory of the package (from workspace dir) */
   workspacePath: string;
   kind: "workspace" | "package";
+}
+
+export interface CollectedTaskDef extends Task {
+  featureName: string;
+  target: RepoPackageJson;
 }
 
 export interface CollectedFileDef extends FileDef {
@@ -103,9 +101,9 @@ export interface CollectedState {
   files: CollectedFileDef[];
   /** we'll ensure these dependencies are installed during execution */
   devDependencies: (string | DependencyDef)[];
-  tasks: Task[];
-  hooks: {
-    [P in keyof Hooks]: Hooks[P][];
+  tasks: CollectedTaskDef[];
+  hooksByPackage: {
+    [packageName: string]: Partial<Hooks>;
   };
 }
 
@@ -114,18 +112,30 @@ export interface StateFlags {
 }
 
 export type ToIntermediateState<T> = {
-  [P in keyof T]: T[P] extends Array<infer O>
+  [P in keyof T]?: T[P] extends Array<infer O>
     ? ReadonlyArray<O | false | undefined>
     : T[P];
 };
 
 export type State = ToIntermediateState<
-  Omit<CollectedState, "files" | "hooks">
+  Omit<CollectedState, "files" | "hooks" | "tasks">
 > & {
+  /** these files will be created during execution */
   files?: ReadonlyArray<FileDef | false | undefined>;
-  flags?: ReadonlyArray<keyof StateFlags>;
+  tasks?: ReadonlyArray<Task | false | undefined>;
   hooks?: Partial<Hooks>;
+
+  /**
+   * ts-pattern for package.jsons that the state applies to. Defaults to workspace.
+   * @default { kind: "workspace" }
+   * */
+  matchPackage?: Pattern.Pattern<RepoPackageJson> | Partial<RepoPackageJson>;
 };
+
+export interface FeatureResult {
+  effects?: (State | null | undefined | false)[];
+  flags?: ReadonlyArray<keyof StateFlags>;
+}
 
 export type FeatureActionFn = (
   config: RepoConfigWithInferredValuesAndProject,
@@ -134,7 +144,7 @@ export type FeatureActionFn = (
    * since the state here is only "collected till now"
    **/
   state: CollectedState,
-) => Partial<State> | Promise<Partial<State>>;
+) => FeatureResult | Promise<FeatureResult | void> | void;
 
 export interface FeatureDefinition {
   actionFn: FeatureActionFn;
@@ -190,6 +200,7 @@ export const configure = (config: RepoConfig): ConfiguredRepoConfig => ({
 });
 
 export interface RepoConfigWithInferredValues extends ConfiguredRepoConfig {
+  // TODO: add error / warning functions
   workspaceDir: string;
   configDir: string;
   conventions: Required<Conventions>;

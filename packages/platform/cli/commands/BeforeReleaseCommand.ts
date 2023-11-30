@@ -18,6 +18,8 @@ import { buildRemappedProject } from "@repo/update-specifiers/main.js";
 import spdxLicenseList from "spdx-license-list/full.js";
 import type PackageJson from "@repo/schema-types/schemas/packageJson.gen.js";
 import { correctSourceMaps } from "@repo/core/utils/correctSourceMaps.js";
+import { apply } from "./apply/apply.js";
+import type { CollectedState } from "@repo/core/configTypes.js";
 
 export class BeforeReleaseCommand extends Command {
   static override paths = [["before-release"]];
@@ -26,17 +28,17 @@ export class BeforeReleaseCommand extends Command {
   // name = Option.String("--as");
 
   target = Option.String("--target");
-
   project = Option.String("--project,-p");
   preset = Option.String("--preset");
 
   packages = Option.Rest();
 
   async execute() {
-    const project = await loadRepoProject();
-    if (!project) {
+    const applyResult = await apply();
+    if (!applyResult) {
       throw new Error(`Unable to find a repo project in the current directory`);
     }
+    const { project, collectedState } = applyResult;
     const selectedPackagePaths = this.packages.map(
       (packageName) =>
         getSingleMatch({
@@ -65,6 +67,7 @@ export class BeforeReleaseCommand extends Command {
       srcDirName,
       buildDirName,
       project,
+      collectedState,
     });
 
     // TODO: just run the command in parallel during build?
@@ -86,6 +89,7 @@ async function prepareBuildDirectoryPackages({
   srcDirName,
   buildDirName,
   project,
+  collectedState,
 }: {
   projectDir: string;
   packageList: readonly WorkspacePackage[];
@@ -93,6 +97,7 @@ async function prepareBuildDirectoryPackages({
   srcDirName: string;
   buildDirName: string;
   project: Project;
+  collectedState: CollectedState;
 }) {
   const configFileCache = await readPreviouslyWrittenFileCache(projectDir);
   const configFileAbsolutePaths = Object.keys(configFileCache).map((filePath) =>
@@ -226,10 +231,16 @@ async function prepareBuildDirectoryPackages({
       //   url: "",
       // },
     };
+
+    const hooks = collectedState.hooksByPackage[manifest.name];
+    const transformedPackageJson =
+      (await hooks?.createPublishPackageJson?.(newPackageJson)) ??
+      newPackageJson;
+
     // save new package.json:
     await fs.writeFile(
       path.join(packageBuildDir, "package.json"),
-      JSON.stringify(sortPackageJson(newPackageJson), undefined, 2),
+      JSON.stringify(sortPackageJson(transformedPackageJson), undefined, 2),
     );
 
     const license = manifest.license ?? project.manifest.license;
