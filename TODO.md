@@ -28,6 +28,8 @@ MVP
   - [ ] important [thread about this](https://github.com/microsoft/TypeScript/issues/49462)
   - [ ] verify that `const x = <x>() => {}` works, because TS thinks it's a JSX tag, [which is supported in mts/cts by default](https://github.com/microsoft/TypeScript/issues/44442))
 - [ ] figure out webpack merging? or a custom config for this repo specifically?
+  - yes, custom config is ok for now
+- [ ] next step: added hooking for package.json generation, use it in the library feature to set the correct entry points
 - [ ] trim the "dependencies" in published package.json based on the config
 - [ ] should we collocate per-package build config in the respective packages, or keep them global?
   - [ ] if yes, then how do we do it? `.config` folder per package?
@@ -90,3 +92,4 @@ Later:
 - [ ] website
 - [ ] Product Hunt release
 - [ ] to get good quality TS errors for both .cjs and .mjs, a wild idea would be to just dump the generated .cts files for build, and then remove them after build. maybe this could be done in the memoryFS that's overlaid on top of the real FS, where we use memFS only for the project directory, and the rest is real FS? or better yet, exclude from real FS specifically all the renamed files only. Mocked FS and we just run real `tsc --build` inside of it?
+- [ ] write a generic TS helper for records/maps that contain arrays, it's a pain to always have to initialize them. or maybe have an initializer getOrSet or push/add() helper that pre-initializes it for you?

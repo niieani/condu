@@ -67,21 +67,24 @@ export const moonCi = ({}: {} = {}) =>
         publish: [],
         start: [],
       };
+
       const projectStates = projects.flatMap<State>((project) => {
-        const tasks = taskList.flatMap((task) => {
+        const tasksForProject = taskList.flatMap((task) => {
           if (task.name in tasksByType) {
             throw new Error(
               `In ${project.manifest.name}: Task name '${task.name}' is reserved for the global task type`,
             );
           }
-          return match(project.manifest)
-            .with(task.matchPackage ?? { kind: "workspace" }, () => {
-              tasksByType[task.type].push([project.manifest.name, task.name]);
-              return [[task.name, task.definition]] as const;
-            })
-            .otherwise(() => []);
+          if (task.target.name === project.manifest.name) {
+            tasksByType[task.type].push([project.manifest.name, task.name]);
+            return [[task.name, task.definition]] as const;
+          }
+          return [];
         });
-        if (tasks.length === 0 && project.manifest.kind === "package") {
+        if (
+          tasksForProject.length === 0 &&
+          project.manifest.kind === "package"
+        ) {
           return [];
         }
         return {
@@ -96,10 +99,12 @@ export const moonCi = ({}: {} = {}) =>
                 $schema: schemas.project,
                 tasks:
                   project.manifest.kind === "package"
-                    ? Object.fromEntries(tasks)
+                    ? Object.fromEntries(tasksForProject)
                     : {
-                        ...Object.fromEntries(tasks),
-                        // add in type-tasks
+                        ...Object.fromEntries(tasksForProject),
+                        // add in type-tasks:
+                        // this currently depends on the order of the execution,
+                        // we know that the workspace package will be last, so we'll have all the 'tasksByType' populated
                         ...mapValues(
                           tasksByType,
                           (tasks): PartialTaskConfig =>
