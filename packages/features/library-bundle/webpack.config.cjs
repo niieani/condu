@@ -110,16 +110,17 @@ module.exports = (
       }),
     ],
     // mode: "production",
-    // optimization: {
-    //   concatenateModules: true,
-    // },
+    optimization: {
+      concatenateModules: true,
+      removeEmptyChunks: true,
+    },
     ...selectedConfig,
     output: {
       ...selectedConfig.output,
       filename,
       path: path.join(process.cwd(), outDir),
     },
-    devtool: false, //"source-map",
+    devtool: "source-map",
     // externalsPresets: {
     //   // TODO: manually externalize node and import it as ESM, not require, so that deno might work?
     //   // use: import { builtinModules } from 'module';

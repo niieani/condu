@@ -2,7 +2,7 @@
   "name": "@repo-feature/moon",
   "type": "module",
   "dependencies": {
-    "@moonrepo/types": "^1.9.0",
+    "@moonrepo/types": "^1.12.0",
     "@repo/cli": "workspace:*",
     "@repo/core": "workspace:*",
     "@repo/schema-types": "workspace:*"

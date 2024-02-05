@@ -5,7 +5,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@ts-morph/common": "^0.21.0",
-    "ts-morph": "^20.0.0"
+    "@ts-morph/common": "^0.22.0",
+    "ts-morph": "^21.0.1",
+    "@repo/core": "workspace:*"
   }
 }

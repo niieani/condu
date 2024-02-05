@@ -56,6 +56,19 @@ export const libraryBundle = ({
         effects: [
           {
             matchPackage: { name: matchingPackage.manifest.name },
+            hooks: {
+              modifyEntrySources(entrySources) {
+                const rootEntry = { ...entrySources["."]! };
+                rootEntry.import = `./${path.join(
+                  outDirRelativeToPackage,
+                  builtEntryName,
+                )}`;
+                return {
+                  ...entrySources,
+                  ".": rootEntry,
+                };
+              },
+            },
             // TODO: do we want these dependencies to be repo-global or per-package?
             devDependencies: [
               "webpack",

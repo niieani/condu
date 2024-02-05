@@ -4,5 +4,8 @@
   "type": "module",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@repo/core": "workspace:*"
   }
 }

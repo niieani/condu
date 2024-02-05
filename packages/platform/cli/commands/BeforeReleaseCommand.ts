@@ -173,7 +173,7 @@ async function prepareBuildDirectoryPackages({
       },
     }));
 
-    const entrySources = Object.fromEntries(
+    const generatedEntrySources = Object.fromEntries(
       [...preferredDirectoryEntries].map(([dir, entry]) => {
         const pathToDir = path.relative(packageSourceDir, dir);
         const basename = path.basename(entry, path.extname(entry));
@@ -194,6 +194,11 @@ async function prepareBuildDirectoryPackages({
       }),
     );
 
+    const hooks = collectedState.hooksByPackage[manifest.name];
+    const entrySources =
+      (await hooks?.modifyEntrySources?.(generatedEntrySources)) ??
+      generatedEntrySources;
+
     const newPackageJson: PackageJson = {
       ...manifest,
       exports: {
@@ -211,9 +216,10 @@ async function prepareBuildDirectoryPackages({
       main: entrySources["."]?.require,
       module: entrySources["."]?.import,
       source: entrySources["."]?.source,
+      // TODO: types is probably unnecessary?
       // types: entrySources["."]?.types,
       // TODO: funding
-      // TODO: support CJF-first projects
+      // TODO: support CJS-first projects
       type: "module",
 
       // TODO: add unpkg/browser support for cases when bundling (webpack or rollup)
@@ -232,9 +238,8 @@ async function prepareBuildDirectoryPackages({
       // },
     };
 
-    const hooks = collectedState.hooksByPackage[manifest.name];
     const transformedPackageJson =
-      (await hooks?.createPublishPackageJson?.(newPackageJson)) ??
+      (await hooks?.modifyPublishPackageJson?.(newPackageJson)) ??
       newPackageJson;
 
     // save new package.json:

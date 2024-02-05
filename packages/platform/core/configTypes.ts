@@ -90,10 +90,25 @@ export interface CollectedFileDef extends FileDef {
   target: RepoPackageJson;
 }
 
+export type EntrySources = Record<
+  string,
+  {
+    types: string;
+    source: string;
+    bun: string;
+    import: string;
+    require: string;
+    default: string;
+  }
+>;
+
 export interface Hooks {
-  createPublishPackageJson: (
+  modifyPublishPackageJson: (
     packageJson: PackageJson,
   ) => PackageJson | Promise<PackageJson>;
+  modifyEntrySources: (
+    entrySources: EntrySources,
+  ) => EntrySources | Promise<EntrySources>;
 }
 
 export interface CollectedState {
@@ -117,13 +132,14 @@ export type ToIntermediateState<T> = {
     : T[P];
 };
 
-export type State = ToIntermediateState<
-  Omit<CollectedState, "files" | "hooks" | "tasks">
-> & {
+export type Effects = {
   /** these files will be created during execution */
   files?: ReadonlyArray<FileDef | false | undefined>;
   tasks?: ReadonlyArray<Task | false | undefined>;
   hooks?: Partial<Hooks>;
+
+  /** we'll ensure these dependencies are installed during execution */
+  devDependencies?: (string | DependencyDef)[];
 
   /**
    * ts-pattern for package.jsons that the state applies to. Defaults to workspace.
@@ -133,7 +149,7 @@ export type State = ToIntermediateState<
 };
 
 export interface FeatureResult {
-  effects?: (State | null | undefined | false)[];
+  effects?: (Effects | null | undefined | false)[];
   flags?: ReadonlyArray<keyof StateFlags>;
 }
 
