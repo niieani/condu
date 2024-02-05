@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/filename-case */
 import t from "io-ts";
 import R from "remeda";
 import { PathReporter } from "io-ts/PathReporter";
@@ -11,6 +12,7 @@ export const FunctionT = t.Function as unknown as t.Type<
 
 export const unionOfStrings = <T extends string>(...values: T[]) =>
   t.keyof(
+    // eslint-disable-next-line unicorn/no-null
     Object.fromEntries(values.map((value): any => [value, null])) as {
       [K in T]: null;
     },

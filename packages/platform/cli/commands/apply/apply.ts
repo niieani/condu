@@ -135,11 +135,11 @@ export async function collectState(
       if (featureEffect.hooks) {
         for (const [_hookName, hookFn] of Object.entries(featureEffect.hooks)) {
           const hookName = _hookName as keyof Hooks;
-          matchedPackages.forEach((pkg) => {
+          for (const pkg of matchedPackages) {
             const hooks = (hooksByPackage[pkg.manifest.name] ||= {});
-            hooks[hookName] ||= [];
-            hooks[hookName].push(hookFn);
-          });
+            const hook = (hooks[hookName] ||= []);
+            hook.push(hookFn);
+          }
         }
       }
     }

@@ -3,9 +3,9 @@
   "type": "module",
   "dependencies": {
     "async-memoize-one": "^1.1.6",
-    "fp-ts": "^2.16.1",
-    "io-ts": "^2.2.20",
-    "remeda": "^1.29.0"
+    "fp-ts": "^2.16.2",
+    "io-ts": "^2.2.21",
+    "remeda": "^1.40.0"
   },
   "devDependencies": {
     "node-fetch": "^3.3.2"

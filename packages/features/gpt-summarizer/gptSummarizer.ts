@@ -3,9 +3,9 @@
 // we probably wanna use glob to list all source and then copy them one by one
 
 import { walkDirectoryRecursively } from "@repo/core/utils/walkDirectoryRecursively.js";
-import fs from "node:fs/promises";
-import * as path from "node:path";
 import { defineFeature } from "@repo/core/defineFeature.js";
+import * as fs from "node:fs/promises";
+import * as path from "node:path";
 
 interface Result {
   type: "test" | "source" | "doc";
@@ -35,7 +35,7 @@ export const summarize = async ({
       (recursive ? true : entry.isFile()),
   )) {
     if (entry.isDirectory()) continue;
-    const isSource = /\.[mc]?[tj]sx?$/.test(entry.name);
+    const isSource = /\.[cm]?[jt]sx?$/.test(entry.name);
     const isTest = isSource && /\.test\./.test(entry.name);
     const isDoc = /\.mdx?$/.test(entry.name);
     const type = isDoc

@@ -45,7 +45,8 @@ export default configure({
         "eslint.experimental.useFlatConfig": true,
         "eslint.ignoreUntitled": true,
         "eslint.useESLintClass": true,
-        "eslint.execArgv": ["--loader", "./node_modules/tsx/dist/loader.mjs"],
+        "eslint.runtime": "./node_modules/.bin/tsx",
+        // "eslint.execArgv": ["--loader", "./node_modules/tsx/dist/loader.mjs"],
 
         "explorer.fileNesting.enabled": true,
         "explorer.fileNesting.expand": false,
@@ -62,6 +63,6 @@ export default configure({
       },
     }),
     gptSummarizer(),
-    gitignore({ ignore: [".swc/"] }),
+    gitignore({ ignore: [".swc/", ".idea/"] }),
   ],
 });

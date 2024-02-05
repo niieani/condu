@@ -57,7 +57,21 @@ MVP
 
 Later:
 
-- [ ] error reporting for features
+- [ ] multi-repo mode
+  - best of both worlds - monorepo for development and keeping tools in sync, single-repo management benefits (separate issues, PRs, etc.)
+  - orchestrate multiple repos with a parent configuration repo
+  - support GitHub: automatically create a repo when creating a new package
+    - [ ] autoconfigure repo based on settings (e.g. enable/disable wiki, issues, etc.)
+      - either via package.json or repo.toml or something?
+    - [ ] sync Github settings on apply-remote command? or something like that?
+    - [ ] for CI: checkout the parent repo to run selected build/release?
+    - [ ] option to automatically fetch all non-forked github repositories of a user?
+  - could unify all of my repositories to make sure all of them are kept up-to-date
+  - when cloning only a single repo, it needs to be able to bootstrap itself
+    - maybe a command which will clone the parent repo (or use a global clone based on ENV variable) to make parent repo tooling available and generate config files only for that specific repo?
+  - the managing repo doesn't contains submodules or list (for privacy)
+  - more basic, but good references: https://manicli.com/project-background
+- [ ] error reporting API for features
 - [ ] transpile config files from .config to root
 - [ ] unify/clarify naming around projects/workspaces/packages/workspace-root/etc
 - [ ] allow setting default TypeScript extension: '.ts', '.cts', '.mts', '.js' (for building in TSDoc mode), as well as the default extension in imports: 'source' ('.ts') or 'output' ('.js')

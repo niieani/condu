@@ -7,9 +7,9 @@ import type {
 } from "@moonrepo/types";
 import { otherSchemas as schemas } from "@repo/schema-types/utils/schemas.js";
 import { mapValues, groupBy, uniq, partition } from "remeda";
-import type { FileDef, State, Task } from "@repo/core/configTypes.js";
+import type { FileDef, Effects, Task } from "@repo/core/configTypes.js";
 import { nonEmpty } from "@repo/core/utils/filter.js";
-import { match } from "ts-pattern";
+// import { match } from "ts-pattern";
 
 // TODO: the way this should actually work is it should be a moonCi feature that contributes "ci" commands to state
 // then the Github Actions CI pulls those commands in
@@ -68,7 +68,7 @@ export const moonCi = ({}: {} = {}) =>
         start: [],
       };
 
-      const projectStates = projects.flatMap<State>((project) => {
+      const projectStates = projects.flatMap<Effects>((project) => {
         const tasksForProject = taskList.flatMap((task) => {
           if (task.name in tasksByType) {
             throw new Error(

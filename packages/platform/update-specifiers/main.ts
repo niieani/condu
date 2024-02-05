@@ -7,7 +7,7 @@ import {
   type FileSystemHost,
 } from "@ts-morph/common";
 import * as path from "node:path";
-import { changeSourceMapSourcesToBeRelativeToAdjacentFiles } from "../core/utils/changeSourceMapSourcesToBeRelativeToAdjacentFiles.js";
+import { changeSourceMapSourcesToBeRelativeToAdjacentFiles } from "@repo/core/utils/changeSourceMapSourcesToBeRelativeToAdjacentFiles.js";
 
 const extensionRegexp = /^\.[cm]?[jt]sx?/i;
 

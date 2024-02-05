@@ -1,4 +1,4 @@
-import { type BaseContext } from "clipanion";
+import type { BaseContext } from "clipanion";
 
 export const createCommandContext = (context: BaseContext) => ({
   log: (message: string) => context.stdout.write(message + "\n"),
