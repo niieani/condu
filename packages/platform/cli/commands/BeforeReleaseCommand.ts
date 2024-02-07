@@ -20,6 +20,7 @@ import type PackageJson from "@repo/schema-types/schemas/packageJson.gen.js";
 import { correctSourceMaps } from "@repo/core/utils/correctSourceMaps.js";
 import { apply } from "./apply/apply.js";
 import type { CollectedState } from "@repo/core/configTypes.js";
+import { partition } from "remeda";
 
 export class BeforeReleaseCommand extends Command {
   static override paths = [["before-release"]];
@@ -99,9 +100,10 @@ async function prepareBuildDirectoryPackages({
   project: Project;
   collectedState: CollectedState;
 }) {
+  // TODO: ensure we had run build step before this, so that the cache has been populated
   const configFileCache = await readPreviouslyWrittenFileCache(projectDir);
-  const configFileAbsolutePaths = Object.keys(configFileCache).map((filePath) =>
-    path.join(projectDir, filePath),
+  const configFileAbsolutePaths = Array.from(configFileCache.keys()).map(
+    (filePath) => path.join(projectDir, filePath),
   );
 
   for (const pkg of packageList) {
@@ -196,11 +198,14 @@ async function prepareBuildDirectoryPackages({
 
     const hooks = collectedState.hooksByPackage[manifest.name];
     const entrySources =
-      (await hooks?.modifyEntrySources?.(generatedEntrySources)) ??
+      (await hooks?.modifyEntrySourcesForRelease?.(generatedEntrySources)) ??
       generatedEntrySources;
+
+    const dependencyManifestOverride = getReleaseDependencies(manifest);
 
     const newPackageJson: PackageJson = {
       ...manifest,
+      ...dependencyManifestOverride,
       exports: {
         ...entrySources,
         "./*.json": "./*.json",
@@ -219,7 +224,7 @@ async function prepareBuildDirectoryPackages({
       // TODO: types is probably unnecessary?
       // types: entrySources["."]?.types,
       // TODO: funding
-      // TODO: support CJS-first projects
+      // TODO: support CJS-first projects (maybe?)
       type: "module",
 
       // TODO: add unpkg/browser support for cases when bundling (webpack or rollup)
@@ -272,3 +277,39 @@ async function prepareBuildDirectoryPackages({
 
 const toCompareCase = (str: string) =>
   str.replace(/[^\dA-Za-z]/g, "").toLowerCase();
+
+function getReleaseDependencies(manifest: PackageJson) {
+  const keepDependencies = Array.isArray(manifest["publishDependencies"])
+    ? manifest["publishDependencies"]
+    : undefined;
+  const dependencyEntries = Object.entries(manifest.dependencies ?? {});
+  const [finalDependencyEntries, removedDependencyEntries] = keepDependencies
+    ? partition(dependencyEntries, ([dep]) =>
+        keepDependencies.some((keepDep) =>
+          keepDep.startsWith("@") ? dep.startsWith(keepDep) : dep === keepDep,
+        ),
+      )
+    : ([dependencyEntries, []] as const);
+
+  const dependencyManifestOverride = {
+    dependencies: Object.fromEntries(finalDependencyEntries),
+    ...(removedDependencyEntries.length > 0
+      ? {
+          peerDependencies: {
+            ...manifest.peerDependencies,
+            ...Object.fromEntries(removedDependencyEntries),
+          },
+          peerDependenciesMeta: {
+            ...manifest.peerDependenciesMeta,
+            ...Object.fromEntries(
+              removedDependencyEntries.map(([dep]) => [
+                dep,
+                { optional: true },
+              ]),
+            ),
+          },
+        }
+      : {}),
+  };
+  return dependencyManifestOverride;
+}

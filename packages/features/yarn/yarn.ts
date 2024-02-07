@@ -27,7 +27,17 @@ export const yarn = ({ yarnrc }: { yarnrc?: Yarnrc } = {}) =>
         },
       ];
       const devDependencies: DependencyDef[] = [];
-      if (await fs.exists(path.join(config.configDir, "yarn.config.cjs"))) {
+      if (
+        await fs
+          .access(
+            path.join(config.configDir, "yarn.config.cjs"),
+            fs.constants.F_OK,
+          )
+          .then(
+            () => true,
+            () => false,
+          )
+      ) {
         files.push({
           path: "yarn.config.cjs",
           content: `module.exports = require('./${path.basename(

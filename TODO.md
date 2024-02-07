@@ -13,7 +13,7 @@ MVP
   - [x] might need to settle for .cjs + .js for now if we want to use tsc --build for default esm build
     - this is also the future, since cjs is going away
   - [x] for main pass: simply build project with tsc
-    - [ ] post-build need to update .map files to have the correct paths, as sourceMappingURL is incorrect and needs to be corrected to use the adjecent .map file
+    - [ ] NEXT (easy): post-build need to update .map files to have the correct paths, as sourceMappingURL is incorrect and needs to be corrected to use the adjecent .map file
   - [x] for other pass:
     - [x] build as ESM
     - [x] all the in-project references (relative or imports from existing monorepo ids) can be auto renamed to .mts
@@ -29,8 +29,8 @@ MVP
   - [ ] verify that `const x = <x>() => {}` works, because TS thinks it's a JSX tag, [which is supported in mts/cts by default](https://github.com/microsoft/TypeScript/issues/44442))
 - [ ] figure out webpack merging? or a custom config for this repo specifically?
   - yes, custom config is ok for now
-- [ ] next step: added hooking for package.json generation, use it in the library feature to set the correct entry points
-- [ ] trim the "dependencies" in published package.json based on the config
+- [x] added hooking for package.json generation, use it in the library feature to set the correct entry points
+- [x] trim the "dependencies" in published package.json based on the config
 - [ ] should we collocate per-package build config in the respective packages, or keep them global?
   - [ ] if yes, then how do we do it? `.config` folder per package?
   - [ ] decision: where do we keep local config files? are they centrally managed? do we use config identifiers in folders names to nest configs?
@@ -52,6 +52,10 @@ MVP
 - [ ] vscode auto-ignore generated files
 - [x] use https://www.npmjs.com/package/comment-json to keep the comments and only amend input if it exists
 - [ ] bare minimum for repo tool: just copy files from .config to the root and add them to .gitignore
+- [ ] alternatives to consider for dual building from TSC (unfortunately uses babel):
+
+  - [duel](https://github.com/knightedcodemonkey/duel)
+  - [specifier updating](https://github.com/knightedcodemonkey/specifier)
 
 - shippable state -
 

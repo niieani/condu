@@ -106,7 +106,7 @@ export interface Hooks {
   modifyPublishPackageJson: (
     packageJson: PackageJson,
   ) => PackageJson | Promise<PackageJson>;
-  modifyEntrySources: (
+  modifyEntrySourcesForRelease: (
     entrySources: EntrySources,
   ) => EntrySources | Promise<EntrySources>;
 }

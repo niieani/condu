@@ -133,11 +133,13 @@ module.exports = (
     externals: async (data) => {
       const { request, context, getResolve } = data;
       const externals = [
-        // /^@pnpm\/.*/,
+        /^@pnpm\/.*/,
         /^node:/,
         "typescript",
         "@ts-morph/common",
         "spdx-license-list",
+        "graceful-fs",
+        "fs-extra",
       ];
       const isExternal = externals.some((external) => {
         if (typeof external === "string") {
@@ -156,7 +158,9 @@ module.exports = (
       });
       if (isBuiltin) {
         // rewrite all builtins to use node: prefix
-        return `module node:${request}`;
+        return `module node:${
+          request.endsWith("/") ? request.slice(0, -1) : request
+        }`;
       }
     },
     stats: {
