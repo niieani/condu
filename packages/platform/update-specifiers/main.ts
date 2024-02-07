@@ -5,7 +5,9 @@ import {
   InMemoryFileSystemHost,
   TsConfigResolver,
   type FileSystemHost,
+  FileUtils,
 } from "@ts-morph/common";
+
 import * as path from "node:path";
 import { changeSourceMapSourcesToBeRelativeToAdjacentFiles } from "@repo/core/utils/changeSourceMapSourcesToBeRelativeToAdjacentFiles.js";
 
@@ -38,10 +40,10 @@ interface ChangeSet {
 
 type PrivateTsConfigResolver = Omit<
   TsConfigResolver,
-  "parseJsonConfigFileContent"
+  "_parseJsonConfigFileContent"
 > & {
   // this is private, but we need it
-  parseJsonConfigFileContent: () => ts.ParsedCommandLine;
+  _parseJsonConfigFileContent: () => ts.ParsedCommandLine;
 };
 
 const renameSpecifiers = async ({
@@ -67,13 +69,14 @@ const renameSpecifiers = async ({
   const standardizedTsConfigPath =
     tfsHost.getStandardizedAbsolutePath(tsConfigFilePath);
 
+  const encoding = "utf-8";
   const tsConfigResolver = new TsConfigResolver(
     tfsHost,
     standardizedTsConfigPath,
-    "utf-8",
+    encoding,
   ) as unknown as PrivateTsConfigResolver;
 
-  const tsConfigContent = tsConfigResolver.parseJsonConfigFileContent();
+  const tsConfigContent = tsConfigResolver._parseJsonConfigFileContent();
 
   const tsProgram = ts.createProgram({
     options: tsConfigContent.options,

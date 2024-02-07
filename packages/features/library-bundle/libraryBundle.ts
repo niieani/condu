@@ -32,13 +32,18 @@ export const libraryBundle = ({
       }
 
       const entryPath = path.join(matchingPackage.dir, entry);
-      const entryDir = path.join(matchingPackage.dir, path.dirname(entry));
+      const packageRelativePathToEntry = path.dirname(entry);
+      const entryDir = path.join(
+        matchingPackage.dir,
+        packageRelativePathToEntry,
+      );
       const builtEntryName = `${path.basename(
         entry,
         path.extname(entry),
       )}.bundle.js`;
       const outDir = path.join(config.conventions.buildDir, entryDir);
-      const outDirRelativeToPackage = path.relative(
+      // TODO: right now this is incorrect
+      const outDirRelativeToPackageSource = path.relative(
         matchingPackage.dir,
         outDir,
       );
@@ -57,10 +62,10 @@ export const libraryBundle = ({
           {
             matchPackage: { name: matchingPackage.manifest.name },
             hooks: {
-              modifyEntrySources(entrySources) {
+              modifyEntrySourcesForRelease(entrySources) {
                 const rootEntry = { ...entrySources["."]! };
                 rootEntry.import = `./${path.join(
-                  outDirRelativeToPackage,
+                  packageRelativePathToEntry,
                   builtEntryName,
                 )}`;
                 return {
@@ -103,8 +108,6 @@ export const libraryBundle = ({
                     "build",
                     "--config",
                     configPathRelativeToPackage,
-                    "--mode",
-                    "production",
                     "--entry",
                     `./${entry}`,
                     ...(moduleTarget
@@ -121,7 +124,10 @@ export const libraryBundle = ({
                     "--env",
                     `filename=${builtEntryName}`,
                     "--env",
-                    `outDir=${outDirRelativeToPackage}`,
+                    `outDir=${outDirRelativeToPackageSource}`,
+                    "--mode",
+                    // "development",
+                    "production",
                   ],
                 },
               },
