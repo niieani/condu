@@ -12187,6 +12187,7 @@ __metadata:
     vitest: "npm:^1.2.2"
     webpack: "npm:^5.90.1"
     webpack-cli: "npm:^5.1.4"
+    webpack-merge: "npm:^5.10.0"
     yaml: "npm:^2.3.4"
     zx: "npm:^7.2.3"
   languageName: unknown
@@ -12874,7 +12875,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-merge@npm:^5.7.3":
+"webpack-merge@npm:^5.10.0, webpack-merge@npm:^5.7.3":
   version: 5.10.0
   resolution: "webpack-merge@npm:5.10.0"
   dependencies:

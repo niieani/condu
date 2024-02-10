@@ -10,6 +10,8 @@ const path = require("node:path");
 const webpack = require("webpack");
 const builtin = require("node:module").builtinModules;
 
+// NOTE: if this changes structure to anything other than a non-Promise-returning function
+// the feature definition needs to be updated to accommodate that, as that's the expectation
 module.exports = (
   /** @type {import('./types').LibraryBundleConfig} */
   {
@@ -22,14 +24,13 @@ module.exports = (
     outDir = moduleTarget,
   },
 ) => {
+  const env = process.env.NODE_ENV || "development";
   /** @type {import('webpack').Configuration} */
   const esmConfig = {
     target: [codeTarget, engineTarget].filter(Boolean),
     output: {
       module: true,
-      library: {
-        type: "module",
-      },
+      library: { type: "module" },
       chunkFormat: "module",
     },
     experiments: {
@@ -60,56 +61,57 @@ module.exports = (
     resolve: {
       extensions: [".ts", ".tsx", "..."],
       extensionAlias: {
-        // support TypeScript style resolution of extensions (i.e. import .js actually imports .ts)
+        // support TypeScript style resolution of extensions (i.e. import .js actually imports .ts if it exists)
         ".js": [".ts", ".js"],
         ".mjs": [".mts", ".mjs"],
       },
       alias: {
-        "clipanion/platform": path.join(
-          process.cwd(),
-          "../../..",
-          "node_modules/clipanion/lib/platform/node.mjs",
-        ),
-        clipanion$: path.join(
-          process.cwd(),
-          "../../..",
-          "node_modules/clipanion/lib/advanced/index.mjs",
-        ),
-        "#ansi-styles": path.join(
-          process.cwd(),
-          "../../..",
-          "node_modules/zx/node_modules/chalk/source/vendor/ansi-styles/index.js",
-        ),
-        "#supports-color": path.join(
-          process.cwd(),
-          "../../..",
-          "node_modules/zx/node_modules/chalk/source/vendor/supports-color/index.js",
-        ),
+        // "clipanion/platform": path.join(
+        //   process.cwd(),
+        //   "../../..",
+        //   "node_modules/clipanion/lib/platform/node.mjs",
+        // ),
+        // clipanion$: path.join(
+        //   process.cwd(),
+        //   "../../..",
+        //   "node_modules/clipanion/lib/advanced/index.mjs",
+        // ),
+        // "#ansi-styles": path.join(
+        //   process.cwd(),
+        //   "../../..",
+        //   "node_modules/zx/node_modules/chalk/source/vendor/ansi-styles/index.js",
+        // ),
+        // "#supports-color": path.join(
+        //   process.cwd(),
+        //   "../../..",
+        //   "node_modules/zx/node_modules/chalk/source/vendor/supports-color/index.js",
+        // ),
       },
-      importsFields: ["node"],
-      exportsFields: ["node", "import"],
+      // importsFields: ["node"],
+      // exportsFields: ["node", "import"],
+      conditionNames: ["node", "import"],
     },
     plugins: [
       new webpack.BannerPlugin({
         // bun should be recommended, but node can work with 'tsx' installed
-        banner: "#!/usr/bin/env node --import tsx/esm",
-        // banner: "#!/usr/bin/env bun",
+        // banner: "#!/usr/bin/env node --import tsx/esm",
+        banner: "#!/usr/bin/env bun",
         raw: true,
       }),
-      new webpack.IgnorePlugin({
-        // resourceRegExp: ,
-        // contextRegExp: /@pnpm\//i,
-        checkResource: (resource, context) => {
-          if (context.includes("@pnpm/")) {
-            console.log(resource, context);
-          }
-          if (context.startsWith("@pnpm/")) {
-            return true;
-          }
-        },
-      }),
+      // new webpack.IgnorePlugin({
+      //   // resourceRegExp: ,
+      //   // contextRegExp: /@pnpm\//i,
+      //   checkResource: (resource, context) => {
+      //     if (context.includes("@pnpm/")) {
+      //       console.log(resource, context);
+      //     }
+      //     if (context.startsWith("@pnpm/")) {
+      //       return true;
+      //     }
+      //   },
+      // }),
     ],
-    // mode: "production",
+    mode: env === "production" ? "production" : "development",
     optimization: {
       concatenateModules: true,
       removeEmptyChunks: true,
@@ -140,6 +142,7 @@ module.exports = (
         "spdx-license-list",
         "graceful-fs",
         "fs-extra",
+        // "zx" // required to get rid of Warning: async_hooks.createHook is not implemented in Bun.
       ];
       const isExternal = externals.some((external) => {
         if (typeof external === "string") {
