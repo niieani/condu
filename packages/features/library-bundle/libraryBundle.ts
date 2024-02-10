@@ -49,6 +49,8 @@ export const libraryBundle = ({
       );
       const configExtension =
         config.project.manifest.name === "toolchain" ? "ts" : "js";
+
+      // TODO: consider using an esm transpiled webpack config with WEBPACK_CLI_FORCE_LOAD_ESM_CONFIG
       const configPathRelativeToPackage = `./.config/generated/webpack.config.cjs`;
       // const configPathRelativeToPackage = path.relative(
       //   matchingPackage.dir,
@@ -78,14 +80,35 @@ export const libraryBundle = ({
             devDependencies: [
               "webpack",
               "webpack-cli",
+              "webpack-merge",
               "@swc/core",
               "swc-loader",
             ],
             files: [
               {
-                // TODO: use unique filename for each library bundle, need $id to be filename-safe
+                // TODO: use unique filename for each library bundle feature instance, need $id to be filename-safe
                 path: configPathRelativeToPackage,
-                content: `module.exports = require('@repo-feature/library-bundle/webpack.config.cjs');`,
+                content: `const sharedWebpackConfigFn = require('@repo-feature/library-bundle/webpack.config.cjs');
+module.exports = async (env, argv) => {
+  const sharedConfig = sharedWebpackConfigFn(env, argv);
+  try {
+    const userConfig = await Promise.resolve(require('./.config/webpack.config.cjs')).then((m) => {
+      return typeof m === 'function' ? m(env, argv) : m;
+    });
+    const webpackMerge = require('webpack-merge');
+    return webpackMerge(sharedConfig, userConfig);
+  } catch {
+    // ignore
+  }
+  return sharedConfig;
+};
+`,
+              },
+              {
+                path: entryPath,
+                content: `import { ${exportName} } from './${entry}';
+};
+`,
               },
             ],
             tasks: [
@@ -125,9 +148,9 @@ export const libraryBundle = ({
                     `filename=${builtEntryName}`,
                     "--env",
                     `outDir=${outDirRelativeToPackageSource}`,
-                    "--mode",
-                    // "development",
-                    "production",
+                    // "--mode",
+                    // // "development",
+                    // "${NODE_ENV}",
                   ],
                 },
               },

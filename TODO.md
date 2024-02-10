@@ -8,12 +8,15 @@ MVP
 - [x] automatically add missing workspace dependencies to package.json
 - [x] Individual Package overrides
 - [x] yarn constraints
-- [ ] TS building for release - all files can be in the
+- [x] TS building for release - all files can be in the
+  - prior art:
+    - [tsconfig-to-dual-package](https://github.com/azu/tsconfig-to-dual-package#how-it-works)
+    - [tsc-multi](https://github.com/tommy351/tsc-multi)
   - [x] make a script to copy all source files into the dist folder, except configs
   - [x] might need to settle for .cjs + .js for now if we want to use tsc --build for default esm build
     - this is also the future, since cjs is going away
   - [x] for main pass: simply build project with tsc
-    - [ ] NEXT (easy): post-build need to update .map files to have the correct paths, as sourceMappingURL is incorrect and needs to be corrected to use the adjecent .map file
+    - [x] post-build need to update .map files to have the correct paths, as sourceMappingURL is incorrect and needs to be corrected to use the adjecent .map file
   - [x] for other pass:
     - [x] build as ESM
     - [x] all the in-project references (relative or imports from existing monorepo ids) can be auto renamed to .mts
@@ -25,10 +28,11 @@ MVP
   - [x] adjust the "sources" in the .map files
   - [x] output will have: .ts, .js, .js.map, .d.ts, .mjs, .d.mts, .mjs.map + all other files
   - [x] solve source map references, still relative to the root, instead of always next to the file
-  - [ ] important [thread about this](https://github.com/microsoft/TypeScript/issues/49462)
-  - [ ] verify that `const x = <x>() => {}` works, because TS thinks it's a JSX tag, [which is supported in mts/cts by default](https://github.com/microsoft/TypeScript/issues/44442))
-- [ ] figure out webpack merging? or a custom config for this repo specifically?
+  - [x] verify that `const x = <x>() => {}` works, because TS thinks it's a JSX tag, [which is supported in mts/cts by default](https://github.com/microsoft/TypeScript/issues/44442))
+  - important [thread about this](https://github.com/microsoft/TypeScript/issues/49462)
+- [ ] NEXT: figure out webpack merging? or a custom config for this repo specifically?
   - yes, custom config is ok for now
+- [ ] auto-transpile .ts config files into .js based on extension? (e.g. webpack.config.source.cts -> webpack.config.gen.cjs)
 - [x] added hooking for package.json generation, use it in the library feature to set the correct entry points
 - [x] trim the "dependencies" in published package.json based on the config
 - [ ] should we collocate per-package build config in the respective packages, or keep them global?
@@ -76,10 +80,11 @@ Later:
   - the managing repo doesn't contains submodules or list (for privacy)
   - more basic, but good references: https://manicli.com/project-background
 - [ ] error reporting API for features
-- [ ] transpile config files from .config to root
+- [ ] transpile config files from .config to root (to avoid having to create workarounds loading .ts files)
 - [ ] unify/clarify naming around projects/workspaces/packages/workspace-root/etc
 - [ ] allow setting default TypeScript extension: '.ts', '.cts', '.mts', '.js' (for building in TSDoc mode), as well as the default extension in imports: 'source' ('.ts') or 'output' ('.js')
 - [ ] allow using one of the large scaffolds (epic-stack, electronforge, ignite red)
+- [ ] consider [eslint-cjs-to-esm](https://github.com/azu/eslint-cjs-to-esm)
 - [ ] for library-bundle:
   - [ ] option to bundle node_modules or not (with exceptions)
   - [ ] automatically remove the bundled modules from the built package.json, and maybe add them to optionalPeerDependencies?

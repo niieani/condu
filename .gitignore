@@ -9,6 +9,7 @@ node_modules
 /tsconfig.json
 # library-bundle:cli:
 /packages/platform/cli/.config/generated/webpack.config.cjs
+/packages/platform/cli/packages/platform/cli/main.ts
 # eslint:
 /eslint.config.js
 # moon:
