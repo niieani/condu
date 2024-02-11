@@ -30,9 +30,8 @@ MVP
   - [x] solve source map references, still relative to the root, instead of always next to the file
   - [x] verify that `const x = <x>() => {}` works, because TS thinks it's a JSX tag, [which is supported in mts/cts by default](https://github.com/microsoft/TypeScript/issues/44442))
   - important [thread about this](https://github.com/microsoft/TypeScript/issues/49462)
-- [ ] NEXT: figure out webpack merging? or a custom config for this repo specifically?
-  - yes, custom config is ok for now
-- [ ] auto-transpile .ts config files into .js based on extension? (e.g. webpack.config.source.cts -> webpack.config.gen.cjs)
+- [x] figure out webpack merging / a custom config for this repo specifically?
+- [ ] during 'apply', auto-transpile .ts config files into .js based on extension? (e.g. webpack.config.source.cts -> webpack.config.gen.cjs)
 - [x] added hooking for package.json generation, use it in the library feature to set the correct entry points
 - [x] trim the "dependencies" in published package.json based on the config
 - [ ] should we collocate per-package build config in the respective packages, or keep them global?
@@ -53,7 +52,7 @@ MVP
 - [ ] vitest
 - [ ] CI build and test using moon
 - [ ] similar tool: https://packemon.dev/
-- [ ] vscode auto-ignore generated files
+- [x] vscode auto-ignore generated files
 - [x] use https://www.npmjs.com/package/comment-json to keep the comments and only amend input if it exists
 - [ ] bare minimum for repo tool: just copy files from .config to the root and add them to .gitignore
 - [ ] alternatives to consider for dual building from TSC (unfortunately uses babel):

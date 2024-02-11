@@ -52,6 +52,7 @@ export const libraryBundle = ({
 
       // TODO: consider using an esm transpiled webpack config with WEBPACK_CLI_FORCE_LOAD_ESM_CONFIG
       const configPathRelativeToPackage = `./.config/generated/webpack.config.cjs`;
+      const userConfigPathRelativeToPackage = `./.config/webpack.config.cjs`;
       // const configPathRelativeToPackage = path.relative(
       //   matchingPackage.dir,
       //   path.join(config.project.dir, configPath),
@@ -70,11 +71,22 @@ export const libraryBundle = ({
                   packageRelativePathToEntry,
                   builtEntryName,
                 )}`;
+                rootEntry.bun = rootEntry.import;
+                rootEntry.default = rootEntry.import;
                 return {
                   ...entrySources,
                   ".": rootEntry,
                 };
               },
+              // TODO: add bin
+              // modifyPublishPackageJson(packageJson) {
+              //   return {
+              //     ...packageJson,
+              //     bin: {
+
+              //     }
+              //   }
+              // },
             },
             // TODO: do we want these dependencies to be repo-global or per-package?
             devDependencies: [
@@ -92,21 +104,21 @@ export const libraryBundle = ({
 module.exports = async (env, argv) => {
   const sharedConfig = sharedWebpackConfigFn(env, argv);
   try {
-    const userConfig = await Promise.resolve(require('./.config/webpack.config.cjs')).then((m) => {
+    const userConfig = await Promise.resolve(require(${JSON.stringify(
+      path.relative(
+        path.dirname(configPathRelativeToPackage),
+        userConfigPathRelativeToPackage,
+      ),
+    )})).then((m) => {
       return typeof m === 'function' ? m(env, argv) : m;
     });
-    const webpackMerge = require('webpack-merge');
-    return webpackMerge(sharedConfig, userConfig);
-  } catch {
+    const { merge: webpackMerge } = require('webpack-merge');
+    const merged = webpackMerge(sharedConfig, userConfig);
+    return merged;
+  } catch (e) {
     // ignore
   }
   return sharedConfig;
-};
-`,
-              },
-              {
-                path: entryPath,
-                content: `import { ${exportName} } from './${entry}';
 };
 `,
               },
@@ -120,8 +132,8 @@ module.exports = async (env, argv) => {
                   // TODO: source dir and config only?
                   inputs: [
                     "**/*",
-                    "$workspaceRoot/yarn.lock",
-                    "$workspaceRoot/features/library-bundle/webpack.config.cjs",
+                    // "$workspaceRoot/yarn.lock",
+                    // "$workspaceRoot/features/library-bundle/webpack.config.cjs",
                   ],
                   options: {
                     cache: false,
