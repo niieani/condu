@@ -14,7 +14,7 @@ export const lerna = ({}: {} = {}) =>
               content: {
                 $schema: "node_modules/lerna/schemas/lerna-schema.json",
                 version: "independent",
-                npmClient: "yarn",
+                npmClient: config.node.packageManager.name,
                 command: {
                   version: {
                     conventionalCommits: true,
@@ -23,7 +23,7 @@ export const lerna = ({}: {} = {}) =>
                     // instead of publishing the source directory,
                     // publish the copies along with the compiled output in the dist directory.
                     // allows us to be fully flexible with the source directory structure
-                    directory: "{workspaceRoot}/dist/{projectRoot}",
+                    directory: "{workspaceRoot}/build/{projectRoot}",
                   },
                 },
               } satisfies Lerna,

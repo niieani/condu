@@ -5,10 +5,6 @@
 // for compiling websites, use vite
 
 const path = require("node:path");
-// import type { Configuration } from "webpack";
-// import type { LibraryBundleConfig } from "./types.js";
-const webpack = require("webpack");
-const builtin = require("node:module").builtinModules;
 
 // NOTE: if this changes structure to anything other than a non-Promise-returning function
 // the feature definition needs to be updated to accommodate that, as that's the expectation
@@ -65,52 +61,7 @@ module.exports = (
         ".js": [".ts", ".js"],
         ".mjs": [".mts", ".mjs"],
       },
-      alias: {
-        // "clipanion/platform": path.join(
-        //   process.cwd(),
-        //   "../../..",
-        //   "node_modules/clipanion/lib/platform/node.mjs",
-        // ),
-        // clipanion$: path.join(
-        //   process.cwd(),
-        //   "../../..",
-        //   "node_modules/clipanion/lib/advanced/index.mjs",
-        // ),
-        // "#ansi-styles": path.join(
-        //   process.cwd(),
-        //   "../../..",
-        //   "node_modules/zx/node_modules/chalk/source/vendor/ansi-styles/index.js",
-        // ),
-        // "#supports-color": path.join(
-        //   process.cwd(),
-        //   "../../..",
-        //   "node_modules/zx/node_modules/chalk/source/vendor/supports-color/index.js",
-        // ),
-      },
-      // importsFields: ["node"],
-      // exportsFields: ["node", "import"],
-      conditionNames: ["node", "import"],
     },
-    plugins: [
-      new webpack.BannerPlugin({
-        // bun should be recommended, but node can work with 'tsx' installed
-        // banner: "#!/usr/bin/env node --import tsx/esm",
-        banner: "#!/usr/bin/env bun",
-        raw: true,
-      }),
-      // new webpack.IgnorePlugin({
-      //   // resourceRegExp: ,
-      //   // contextRegExp: /@pnpm\//i,
-      //   checkResource: (resource, context) => {
-      //     if (context.includes("@pnpm/")) {
-      //       console.log(resource, context);
-      //     }
-      //     if (context.startsWith("@pnpm/")) {
-      //       return true;
-      //     }
-      //   },
-      // }),
-    ],
     mode: env === "production" ? "production" : "development",
     optimization: {
       concatenateModules: true,
@@ -123,52 +74,6 @@ module.exports = (
       path: path.join(process.cwd(), outDir),
     },
     devtool: "source-map",
-    // externalsPresets: {
-    //   // TODO: manually externalize node and import it as ESM, not require, so that deno might work?
-    //   // use: import { builtinModules } from 'module';
-    //   node: true,
-    // },
-
-    // ...Object.fromEntries(
-    //   builtin.map((name) => [`${name}$`, `external node:${name}`]),
-    // ),
-    externals: async (data) => {
-      const { request, context, getResolve } = data;
-      const externals = [
-        /^@pnpm\/.*/,
-        /^node:/,
-        "typescript",
-        "@ts-morph/common",
-        "spdx-license-list",
-        "graceful-fs",
-        "fs-extra",
-        // "zx" // required to get rid of Warning: async_hooks.createHook is not implemented in Bun.
-      ];
-      const isExternal = externals.some((external) => {
-        if (typeof external === "string") {
-          return request === external || request.startsWith(`${external}/`);
-        } else if (external instanceof RegExp) {
-          return external.test(request);
-        }
-      });
-      if (isExternal) {
-        return true;
-      }
-      const isBuiltin = builtin.some((name) => {
-        if (request === name || request.startsWith(`${name}/`)) {
-          return true;
-        }
-      });
-      if (isBuiltin) {
-        // rewrite all builtins to use node: prefix
-        return `module node:${
-          request.endsWith("/") ? request.slice(0, -1) : request
-        }`;
-      }
-    },
-    stats: {
-      errorDetails: true,
-    },
     module: {
       rules: [
         {
@@ -201,18 +106,6 @@ module.exports = (
                 },
               },
             },
-            // {
-            //   loader: "ts-loader",
-            //   options: {
-            //     transpileOnly: true,
-            //     compilerOptions: {
-            //       module: "esnext",
-            //       target: codeTarget,
-            //       esModuleInterop: false,
-            //       sourceMap: true,
-            //     },
-            //   },
-            // },
           ],
         },
       ],
