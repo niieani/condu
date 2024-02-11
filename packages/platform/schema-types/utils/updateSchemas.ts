@@ -68,7 +68,10 @@ async function updateSchemas() {
 
     // fixes specific to bugs in the json-schema-to-typescript output:
     if (name === "packageJson") {
-      ts = ts.replace(/} & Person1;/g, `} | Person1;`);
+      ts = ts
+        .replace(/} & Person1;/g, `} | Person1;`)
+        // fix unescaped comment
+        .replace(`.*/[a-z]*)$"`, `.*[a-z]*)$"`);
     }
 
     ts += `\nexport type { ${topLevelSchemaNameSource} as default };\n`;

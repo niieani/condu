@@ -253,7 +253,7 @@ types?: Types14
  * 
  * @minItems 1
  */
-export type Types14 = [("assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"), ...(("assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"))[]]
+export type Types14 = [("assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "milestoned" | "demilestoned" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"), ...(("assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "milestoned" | "demilestoned" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"))[]]
 /**
  * Runs your workflow anytime the pull_request_review event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/pulls/reviews.
  * Note: Workflows do not run on private base repositories when you open a pull request from a forked repository.
@@ -408,7 +408,7 @@ workflows?: [string, ...(string)[]]
  * 
  * @minItems 1
  */
-export type Types20 = [("requested" | "completed"), ...(("requested" | "completed"))[]]
+export type Types20 = [("requested" | "completed" | "in_progress"), ...(("requested" | "completed" | "in_progress"))[]]
 export type StringContainingExpressionSyntax = string
 /**
  * You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
@@ -976,7 +976,7 @@ export interface ReusableWorkflowCallJob {
  */
 name?: string
 needs?: JobNeeds
-permissions?: PermissionsEvent
+permissions?: Permissions
 /**
  * You can use the if conditional to prevent a job from running unless a condition is met. You can use any supported context and expression to create a conditional.
  * Expressions in an if conditional do not require the ${{ }} syntax. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
