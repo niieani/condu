@@ -1,5 +1,5 @@
 {
-  "name": "@repo-feature/library-bundle",
+  "name": "@condu-feature/library-bundle",
   "license": "MIT",
   "type": "module",
   "publishConfig": {
@@ -9,6 +9,6 @@
     "webpack": "^5.90.3"
   },
   "dependencies": {
-    "@repo/core": "workspace:*"
+    "@condu/core": "workspace:*"
   }
 }

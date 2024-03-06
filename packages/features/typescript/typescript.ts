@@ -1,5 +1,5 @@
-import { defineFeature } from "@repo/core/defineFeature.js";
-import type TSConfig from "@repo/schema-types/schemas/tsconfig.gen.js";
+import { defineFeature } from "@condu/core/defineFeature.js";
+import type TSConfig from "@condu/schema-types/schemas/tsconfig.gen.js";
 import * as path from "node:path";
 
 const commonJsFirstPreset = {

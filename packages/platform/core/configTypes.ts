@@ -1,8 +1,8 @@
 import type { PartialProjectConfig, PartialTaskConfig } from "@moonrepo/types";
-import type { WorkspaceProjectsConvention } from "@repo/cli/getProjectGlobsFromMoonConfig.js";
-import type PackageJson from "@repo/schema-types/schemas/packageJson.gen.js";
+import type { WorkspaceProjectsConvention } from "@condu/cli/getProjectGlobsFromMoonConfig.js";
+import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import type { Pattern } from "ts-pattern";
-import type { Project } from "@repo/cli/loadProject.js";
+import type { Project } from "@condu/cli/loadProject.js";
 
 export interface DependencyDef {
   packageAlias: string;
@@ -64,7 +64,7 @@ export interface RepoPackageConfig
 export interface RepoPackageJson extends PackageJson {
   // name is mandatory
   name: string;
-  repo?: RepoPackageConfig;
+  condu?: RepoPackageConfig;
   /** absolute directory of the package */
   path: string;
   /** relative directory of the package (from workspace dir) */

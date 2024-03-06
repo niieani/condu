@@ -12,14 +12,14 @@ import { createCommandContext } from "../createCommandContext.js";
 import { $ } from "../zx.js";
 import { cd } from "zx";
 import { getSingleMatch } from "../matchPackage.js";
-import { copyFiles } from "@repo/core/utils/copy.js";
+import { copyFiles } from "@condu/core/utils/copy.js";
 import { readPreviouslyWrittenFileCache } from "./apply/readWrite.js";
-import { buildRemappedProject } from "@repo/update-specifiers/main.js";
+import { buildRemappedProject } from "@condu/update-specifiers/main.js";
 import spdxLicenseList from "spdx-license-list/full.js";
-import type PackageJson from "@repo/schema-types/schemas/packageJson.gen.js";
-import { correctSourceMaps } from "@repo/core/utils/correctSourceMaps.js";
+import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
+import { correctSourceMaps } from "@condu/core/utils/correctSourceMaps.js";
 import { apply } from "./apply/apply.js";
-import type { CollectedState } from "@repo/core/configTypes.js";
+import type { CollectedState } from "@condu/core/configTypes.js";
 import { partition } from "remeda";
 
 export class BeforeReleaseCommand extends Command {
@@ -37,7 +37,9 @@ export class BeforeReleaseCommand extends Command {
   async execute() {
     const applyResult = await apply();
     if (!applyResult) {
-      throw new Error(`Unable to find a repo project in the current directory`);
+      throw new Error(
+        `Unable to find a condu project in the current directory`,
+      );
     }
     const { project, collectedState } = applyResult;
     const selectedPackagePaths = this.packages.map(

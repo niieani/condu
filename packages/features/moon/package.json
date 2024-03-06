@@ -1,10 +1,10 @@
 {
-  "name": "@repo-feature/moon",
+  "name": "@condu-feature/moon",
   "type": "module",
   "dependencies": {
-    "@moonrepo/types": "^1.15.1",
-    "@repo/cli": "workspace:*",
-    "@repo/core": "workspace:*",
-    "@repo/schema-types": "workspace:*"
+    "@condu/cli": "workspace:*",
+    "@condu/core": "workspace:*",
+    "@condu/schema-types": "workspace:*",
+    "@moonrepo/types": "^1.15.1"
   }
 }

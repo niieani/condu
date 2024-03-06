@@ -1,4 +1,4 @@
-import { loadRepoProject } from "@repo/cli/loadProject.js";
+import { loadRepoProject } from "@condu/cli/loadProject.js";
 import path from "node:path";
 
 const __dirname = new URL(".", import.meta.url).pathname;

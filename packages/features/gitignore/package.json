@@ -1,8 +1,8 @@
 {
-  "name": "@repo-feature/gitignore",
+  "name": "@condu-feature/gitignore",
   "type": "module",
   "dependencies": {
-    "@repo/core": "workspace:*",
+    "@condu/core": "workspace:*",
     "remeda": "^1.46.2"
   }
 }

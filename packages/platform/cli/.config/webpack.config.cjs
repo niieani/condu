@@ -13,7 +13,7 @@ const builtin = require("node:module").builtinModules;
 // NOTE: if this changes structure to anything other than a non-Promise-returning function
 // the feature definition needs to be updated to accommodate that, as that's the expectation
 module.exports = (
-  /** @type {import('@repo-feature/library-bundle/types').LibraryBundleConfig} */
+  /** @type {import('@condu-feature/library-bundle/types').LibraryBundleConfig} */
   {
     moduleTarget,
     codeTarget = "es2022",

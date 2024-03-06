@@ -1,12 +1,12 @@
 {
-  "name": "@repo-feature/ci-github-actions",
+  "name": "@condu-feature/ci-github-actions",
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@repo/core": "workspace:*",
-    "@repo/schema-types": "workspace:*",
+    "@condu/core": "workspace:*",
+    "@condu/schema-types": "workspace:*",
     "remeda": "^1.46.2"
   }
 }

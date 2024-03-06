@@ -1,21 +1,21 @@
-import { gitignore } from "@repo-feature/gitignore/gitignore.js";
-import { typescript } from "@repo-feature/typescript/typescript.js";
-import { moon } from "@repo-feature/moon/moon.js";
-import { auto } from "@repo-feature/auto/auto.js";
-import { moonCi } from "@repo-feature/ci-github-actions/moon.js";
-import { eslint } from "@repo-feature/eslint/eslint.js";
-import { lerna } from "@repo-feature/lerna/lerna.js";
-import { yarn } from "@repo-feature/yarn/yarn.js";
-import { vscode } from "@repo-feature/vscode/vscode.js";
-import { libraryBundle } from "@repo-feature/library-bundle/libraryBundle.js";
-import { gptSummarizer } from "@repo-feature/gpt-summarizer/gptSummarizer.js";
-import { configure } from "@repo/core/configTypes.js";
+import { gitignore } from "@condu-feature/gitignore/gitignore.js";
+import { typescript } from "@condu-feature/typescript/typescript.js";
+import { moon } from "@condu-feature/moon/moon.js";
+import { auto } from "@condu-feature/auto/auto.js";
+import { moonCi } from "@condu-feature/ci-github-actions/moon.js";
+import { eslint } from "@condu-feature/eslint/eslint.js";
+import { lerna } from "@condu-feature/lerna/lerna.js";
+import { yarn } from "@condu-feature/yarn/yarn.js";
+import { vscode } from "@condu-feature/vscode/vscode.js";
+import { libraryBundle } from "@condu-feature/library-bundle/libraryBundle.js";
+import { gptSummarizer } from "@condu-feature/gpt-summarizer/gptSummarizer.js";
+import { configure } from "@condu/core/configTypes.js";
 
 export default configure({
   engine: "bun",
   projects: [
-    { parentPath: "packages/features", nameConvention: "@repo-feature/*" },
-    { parentPath: "packages/platform", nameConvention: "@repo/*" },
+    { parentPath: "packages/features", nameConvention: "@condu-feature/*" },
+    { parentPath: "packages/platform", nameConvention: "@condu/*" },
   ],
   conventions: {
     sourceDir: ".",
@@ -32,10 +32,10 @@ export default configure({
     }),
     libraryBundle({
       id: "cli",
-      package: "@repo/cli",
+      package: "@condu/cli",
       entry: "main.ts",
       moduleTarget: "esm",
-      binName: "repo",
+      binName: "condu",
     }),
     eslint(),
     moon(),
@@ -66,6 +66,6 @@ export default configure({
       },
     }),
     gptSummarizer(),
-    gitignore({ ignore: [".swc/", ".idea/", ".env", ".env.*"] }),
+    gitignore({ ignore: [".swc/", ".idea/", ".env", ".env.*", "/brand/"] }),
   ],
 });

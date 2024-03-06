@@ -167,6 +167,8 @@ const gitignore = ({ ignore }: { ignore?: string[] } = {}) =>
 alternative names:
 
 - condu (with the CLI command: `co`)
+- strata (the idea of layers or strata, relating to the project's feature-based architecture)
+- automi
 
 ```shell
 $ repo use test-jest test-eslint

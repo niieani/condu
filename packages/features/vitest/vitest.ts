@@ -1,4 +1,4 @@
-import { defineFeature } from "@repo/core/defineFeature.js";
+import { defineFeature } from "@condu/core/defineFeature.js";
 
 export const vitest = ({}: {} = {}) =>
   defineFeature({

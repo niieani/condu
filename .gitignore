@@ -24,7 +24,7 @@ node_modules
 # lerna:
 /lerna.json
 # auto:
-/auto.config.js
+/auto.config.cjs
 # vscode:
 /.vscode/settings.json
 # gpt-summarizer:
@@ -34,3 +34,4 @@ node_modules
 .idea/
 .env
 .env.*
+/brand/

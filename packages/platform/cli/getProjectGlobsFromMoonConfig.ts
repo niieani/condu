@@ -7,7 +7,7 @@ interface ParentDirectoryProjectConvention {
   /**
    * defines how the name should be created from the project directory name.
    * '*' in the string refers to the project directory name
-   * @example when '@repo/*' will name the project '@repo/utils' if the project folder is 'utils'
+   * @example when '@condu/*' will name the project '@condu/utils' if the project folder is 'utils'
    * @default '*'
    **/
   nameConvention?: string;

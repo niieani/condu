@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { ensureDependency } from "../../toolchain.js";
+import { ensureDependency } from "../../ensureDependency.js";
 import type {
   CollectedFileDef,
   CollectedState,
@@ -8,11 +8,11 @@ import type {
   Hooks,
   RepoConfigWithInferredValuesAndProject,
   StateFlags,
-} from "@repo/core/configTypes.js";
+} from "@condu/core/configTypes.js";
 import { groupBy, equals } from "remeda";
 import { type LoadConfigOptions, loadRepoProject } from "../../loadProject.js";
-import { getDefaultGitBranch } from "@repo/core/utils/getDefaultGitBranch.js";
-import { nonEmpty } from "@repo/core/utils/filter.js";
+import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
+import { nonEmpty } from "@condu/core/utils/filter.js";
 import { isMatching } from "ts-pattern";
 import {
   FILE_STATE_PATH,
@@ -125,7 +125,7 @@ export async function collectState(
         }
       }
 
-      // TODO: support per-package dependencies, right now all dependencies are repo-global
+      // TODO: support per-package dependencies, right now all dependencies are condu-global
       if (featureEffect.devDependencies) {
         state.devDependencies.push(
           ...featureEffect.devDependencies.filter(nonEmpty),
@@ -167,8 +167,8 @@ export async function collectState(
   }
 
   // TODO: store file list, tasks and dependencies in a git-committed file, so that any removals/upgrades can be flagged as changes during diffing
-  // e.g. .config/toolchain/.files
-  // e.g. .config/toolchain/.dependencies // automatically updated when doing 'yarn add' so that it's compatible with dep. auto-updaters
+  // e.g. .config/condu/.files
+  // e.g. .config/condu/.dependencies // automatically updated when doing 'yarn add' so that it's compatible with dep. auto-updaters
   // TODO: also store version of each feature, so that we can detect if a feature has been upgraded
 
   return state;

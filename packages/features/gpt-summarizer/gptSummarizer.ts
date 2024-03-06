@@ -2,8 +2,8 @@
 // or in bun it should be supported to do: fs.copyFileSync('a', 'b', fs.constants.COPYFILE_FICLONE_FORCE)
 // we probably wanna use glob to list all source and then copy them one by one
 
-import { walkDirectoryRecursively } from "@repo/core/utils/walkDirectoryRecursively.js";
-import { defineFeature } from "@repo/core/defineFeature.js";
+import { walkDirectoryRecursively } from "@condu/core/utils/walkDirectoryRecursively.js";
+import { defineFeature } from "@condu/core/defineFeature.js";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 

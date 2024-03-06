@@ -1,11 +1,11 @@
 {
-  "name": "@repo-feature/gpt-summarizer",
+  "name": "@condu-feature/gpt-summarizer",
   "license": "MIT",
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@repo/core": "workspace:*"
+    "@condu/core": "workspace:*"
   }
 }

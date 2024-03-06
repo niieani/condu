@@ -1,7 +1,7 @@
-import { defineFeature } from "@repo/core/defineFeature.js";
+import { defineFeature } from "@condu/core/defineFeature.js";
 import { assign } from "comment-json";
-import type VscodeSettingsWorkspace from "@repo/schema-types/schemas/vscodeSettingsWorkspace.gen.js";
-import path from "node:path";
+import type VscodeSettingsWorkspace from "@condu/schema-types/schemas/vscodeSettingsWorkspace.gen.js";
+import * as path from "node:path";
 
 export const vscode = ({
   suggestedConfig = {},

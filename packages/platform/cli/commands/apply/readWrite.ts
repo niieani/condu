@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { FileDef, RepoPackageJson } from "@repo/core/configTypes.js";
+import type { FileDef, RepoPackageJson } from "@condu/core/configTypes.js";
 import yaml from "yaml";
 import commentJson from "comment-json";
 import { P, match } from "ts-pattern";

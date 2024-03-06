@@ -47,8 +47,8 @@ export default [
         {
           devDependencies: ["**/*.test.js"],
           autoFixVersionMapping: [
-            ["@repo/", "workspace:*"],
-            ["@repo-feature/", "workspace:*"],
+            ["@condu/", "workspace:*"],
+            ["@condu-feature/", "workspace:*"],
           ],
           autoFixFallback: "^",
         },

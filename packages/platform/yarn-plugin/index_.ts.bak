@@ -59,7 +59,7 @@ const plugin: Plugin<Hooks> = {
 
       // try {
       //   const config = await import(
-      //     ppath.join(target, ".config", "toolchain.ts")
+      //     ppath.join(target, ".config", "condu.ts")
       //   );
       //   console.log(`What a great install, am I right?`, config);
       // } catch {

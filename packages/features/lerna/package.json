@@ -1,10 +1,10 @@
 {
-  "name": "@repo-feature/lerna",
+  "name": "@condu-feature/lerna",
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@repo/core": "workspace:*"
+    "@condu/core": "workspace:*"
   }
 }

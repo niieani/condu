@@ -1,7 +1,9 @@
 {
-  "name": "@repo/cli",
+  "name": "@condu/cli",
   "type": "module",
   "dependencies": {
+    "@condu/core": "workspace:*",
+    "@condu/update-specifiers": "workspace:*",
     "@pnpm/fetch": "^7.0.7",
     "@pnpm/logger": "^5.0.0",
     "@pnpm/network.auth-header": "^2.2.1",
@@ -9,8 +11,6 @@
     "@pnpm/read-project-manifest": "^5.0.11",
     "@pnpm/types": "^9.4.2",
     "@pnpm/workspace.find-packages": "^1.1.11",
-    "@repo/core": "workspace:*",
-    "@repo/update-specifiers": "workspace:*",
     "async-memoize-one": "^1.1.7",
     "clipanion": "^4.0.0-rc.3",
     "comment-json": "^4.2.3",

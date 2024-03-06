@@ -1,4 +1,4 @@
-import { defineFeature } from "@repo/core/defineFeature.js";
+import { defineFeature } from "@condu/core/defineFeature.js";
 import type {
   PartialVcsConfig,
   PartialToolchainConfig as Toolchain,
@@ -8,8 +8,8 @@ import type {
 
 // import type Toolchain from "./schemas/toolchain.js";
 // import type Workspace from "./schemas/workspace.js";
-import { otherSchemas as schemas } from "@repo/schema-types/utils/schemas.js";
-import { getMoonWorkspaceProjectsFromConventionConfig } from "@repo/cli/getProjectGlobsFromMoonConfig.js";
+import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
+import { getMoonWorkspaceProjectsFromConventionConfig } from "@condu/cli/getProjectGlobsFromMoonConfig.js";
 
 // TODO: add opinionated defaults for toolchain and workspace
 // TODO: use a shared config property for typescript, etc.
@@ -116,7 +116,7 @@ export const moon = ({
                   ...(config.projects && {
                     typescript: {
                       ...defaultToolchain.typescript,
-                      // TODO: implement this in repo, so we don't repend on moon for it:
+                      // TODO: implement this in condu, so we don't repend on moon for it:
                       // syncProjectReferences: true,
                       // syncProjectReferencesToPaths: true,
                       // createMissingConfig: true,
