@@ -1,9 +1,16 @@
 import type { AutoRc } from "auto";
 import type { INpmConfig } from "@auto-it/npm";
+const { defaultLabels } =
+  require("@auto-it/core") as typeof import("@auto-it/core");
 
 /** Auto configuration */
-export default function rc(): AutoRc {
+export = function rc(): AutoRc {
   return {
+    labels: defaultLabels.map((label) => ({
+      ...label,
+      // prefix the default labels, so they don't conflict with default dependabot labels
+      name: `version: ${label.name}`,
+    })),
     plugins: [
       "released",
       [
@@ -16,4 +23,4 @@ export default function rc(): AutoRc {
       ],
     ],
   };
-}
+};

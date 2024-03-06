@@ -2419,6 +2419,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@repo-feature/auto@workspace:packages/features/auto"
   dependencies:
+    "@auto-it/core": "npm:^11.0.4"
     "@repo/core": "workspace:*"
     "@types/env-ci": "npm:^3.1.4"
     "@types/signale": "npm:^1.4.7"
@@ -12161,6 +12162,7 @@ __metadata:
     "@yarnpkg/types": "npm:^4.0.0"
     arktype: "npm:^1.0.29-alpha"
     async-memoize-one: "npm:^1.1.6"
+    auto: "npm:^11.0.4"
     bun-types: "npm:^1.0.26"
     esbuild: "npm:^0.20.0"
     eslint: "npm:^8.56.0"
