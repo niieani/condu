@@ -5,6 +5,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@auto-it/core": "^11.0.4",
     "@repo/core": "workspace:*"
   },
   "devDependencies": {

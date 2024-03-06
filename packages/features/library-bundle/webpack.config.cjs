@@ -14,7 +14,7 @@ module.exports = (
     moduleTarget,
     codeTarget = "es2022",
     engineTarget,
-    name = "Library",
+    binName: name = "library",
     export: exportName = "default",
     filename = "main.js",
     outDir = moduleTarget,

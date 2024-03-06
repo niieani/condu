@@ -23,6 +23,8 @@ node_modules
 /.moon/tasks.yml
 # lerna:
 /lerna.json
+# auto:
+/auto.config.js
 # vscode:
 /.vscode/settings.json
 # gpt-summarizer:
@@ -30,3 +32,5 @@ node_modules
 # custom ignore patterns:
 .swc/
 .idea/
+.env
+.env.*

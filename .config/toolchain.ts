@@ -1,6 +1,7 @@
 import { gitignore } from "@repo-feature/gitignore/gitignore.js";
 import { typescript } from "@repo-feature/typescript/typescript.js";
 import { moon } from "@repo-feature/moon/moon.js";
+import { auto } from "@repo-feature/auto/auto.js";
 import { moonCi } from "@repo-feature/ci-github-actions/moon.js";
 import { eslint } from "@repo-feature/eslint/eslint.js";
 import { lerna } from "@repo-feature/lerna/lerna.js";
@@ -34,11 +35,13 @@ export default configure({
       package: "@repo/cli",
       entry: "main.ts",
       moduleTarget: "esm",
+      binName: "repo",
     }),
     eslint(),
     moon(),
     moonCi(),
     lerna(),
+    auto(),
     vscode({
       hideGeneratedFiles: false,
       suggestedConfig: {
@@ -63,6 +66,6 @@ export default configure({
       },
     }),
     gptSummarizer(),
-    gitignore({ ignore: [".swc/", ".idea/"] }),
+    gitignore({ ignore: [".swc/", ".idea/", ".env", ".env.*"] }),
   ],
 });

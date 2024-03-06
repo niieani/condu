@@ -2,7 +2,7 @@ export interface LibraryBundleConfig {
   moduleTarget: "esm" | "umd";
   codeTarget?: string;
   engineTarget?: string;
-  name?: string;
+  binName?: string;
   export?: string;
   filename?: string;
   outDir?: string;

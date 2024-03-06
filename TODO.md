@@ -31,20 +31,27 @@ MVP
   - [x] verify that `const x = <x>() => {}` works, because TS thinks it's a JSX tag, [which is supported in mts/cts by default](https://github.com/microsoft/TypeScript/issues/44442))
   - important [thread about this](https://github.com/microsoft/TypeScript/issues/49462)
 - [x] figure out webpack merging / a custom config for this repo specifically?
-- [ ] during 'apply', auto-transpile .ts config files into .js based on extension? (e.g. webpack.config.source.cts -> webpack.config.gen.cjs)
 - [x] added hooking for package.json generation, use it in the library feature to set the correct entry points
 - [x] trim the "dependencies" in published package.json based on the config
 - [ ] should we collocate per-package build config in the respective packages, or keep them global?
   - [ ] if yes, then how do we do it? `.config` folder per package?
   - [ ] decision: where do we keep local config files? are they centrally managed? do we use config identifiers in folders names to nest configs?
-- [ ] semantic-release (use [Auto](https://github.com/intuit/auto) instead for mono-repo support)
+- [ ] NEXT: some basic integration tests that use the built packages
+  - what do I actually want to test here? ooh the release process!!!
+- [ ] NEXT: CI & semantic-release (use [Auto](https://github.com/intuit/auto) instead for mono-repo support)
+- [ ] basic any-config feature:
+  - [ ] symlink all non-js files from .config to the root (e.g. for .env)
+  - [ ] create dummy root .cjs files that require or .js/.mjs files that import their equivalent from .config
 - [ ] look at whether we can have global tasks in moonrepo
+- [ ] during 'apply', auto-transpile .ts config files into .js based on extension? (e.g. webpack.config.source.cts -> webpack.config.gen.cjs)
 - [ ] pre-release
   - [x] copy/generate LICENSE to each package
   - [x] set correct package.json fields
     - [x] generate correct entry points (like https://github.com/isaacs/tshy)
     - [x] conventional entry point:
       - use `index.ts`, `main.ts` or `${packageName}.ts` if they exist (set camelCase or kebab-case in "conventions" - use it also for file name linting defaults)
+- [ ] "clean"/"default" feature? before build, we need to run apply and clean 'build' dir
+- [ ] add an 'init' command to create a new repo with config (or update existing one) from scratch
 - [ ] add validation for feature dependencies (e.g. "auto" feature depends on "lerna")
   - maybe not dependencies, but see below - contributed state?
 - [ ] add shared state for features (features can contribute to it and build on top of each other's state)
@@ -64,6 +71,8 @@ MVP
 
 Later:
 
+- [ ] in apply: auto-create package.json when missing, but matches one of the conventions
+- [ ] automatically use features that are installed as devDependencies using the default parameters (maybe a flag can turn this off?)
 - [ ] multi-repo mode
   - best of both worlds - monorepo for development and keeping tools in sync, single-repo management benefits (separate issues, PRs, etc.)
   - orchestrate multiple repos with a parent configuration repo

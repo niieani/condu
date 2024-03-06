@@ -10,7 +10,7 @@ export const libraryBundle = ({
   codeTarget,
   engineTarget,
   export: exportName,
-  name,
+  binName,
 }: {
   id: string;
   // TODO: make entrypoint optional and default using the same logic as in BeforeRelease for main
@@ -78,15 +78,16 @@ export const libraryBundle = ({
                   ".": rootEntry,
                 };
               },
-              // TODO: add bin
-              // modifyPublishPackageJson(packageJson) {
-              //   return {
-              //     ...packageJson,
-              //     bin: {
-
-              //     }
-              //   }
-              // },
+              ...(binName
+                ? {
+                    modifyPublishPackageJson(packageJson) {
+                      return {
+                        ...packageJson,
+                        bin: { [binName]: builtEntryName },
+                      };
+                    },
+                  }
+                : {}),
             },
             // TODO: do we want these dependencies to be repo-global or per-package?
             devDependencies: [
@@ -155,7 +156,7 @@ module.exports = async (env, argv) => {
                       ? ["--env", `engineTarget=${engineTarget}`]
                       : []),
                     ...(exportName ? ["--env", `export=${exportName}`] : []),
-                    ...(name ? ["--env", `name=${name}`] : []),
+                    ...(binName ? ["--env", `name=${binName}`] : []),
                     "--env",
                     `filename=${builtEntryName}`,
                     "--env",
