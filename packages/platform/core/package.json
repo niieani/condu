@@ -2,10 +2,10 @@
   "name": "@repo/core",
   "type": "module",
   "dependencies": {
-    "async-memoize-one": "^1.1.6",
+    "async-memoize-one": "^1.1.7",
     "fp-ts": "^2.16.2",
     "io-ts": "^2.2.21",
-    "remeda": "^1.40.1"
+    "remeda": "^1.46.2"
   },
   "devDependencies": {
     "node-fetch": "^3.3.2"
