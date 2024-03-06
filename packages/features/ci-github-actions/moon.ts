@@ -1,14 +1,14 @@
-import { defineFeature } from "@repo/core/defineFeature.js";
-import type GithubWorkflow from "@repo/schema-types/schemas/githubWorkflow.gen.js";
+import { defineFeature } from "@condu/core/defineFeature.js";
+import type GithubWorkflow from "@condu/schema-types/schemas/githubWorkflow.gen.js";
 import type {
   PartialTaskConfig,
   PartialInheritedTasksConfig as Tasks,
   PartialProjectConfig as Project,
 } from "@moonrepo/types";
-import { otherSchemas as schemas } from "@repo/schema-types/utils/schemas.js";
+import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
 import { mapValues, groupBy, uniq, partition } from "remeda";
-import type { FileDef, Effects, Task } from "@repo/core/configTypes.js";
-import { nonEmpty } from "@repo/core/utils/filter.js";
+import type { FileDef, Effects, Task } from "@condu/core/configTypes.js";
+import { nonEmpty } from "@condu/core/utils/filter.js";
 // import { match } from "ts-pattern";
 
 // TODO: the way this should actually work is it should be a moonCi feature that contributes "ci" commands to state

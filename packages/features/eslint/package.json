@@ -1,11 +1,11 @@
 {
-  "name": "@repo-feature/eslint",
+  "name": "@condu-feature/eslint",
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
   "peerDependencies": {
-    "@repo/core": "workspace:*",
+    "@condu/core": "workspace:*",
     "@typescript-eslint/eslint-plugin": "6.8.0",
     "@typescript-eslint/parser": "6.8.0",
     "eslint-plugin-import": "*",

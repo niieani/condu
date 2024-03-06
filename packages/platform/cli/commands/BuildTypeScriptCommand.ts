@@ -1,5 +1,5 @@
 import { Command, Option } from "clipanion";
-import { buildRemappedProject } from "@repo/update-specifiers/main.js";
+import { buildRemappedProject } from "@condu/update-specifiers/main.js";
 
 export class BuildTypeScriptCommand extends Command {
   static override paths = [["build-ts"]];

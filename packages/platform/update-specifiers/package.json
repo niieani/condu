@@ -1,11 +1,11 @@
 {
-  "name": "@repo/update-specifiers",
+  "name": "@condu/update-specifiers",
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@repo/core": "workspace:*",
+    "@condu/core": "workspace:*",
     "@ts-morph/common": "^0.22.0",
     "ts-morph": "^21.0.1"
   }

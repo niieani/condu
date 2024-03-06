@@ -5,33 +5,33 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "repo": "repo"
+    "condu": "condu"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "pnpm": {
     "overrides": {
-      "@repo-feature/auto": "file:../../build/packages/features/auto",
-      "@repo-feature/ci-github-actions": "file:../../build/packages/features/ci-github-actions",
-      "@repo-feature/eslint": "file:../../build/packages/features/eslint",
-      "@repo-feature/gitignore": "file:../../build/packages/features/gitignore",
-      "@repo-feature/gpt-summarizer": "file:../../build/packages/features/gpt-summarizer",
-      "@repo-feature/lerna": "file:../../build/packages/features/lerna",
-      "@repo-feature/library-bundle": "file:../../build/packages/features/library-bundle",
-      "@repo-feature/moon": "file:../../build/packages/features/moon",
-      "@repo-feature/typescript": "file:../../build/packages/features/typescript",
-      "@repo-feature/vitest": "file:../../build/packages/features/vitest",
-      "@repo-feature/vscode": "file:../../build/packages/features/vscode",
-      "@repo-feature/yarn": "file:../../build/packages/features/yarn",
-      "@repo/auto-plugin-package-structure": "file:../../build/packages/platform/auto-plugin-package-structure",
-      "@repo/cli": "file:../../build/packages/platform/cli",
-      "@repo/core": "file:../../build/packages/platform/core",
-      "@repo/schema-types": "file:../../build/packages/platform/schema-types",
-      "@repo/update-specifiers": "file:../../build/packages/platform/update-specifiers"
+      "@condu-feature/auto": "file:../../build/packages/features/auto",
+      "@condu-feature/ci-github-actions": "file:../../build/packages/features/ci-github-actions",
+      "@condu-feature/eslint": "file:../../build/packages/features/eslint",
+      "@condu-feature/gitignore": "file:../../build/packages/features/gitignore",
+      "@condu-feature/gpt-summarizer": "file:../../build/packages/features/gpt-summarizer",
+      "@condu-feature/lerna": "file:../../build/packages/features/lerna",
+      "@condu-feature/library-bundle": "file:../../build/packages/features/library-bundle",
+      "@condu-feature/moon": "file:../../build/packages/features/moon",
+      "@condu-feature/typescript": "file:../../build/packages/features/typescript",
+      "@condu-feature/vitest": "file:../../build/packages/features/vitest",
+      "@condu-feature/vscode": "file:../../build/packages/features/vscode",
+      "@condu-feature/yarn": "file:../../build/packages/features/yarn",
+      "@condu/auto-plugin-package-structure": "file:../../build/packages/platform/auto-plugin-package-structure",
+      "@condu/cli": "file:../../build/packages/platform/cli",
+      "@condu/core": "file:../../build/packages/platform/core",
+      "@condu/schema-types": "file:../../build/packages/platform/schema-types",
+      "@condu/update-specifiers": "file:../../build/packages/platform/update-specifiers"
     }
   },
   "dependencies": {
-    "@repo/cli": "file:../../build/packages/platform/cli"
+    "@condu/cli": "file:../../build/packages/platform/cli"
   }
 }

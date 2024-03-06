@@ -1,5 +1,5 @@
 {
-  "name": "@repo/auto-plugin-package-structure",
+  "name": "@condu/auto-plugin-package-structure",
   "type": "module",
   "publishConfig": {
     "access": "public"

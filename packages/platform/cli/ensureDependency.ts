@@ -1,15 +1,16 @@
-import { spinner } from "zx";
 // import semver from "semver";
 import { readProjectManifest } from "@pnpm/read-project-manifest";
 import { createNpmResolver } from "@pnpm/npm-resolver";
-import { getCacheDir } from "@repo/core/utils/dirs.js";
+import { getCacheDir } from "@condu/core/utils/dirs.js";
 import { createFetchFromRegistry } from "@pnpm/fetch";
 import { createGetAuthHeaderByURI } from "@pnpm/network.auth-header";
 import * as path from "node:path";
-import { findUp } from "@repo/core/utils/findUp.js";
-import { $ } from "./zx.js";
-import type PackageJson from "@repo/schema-types/schemas/packageJson.gen.js";
-import type { DependencyDef, RepoPackageJson } from "@repo/core/configTypes.js";
+import { findUp } from "@condu/core/utils/findUp.js";
+import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
+import type {
+  DependencyDef,
+  RepoPackageJson,
+} from "@condu/core/configTypes.js";
 import type { ProjectManifest } from "@pnpm/types";
 
 const registry = "https://registry.npmjs.org/";
@@ -26,26 +27,6 @@ const resolveFromNpm = createNpmResolver(
   // },
   { offline: false, cacheDir: getCacheDir(process) },
 );
-
-async function setup() {
-  await $`yarn config set nodeLinker node-modules`;
-}
-
-// await $`yarn`;
-// await spinner("waiting", () => $`sleep 5`);
-
-// const cwd = process.cwd();
-// const {
-//   manifest,
-//   fileName: manifestPath,
-//   writeProjectManifest,
-// } = await getManifest(cwd);
-// console.log(manifestPath);
-
-// // await ensureDependency({ packageName: "lodash", manifest });
-
-// // await writeProjectManifest(manifest);
-// await $`echo done`;
 
 export async function getManifest(cwd: string) {
   const manifestPath = await findUp(

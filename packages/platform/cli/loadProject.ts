@@ -1,19 +1,19 @@
 /// <reference path="./async-memoize-one.d.ts" />
 
-import path from "node:path";
-import { getManifest } from "./toolchain.js";
-import { CORE_NAME } from "./constants.js";
+import * as path from "node:path";
+import { getManifest } from "./ensureDependency.js";
+import { CORE_NAME } from "@condu/core/constants.js";
 import {
   CONFIGURED,
   type ConfiguredRepoConfig,
   type RepoConfigWithInferredValues,
   type RepoPackageJson,
-} from "@repo/core/configTypes.js";
+} from "@condu/core/configTypes.js";
 import {
   getProjectDefinitionsFromConventionConfig,
   type WorkspaceProjectDefined,
 } from "./getProjectGlobsFromMoonConfig.js";
-import type PackageJson from "@repo/schema-types/schemas/packageJson.gen.js";
+import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
 import memoizeOne from "async-memoize-one";
 import type { ProjectManifest } from "@pnpm/types";
@@ -23,7 +23,7 @@ import {
   DEFAULT_PACKAGE_MANAGER,
   DEFAULT_SOURCE_EXTENSIONS,
 } from "./commands/apply/constants.js";
-import { getDefaultGitBranch } from "@repo/core/utils/getDefaultGitBranch.js";
+import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
 
 export interface LoadConfigOptions {
   startDir?: string;

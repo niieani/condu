@@ -1,5 +1,5 @@
 {
-  "name": "@repo/schema-types",
+  "name": "@condu/schema-types",
   "type": "module",
   "publishConfig": {
     "access": "public"

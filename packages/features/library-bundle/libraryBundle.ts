@@ -1,6 +1,7 @@
-import { defineFeature } from "@repo/core/defineFeature.js";
+import { defineFeature } from "@condu/core/defineFeature.js";
 import type { LibraryBundleConfig } from "./types.js";
-import path from "node:path";
+import * as path from "node:path";
+import { CORE_NAME } from "@condu/core/constants.js";
 
 export const libraryBundle = ({
   id,
@@ -48,7 +49,7 @@ export const libraryBundle = ({
         outDir,
       );
       const configExtension =
-        config.project.manifest.name === "toolchain" ? "ts" : "js";
+        config.project.manifest.name === CORE_NAME ? "ts" : "js";
 
       // TODO: consider using an esm transpiled webpack config with WEBPACK_CLI_FORCE_LOAD_ESM_CONFIG
       const configPathRelativeToPackage = `./.config/generated/webpack.config.cjs`;
@@ -89,7 +90,7 @@ export const libraryBundle = ({
                   }
                 : {}),
             },
-            // TODO: do we want these dependencies to be repo-global or per-package?
+            // TODO: do we want these dependencies to be condu-global or per-package?
             devDependencies: [
               "webpack",
               "webpack-cli",
@@ -101,7 +102,7 @@ export const libraryBundle = ({
               {
                 // TODO: use unique filename for each library bundle feature instance, need $id to be filename-safe
                 path: configPathRelativeToPackage,
-                content: `const sharedWebpackConfigFn = require('@repo-feature/library-bundle/webpack.config.cjs');
+                content: `const sharedWebpackConfigFn = require('@condu-feature/library-bundle/webpack.config.cjs');
 module.exports = async (env, argv) => {
   const sharedConfig = sharedWebpackConfigFn(env, argv);
   try {

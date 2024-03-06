@@ -1,11 +1,11 @@
 {
-  "name": "@repo-feature/vscode",
+  "name": "@condu-feature/vscode",
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@repo/core": "workspace:*",
+    "@condu/core": "workspace:*",
     "comment-json": "^4.2.3"
   }
 }

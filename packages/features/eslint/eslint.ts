@@ -1,4 +1,5 @@
-import { defineFeature } from "@repo/core/defineFeature.js";
+import { defineFeature } from "@condu/core/defineFeature.js";
+import { CORE_NAME } from "@condu/core/constants.js";
 
 export const eslint = ({}: {} = {}) =>
   defineFeature({
@@ -9,8 +10,8 @@ export const eslint = ({}: {} = {}) =>
           files: [
             {
               path: "eslint.config.js",
-              content: `import config from '@repo-feature/eslint/config.${
-                config.project.manifest.name === "toolchain" ? "ts" : "js"
+              content: `import config from '@condu-feature/eslint/config.${
+                config.project.manifest.name === CORE_NAME ? "ts" : "js"
               }';
 export default config;`,
             },
