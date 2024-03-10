@@ -1,9 +1,6 @@
 import { equals } from "remeda";
 import type { WorkspaceProjectDefined } from "./getProjectGlobsFromMoonConfig.js";
-import type {
-  Match,
-  ConventionMatch,
-} from "./commands/create/CreateCommand.js";
+import type { Match, ConventionMatch } from "./commands/create/create.js";
 
 export interface MatchOptions {
   partialPath: string;

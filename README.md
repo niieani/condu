@@ -1,6 +1,6 @@
-# project codename: repo
+# project codename: condu
 
-NOTE: the codename "repo" is not final and is likely to change.
+NOTE: the codename "condu" is not final and is likely to change.
 
 The un-template / un-boilerplate / un-scaffold / un-generator.
 Keep ALL of your project configuration up to date, and easily override it, using a single language.
@@ -23,9 +23,9 @@ Override only the parts you need to in your given project, and keep the rest up 
 Scaffolding seems great at first, but isn't good enough, because it's not maintainable.
 The ecosystem moves too fast, and there are no configuration management tools in the JavaScript ecosystem.
 
-`repo` fixes [this](https://twitter.com/WarrenInTheBuff/status/1672839156647575552) and [this](https://deno.com/blog/node-config-hell) and [this](https://www.youtube.com/watch?v=wYdnJPYFTIE), and [this](https://x.com/_swanson/status/1715073746073973203?s=61&t=JtRF6B8eIiof-jxZY_xABA).
+`condu` fixes [this](https://twitter.com/WarrenInTheBuff/status/1672839156647575552) and [this](https://deno.com/blog/node-config-hell) and [this](https://www.youtube.com/watch?v=wYdnJPYFTIE), and [this](https://x.com/_swanson/status/1715073746073973203?s=61&t=JtRF6B8eIiof-jxZY_xABA).
 
-`repo` is here to help out.
+`condu` is here to help out.
 
 Embrace convention over configuration, but allow for easy configuration overrides.
 
@@ -113,7 +113,7 @@ Embrace convention over configuration, but allow for easy configuration override
 
 ## API
 
-Just like VSCode plugins can "contribute" features, commands, settings, `repo` plugins can contribute features, tasks, files to `repo`. They can also use shared config scope to coordinate what they output.
+Just like VSCode plugins can "contribute" features, commands, settings, `condu` plugins can contribute features, tasks, files to `condu`. They can also use shared config scope to coordinate what they output.
 
 something like:
 
@@ -164,22 +164,23 @@ const gitignore = ({ ignore }: { ignore?: string[] } = {}) =>
 
 ## simple CLI to manage the repo
 
-alternative names:
+names ideas:
 
-- condu (with the CLI command: `co`)
+- condu (with shorter the CLI command: `co`)
+- repo
 - strata (the idea of layers or strata, relating to the project's feature-based architecture)
 - automi
 
 ```shell
-$ repo use test-jest test-eslint
+$ condu use test-jest test-eslint
 
 # use a customized version:
-$ repo use @niieani/jest @niieani/eslint
+$ condu use @niieani/jest @niieani/eslint
 
-$ repo use storybook
+$ condu use storybook
 
 # autogenerate config override file
-$ repo use test-jest --override
+$ condu use test-jest --override
 ```
 
 common config might need (optionally overridable) things like:
@@ -203,3 +204,11 @@ const config = {
 
 - Files named 'index' or 'main' are not too useful, prefer using real names (automation)
 - default exports are considered an anti-pattern due to complexities with ESM/CJS interop
+
+## How to setup in your project
+
+TODO: this should be automated by running `npx condu install`, which would generate a template config and run apply.
+
+1. add postinstall script: `test -f .config/condu.ts && yarn condu apply`
+2. if using yarn, add plugin
+3. configure features you'd like to use

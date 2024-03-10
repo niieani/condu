@@ -105,6 +105,7 @@ const writeFileFromDef = async ({
     !usedExistingContent
   ) {
     const manuallyChanged = previouslyWritten.manuallyChanged;
+    const isInteractive = process.stdin.isTTY;
     // this needs to happen sequentially, because we're prompting the user for input:
     return async () => {
       console.log(`Manual changes present in ${pathFromProjectDir}:`);
@@ -117,13 +118,16 @@ const writeFileFromDef = async ({
         "Do you want to overwrite the file? (y/n)",
       );
       rl.close();
-      const shouldOverwrite = match(rawAnswer)
-        .with(P.union("y", "Y", P.string.regex(/yes/i)), () => true)
-        .otherwise(() => false);
+      const shouldOverwrite =
+        isInteractive &&
+        match(rawAnswer)
+          .with(P.union("y", "Y", P.string.regex(/yes/i)), () => true)
+          .otherwise(() => false);
 
       if (shouldOverwrite) {
         return write({ targetPath, content, pathFromProjectDir });
       } else {
+        process.exitCode = 1;
         console.log(`Skipping: ${pathFromProjectDir}`);
         return {
           path: file.path,

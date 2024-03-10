@@ -33,12 +33,16 @@ MVP TODO List
 - [x] figure out webpack merging / a custom config for this repo specifically?
 - [x] added hooking for package.json generation, use it in the library feature to set the correct entry points
 - [x] trim the "dependencies" in published package.json based on the config
+- [x] auto-run 'apply' after package changes
+- [ ] how can we ensure that apply has been run before anything else?
+  - consider modifying package.json to add "preXYZ" to each script, that auto-runs apply
+    - maybe not the best idea, since user might be using pre-scripts already, or using scripts in other scripts (which would cause pre to be apply multiple times)
 - [ ] should we collocate per-package build config in the respective packages, or keep them global?
   - [ ] if yes, then how do we do it? `.config` folder per package?
   - [ ] decision: where do we keep local config files? are they centrally managed? do we use config identifiers in folders names to nest configs?
-- [ ] NEXT: some basic integration tests that use the built packages
+- [ ] CI & semantic-release or [Auto](https://github.com/intuit/auto) instead
+- [ ] some basic integration tests that use the built packages
   - what do I actually want to test here? ooh the release process!!!
-- [ ] NEXT: CI & semantic-release (use [Auto](https://github.com/intuit/auto) instead for mono-repo support)
 - [ ] basic any-config feature:
   - [ ] symlink all non-js files from .config to the root (e.g. for .env)
   - [ ] create dummy root .cjs files that require or .js/.mjs files that import their equivalent from .config

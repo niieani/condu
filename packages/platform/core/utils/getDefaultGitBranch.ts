@@ -25,7 +25,7 @@ export const getDefaultGitBranch_ = async (
     return defaultBranch;
   } catch (e) {
     console.warn(
-      `Unable to determine the default git branch. ${e}. Using "main" as the default.`,
+      `Unable to determine the default git branch: ${e}. Falling back to "main".`,
     );
     return "main";
   }
