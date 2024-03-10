@@ -15,17 +15,34 @@ interface Result {
 
 const summaryFileName = "about-the-projects-and-its-source-code.md";
 
+interface FeatureOptions {
+  ignore?: string[];
+  removeComments?: boolean;
+}
+
+interface SummarizerOptions extends FeatureOptions {
+  rootDir: string;
+  recursive?: boolean;
+}
+
+function removeSingleLineComments(input: string): string {
+  // Matches lines that start with optional whitespace followed by //, until the end of the line.
+  // Includes the newline character in the match to remove the whole line.
+  // The 'gm' flags ensure the pattern is applied across multiple lines and matches are made at the beginning of each line.
+  return input.replaceAll(/^\s*\/\/.*(\r?\n|$)/gm, "");
+}
+
 export const summarize = async ({
   rootDir,
   recursive = true,
-}: {
-  rootDir: string;
-  recursive?: boolean;
-}): Promise<string> => {
+  ignore = [],
+  removeComments = false,
+}: SummarizerOptions): Promise<string> => {
   const work: Promise<Result | undefined>[] = [];
   for await (const { directoryPath, entry } of walkDirectoryRecursively(
     rootDir,
     ({ entry }) =>
+      !ignore.includes(entry.name) &&
       entry.name !== "node_modules" &&
       !entry.name.startsWith(".") &&
       !/\.config\./.test(entry.name) &&
@@ -66,6 +83,9 @@ export const summarize = async ({
         );
         // Reduce consecutive newlines to a single newline and trim newlines at the start and end of the file
         content = content.replace(/\n{2,}/g, "\n").trim();
+        if (removeComments) {
+          content = removeSingleLineComments(content);
+        }
         if (!content) return;
 
         return {
@@ -102,7 +122,10 @@ export const summarize = async ({
   return summarized;
 };
 
-export const gptSummarizer = ({}: {} = {}) =>
+export const gptSummarizer = ({
+  ignore,
+  removeComments,
+}: FeatureOptions = {}) =>
   defineFeature({
     name: "gpt-summarizer",
     order: { priority: "end" },
@@ -117,12 +140,16 @@ export const gptSummarizer = ({}: {} = {}) =>
                 const summarized = await summarize({
                   rootDir: config.workspaceDir,
                   recursive: false,
+                  ignore,
+                  removeComments,
                 });
                 let fullSummary = `# Workspace Documentation\n${summarized}\n`;
                 fullSummary += "# Packages\n";
                 for (const { manifest } of packages) {
                   const summarized = await summarize({
                     rootDir: manifest.path,
+                    ignore,
+                    removeComments,
                   });
                   fullSummary += `## Package ${manifest.name}\n${summarized}\n`;
                 }

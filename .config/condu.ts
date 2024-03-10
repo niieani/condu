@@ -65,7 +65,10 @@ export default configure({
         "explorer.sortOrder": "foldersNestsFiles",
       },
     }),
-    gptSummarizer(),
+    gptSummarizer({
+      ignore: ["TODO.md", "CHANGELOG.md"],
+      removeComments: true,
+    }),
     gitignore({ ignore: [".swc/", ".idea/", ".env", ".env.*", "/brand/"] }),
   ],
 });
