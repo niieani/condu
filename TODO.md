@@ -75,6 +75,9 @@ MVP TODO List
 
 Later:
 
+- [ ] autodetect when certain tools are configured, but without a condu plugin, and suggest installation
+  - yarn - important because of the plugin
+  - others: typescript, gitignore, etc.
 - [ ] in apply: auto-create package.json when missing, but matches one of the conventions
 - [ ] automatically use features that are installed as devDependencies using the default parameters (maybe a flag can turn this off?)
 - [ ] multi-repo mode
