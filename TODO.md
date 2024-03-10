@@ -1,4 +1,4 @@
-MVP
+MVP TODO List
 
 - [x] moonrepo integration
 - [x] typescript
@@ -124,3 +124,7 @@ Later:
 - [ ] Product Hunt release
 - [ ] to get good quality TS errors for both .cjs and .mjs, a wild idea would be to just dump the generated .cts files for build, and then remove them after build. maybe this could be done in the memoryFS that's overlaid on top of the real FS, where we use memFS only for the project directory, and the rest is real FS? or better yet, exclude from real FS specifically all the renamed files only. Mocked FS and we just run real `tsc --build` inside of it?
 - [ ] write a generic TS helper for records/maps that contain arrays, it's a pain to always have to initialize them. or maybe have an initializer getOrSet or push/add() helper that pre-initializes it for you?
+
+Other ideas:
+
+- use build-time macros to enable generation of config files from JavaScript, essentially enable templating of scripts within condu configuration files
