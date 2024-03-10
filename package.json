@@ -60,12 +60,13 @@
     "start": "yarn condu",
     "condu": "bun packages/platform/cli/main.ts",
     "updateSchemas": "bun packages/platform/schema-types/utils/updateSchemas.ts",
-    "moon": "moon"
+    "moon": "moon",
+    "postinstall": "test -f .config/condu.ts && yarn condu apply"
   },
   "engines": {
     "node": "20.7.0"
   },
-  "packageManager": "yarn@4.1.0",
+  "packageManager": "yarn@4.1.1",
   "workspaces": [
     "packages/features/*",
     "packages/platform/*"

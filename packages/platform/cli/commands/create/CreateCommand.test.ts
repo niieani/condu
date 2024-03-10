@@ -20,7 +20,7 @@ import {
 import { loadRepoProject, type Project } from "../../loadProject.js";
 import { override, restore } from "swc-mockify/src/mockify.js";
 
-import { createCommand, createPackage } from "./CreateCommand.js";
+import { createCommand, createPackage } from "./create.js";
 import {
   type WorkspaceProjectDefined,
   getProjectDefinitionsFromConventionConfig,

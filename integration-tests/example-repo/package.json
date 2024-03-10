@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "condu": "condu"
+    "postinstall": "condu apply"
   },
   "keywords": [],
   "author": "",
@@ -28,10 +28,20 @@
       "@condu/cli": "file:../../build/packages/platform/cli",
       "@condu/core": "file:../../build/packages/platform/core",
       "@condu/schema-types": "file:../../build/packages/platform/schema-types",
-      "@condu/update-specifiers": "file:../../build/packages/platform/update-specifiers"
+      "@condu/update-specifiers": "file:../../build/packages/platform/update-specifiers",
+      "@condu/yarn-plugin": "file:../../build/packages/platform/yarn-plugin"
     }
   },
   "dependencies": {
     "@condu/cli": "file:../../build/packages/platform/cli"
-  }
+  },
+  "devDependencies": {
+    "@condu-feature/gitignore": "*",
+    "@condu-feature/typescript": "*",
+    "@condu/core": "*"
+  },
+  "workspacePath": ".",
+  "workspaces": [
+    "packages/*"
+  ]
 }

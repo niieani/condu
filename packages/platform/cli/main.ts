@@ -7,22 +7,30 @@ import * as path from "node:path";
 import { BuildTypeScriptCommand } from "./commands/BuildTypeScriptCommand.js";
 import { BeforeReleaseCommand } from "./commands/BeforeReleaseCommand.js";
 
-const [node, app, ...args] = process.argv;
-if (!node || !app) {
-  throw new Error(`Unable to determine binary name`);
+// export { apply } from "./commands/apply/apply.js";
+
+declare global {
+  var __yarnPlugin__: boolean;
 }
 
-const cli = new Cli({
-  binaryLabel: path.basename(app),
-  binaryName: `${path.basename(node)} ${path.basename(app)}`,
-  // binaryVersion: version,
-});
+if (!globalThis.__yarnPlugin__) {
+  const [node, app, ...args] = process.argv;
+  if (!node || !app) {
+    throw new Error(`Unable to determine binary name`);
+  }
 
-cli.register(ApplyCommand);
-cli.register(CreateCommand);
-cli.register(ExecCommand);
-cli.register(BuildTypeScriptCommand);
-cli.register(BeforeReleaseCommand);
-cli.register(Builtins.VersionCommand);
-cli.register(Builtins.HelpCommand);
-cli.runExit(args);
+  const cli = new Cli({
+    binaryLabel: path.basename(app),
+    binaryName: `${path.basename(node)} ${path.basename(app)}`,
+    // binaryVersion: version,
+  });
+
+  cli.register(ApplyCommand);
+  cli.register(CreateCommand);
+  cli.register(ExecCommand);
+  cli.register(BuildTypeScriptCommand);
+  cli.register(BeforeReleaseCommand);
+  cli.register(Builtins.VersionCommand);
+  cli.register(Builtins.HelpCommand);
+  cli.runExit(args);
+}

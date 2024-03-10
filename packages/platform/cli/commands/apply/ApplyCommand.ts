@@ -1,5 +1,4 @@
 import { Command, Option } from "clipanion";
-import { apply } from "./apply.js";
 // import { $ } from "./zx.js";
 
 export class ApplyCommand extends Command {
@@ -9,6 +8,7 @@ export class ApplyCommand extends Command {
 
   async execute() {
     // TODO: also run: ./node_modules/@moonrepo/cli/moon sync projects
+    const { apply } = await import("./apply.js");
     await apply();
     // await $`./node_modules/@moonrepo/cli/moon sync projects`;
 
