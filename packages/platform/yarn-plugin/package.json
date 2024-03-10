@@ -1,0 +1,15 @@
+{
+  "name": "@condu/yarn-plugin",
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@condu/cli": "workspace:*"
+  },
+  "devDependencies": {
+    "@yarnpkg/core": "^4.0.3",
+    "@yarnpkg/fslib": "^3.0.2"
+  }
+}

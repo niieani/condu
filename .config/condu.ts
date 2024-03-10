@@ -21,7 +21,11 @@ export default configure({
     sourceDir: ".",
   },
   features: [
-    yarn(),
+    yarn({
+      yarnrc: {
+        plugins: ["./packages/platform/yarn-plugin/index.cjs"],
+      },
+    }),
     typescript({
       tsconfig: {
         compilerOptions: {
