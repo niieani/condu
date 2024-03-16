@@ -18,6 +18,12 @@ export const lerna = ({}: {} = {}) =>
                 command: {
                   version: {
                     conventionalCommits: true,
+                    message: "chore(release): publish %s",
+                    // also update the "build" folder versions:
+                    syncDistVersion: true,
+                    // we will manually tag & push the version
+                    // gitTagVersion: false,
+                    // push: false,
                   },
                   publish: {
                     // instead of publishing the source directory,
