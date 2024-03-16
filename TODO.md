@@ -61,6 +61,35 @@
   - [duel](https://github.com/knightedcodemonkey/duel)
   - [specifier updating](https://github.com/knightedcodemonkey/specifier)
 
+## Bumping versions / releases
+
+Flow would have to be:
+
+- use separate tag for latest release: `latest` (or `prerelease`)
+  - derrived from `main` + applied all versions (+copied over CHANGELOGs) based on `latest` in all package.jsons
+- apply version bump with lerna
+- remove build config from .gitignore
+- build/prepare + commit + tag/release
+- push as `latest` tag
+
+Question: how does `auto` know what tags the PR had that was just merged?
+
+Alternatively, use release-please (?). Downside: no prereleases
+
+Or another system?
+
+- [changesets](https://github.com/changesets/changesets/blob/main/docs/intro-to-using-changesets.md)
+- [multi-semantic-release](https://github.com/anolilab/multi-semantic-release)
+- [semantic-release-monorepo](https://github.com/pmowrer/semantic-release-monorepo)
+- [nx plugin](https://github.com/jscutlery/semver#jscutlerysemver)
+- [beachball](https://microsoft.github.io/beachball/)
+- [release-it](https://github.com/release-it/release-it)
+- [semantic-release-yarn](https://github.com/hongaar/semantic-release-yarn)
+- [zx-bulk-release](https://github.com/semrel-extra/zx-bulk-release/)
+- [monodeploy](https://github.com/tophat/monodeploy)
+
+Maybe just stick to semantic-release for now so I'm unblocked for other projects??
+
 ## Later:
 
 - [ ] add validation for feature dependencies (e.g. "auto" feature depends on "lerna")
@@ -83,6 +112,7 @@
 - [ ] automatically use features that are installed as devDependencies using the default parameters (maybe a flag can turn this off?)
 - [ ] multi-repo mode
   - best of both worlds - monorepo for development and keeping tools in sync, single-repo management benefits (separate issues, PRs, etc.)
+    - see previous art: [meta](https://github.com/mateodelnorte/meta)
   - orchestrate multiple repos with a parent configuration repo
   - support GitHub: automatically create a repo when creating a new package
     - [ ] autoconfigure repo based on settings (e.g. enable/disable wiki, issues, etc.)
