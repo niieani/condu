@@ -17,6 +17,7 @@ export = function rc(): AutoRc {
         "npm",
         {
           exact: true,
+          subPackageChangelogs: false,
           // best not to set the deprecated 'publishFolder' here
           // instead configure 'publish.directory' in lerna.json
         } satisfies INpmConfig,
