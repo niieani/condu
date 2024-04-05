@@ -6,6 +6,6 @@
     "@condu/cli": "workspace:*",
     "@condu/core": "workspace:*",
     "@condu/schema-types": "workspace:*",
-    "@moonrepo/types": "^1.15.1"
+    "@moonrepo/types": "^1.16.1"
   }
 }

@@ -1,13 +1,9 @@
 {
-  "name": "@condu-feature/library-bundle",
+  "name": "@condu-feature/condu-packages",
   "license": "MIT",
   "type": "module",
-  "version": "0.0.0",
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-    "webpack": "^5.91.0"
   },
   "dependencies": {
     "@condu/core": "workspace:*"

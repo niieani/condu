@@ -1,5 +1,6 @@
 import { gitignore } from "@condu-feature/gitignore/gitignore.js";
 import { typescript } from "@condu-feature/typescript/typescript.js";
+import { condu } from "@condu-feature/condu-packages/conduPackages.js";
 import { moon } from "@condu-feature/moon/moon.js";
 import { auto } from "@condu-feature/auto/auto.js";
 import { moonCi } from "@condu-feature/ci-github-actions/moon.js";
@@ -34,6 +35,7 @@ export default configure({
         },
       },
     }),
+    condu(),
     libraryBundle({
       id: "cli",
       package: "@condu/cli",

@@ -171,7 +171,7 @@ export interface FeatureDefinition {
   };
 }
 
-interface Conventions {
+export interface Conventions {
   /** @default 'src' */
   sourceDir?: string;
   sourceExtensions?: string[];

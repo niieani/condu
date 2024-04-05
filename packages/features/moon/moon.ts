@@ -150,6 +150,12 @@ export const moon = ({
                     defaultBranch: config.git.defaultBranch,
                     ...workspace?.vcs,
                   },
+                  hasher: {
+                    ignorePatterns: [
+                      `${config.conventions.buildDir}/**`,
+                      ...(workspace?.hasher?.ignorePatterns ?? []),
+                    ],
+                  },
                 } satisfies Workspace,
               },
             ],

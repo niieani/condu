@@ -7,9 +7,19 @@ import type {
 } from "@moonrepo/types";
 import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
 import { mapValues, groupBy, uniq, partition } from "remeda";
-import type { FileDef, Effects, Task } from "@condu/core/configTypes.js";
+import type {
+  FileDef,
+  Effects,
+  Task,
+  Conventions,
+} from "@condu/core/configTypes.js";
 import { nonEmpty } from "@condu/core/utils/filter.js";
 // import { match } from "ts-pattern";
+
+type TasksByType = Record<
+  Task["type"],
+  [projectName: string, taskName: string][]
+>;
 
 // TODO: the way this should actually work is it should be a moonCi feature that contributes "ci" commands to state
 // then the Github Actions CI pulls those commands in
@@ -57,10 +67,7 @@ export const moonCi = ({}: {} = {}) =>
         config.project,
       ];
       const taskList = state.tasks;
-      const tasksByType: Record<
-        Task["type"],
-        [projectName: string, taskName: string][]
-      > = {
+      const tasksByType: TasksByType = {
         build: [],
         test: [],
         format: [],
@@ -105,20 +112,10 @@ export const moonCi = ({}: {} = {}) =>
                         // add in type-tasks:
                         // this currently depends on the order of the execution,
                         // we know that the workspace package will be last, so we'll have all the 'tasksByType' populated
-                        ...mapValues(
+                        ...getWorkspaceTasks({
                           tasksByType,
-                          (tasks): PartialTaskConfig =>
-                            // this groups all the tasks of the same type into a single task
-                            // so that all the features implementing the same task type (e.g. 'test') can be run in parallel
-                            ({
-                              // ~ is self-referencing task: https://moonrepo.dev/docs/concepts/target#self-
-                              deps: tasks.map(
-                                ([projectName, taskName]) =>
-                                  `${projectName}:${taskName}`,
-                              ),
-                              inputs: [],
-                            }),
-                        ),
+                          conventions: config.conventions,
+                        }),
                       },
               } satisfies Project,
             },
@@ -162,3 +159,40 @@ export const moonCi = ({}: {} = {}) =>
       };
     },
   });
+
+function getWorkspaceTasks({
+  tasksByType,
+  conventions,
+}: {
+  tasksByType: TasksByType;
+  conventions: Required<Conventions>;
+}): Record<string, PartialTaskConfig> {
+  const tasks = mapValues(
+    tasksByType,
+    (tasks, type): PartialTaskConfig =>
+      // this groups all the tasks of the same type into a single task
+      // so that all the features implementing the same task type (e.g. 'test') can be run in parallel
+      ({
+        // ~ is self-referencing task: https://moonrepo.dev/docs/concepts/target#self-
+        deps: tasks.map(
+          ([projectName, taskName]) => `${projectName}:${taskName}`,
+        ),
+        inputs: [],
+        ...(type === "publish" && { options: { runDepsInParallel: false } }),
+      }),
+  );
+
+  return {
+    ...tasks,
+    "build-tasks": tasks.build,
+    clean: {
+      command: `rm -rf ${conventions.buildDir} && echo done`,
+      options: { cache: false },
+    },
+    build: {
+      deps: ["~:clean", "~:build-tasks"],
+      inputs: [],
+      options: { runDepsInParallel: false },
+    },
+  };
+}

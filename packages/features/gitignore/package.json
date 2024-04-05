@@ -4,6 +4,6 @@
   "version": "0.0.0",
   "dependencies": {
     "@condu/core": "workspace:*",
-    "remeda": "^1.46.2"
+    "remeda": "^1.57.1"
   }
 }

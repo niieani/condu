@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "dependencies": {
     "async-memoize-one": "^1.1.7",
-    "fp-ts": "^2.16.2",
+    "fp-ts": "^2.16.5",
     "io-ts": "^2.2.21",
-    "remeda": "^1.46.2"
+    "remeda": "^1.57.1"
   },
   "devDependencies": {
     "node-fetch": "^3.3.2"

@@ -22,10 +22,11 @@ const presets = {
   "esm-first": esmFirstPreset,
 };
 
-// TODO: contribute a feature to vscode to enable:
+// TODO: make this feature contribute a to vscode feature to enable:
 // "typescript.tsserver.experimental.enableProjectDiagnostics": true
 // see https://github.com/microsoft/vscode/issues/13953
 
+// TODO: reference https://www.totaltypescript.com/tsconfig-cheat-sheet
 export const typescript = ({
   tsconfig,
   preset,
@@ -64,6 +65,7 @@ export const typescript = ({
                     target: "ESNext",
                     ...selectedPreset,
                     module: "NodeNext",
+                    moduleDetection: "force",
                     strict: true,
                     // we don't need to emit 'use strict' in the files
                     alwaysStrict: false,

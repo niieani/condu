@@ -137,6 +137,8 @@ module.exports = async (env, argv) => {
                     // "$workspaceRoot/yarn.lock",
                     // "$workspaceRoot/features/library-bundle/webpack.config.cjs",
                   ],
+                  // TODO: deps workaround due to https://github.com/moonrepo/moon/issues/1413
+                  deps: [`${config.project.manifest.name}:clean`],
                   options: {
                     cache: false,
                   },

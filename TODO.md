@@ -42,12 +42,14 @@
       - use `index.ts`, `main.ts` or `${packageName}.ts` if they exist (set camelCase or kebab-case in "conventions" - use it also for file name linting defaults)
 - [x] vscode auto-ignore generated files
 - [x] use https://www.npmjs.com/package/comment-json to keep the comments and only amend input if it exists
+- [x] fully fleshed out build step on CI (incl. prepare dependency)
 - [ ] should we collocate per-package build config in the respective packages, or keep them global?
   - [ ] if yes, then how do we do it? `.config` folder per package?
   - [ ] make decision: where do we keep local config files? are they centrally managed? do we use config identifiers in folders names to nest configs?
 - [ ] CI & semantic-release or [Auto](https://github.com/intuit/auto)
 - [ ] some basic integration tests that use the built packages
   - what do I actually want to test here? ooh the release process!!!
+  - inspiration: [zx-bulk-release](https://github.com/semrel-extra/zx-bulk-release/blob/b2a22a483a810be63e059bcbcb1db08289729809/src/test/js/integration.test.js)
 - [ ] "clean"/"default" feature? before build, we need to run apply and clean 'build' dir
 - [ ] add an 'init' command to create a new repo with config (or update existing one) from scratch
 - [ ] vitest feature
@@ -66,11 +68,25 @@
 Flow would have to be:
 
 - use separate tag for latest release: `latest` (or `prerelease`)
-  - derrived from `main` + applied all versions (+copied over CHANGELOGs) based on `latest` in all package.jsons
+  - derived from `main` + applied all versions (+copied over CHANGELOGs) based on `latest` in all package.jsons
 - apply version bump with lerna
-- remove build config from .gitignore
+- remove 'build' from .gitignore
 - build/prepare + commit + tag/release
 - push as `latest` tag
+
+Actually, the better CI flow:
+
+- apply versions to the `package.json`s
+  - use getLatestTaggedVersion from [zx-bulk-release](https://github.com/semrel-extra/zx-bulk-release/blob/b2a22a483a810be63e059bcbcb1db08289729809/src/main/js/processor/meta.js#L196-L210)
+- build/prepare
+- remove 'build' from .gitignore
+- `git add build`
+- run auto shipit -- to bump versions and release
+- ensure CI has concurrency 1 per branch/sha
+
+Notes:
+use a test NPM registry to test ([verdaccio](https://github.com/semrel-extra/zx-bulk-release/blob/b2a22a483a810be63e059bcbcb1db08289729809/verdaccio.config.yaml)).
+make sure that lerna has syncDistVersion enabled to also version the built packages
 
 Question: how does `auto` know what tags the PR had that was just merged?
 
@@ -92,8 +108,15 @@ Maybe just stick to semantic-release for now so I'm unblocked for other projects
 
 ## Later:
 
+- [ ] website
+  - inspiration: [tailwind](https://tailwindcss.com/) - make configs disappear and appear in a mock vscode/github UI?
+- [ ] add validation on CI to make sure no uncommitted files are left dangling after `condu apply` / `yarn` on CI
+- [ ] public library of patches to common dependencies (e.g. [graceful-fs](https://github.com/isaacs/node-graceful-fs/issues/245#issuecomment-2037699522))
 - [ ] add validation for feature dependencies (e.g. "auto" feature depends on "lerna")
   - maybe not dependencies, but see below - contributed state?
+- [ ] eslint additions
+  - [ ] ban `export let`
+- [ ] support rescript
 - [ ] add shared state for features (features can contribute to it and build on top of each other's state)
   - perhaps features contribute individual settings, like in vscode - providing a required schema - that way we could validate that the dependent state is valid
 - [ ] basic any-config feature:
