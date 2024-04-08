@@ -16,6 +16,12 @@ import { apply } from "./apply/apply.js";
 const DECLARATION_FILE_EXT_REGEXP = /\.d\.[cm]?ts$/;
 const TSCONFIG_LIKE_FILENAME_REGEXP = /tsconfig\..*\.json$/;
 
+/**
+ * Prepares the packages in 'build' directory for release:
+ * - Copies non-JS files from packages to the 'build' directory.
+ * - Ensures there is a LICENSE
+ * - Fills in package.json fields.
+ */
 export async function prepareBuildDirectoryPackages({
   projectDir,
   packageList,
@@ -211,6 +217,10 @@ export async function prepareBuildDirectoryPackages({
 const toCompareCase = (str: string) =>
   str.replace(/[^\dA-Za-z]/g, "").toLowerCase();
 
+/**
+ * If 'publishDependencies' are defined in the package.json,
+ * returns the new fields for the package.json to be published.
+ */
 function getReleaseDependencies(manifest: PackageJson) {
   const keepDependencies = Array.isArray(manifest["publishDependencies"])
     ? manifest["publishDependencies"]
@@ -277,7 +287,7 @@ export async function beforeReleasePipeline(input: {
   const srcDirName = config.conventions.sourceDir;
   const absBuildDir = path.join(projectDir, buildDirName);
 
-  await correctSourceMaps({ buildDir: absBuildDir });
+  // await correctSourceMaps({ buildDir: absBuildDir });
 
   await prepareBuildDirectoryPackages({
     projectDir,
@@ -290,9 +300,9 @@ export async function beforeReleasePipeline(input: {
   });
 
   // TODO: just run the command in parallel during build?
-  console.log(`Building remapped project...`);
-  await buildRemappedProject({
-    tsConfigFilePath: input.project ?? "tsconfig.json",
-    mappingPreset: input.preset === "ts-to-mts" ? "to-to-mts" : "ts-to-cts",
-  });
+  // console.log(`Building remapped project...`);
+  // await buildRemappedProject({
+  //   tsConfigFilePath: input.project ?? "tsconfig.json",
+  //   mappingPreset: input.preset === "ts-to-mts" ? "ts-to-mts" : "ts-to-cts",
+  // });
 }

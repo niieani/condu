@@ -134,15 +134,14 @@ module.exports = async (env, argv) => {
                   // TODO: source dir and config only?
                   inputs: [
                     "**/*",
-                    // "$workspaceRoot/yarn.lock",
-                    // "$workspaceRoot/features/library-bundle/webpack.config.cjs",
+                    // "/yarn.lock",
+                    // "/features/library-bundle/webpack.config.cjs",
                   ],
-                  // TODO: deps workaround due to https://github.com/moonrepo/moon/issues/1413
-                  deps: [`${config.project.manifest.name}:clean`],
-                  options: {
-                    cache: false,
-                  },
-                  // TODO: add inputs and outputs
+                  outputs: [
+                    `/${config.conventions.buildDir}/$projectSource/${builtEntryName}`,
+                    `/${config.conventions.buildDir}/$projectSource/${builtEntryName}.map`,
+                    `/${config.conventions.buildDir}/$projectSource/_build_/**/*`,
+                  ],
                   args: [
                     "build",
                     "--config",

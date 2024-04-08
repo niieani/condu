@@ -70,7 +70,13 @@ module.exports = (
     ...selectedConfig,
     output: {
       ...selectedConfig.output,
-      filename,
+      filename: (pathData) =>
+        pathData.chunk.name === "main" ? filename : "_build_/entries/[name].js",
+      chunkFilename: `_build_/chunks/[id].js`,
+      cssFilename: `_build_/css/[id].css`,
+      cssChunkFilename: `_build_/css/[id].css`,
+      assetModuleFilename: `_build_/assets/[hash][ext][query]`,
+      webassemblyModuleFilename: `_build_/wasm/[hash].module.wasm`,
       path: path.join(process.cwd(), outDir),
     },
     devtool: "source-map",

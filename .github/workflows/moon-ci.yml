@@ -8,6 +8,8 @@ jobs:
   ci:
     name: Moon CI
     runs-on: ubuntu-latest
+    env:
+      MOON_TOOLCHAIN_FORCE_GLOBALS: "true"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -17,6 +19,4 @@ jobs:
           node-version: 20.12.1
           cache: yarn
       - run: yarn install --immutable
-      - run: ./node_modules/@moonrepo/cli/moon ci
-        env:
-          MOON_TOOLCHAIN_FORCE_GLOBALS: "true"
+      - run: ./node_modules/@moonrepo/cli/moon ci :build

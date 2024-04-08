@@ -5,7 +5,6 @@ import {
   InMemoryFileSystemHost,
   TsConfigResolver,
   type FileSystemHost,
-  FileUtils,
 } from "@ts-morph/common";
 
 import * as path from "node:path";
@@ -46,7 +45,7 @@ type PrivateTsConfigResolver = Omit<
   _parseJsonConfigFileContent: () => ts.ParsedCommandLine;
 };
 
-const renameSpecifiers = async ({
+const buildTsWithRenamedSpecifiers = async ({
   tsConfigFilePath,
   fsExtensionMapping,
   emittedExtensionMapping,
@@ -413,7 +412,7 @@ const presets = {
     fsExtensionMapping: { ".ts": ".cts", ".js": ".cjs" },
     emittedExtensionMapping: { ".ts": ".cjs", ".js": ".cjs" },
   },
-  "to-to-mts": {
+  "ts-to-mts": {
     fsExtensionMapping: { ".ts": ".mts", ".js": ".mjs" },
     emittedExtensionMapping: { ".ts": ".mjs", ".js": ".mjs" },
   },
@@ -424,9 +423,9 @@ export const buildRemappedProject = async ({
   mappingPreset,
 }: {
   tsConfigFilePath: string;
-  mappingPreset: "ts-to-cts" | "to-to-mts";
+  mappingPreset: "ts-to-cts" | "ts-to-mts";
 }) =>
-  renameSpecifiers({
+  buildTsWithRenamedSpecifiers({
     tsConfigFilePath,
     ...presets[mappingPreset],
   });

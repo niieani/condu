@@ -38,6 +38,9 @@ export const moonCi = ({}: {} = {}) =>
           ci: {
             name: "Moon CI",
             "runs-on": "ubuntu-latest",
+            env: {
+              MOON_TOOLCHAIN_FORCE_GLOBALS: "true",
+            },
             steps: [
               {
                 uses: "actions/checkout@v4",
@@ -51,12 +54,7 @@ export const moonCi = ({}: {} = {}) =>
                 },
               },
               { run: `${config.node.packageManager.name} install --immutable` },
-              {
-                run: `./node_modules/@moonrepo/cli/moon ci`,
-                env: {
-                  MOON_TOOLCHAIN_FORCE_GLOBALS: "true",
-                },
-              },
+              { run: `./node_modules/@moonrepo/cli/moon ci :build` },
             ],
           },
         },
@@ -184,15 +182,15 @@ function getWorkspaceTasks({
 
   return {
     ...tasks,
-    "build-tasks": tasks.build,
+    // "build-tasks": tasks.build,
     clean: {
-      command: `rm -rf ${conventions.buildDir} && echo done`,
-      options: { cache: false },
+      command: `rm -rf ${conventions.buildDir}`,
+      options: { cache: false, runInCI: false },
     },
-    build: {
-      deps: ["~:clean", "~:build-tasks"],
-      inputs: [],
-      options: { runDepsInParallel: false },
-    },
+    // build: {
+    //   deps: ["~:clean", "~:build-tasks"],
+    //   inputs: [],
+    //   options: { runDepsInParallel: false },
+    // },
   };
 }
