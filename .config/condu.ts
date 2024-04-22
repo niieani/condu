@@ -51,11 +51,13 @@ export default configure({
     vscode({
       hideGeneratedFiles: false,
       suggestedConfig: {
-        "eslint.experimental.useFlatConfig": true,
         "eslint.ignoreUntitled": true,
         "eslint.useESLintClass": true,
-        "eslint.runtime": "./node_modules/.bin/tsx",
-        // "eslint.execArgv": ["--loader", "./node_modules/tsx/dist/loader.mjs"],
+        "eslint.execArgv": [
+          "--import",
+          // @ts-expect-error weird error
+          import.meta.resolve("tsx/esm").slice("file://".length),
+        ],
 
         "explorer.fileNesting.enabled": true,
         "explorer.fileNesting.expand": false,

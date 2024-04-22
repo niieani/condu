@@ -6,6 +6,6 @@
     "access": "public"
   },
   "dependencies": {
-    "json-schema-to-typescript": "patch:json-schema-to-typescript@npm%3A13.1.1#~/.yarn/patches/json-schema-to-typescript-npm-13.1.1-55a260b512.patch"
+    "json-schema-to-typescript": "^14.0.0"
   }
 }

@@ -8,6 +8,6 @@
   "dependencies": {
     "@condu/core": "workspace:*",
     "@condu/schema-types": "workspace:*",
-    "remeda": "^1.57.1"
+    "remeda": "^1.60.1"
   }
 }

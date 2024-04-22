@@ -5,27 +5,27 @@
   "dependencies": {
     "@condu/core": "workspace:*",
     "@condu/update-specifiers": "workspace:*",
-    "@pnpm/fetch": "^7.0.7",
+    "@pnpm/fetch": "^8.0.0",
     "@pnpm/logger": "^5.0.0",
-    "@pnpm/network.auth-header": "^2.2.1",
-    "@pnpm/npm-resolver": "^18.1.1",
-    "@pnpm/read-project-manifest": "^5.0.11",
-    "@pnpm/types": "^9.4.2",
-    "@pnpm/workspace.find-packages": "^1.1.12",
+    "@pnpm/network.auth-header": "^3.0.0",
+    "@pnpm/npm-resolver": "^19.0.0",
+    "@pnpm/read-project-manifest": "^6.0.0",
+    "@pnpm/types": "^10.0.0",
+    "@pnpm/workspace.find-packages": "^2.0.2",
     "async-memoize-one": "^1.1.7",
     "clipanion": "^4.0.0-rc.3",
     "comment-json": "^4.2.3",
     "print-diff": "^2.0.0",
-    "remeda": "^1.57.1",
+    "remeda": "^1.60.1",
     "sort-package-json": "^2.10.0",
     "spdx-license-list": "^6.9.0",
-    "ts-pattern": "^5.1.0",
+    "ts-pattern": "^5.1.1",
     "yaml": "^2.4.1",
-    "zx": "^7.2.3"
+    "zx": "^8.0.2"
   },
   "devDependencies": {
     "swc-mockify": "portal:../../../../mockify/swc-mockify",
-    "vitest": "^1.4.0"
+    "vitest": "^1.5.0"
   },
   "publishDependencies": [
     "@pnpm",

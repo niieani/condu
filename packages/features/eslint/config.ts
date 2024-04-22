@@ -9,9 +9,17 @@ import unicornPlugin from "eslint-plugin-unicorn";
 
 export default [
   {
+    // https://eslint.org/docs/latest/use/configure/configuration-files#globally-ignoring-files-with-ignores
+    ignores: [
+      "**/*.{gen,generated}.{js,jsx,ts,tsx,mjs}",
+      "build/**",
+      ".moon/**",
+      ".yarn/**",
+    ],
+  },
+  {
     // TODO: use files from config
     files: ["**/*.{js,jsx,ts,tsx}"],
-    ignores: ["**/*.{gen,generated}.{js,jsx,ts,tsx}"],
     plugins: {
       import: {
         ...importPlugin,
@@ -45,7 +53,7 @@ export default [
         "error",
         // TODO: make dynamic based on conventions
         {
-          devDependencies: ["**/*.test.js"],
+          devDependencies: ["**/*.test.{js,jsx,ts,tsx}", "**/.config/**"],
           autoFixVersionMapping: [
             ["@condu/", "workspace:*"],
             ["@condu-feature/", "workspace:*"],

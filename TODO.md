@@ -110,6 +110,7 @@ Maybe just stick to semantic-release for now so I'm unblocked for other projects
 
 - [ ] website
   - inspiration: [tailwind](https://tailwindcss.com/) - make configs disappear and appear in a mock vscode/github UI?
+- [ ] easy way to quickly create a new Github repo, already preconfigured, with initial commit, etc.
 - [ ] add validation on CI to make sure no uncommitted files are left dangling after `condu apply` / `yarn` on CI
 - [ ] public library of patches to common dependencies (e.g. [graceful-fs](https://github.com/isaacs/node-graceful-fs/issues/245#issuecomment-2037699522))
 - [ ] add validation for feature dependencies (e.g. "auto" feature depends on "lerna")
@@ -189,3 +190,7 @@ Maybe just stick to semantic-release for now so I'm unblocked for other projects
 Other ideas:
 
 - use build-time macros to enable generation of config files from JavaScript, essentially enable templating of scripts within condu configuration files
+
+Post-release:
+
+- https://gist.github.com/khalidx/1c670478427cc0691bda00a80208c8cc

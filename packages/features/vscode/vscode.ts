@@ -29,9 +29,11 @@ export const vscode = ({
                   getExistingContentAndMarkAsUserEditable: getExistingContent,
                 }) =>
                   // TODO: enable other plugins to contribute to this one, e.g. eslint:
-                  // "eslint.experimental.useFlatConfig": true,
                   // "eslint.ignoreUntitled": true,
                   // "eslint.useESLintClass": true,
+                  // and TypeScript:
+                  // "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+                  // "typescript.preferences.preferTypeOnlyAutoImports": true,
                   {
                     const existingContent =
                       ((await getExistingContent()) as VscodeSettingsWorkspace) ??
