@@ -559,9 +559,10 @@ __metadata:
   resolution: "@condu-feature/auto@workspace:packages/features/auto"
   dependencies:
     "@auto-it/core": "npm:^11.1.6"
-    "@condu/core": "workspace:*"
     "@types/env-ci": "npm:^3.1.4"
     "@types/signale": "npm:^1.4.7"
+  peerDependencies:
+    "@condu/core": "workspace:^*"
   languageName: unknown
   linkType: soft
 
@@ -569,17 +570,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@condu-feature/ci-github-actions@workspace:packages/features/ci-github-actions"
   dependencies:
-    "@condu/core": "workspace:*"
-    "@condu/schema-types": "workspace:*"
+    "@condu/schema-types": "workspace:^*"
     remeda: "npm:^1.60.1"
+  peerDependencies:
+    "@condu/core": "workspace:^*"
   languageName: unknown
   linkType: soft
 
 "@condu-feature/condu-packages@workspace:packages/features/condu-packages":
   version: 0.0.0-use.local
   resolution: "@condu-feature/condu-packages@workspace:packages/features/condu-packages"
-  dependencies:
-    "@condu/core": "workspace:*"
+  peerDependencies:
+    "@condu/core": "workspace:^*"
   languageName: unknown
   linkType: soft
 
@@ -587,7 +589,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@condu-feature/eslint@workspace:packages/features/eslint"
   peerDependencies:
-    "@condu/core": "workspace:*"
+    "@condu/core": "workspace:^*"
     "@typescript-eslint/eslint-plugin": 6.8.0
     "@typescript-eslint/parser": 6.8.0
     eslint-plugin-import: "*"
@@ -599,24 +601,25 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@condu-feature/gitignore@workspace:packages/features/gitignore"
   dependencies:
-    "@condu/core": "workspace:*"
     remeda: "npm:^1.60.1"
+  peerDependencies:
+    "@condu/core": "workspace:^*"
   languageName: unknown
   linkType: soft
 
 "@condu-feature/gpt-summarizer@workspace:packages/features/gpt-summarizer":
   version: 0.0.0-use.local
   resolution: "@condu-feature/gpt-summarizer@workspace:packages/features/gpt-summarizer"
-  dependencies:
-    "@condu/core": "workspace:*"
+  peerDependencies:
+    "@condu/core": "workspace:^*"
   languageName: unknown
   linkType: soft
 
 "@condu-feature/lerna@workspace:packages/features/lerna":
   version: 0.0.0-use.local
   resolution: "@condu-feature/lerna@workspace:packages/features/lerna"
-  dependencies:
-    "@condu/core": "workspace:*"
+  peerDependencies:
+    "@condu/core": "workspace:^*"
   languageName: unknown
   linkType: soft
 
@@ -624,8 +627,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@condu-feature/library-bundle@workspace:packages/features/library-bundle"
   dependencies:
-    "@condu/core": "workspace:*"
     webpack: "npm:^5.91.0"
+  peerDependencies:
+    "@condu/core": "workspace:^*"
   languageName: unknown
   linkType: soft
 
@@ -633,26 +637,26 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@condu-feature/moon@workspace:packages/features/moon"
   dependencies:
-    "@condu/cli": "workspace:*"
-    "@condu/core": "workspace:*"
-    "@condu/schema-types": "workspace:*"
+    "@condu/schema-types": "workspace:^*"
     "@moonrepo/types": "npm:^1.17.1"
+  peerDependencies:
+    "@condu/core": "workspace:^*"
   languageName: unknown
   linkType: soft
 
 "@condu-feature/typescript@workspace:packages/features/typescript":
   version: 0.0.0-use.local
   resolution: "@condu-feature/typescript@workspace:packages/features/typescript"
-  dependencies:
-    "@condu/core": "workspace:*"
+  peerDependencies:
+    "@condu/core": "workspace:^*"
   languageName: unknown
   linkType: soft
 
 "@condu-feature/vitest@workspace:packages/features/vitest":
   version: 0.0.0-use.local
   resolution: "@condu-feature/vitest@workspace:packages/features/vitest"
-  dependencies:
-    "@condu/core": "workspace:*"
+  peerDependencies:
+    "@condu/core": "workspace:^*"
   languageName: unknown
   linkType: soft
 
@@ -660,16 +664,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@condu-feature/vscode@workspace:packages/features/vscode"
   dependencies:
-    "@condu/core": "workspace:*"
     comment-json: "npm:^4.2.3"
+  peerDependencies:
+    "@condu/core": "workspace:^*"
   languageName: unknown
   linkType: soft
 
 "@condu-feature/yarn@workspace:packages/features/yarn":
   version: 0.0.0-use.local
   resolution: "@condu-feature/yarn@workspace:packages/features/yarn"
-  dependencies:
-    "@condu/core": "workspace:*"
+  peerDependencies:
+    "@condu/core": "workspace:^*"
   languageName: unknown
   linkType: soft
 
@@ -682,12 +687,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@condu/cli@workspace:*, @condu/cli@workspace:packages/platform/cli":
+"@condu/cli@workspace:^*, @condu/cli@workspace:packages/platform/cli":
   version: 0.0.0-use.local
   resolution: "@condu/cli@workspace:packages/platform/cli"
   dependencies:
-    "@condu/core": "workspace:*"
-    "@condu/update-specifiers": "workspace:*"
+    "@condu/update-specifiers": "workspace:^*"
     "@pnpm/fetch": "npm:^8.0.0"
     "@pnpm/logger": "npm:^5.0.0"
     "@pnpm/network.auth-header": "npm:^3.0.0"
@@ -707,10 +711,12 @@ __metadata:
     vitest: "npm:^1.5.0"
     yaml: "npm:^2.4.1"
     zx: "npm:^8.0.2"
+  peerDependencies:
+    "@condu/core": "workspace:^*"
   languageName: unknown
   linkType: soft
 
-"@condu/core@workspace:*, @condu/core@workspace:packages/platform/core":
+"@condu/core@workspace:packages/platform/core":
   version: 0.0.0-use.local
   resolution: "@condu/core@workspace:packages/platform/core"
   dependencies:
@@ -722,7 +728,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@condu/schema-types@workspace:*, @condu/schema-types@workspace:packages/platform/schema-types":
+"@condu/schema-types@workspace:^*, @condu/schema-types@workspace:packages/platform/schema-types":
   version: 0.0.0-use.local
   resolution: "@condu/schema-types@workspace:packages/platform/schema-types"
   dependencies:
@@ -730,13 +736,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@condu/update-specifiers@workspace:*, @condu/update-specifiers@workspace:packages/platform/update-specifiers":
+"@condu/update-specifiers@workspace:^*, @condu/update-specifiers@workspace:packages/platform/update-specifiers":
   version: 0.0.0-use.local
   resolution: "@condu/update-specifiers@workspace:packages/platform/update-specifiers"
   dependencies:
-    "@condu/core": "workspace:*"
     "@ts-morph/common": "npm:^0.23.0"
     ts-morph: "npm:^22.0.0"
+  peerDependencies:
+    "@condu/core": "workspace:^*"
   languageName: unknown
   linkType: soft
 
@@ -744,7 +751,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@condu/yarn-plugin@workspace:packages/platform/yarn-plugin"
   dependencies:
-    "@condu/cli": "workspace:*"
+    "@condu/cli": "workspace:^*"
     "@yarnpkg/core": "npm:^4.0.3"
     "@yarnpkg/fslib": "npm:^3.0.2"
   languageName: unknown

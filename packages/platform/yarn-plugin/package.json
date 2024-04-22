@@ -7,7 +7,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@condu/cli": "workspace:*"
+    "@condu/cli": "workspace:^*"
   },
   "devDependencies": {
     "@yarnpkg/core": "^4.0.3",

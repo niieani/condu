@@ -47,6 +47,7 @@ export const typescript = ({
       return {
         effects: [
           {
+            devDependencies: ["typescript"],
             tasks: [
               {
                 type: "build",

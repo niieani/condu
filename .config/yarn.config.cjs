@@ -12,11 +12,14 @@ module.exports = defineConfig({
     const workspaces = Yarn.workspaces();
     for (const workspace of workspaces) {
       if (!workspace.ident) continue;
-      for (const dep of Yarn.dependencies({ ident: workspace.ident })) {
+      for (const dep of Yarn.dependencies({ ident: workspace.ident, type: 'dependencies' })) {
         // console.log(
         //   `would update ${dep.ident}@${dep.range} in ${dep.workspace.ident}`,
         // );
-        dep.update(`workspace:*`);
+        dep.update(`workspace:^*`);
+      }
+      for (const dep of Yarn.dependencies({ ident: workspace.ident, type: 'peerDependencies' })) {
+        dep.update(`workspace:^*`);
       }
     }
 
