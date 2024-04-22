@@ -6,10 +6,10 @@
   "publishConfig": {
     "access": "public"
   },
+  "peerDependencies": {
+    "@condu/core": "workspace:^*"
+  },
   "devDependencies": {
     "webpack": "^5.91.0"
-  },
-  "dependencies": {
-    "@condu/core": "workspace:*"
   }
 }

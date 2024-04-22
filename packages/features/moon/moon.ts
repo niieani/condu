@@ -9,7 +9,7 @@ import type {
 // import type Toolchain from "./schemas/toolchain.js";
 // import type Workspace from "./schemas/workspace.js";
 import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
-import { getMoonWorkspaceProjectsFromConventionConfig } from "@condu/cli/getProjectGlobsFromMoonConfig.js";
+import { getMoonWorkspaceProjectsFromConventionConfig } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
 
 // TODO: add opinionated defaults for toolchain and workspace
 // TODO: use a shared config property for typescript, etc.

@@ -1,4 +1,4 @@
-import type { WorkspaceProjectDefined } from "../../getProjectGlobsFromMoonConfig.js";
+import type { WorkspaceProjectDefined } from "../../../core/utils/getProjectGlobsFromMoonConfig.js";
 import { loadRepoProject } from "../../loadProject.js";
 import * as fs from "node:fs/promises";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";

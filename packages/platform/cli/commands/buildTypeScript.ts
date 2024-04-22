@@ -1,11 +1,11 @@
 import * as path from "node:path";
 import { correctSourceMaps } from "@condu/core/utils/correctSourceMaps.js";
-import { buildRemappedProject } from "@condu/update-specifiers/main.js";
+import { buildRemappedProject, type TypeScriptPipelinePreset } from "@condu/update-specifiers/main.js";
 import { apply } from "./apply/apply.js";
 
 export async function buildTypeScriptPipeline(input: {
   project?: string;
-  preset?: string;
+  preset?: TypeScriptPipelinePreset;
 }) {
   const applyResult = await apply();
   if (!applyResult) {

@@ -5,7 +5,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
+  "devDependencies": {
     "json-schema-to-typescript": "^14.0.0"
   }
 }

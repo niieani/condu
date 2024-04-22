@@ -5,7 +5,7 @@ export const condu = ({}: {} = {}) =>
   defineFeature({
     name: "condu",
     actionFn: (config, state) => {
-      const workspaceName = config.project.manifest.name;
+      const isInternalCondu = config.project.manifest.name === CORE_NAME;
       return {
         effects: [
           {
@@ -15,8 +15,11 @@ export const condu = ({}: {} = {}) =>
                 name: "prepare-package",
                 definition: {
                   // TODO: add configurability/arguments
-                  command: `${config.node.packageManager.name} run ${CORE_NAME} before-release`,
-                  deps: [`${workspaceName}:tsc-project`],
+                  command: `${
+                    isInternalCondu
+                      ? `${config.node.packageManager.name} run `
+                      : ""
+                  }${CORE_NAME} before-release`,
                 },
               },
             ],

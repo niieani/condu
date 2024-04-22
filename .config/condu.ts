@@ -35,7 +35,7 @@ export default configure({
         },
       },
     }),
-    // condu(),
+    condu(),
     libraryBundle({
       id: "cli",
       package: "@condu/cli",

@@ -1,3 +1,4 @@
+import { CORE_NAME } from "@condu/core/constants.js";
 import { defineFeature } from "@condu/core/defineFeature.js";
 import type TSConfig from "@condu/schema-types/schemas/tsconfig.gen.js";
 import * as path from "node:path";
@@ -5,7 +6,6 @@ import * as path from "node:path";
 const commonJsFirstPreset = {
   module: "CommonJS",
   moduleResolution: "Node",
-  verbatimModuleSyntax: true,
   esModuleInterop: true,
 } satisfies TSConfig["compilerOptions"];
 
@@ -13,7 +13,6 @@ const esmFirstPreset = {
   module: "NodeNext",
   // most recommended way, because it's compatible with most tools (requires .js imports)
   moduleResolution: "NodeNext",
-  verbatimModuleSyntax: true,
   // esModuleInterop: false,
 } satisfies TSConfig["compilerOptions"];
 
@@ -29,7 +28,7 @@ const presets = {
 // TODO: reference https://www.totaltypescript.com/tsconfig-cheat-sheet
 export const typescript = ({
   tsconfig,
-  preset,
+  preset = "esm-first",
 }: {
   tsconfig?: TSConfig;
   preset?: "commonjs-first" | "esm-first";
@@ -38,21 +37,28 @@ export const typescript = ({
     name: "typescript",
     order: { priority: "beginning" },
     actionFn: (config, state) => {
+      const isInternalCondu = config.project.manifest.name === CORE_NAME;
       // TODO: explain pros and cons of composite projects
       // cons: slower, more memory, no incremental builds
       // pros: more responsive to changes in other projects, auto-import suggestions from other projects
       const isComposite =
         config.projects && tsconfig?.compilerOptions?.composite !== false;
-      const selectedPreset = presets[preset ?? "esm-first"];
+      const selectedPreset = presets[preset];
       return {
         effects: [
           {
             tasks: [
               {
                 type: "build",
-                name: "tsc-project",
+                name: "typescript",
                 definition: {
-                  command: "tsc --project tsconfig.json",
+                  command: `${
+                    isInternalCondu
+                      ? `${config.node.packageManager.name} run `
+                      : ""
+                  }${CORE_NAME} tsc --preset ${
+                    preset === "esm-first" ? "ts-to-mts" : "ts-to-cjs"
+                  }`,
                 },
               },
             ],

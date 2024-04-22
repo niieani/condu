@@ -24,7 +24,7 @@ import { createCommand, createPackage } from "./create.js";
 import {
   type WorkspaceProjectDefined,
   getProjectDefinitionsFromConventionConfig,
-} from "../../getProjectGlobsFromMoonConfig.js";
+} from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
 // import { createCommand } from "./CreateCommand.js";
 
 describe("createCommand", () => {

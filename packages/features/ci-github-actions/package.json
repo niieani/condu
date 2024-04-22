@@ -6,8 +6,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@condu/core": "workspace:*",
     "@condu/schema-types": "workspace:*",
     "remeda": "^1.60.1"
+  },
+  "peerDependencies": {
+    "@condu/core": "workspace:^*"
   }
 }

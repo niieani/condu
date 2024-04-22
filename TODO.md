@@ -43,6 +43,9 @@
 - [x] vscode auto-ignore generated files
 - [x] use https://www.npmjs.com/package/comment-json to keep the comments and only amend input if it exists
 - [x] fully fleshed out build step on CI (incl. prepare dependency)
+- [ ] pnpm feature
+- [ ] fix the CLI command displayed (instead of "bun main.bundle.js") + add help
+- [ ] better support for making '@condu/core' a peerDependency
 - [ ] should we collocate per-package build config in the respective packages, or keep them global?
   - [ ] if yes, then how do we do it? `.config` folder per package?
   - [ ] make decision: where do we keep local config files? are they centrally managed? do we use config identifiers in folders names to nest configs?
@@ -115,6 +118,7 @@ Maybe just stick to semantic-release for now so I'm unblocked for other projects
 - [ ] public library of patches to common dependencies (e.g. [graceful-fs](https://github.com/isaacs/node-graceful-fs/issues/245#issuecomment-2037699522))
 - [ ] add validation for feature dependencies (e.g. "auto" feature depends on "lerna")
   - maybe not dependencies, but see below - contributed state?
+- [ ] clean up or write to console a list of devDependencies that should be removed once a feature is removed/disabled
 - [ ] eslint additions
   - [ ] ban `export let`
 - [ ] support rescript

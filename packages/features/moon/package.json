@@ -3,9 +3,10 @@
   "type": "module",
   "version": "0.0.0",
   "dependencies": {
-    "@condu/cli": "workspace:*",
-    "@condu/core": "workspace:*",
-    "@condu/schema-types": "workspace:*",
+    "@condu/schema-types": "workspace:^*",
     "@moonrepo/types": "^1.17.1"
+  },
+  "peerDependencies": {
+    "@condu/core": "workspace:^*"
   }
 }

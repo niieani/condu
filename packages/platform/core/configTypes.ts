@@ -1,5 +1,5 @@
 import type { PartialProjectConfig, PartialTaskConfig } from "@moonrepo/types";
-import type { WorkspaceProjectsConvention } from "@condu/cli/getProjectGlobsFromMoonConfig.js";
+import type { WorkspaceProjectsConvention } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import type { Pattern } from "ts-pattern";
 import type { Project } from "@condu/cli/loadProject.js";

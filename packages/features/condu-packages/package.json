@@ -5,7 +5,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
-    "@condu/core": "workspace:*"
-  }
+  "peerDependencies": {
+    "@condu/core": "workspace:^*"
+  },
+  "publishDependencies": []
 }

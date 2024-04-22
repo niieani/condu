@@ -6,8 +6,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@condu/core": "workspace:*",
     "@ts-morph/common": "^0.23.0",
     "ts-morph": "^22.0.0"
+  },
+  "peerDependencies": {
+    "@condu/core": "workspace:^*"
   }
 }

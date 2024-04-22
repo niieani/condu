@@ -3,8 +3,7 @@
   "type": "module",
   "version": "0.0.0",
   "dependencies": {
-    "@condu/core": "workspace:*",
-    "@condu/update-specifiers": "workspace:*",
+    "@condu/update-specifiers": "workspace:^*",
     "@pnpm/fetch": "^8.0.0",
     "@pnpm/logger": "^5.0.0",
     "@pnpm/network.auth-header": "^3.0.0",
@@ -27,8 +26,12 @@
     "swc-mockify": "portal:../../../../mockify/swc-mockify",
     "vitest": "^1.5.0"
   },
+  "peerDependencies": {
+    "@condu/core": "workspace:^*"
+  },
   "publishDependencies": [
     "@pnpm",
+    "@condu",
     "spdx-license-list"
   ]
 }

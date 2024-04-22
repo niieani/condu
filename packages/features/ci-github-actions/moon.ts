@@ -184,7 +184,7 @@ function getWorkspaceTasks({
     ...tasks,
     // "build-tasks": tasks.build,
     clean: {
-      command: `rm -rf ${conventions.buildDir}`,
+      command: `rm -rf ${conventions.buildDir} .moon/cache/states`,
       options: { cache: false, runInCI: false },
     },
     // build: {

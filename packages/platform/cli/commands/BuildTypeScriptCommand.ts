@@ -1,3 +1,4 @@
+import type { TypeScriptPipelinePreset } from "@condu/update-specifiers/main.js";
 import { Command, Option } from "clipanion";
 import childProcess from "node:child_process";
 
@@ -27,7 +28,7 @@ export class BuildTypeScriptCommand extends Command {
 
   async execute() {
     let project: string | undefined;
-    let preset: string | undefined;
+    let preset: TypeScriptPipelinePreset | undefined;
     let next: "project" | "preset" | undefined;
     const tscOpts = [];
 
@@ -37,7 +38,7 @@ export class BuildTypeScriptCommand extends Command {
         continue;
       }
       if (next === "preset") {
-        preset = opt;
+        preset = opt !== "ts-to-cts" ? "ts-to-mts" : "ts-to-cts";
         next = undefined;
         continue;
       }
@@ -63,6 +64,7 @@ export class BuildTypeScriptCommand extends Command {
     if (tsc.status !== 0) {
       throw new Error(`tsc exited with status code ${tsc.status}`);
     }
+    console.log("tsc built");
     const { buildTypeScriptPipeline } = await import("./buildTypeScript.js");
     await buildTypeScriptPipeline({ project, preset });
   }

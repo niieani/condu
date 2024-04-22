@@ -63,9 +63,11 @@ module.exports = (
       const { request, context, getResolve } = data;
       const externals = [
         /^@pnpm\/.*/,
+        /^@condu\/.*/,
         /^node:/,
         "typescript",
         "@ts-morph/common",
+        'ts-morph',
         "spdx-license-list",
         "graceful-fs",
         "fs-extra",

@@ -418,12 +418,14 @@ const presets = {
   },
 } as const;
 
+export type TypeScriptPipelinePreset = keyof typeof presets;
+
 export const buildRemappedProject = async ({
   tsConfigFilePath,
   mappingPreset,
 }: {
   tsConfigFilePath: string;
-  mappingPreset: "ts-to-cts" | "ts-to-mts";
+  mappingPreset: TypeScriptPipelinePreset;
 }) =>
   buildTsWithRenamedSpecifiers({
     tsConfigFilePath,

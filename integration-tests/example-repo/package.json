@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "condu": "condu",
     "postinstall": "condu apply"
   },
   "keywords": [],
@@ -14,6 +15,7 @@
     "overrides": {
       "@condu-feature/auto": "file:../../build/packages/features/auto",
       "@condu-feature/ci-github-actions": "file:../../build/packages/features/ci-github-actions",
+      "@condu-feature/condu-packages": "file:../../build/packages/features/condu-packages",
       "@condu-feature/eslint": "file:../../build/packages/features/eslint",
       "@condu-feature/gitignore": "file:../../build/packages/features/gitignore",
       "@condu-feature/gpt-summarizer": "file:../../build/packages/features/gpt-summarizer",
@@ -33,12 +35,12 @@
     }
   },
   "dependencies": {
-    "@condu/cli": "file:../../build/packages/platform/cli"
+    "@condu/cli": "file:../../build/packages/platform/cli@0.0.0"
   },
   "devDependencies": {
-    "@condu-feature/gitignore": "*",
-    "@condu-feature/typescript": "*",
-    "@condu/core": "*"
+    "@condu-feature/gitignore": "file:../../build/packages/features/gitignore@0.0.0",
+    "@condu-feature/typescript": "file:../../build/packages/features/typescript@0.0.0",
+    "@condu/core": "file:../../build/packages/platform/core@0.0.0"
   },
   "workspacePath": ".",
   "workspaces": [

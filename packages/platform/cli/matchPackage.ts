@@ -1,5 +1,5 @@
 import { equals } from "remeda";
-import type { WorkspaceProjectDefined } from "./getProjectGlobsFromMoonConfig.js";
+import type { WorkspaceProjectDefined } from "../core/utils/getProjectGlobsFromMoonConfig.js";
 import type { Match, ConventionMatch } from "./commands/create/create.js";
 
 export interface MatchOptions {

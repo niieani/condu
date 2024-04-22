@@ -12,7 +12,7 @@ import {
 import {
   getProjectDefinitionsFromConventionConfig,
   type WorkspaceProjectDefined,
-} from "./getProjectGlobsFromMoonConfig.js";
+} from "../core/utils/getProjectGlobsFromMoonConfig.js";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
 import memoizeOne from "async-memoize-one";

@@ -6,7 +6,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@condu/core": "workspace:*",
     "comment-json": "^4.2.3"
+  },
+  "peerDependencies": {
+    "@condu/core": "workspace:^*"
   }
 }

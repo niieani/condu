@@ -1,0 +1,11 @@
+.DS_Store
+node_modules
+/.config/.cache/
+/build/
+# typescript:
+/tsconfig.options.json
+/tsconfig.json
+/packages/*/tsconfig.json
+# custom ignore patterns:
+.env
+.env.*
