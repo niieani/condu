@@ -83,7 +83,7 @@ Actually, the better CI flow:
   - use getLatestTaggedVersion from [zx-bulk-release](https://github.com/semrel-extra/zx-bulk-release/blob/b2a22a483a810be63e059bcbcb1db08289729809/src/main/js/processor/meta.js#L196-L210)
 - build/prepare
 - remove 'build' from .gitignore (`condu apply --publish` ?)
-- `git add build`
+- `git add build` & commit
 - run auto shipit -- to bump versions and release
 - ensure CI has concurrency 1 per branch/sha
 
