@@ -145,6 +145,7 @@ export async function prepareBuildDirectoryPackages({
     const newPackageJson: PackageJson = {
       ...manifest,
       ...dependencyManifestOverride,
+      version: project.manifest.version ?? "0.0.0",
       publishConfig: {
         // access: "public",
         registry: project.config.publish?.registry,
