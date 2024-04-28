@@ -4,6 +4,10 @@ import { Command, Option } from "clipanion";
 export class ApplyCommand extends Command {
   static override paths = [["apply"]];
 
+  static override usage = Command.Usage({
+    description: "Apply the latest changes to the project by creating or modifying configuration files.",
+  });
+
   // name = Option.String();
 
   async execute() {

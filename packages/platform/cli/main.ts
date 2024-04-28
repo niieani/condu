@@ -3,9 +3,10 @@ import { Cli, Builtins } from "clipanion";
 import { ApplyCommand } from "./commands/apply/ApplyCommand.js";
 import { CreateCommand } from "./commands/create/CreateCommand.js";
 import { ExecCommand } from "./commands/ExecCommand.js";
-import * as path from "node:path";
 import { BuildTypeScriptCommand } from "./commands/BuildTypeScriptCommand.js";
 import { BeforeReleaseCommand } from "./commands/BeforeReleaseCommand.js";
+import * as path from "node:path";
+import { CORE_NAME } from "@condu/core/constants.js";
 
 // export { apply } from "./commands/apply/apply.js";
 
@@ -20,8 +21,8 @@ if (!globalThis.__yarnPlugin__) {
   }
 
   const cli = new Cli({
-    binaryLabel: path.basename(app),
-    binaryName: `${path.basename(node)} ${path.basename(app)}`,
+    binaryLabel: CORE_NAME,
+    binaryName: `${path.basename(node)} ${CORE_NAME}`,
     // binaryVersion: version,
   });
 

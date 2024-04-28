@@ -1,4 +1,4 @@
-import { equals } from "remeda";
+import { isDeepEqual } from "remeda";
 import type { WorkspaceProjectDefined } from "../core/utils/getProjectGlobsFromMoonConfig.js";
 import type { Match, ConventionMatch } from "./commands/create/create.js";
 
@@ -106,7 +106,7 @@ export function getConventionMatches({
     const pathPartsToMatch = pathParts.slice(0, -1);
     const globPartsToMatch = globParts.slice(-pathPartsToMatch.length - 1, -1);
 
-    if (equals(pathPartsToMatch, globPartsToMatch)) {
+    if (isDeepEqual(pathPartsToMatch, globPartsToMatch)) {
       return [
         {
           convention,

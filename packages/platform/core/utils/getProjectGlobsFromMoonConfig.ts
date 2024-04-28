@@ -3,7 +3,11 @@ import type {
   PartialWorkspaceProjectsConfig,
 } from "@moonrepo/types";
 
-interface ParentDirectoryProjectConvention {
+interface ProjectConventionConfig {
+  private?: boolean
+}
+
+interface ParentDirectoryProjectConvention extends ProjectConventionConfig {
   /**
    * defines how the name should be created from the project directory name.
    * '*' in the string refers to the project directory name
@@ -18,7 +22,7 @@ interface ParentDirectoryProjectConvention {
   parentPath: string;
 }
 
-interface ExplicitPathProjectConvention {
+interface ExplicitPathProjectConvention extends ProjectConventionConfig {
   path: string;
   name?: string;
 }

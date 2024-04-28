@@ -259,8 +259,6 @@ function getReleaseDependencies(manifest: PackageJson) {
 
 export async function beforeReleasePipeline(input: {
   target?: string;
-  project?: string;
-  preset?: string;
   packages: string[];
 }) {
   const applyResult = await apply();

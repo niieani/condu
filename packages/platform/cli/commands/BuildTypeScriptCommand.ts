@@ -24,6 +24,10 @@ import childProcess from "node:child_process";
 export class BuildTypeScriptCommand extends Command {
   static override paths = [["tsc"]];
 
+  static override usage = Command.Usage({
+    description: "Build the project using TypeScript, additionally creating mts/cts versions of the code.",
+  });
+
   opts = Option.Proxy();
 
   async execute() {

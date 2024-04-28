@@ -3,11 +3,11 @@ import { Command, Option } from "clipanion";
 export class BeforeReleaseCommand extends Command {
   static override paths = [["before-release"]];
 
-  // partialPath = Option.String({ required: true });
-  // name = Option.String("--as");
+  static override usage = Command.Usage({
+    description: "Prepare the packages for release by generating their respective package.json files.",
+  });
+
   target = Option.String("--target");
-  project = Option.String("--project,-p");
-  preset = Option.String("--preset");
   packages = Option.Rest();
 
   async execute() {

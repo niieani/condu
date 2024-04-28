@@ -17,6 +17,11 @@ export default configure({
   projects: [
     { parentPath: "packages/features", nameConvention: "@condu-feature/*" },
     { parentPath: "packages/platform", nameConvention: "@condu/*" },
+    {
+      parentPath: "packages/test",
+      nameConvention: "@condu-test/*",
+      private: true,
+    },
   ],
   conventions: {
     sourceDir: ".",

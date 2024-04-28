@@ -204,7 +204,8 @@ export interface RepoConfig {
   conventions?: Conventions;
 }
 
-export const CONFIGURED = Symbol.for("Configured");
+// export const CONFIGURED = Symbol.for("Configured");
+export const CONFIGURED = "__configured__";
 
 export interface ConfiguredRepoConfig extends RepoConfig {
   [CONFIGURED]: true;

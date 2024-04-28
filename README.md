@@ -2,6 +2,8 @@
 
 NOTE: the codename "condu" is not final and is likely to change.
 
+One config to rule them all.
+
 Configuration as code. Think about condu as terraform for your repository configuration.
 
 The un-template / un-boilerplate / un-scaffold / un-generator.

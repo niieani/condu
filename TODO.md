@@ -82,7 +82,7 @@ Actually, the better CI flow:
 - apply versions to the `package.json`s
   - use getLatestTaggedVersion from [zx-bulk-release](https://github.com/semrel-extra/zx-bulk-release/blob/b2a22a483a810be63e059bcbcb1db08289729809/src/main/js/processor/meta.js#L196-L210)
 - build/prepare
-- remove 'build' from .gitignore
+- remove 'build' from .gitignore (`condu apply --publish` ?)
 - `git add build`
 - run auto shipit -- to bump versions and release
 - ensure CI has concurrency 1 per branch/sha
@@ -94,6 +94,7 @@ make sure that lerna has syncDistVersion enabled to also version the built packa
 Question: how does `auto` know what tags the PR had that was just merged?
 
 Alternatively, use release-please (?). Downside: no prereleases
+Could also do changesets?
 
 Or another system?
 
