@@ -4,10 +4,10 @@ import * as fs from "node:fs/promises";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import sortPackageJson from "sort-package-json";
 import * as path from "node:path";
-import { $ } from "../../zx.js";
 import { cd } from "zx";
 import { getSingleMatch, type MatchOptions } from "../../matchPackage.js";
 import type { CommandContext } from "./CreateCommand.js";
+import childProcess from "node:child_process";
 
 // const gitUser = (await $`git config user.name`).stdout.trim();
 // const gitEmail = (await $`git config user.email`).stdout.trim();
@@ -85,6 +85,9 @@ export async function createPackage({
     await fs.mkdir(modulePath, { recursive: true });
   }
 
+  const convention = "convention" in match ? match.convention : undefined;
+  const isPrivate = convention?.private;
+
   const packageJson: PackageJson = sortPackageJson({
     name: match.name,
     description,
@@ -93,9 +96,9 @@ export async function createPackage({
     author: manifest.author,
     license: manifest.license,
     contributors: manifest.contributors,
-    publishConfig: {
-      access: "public",
-    },
+    ...(isPrivate
+      ? { private: isPrivate }
+      : { publishConfig: { access: "public" } }),
     ...existingPackageJson,
   });
 
@@ -107,7 +110,15 @@ export async function createPackage({
   if (!existingPackageJson) {
     // run yarn to link the new package
     cd(projectDir);
-    await $`yarn`;
+    // TODO: use correct package manager
+
+    const yarn = childProcess.spawnSync(`yarn install`, {
+      stdio: "inherit",
+      shell: true,
+    });
+    if (yarn.status !== 0) {
+      context.error(`yarn exited with status code ${yarn.status}`);
+    }
   }
 
   context.log(
