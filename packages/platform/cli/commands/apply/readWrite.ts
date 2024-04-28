@@ -95,7 +95,8 @@ const writeFileFromDef = async ({
     !previouslyWritten.manuallyChanged &&
     content === previouslyWritten.content
   ) {
-    console.log(`Already fresh: ${pathFromProjectDir}`);
+    // TODO: if (DEBUG)
+    // console.log(`Already fresh: ${pathFromProjectDir}`);
     return previouslyWritten;
   }
 
@@ -228,12 +229,12 @@ export async function readPreviouslyWrittenFileCache(
                 manuallyChanged: !stat
                   ? "deleted"
                   : stat?.atimeMs !== file.writtenAt &&
-                    newContent !== file.content
-                  ? {
-                      at: stat.atimeMs,
-                      content: newContent,
-                    }
-                  : undefined,
+                      newContent !== file.content
+                    ? {
+                        at: stat.atimeMs,
+                        content: newContent,
+                      }
+                    : undefined,
               },
             ] as const;
           },

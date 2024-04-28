@@ -197,6 +197,10 @@ export interface RepoConfig {
   engine: "node" | "bun";
   // node: PartialNodeConfig;
   node?: NodeConfig;
+  publish?: {
+    registry?: string;
+    access?: "public" | "restricted";
+  };
   git?: GitConfig;
   features: FeatureDefinition[];
   /** when present, assumes monorepo */

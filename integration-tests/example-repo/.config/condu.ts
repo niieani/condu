@@ -13,11 +13,14 @@ export default configure({
   conventions: {
     sourceDir: ".",
   },
-  features: [typescript({
-    tsconfig: {
-      compilerOptions: {
-        preserveSymlinks: false,
-      }
-    }
-  }), gitignore({ ignore: [".env", ".env.*"] })],
+  features: [
+    typescript({
+      tsconfig: {
+        compilerOptions: {
+          preserveSymlinks: false,
+        },
+      },
+    }),
+    gitignore({ ignore: [".env", ".env.*"] }),
+  ],
 });

@@ -50,7 +50,8 @@ export const copyFiles = async ({
           // use copy-on-write strategy for performance if supported
           fs.constants.COPYFILE_FICLONE,
         );
-        console.log(`Copied ${targetFilePath}`);
+        // TODO: if debug
+        // console.log(`Copied ${targetFilePath}`);
         return {
           source: sourceFilePath,
           target: targetFilePath,

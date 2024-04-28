@@ -23,6 +23,9 @@ export default configure({
       private: true,
     },
   ],
+  publish: {
+    registry: "http://localhost:4000/",
+  },
   conventions: {
     sourceDir: ".",
   },

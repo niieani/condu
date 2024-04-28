@@ -48,7 +48,7 @@ export async function prepareBuildDirectoryPackages({
   for (const pkg of packageList) {
     const {
       dir: packageDir,
-      manifest: { path: _p, kind: _k, ...manifest },
+      manifest: { path: _p, kind: _k, workspacePath: _w, ...manifest },
     } = pkg;
     const packageBuildDir = path.join(absBuildDir, packageDir);
     const packageSourceDir = path.join(projectDir, packageDir, srcDirName);
@@ -145,6 +145,11 @@ export async function prepareBuildDirectoryPackages({
     const newPackageJson: PackageJson = {
       ...manifest,
       ...dependencyManifestOverride,
+      publishConfig: {
+        // access: "public",
+        registry: project.config.publish?.registry,
+        ...manifest.publishConfig,
+      },
       exports: {
         ...entrySources,
         "./*.json": "./*.json",
