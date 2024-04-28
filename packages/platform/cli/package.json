@@ -1,7 +1,6 @@
 {
   "name": "@condu/cli",
   "type": "module",
-  "version": "0.0.0",
   "dependencies": {
     "@condu/update-specifiers": "workspace:^*",
     "@pnpm/fetch": "^8.0.0",

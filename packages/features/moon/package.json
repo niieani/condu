@@ -1,7 +1,6 @@
 {
   "name": "@condu-feature/moon",
   "type": "module",
-  "version": "0.0.0",
   "dependencies": {
     "@condu/schema-types": "workspace:^*",
     "@moonrepo/types": "^1.17.1"

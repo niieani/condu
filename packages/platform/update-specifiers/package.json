@@ -1,7 +1,6 @@
 {
   "name": "@condu/update-specifiers",
   "type": "module",
-  "version": "0.0.0",
   "publishConfig": {
     "access": "public"
   },
