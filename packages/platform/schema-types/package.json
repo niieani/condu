@@ -2,7 +2,8 @@
   "name": "@condu/schema-types",
   "type": "module",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "directory": "../../../build/packages/platform/schema-types"
   },
   "devDependencies": {
     "json-schema-to-typescript": "^14.0.0"

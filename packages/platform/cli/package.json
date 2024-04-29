@@ -32,5 +32,8 @@
     "@pnpm",
     "@condu",
     "spdx-license-list"
-  ]
+  ],
+  "publishConfig": {
+    "directory": "../../../build/packages/platform/cli"
+  }
 }

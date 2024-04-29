@@ -2,7 +2,8 @@
   "name": "@condu/update-specifiers",
   "type": "module",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "directory": "../../../build/packages/platform/update-specifiers"
   },
   "dependencies": {
     "@ts-morph/common": "^0.23.0",

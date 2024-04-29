@@ -23,6 +23,7 @@ node_modules
 /.moon/tasks.yml
 # lerna:
 /lerna.json
+/lerna-debug.log
 # auto:
 /auto.config.cjs
 # vscode:

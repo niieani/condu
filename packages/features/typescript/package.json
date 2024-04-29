@@ -3,5 +3,8 @@
   "type": "module",
   "peerDependencies": {
     "@condu/core": "workspace:^*"
+  },
+  "publishConfig": {
+    "directory": "../../../build/packages/features/typescript"
   }
 }

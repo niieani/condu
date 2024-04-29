@@ -6,5 +6,8 @@
   },
   "peerDependencies": {
     "@condu/core": "workspace:^*"
+  },
+  "publishConfig": {
+    "directory": "../../../build/packages/features/gitignore"
   }
 }

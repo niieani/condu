@@ -2,7 +2,8 @@
   "name": "@condu-feature/vscode",
   "type": "module",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "directory": "../../../build/packages/features/vscode"
   },
   "dependencies": {
     "comment-json": "^4.2.3"

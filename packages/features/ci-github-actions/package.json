@@ -2,7 +2,8 @@
   "name": "@condu-feature/ci-github-actions",
   "type": "module",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "directory": "../../../build/packages/features/ci-github-actions"
   },
   "dependencies": {
     "@condu/schema-types": "workspace:^*",

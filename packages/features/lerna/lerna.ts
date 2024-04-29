@@ -34,6 +34,7 @@ export const lerna = ({}: {} = {}) =>
                 },
               } satisfies Lerna,
             },
+            { path: "lerna-debug.log" },
           ],
         },
       ],

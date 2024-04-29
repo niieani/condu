@@ -2,7 +2,8 @@
   "name": "@condu-feature/eslint",
   "type": "module",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "directory": "../../../build/packages/features/eslint"
   },
   "peerDependencies": {
     "@condu/core": "workspace:^*",

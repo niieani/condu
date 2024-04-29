@@ -24,6 +24,7 @@ import {
   DEFAULT_SOURCE_EXTENSIONS,
 } from "./commands/apply/constants.js";
 import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
+import sortPackageJson from "sort-package-json";
 
 export interface LoadConfigOptions {
   startDir?: string;
@@ -57,9 +58,8 @@ export interface Project
 export async function loadRepoProject({
   startDir = process.cwd(),
 }: LoadConfigOptions = {}): Promise<Project | undefined> {
-  const { manifest, writeProjectManifest, projectDir } = await getManifest(
-    startDir,
-  );
+  const { manifest, writeProjectManifest, projectDir } =
+    await getManifest(startDir);
   const configFile = path.join(projectDir, `.config`, `${CORE_NAME}.ts`);
   const importedConfigFile = await import(
     /* webpackIgnore: true */
@@ -166,7 +166,7 @@ export const getWorkspacePackages = async (
         force?: boolean,
       ) =>
         writeProjectManifest(
-          { ...manifest, ...(pJson as ProjectManifest) },
+          sortPackageJson({ ...manifest, ...(pJson as ProjectManifest) }),
           force,
         ),
     };

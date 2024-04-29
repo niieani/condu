@@ -6,11 +6,16 @@ import type {
   CollectedState,
   DependencyDef,
   Hooks,
+  RepoConfigWithInferredValues,
   RepoConfigWithInferredValuesAndProject,
   StateFlags,
 } from "@condu/core/configTypes.js";
-import { groupBy, equals } from "remeda";
-import { type LoadConfigOptions, loadRepoProject } from "../../loadProject.js";
+import { groupBy, isDeepEqual } from "remeda";
+import {
+  type LoadConfigOptions,
+  loadRepoProject,
+  type Project,
+} from "../../loadProject.js";
 import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
 import { nonEmpty } from "@condu/core/utils/filter.js";
 import { isMatching } from "ts-pattern";
@@ -125,7 +130,7 @@ export async function collectState(
         }
       }
 
-      // TODO: support per-package dependencies, right now all dependencies are condu-global
+      // TODO: support per-package dependencies, right now all dependencies are repo-global
       if (featureEffect.devDependencies) {
         state.devDependencies.push(
           ...featureEffect.devDependencies.filter(nonEmpty),
@@ -202,7 +207,7 @@ export async function apply(options: LoadConfigOptions = {}) {
   // sync defined workspaces to package.json
   if (
     !Array.isArray(manifest.workspaces) ||
-    !equals((manifest.workspaces ?? []).sort(), projectGlobs)
+    !isDeepEqual((manifest.workspaces ?? []).sort(), projectGlobs)
   ) {
     // TODO: support pnpm workspaces
     manifest.workspaces = projectGlobs;
@@ -218,9 +223,8 @@ export async function apply(options: LoadConfigOptions = {}) {
 
   // TODO: provide the manually changed previouslyWrittenFiles to respective features
   // TODO: would need to add feature name to each cache entry
-  const previouslyWrittenFiles = await readPreviouslyWrittenFileCache(
-    projectDir,
-  );
+  const previouslyWrittenFiles =
+    await readPreviouslyWrittenFileCache(projectDir);
 
   const writtenFiles: WrittenFile[] = [];
   for (const [targetPackageDir, files] of Object.entries(filesByPackageDir)) {
@@ -282,8 +286,33 @@ export async function apply(options: LoadConfigOptions = {}) {
     // TODO: run 'yarn install' or whatever the package manager is if manifest changed
   }
 
+  await ensurePublishConfigDirectorySet(project);
+
   return {
     project,
     collectedState,
   };
+}
+
+async function ensurePublishConfigDirectorySet(project: Project) {
+  for (const pkg of await project.getWorkspacePackages()) {
+    // ensure there's a publishConfig.directory set for each package
+    // see https://pnpm.io/package_json#publishconfigdirectory
+    const originalPackageDir = path.join(project.projectDir, pkg.dir);
+    const publishablePackageDir = path.join(
+      project.projectDir,
+      project.config.conventions.buildDir,
+      pkg.dir,
+    );
+    const relativePath = path.relative(
+      originalPackageDir,
+      publishablePackageDir,
+    );
+    const publishableDirectory = pkg.manifest.publishConfig?.["directory"];
+    if (publishableDirectory !== relativePath) {
+      pkg.manifest.publishConfig ??= {};
+      pkg.manifest.publishConfig["directory"] = relativePath;
+      await pkg.writeProjectManifest(pkg.manifest);
+    }
+  }
 }

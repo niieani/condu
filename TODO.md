@@ -104,14 +104,41 @@ Or another system?
 - [nx plugin](https://github.com/jscutlery/semver#jscutlerysemver)
 - [beachball](https://microsoft.github.io/beachball/)
 - [release-it](https://github.com/release-it/release-it)
+  - not great for monorepos, needs workspaces defined in order
+- [release-please](https://github.com/googleapis/release-please)
+  - many languages support which is nice
+  - looks like a decent option
+  - can combine with publishing from lerna ([from-package](https://lerna.js.org/docs/features/version-and-publish#from-package)) for publishing
 - [semantic-release-yarn](https://github.com/hongaar/semantic-release-yarn)
 - [zx-bulk-release](https://github.com/semrel-extra/zx-bulk-release/)
 - [monodeploy](https://github.com/tophat/monodeploy)
 
 Maybe just stick to semantic-release for now so I'm unblocked for other projects??
 
+### Ideas for next steps
+
+Ugh this is terrible.
+
+Options:
+
+1. instead of using a top-level `build` folder that mimics the structure, could use a subdirectory like `.release`
+
+- not just for `dist` files, but the entire package with package.json, and other files copied
+- this also potentially simplifies the issue of caching the build artifacts, since they're descendants of the package
+- this might make it possible to use semantic release with `pkgRoot` option
+
+2. modify/validate the monorepo semantic release to utilize [`pkgRoot`](https://github.com/semantic-release/npm#options)
+3. figure out logic for injecting the correct version into the `package.json`s, then use `lerna version` to bump the versions
+4. store the versions in the package.jsons committed to the repo
+5. use changesets - with [`publishConfig.directory`](https://github.com/changesets/changesets/blob/0bf89b3709e3e3df6ed5dbb8ece0fb000a55d5f4/packages/cli/src/commands/publish/publishPackages.ts#L133C34-L135) - pnpm directory [seems to](https://pnpm.io/package_json#publishconfigdirectory) should also work even when not a subdirectory
+   - I don't love changesets, because they're manual disjointed from commits (duplication)
+   - but they could work with reasonable low effort and seem to be pretty stable...
+
 ## Later:
 
+- [ ] commitlint + husky for linting commit messages
+- [ ] consider swapping pnpm internals for https://www.npmjs.com/package/@manypkg/get-packages
+- [ ] "recommended" preset of features that always opts you in to the latest and greatest of the JS ecosystem
 - [ ] website
   - inspiration: [tailwind](https://tailwindcss.com/) - make configs disappear and appear in a mock vscode/github UI?
 - [ ] easy way to quickly create a new Github repo, already preconfigured, with initial commit, etc.

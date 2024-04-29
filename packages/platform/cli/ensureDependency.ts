@@ -12,6 +12,7 @@ import type {
   RepoPackageJson,
 } from "@condu/core/configTypes.js";
 import type { ProjectManifest } from "@pnpm/types";
+import sortPackageJson from "sort-package-json";
 
 const registry = "https://registry.npmjs.org/";
 const resolveFromNpm = createNpmResolver(
@@ -59,7 +60,7 @@ export async function getManifest(cwd: string) {
       force?: boolean,
     ) =>
       writeProjectManifest(
-        { ...manifest, ...(pJson as ProjectManifest) },
+        sortPackageJson({ ...manifest, ...(pJson as ProjectManifest) }),
         force,
       ),
     projectDir,

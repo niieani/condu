@@ -9,5 +9,8 @@
   },
   "devDependencies": {
     "node-fetch": "^3.3.2"
+  },
+  "publishConfig": {
+    "directory": "../../../build/packages/platform/core"
   }
 }

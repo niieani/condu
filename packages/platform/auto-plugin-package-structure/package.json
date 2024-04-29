@@ -2,7 +2,8 @@
   "name": "@condu/auto-plugin-package-structure",
   "type": "module",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "directory": "../../../build/packages/platform/auto-plugin-package-structure"
   },
   "devDependencies": {
     "@auto-it/core": "^11.1.6",
