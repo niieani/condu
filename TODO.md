@@ -93,11 +93,6 @@ make sure that lerna has syncDistVersion enabled to also version the built packa
 
 Question: how does `auto` know what tags the PR had that was just merged?
 
-Alternatively, use release-please (?). Downside: no prereleases
-Could also do changesets?
-
-Or another system?
-
 - [changesets](https://github.com/changesets/changesets/blob/main/docs/intro-to-using-changesets.md)
 - [multi-semantic-release](https://github.com/anolilab/multi-semantic-release)
 - [semantic-release-monorepo](https://github.com/pmowrer/semantic-release-monorepo)
@@ -109,6 +104,8 @@ Or another system?
   - many languages support which is nice
   - looks like a decent option
   - can combine with publishing from lerna ([from-package](https://lerna.js.org/docs/features/version-and-publish#from-package)) for publishing
+  - can support prerelease version strategy
+  - doesn't do any NPM releasing itself, can use Lerna
 - [semantic-release-yarn](https://github.com/hongaar/semantic-release-yarn)
 - [zx-bulk-release](https://github.com/semrel-extra/zx-bulk-release/)
 - [monodeploy](https://github.com/tophat/monodeploy)
@@ -133,6 +130,12 @@ Options:
 5. use changesets - with [`publishConfig.directory`](https://github.com/changesets/changesets/blob/0bf89b3709e3e3df6ed5dbb8ece0fb000a55d5f4/packages/cli/src/commands/publish/publishPackages.ts#L133C34-L135) - pnpm directory [seems to](https://pnpm.io/package_json#publishconfigdirectory) should also work even when not a subdirectory
    - I don't love changesets, because they're manual disjointed from commits (duplication)
    - but they could work with reasonable low effort and seem to be pretty stable...
+
+### Strategy
+
+- let's try release-please, and see if it can add 'version' to the package.jsons that don't have it
+- if not, let's try semantic-release with `pkgRoot` option
+  - might need to move files from `build` to `.dist` or sth to make it work
 
 ## Later:
 
