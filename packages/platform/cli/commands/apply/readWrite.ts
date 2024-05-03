@@ -30,16 +30,22 @@ interface CachedWrittenFile extends WrittenFile {
     | "deleted";
 }
 
-const getGetExistingContent =
+const createGetExistingContentFn =
   (targetPath: string, onExecuted: () => void) =>
-  async (): Promise<string | object | undefined> => {
+  async (
+    defaultFallback?: string | object | undefined,
+  ): Promise<string | object | undefined> => {
     onExecuted();
     const extension = path.extname(targetPath);
-    const file = (await fs.readFile(targetPath)).toString();
-    return match(extension)
-      .with(P.string.regex(/\.ya?ml$/i), () => yaml.parse(file))
-      .with(P.string.regex(/\.json5?$/i), () => commentJson.parse(file))
-      .otherwise(() => file);
+    try {
+      const file = (await fs.readFile(targetPath)).toString();
+      return match(extension)
+        .with(P.string.regex(/\.ya?ml$/i), () => yaml.parse(file))
+        .with(P.string.regex(/\.json5?$/i), () => commentJson.parse(file))
+        .otherwise(() => file);
+    } catch {
+      return defaultFallback;
+    }
   };
 
 const writeFileFromDef = async ({
@@ -67,7 +73,7 @@ const writeFileFromDef = async ({
     typeof file.content === "function"
       ? ((await file.content({
           manifest,
-          getExistingContentAndMarkAsUserEditable: getGetExistingContent(
+          getExistingContentAndMarkAsUserEditable: createGetExistingContentFn(
             targetPath,
             () => {
               usedExistingContent = true;

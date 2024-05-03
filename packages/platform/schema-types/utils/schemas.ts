@@ -22,4 +22,6 @@ export const schemas = {
     "https://github.com/wraith13/vscode-schemas/raw/master/en/latest/schemas/settings/workspace.json",
   // vscodeSettingsResourceLanguage:
   //   "https://github.com/wraith13/vscode-schemas/raw/master/en/latest/schemas/settings/resourceLanguage.json",
+  releasePleaseConfig:
+    "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
 };

@@ -1,6 +1,24 @@
 {
   "name": "condu",
   "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "packages/features/*",
+    "packages/platform/*",
+    "packages/test/*"
+  ],
+  "scripts": {
+    "condu": "bun packages/platform/cli/main.ts",
+    "postinstall": "test -f .config/condu.ts && yarn condu apply",
+    "moon": "moon",
+    "start": "bun condu",
+    "updateSchemas": "bun packages/platform/schema-types/utils/updateSchemas.ts"
+  },
+  "resolutions": {
+    "@pnpm/fetching-types@npm:5.0.0": "patch:@pnpm/fetching-types@npm%3A5.0.0#~/.yarn/patches/@pnpm-fetching-types-npm-5.0.0-d10b510b05.patch",
+    "esbuild": "0.20.2",
+    "graceful-fs": "4.2.11"
+  },
   "dependencies": {
     "@pnpm/fetch": "^8.0.0",
     "@pnpm/logger": "^5.0.0",
@@ -42,6 +60,7 @@
     "jest": "^29.7.0",
     "lerna": "^8.1.2",
     "process": "^0.11.10",
+    "release-please": "^16.10.2",
     "rimraf": "^5.0.5",
     "rollup": "^4.17.0",
     "rollup-plugin-swc3": "^0.11.1",
@@ -54,27 +73,9 @@
     "webpack-cli": "^5.1.4",
     "webpack-merge": "^5.10.0"
   },
-  "type": "module",
-  "scripts": {
-    "start": "bun condu",
-    "condu": "bun packages/platform/cli/main.ts",
-    "updateSchemas": "bun packages/platform/schema-types/utils/updateSchemas.ts",
-    "moon": "moon",
-    "postinstall": "test -f .config/condu.ts && yarn condu apply"
-  },
+  "packageManager": "yarn@4.1.1",
   "engines": {
     "node": "20.12.2"
-  },
-  "packageManager": "yarn@4.1.1",
-  "workspaces": [
-    "packages/features/*",
-    "packages/platform/*",
-    "packages/test/*"
-  ],
-  "resolutions": {
-    "@pnpm/fetching-types@npm:5.0.0": "patch:@pnpm/fetching-types@npm%3A5.0.0#~/.yarn/patches/@pnpm-fetching-types-npm-5.0.0-d10b510b05.patch",
-    "esbuild": "0.20.2",
-    "graceful-fs": "4.2.11"
   },
   "workspacePath": "."
 }
