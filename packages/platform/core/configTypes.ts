@@ -28,7 +28,7 @@ export interface FileDef {
    * or should it be committed?
    * will affect the behavior for features like gitignore
    **/
-  type?: "ephemeral" | "committed";
+  type?: "ephemeral" | "committed" | "ignore-only";
   /** should this file be published when making a distributable package */
   publish?: boolean;
   /**

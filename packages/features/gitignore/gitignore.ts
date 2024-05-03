@@ -26,8 +26,10 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
                   if (featureName === "gitignore") return [];
                   return [
                     `# ${featureName}:`,
-                    ...files.map(
-                      ({ path: p, targetDir }) => `/${path.join(targetDir, p)}`,
+                    ...files.map(({ path: p, targetDir, type }) =>
+                      type === "ignore-only"
+                        ? p
+                        : `/${path.join(targetDir, p)}`,
                     ),
                   ];
                 });

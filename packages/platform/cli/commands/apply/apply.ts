@@ -216,8 +216,9 @@ export async function apply(options: LoadConfigOptions = {}) {
 
   const collectedState = await collectState({ ...config, project });
 
-  const writableFiles = collectedState.files.filter(({ targetDir, content }) =>
-    Boolean(targetDir && content),
+  const writableFiles = collectedState.files.filter(
+    ({ targetDir, content, type }) =>
+      Boolean(targetDir && content && type !== "ignore-only"),
   );
   const filesByPackageDir = groupBy(writableFiles, (file) => file.targetDir);
 

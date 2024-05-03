@@ -10,10 +10,14 @@ export const yarn = ({ yarnrc }: { yarnrc?: Yarnrc } = {}) =>
     actionFn: async (config, state) => {
       // TODO: auto-run `yarn constraints` at some point, maybe during apply?
       const files: FileDef[] = [
-        {
-          // this is to mark cache as gitignored
-          path: ".yarn/cache/",
-        },
+        // gitignores:
+        { path: ".pnp.*", type: "ignore-only" },
+        { path: ".yarn/*", type: "ignore-only" },
+        { path: "!.yarn/patches", type: "ignore-only" },
+        { path: "!.yarn/plugins", type: "ignore-only" },
+        { path: "!.yarn/releases", type: "ignore-only" },
+        { path: "!.yarn/sdks", type: "ignore-only" },
+        { path: "!.yarn/versions", type: "ignore-only" },
         {
           path: ".yarnrc.yml",
           // if we moved fully to 'bun' for package management,
