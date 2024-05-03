@@ -18,9 +18,9 @@ export interface Task {
   definition: PartialTaskConfig;
 }
 
-export type GetExistingContentFn = (
-  defaultFallback?: string | object | undefined,
-) => Promise<string | object | undefined> | string | object | undefined;
+export type GetExistingContentFn = <T extends string | object>(
+  defaultFallback?: T | undefined,
+) => Promise<T | undefined> | T | undefined;
 
 export interface FileDef {
   /**

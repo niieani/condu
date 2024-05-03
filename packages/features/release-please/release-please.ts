@@ -17,6 +17,7 @@ export const releasePlease = ({}: {} = {}) =>
                 type: "committed",
                 content: {
                   $schema: schemas.releasePleaseConfig,
+                  "bootstrap-sha": "487dfcb00e029d0c8f483f41d0de82a992885f3d",
                   packages: {
                     "packages/features/release-please": {
                       "release-type": "node",
@@ -38,8 +39,11 @@ export const releasePlease = ({}: {} = {}) =>
               {
                 path: ".config/release-please/manifest.json",
                 type: "committed",
-                // ensure the file exists, fallback to {} if it doesn't
-                content: (f) => f.getExistingContentAndMarkAsUserEditable({}),
+                // ensure the file exists
+                content: async (f) => ({
+                  "packages/features/release-please": "1.0.0",
+                  ...(await f.getExistingContentAndMarkAsUserEditable({})),
+                }),
               },
             ],
             devDependencies: ["release-please"],
