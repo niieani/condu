@@ -12,5 +12,6 @@
   },
   "publishConfig": {
     "directory": "../../../build/packages/platform/core"
-  }
+  },
+  "version": "1.0.1"
 }

@@ -9,5 +9,6 @@
   "dependencies": {
     "@condu/core": "workspace:^*",
     "@condu/schema-types": "workspace:^*"
-  }
+  },
+  "version": "1.0.1"
 }
