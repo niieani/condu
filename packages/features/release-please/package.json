@@ -7,7 +7,8 @@
     "directory": "../../../build/packages/features/release-please"
   },
   "dependencies": {
-    "@condu/core": "workspace:^*",
+    "@condu/core": "1.0.1",
     "@condu/schema-types": "workspace:^*"
-  }
+  },
+  "version": "1.0.1"
 }

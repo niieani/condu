@@ -1,5 +1,5 @@
 {
-  "packages/features/release-please": "1.0.0",
+  "packages/features/release-please": "1.0.1",
   "packages/platform/schema-types": "1.0.0",
-  "packages/platform/core": "1.0.0"
+  "packages/platform/core": "1.0.1"
 }
