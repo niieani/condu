@@ -5,5 +5,9 @@
   "publishConfig": {
     "access": "public",
     "directory": "../../../build/packages/features/release-please"
+  },
+  "dependencies": {
+    "@condu/core": "workspace:^*",
+    "@condu/schema-types": "workspace:^*"
   }
 }

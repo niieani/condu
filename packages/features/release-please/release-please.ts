@@ -27,6 +27,12 @@ export const releasePlease = ({}: {} = {}) =>
                       // draft: false,
                       // prerelease: false,
                     },
+                    "packages/platform/schema-types": {
+                      "release-type": "node",
+                    },
+                    "packages/platform/core": {
+                      "release-type": "node",
+                    },
                   },
                   plugins: [
                     {
@@ -42,6 +48,8 @@ export const releasePlease = ({}: {} = {}) =>
                 // ensure the file exists
                 content: async (f) => ({
                   "packages/features/release-please": "1.0.0",
+                  "packages/platform/schema-types": "1.0.0",
+                  "packages/platform/core": "1.0.0",
                   ...(await f.getExistingContentAndMarkAsUserEditable({})),
                 }),
               },

@@ -4,6 +4,12 @@
   "packages": {
     "packages/features/release-please": {
       "release-type": "node"
+    },
+    "packages/platform/schema-types": {
+      "release-type": "node"
+    },
+    "packages/platform/core": {
+      "release-type": "node"
     }
   },
   "plugins": [
