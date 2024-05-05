@@ -47,9 +47,10 @@ export const moonCi = ({}: {} = {}) =>
                 with: { "fetch-depth": 0 },
               },
               {
-                uses: "actions/setup-node@v3",
+                uses: "actions/setup-node@v4",
                 with: {
-                  "node-version": config.node.version,
+                  "node-version-file": "package.json",
+                  // "node-version": config.node.version,
                   cache: config.node.packageManager.name,
                 },
               },

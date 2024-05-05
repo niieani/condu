@@ -73,9 +73,9 @@
     "webpack-cli": "^5.1.4",
     "webpack-merge": "^5.10.0"
   },
-  "packageManager": "yarn@4.1.1",
+  "packageManager": "yarn@4.2.1",
   "engines": {
-    "node": "20.12.2"
+    "node": "22.1.0"
   },
   "workspacePath": "."
 }

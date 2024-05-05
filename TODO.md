@@ -135,6 +135,8 @@ Options:
 
 - let's try release-please, and see if it can add 'version' to the package.jsons that don't have it
   - if not, I could accept keeping the version baked in, since it creates a PR to do the release anyway - it bumps the version in the PR
+  - it does, but the problem is it replaces the "workspace:\*" due to [this bug](https://github.com/googleapis/release-please/issues/2173), making it unusable
+  - perhaps I can patch it manually for now in a fork
 - if not, let's try semantic-release with `pkgRoot` option
   - might need to move files from `build` to `.dist` or sth to make it work
 
