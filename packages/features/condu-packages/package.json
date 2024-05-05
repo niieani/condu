@@ -1,6 +1,7 @@
 {
   "name": "@condu-feature/condu-packages",
   "license": "MIT",
+  "version": "1.0.0",
   "type": "module",
   "publishConfig": {
     "access": "public",
