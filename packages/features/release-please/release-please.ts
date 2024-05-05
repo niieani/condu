@@ -1,13 +1,32 @@
 import { defineFeature } from "@condu/core/defineFeature.js";
 import { CORE_NAME } from "@condu/core/constants.js";
 import { schemas } from "@condu/schema-types/utils/schemas.js";
-import type ReleasePleaseConfig from "@condu/schema-types/schemas/releasePleaseConfig.gen.js";
+import type {
+  ReleaserConfigOptions,
+  default as ReleasePleaseConfig,
+} from "@condu/schema-types/schemas/releasePleaseConfig.gen.js";
 
 export const releasePlease = ({}: {} = {}) =>
   defineFeature({
     name: "release-please",
-    actionFn: (config, state) => {
+    actionFn: async (config, state) => {
       const isInternalCondu = config.project.manifest.name === CORE_NAME;
+      const packages = (await config.project.getWorkspacePackages()).filter(
+        ({ manifest }) => !manifest.private,
+      );
+      const releaserConfigPackages = Object.fromEntries(
+        packages.map(({ manifest, dir }) => [
+          dir,
+          {
+            "release-type": "node",
+            component: manifest.name,
+          } satisfies ReleaserConfigOptions,
+        ]),
+      );
+      const defaultManifest = Object.fromEntries(
+        packages.map(({ dir }) => [dir, "1.0.0"]),
+      );
+
       return {
         effects: [
           {
@@ -17,23 +36,10 @@ export const releasePlease = ({}: {} = {}) =>
                 type: "committed",
                 content: {
                   $schema: schemas.releasePleaseConfig,
+                  "tag-separator": "@",
+                  "include-v-in-tag": false,
                   "bootstrap-sha": "487dfcb00e029d0c8f483f41d0de82a992885f3d",
-                  packages: {
-                    "packages/features/release-please": {
-                      "release-type": "node",
-                      // "changelog-path": "CHANGELOG.md",
-                      // "bump-minor-pre-major": false,
-                      // "bump-patch-for-minor-pre-major": false,
-                      // draft: false,
-                      // prerelease: false,
-                    },
-                    "packages/platform/schema-types": {
-                      "release-type": "node",
-                    },
-                    "packages/platform/core": {
-                      "release-type": "node",
-                    },
-                  },
+                  packages: releaserConfigPackages,
                   plugins: [
                     {
                       type: "node-workspace",
@@ -47,9 +53,7 @@ export const releasePlease = ({}: {} = {}) =>
                 type: "committed",
                 // ensure the file exists
                 content: async (f) => ({
-                  "packages/features/release-please": "1.0.0",
-                  "packages/platform/schema-types": "1.0.0",
-                  "packages/platform/core": "1.0.0",
+                  ...defaultManifest,
                   ...(await f.getExistingContentAndMarkAsUserEditable({})),
                 }),
               },
