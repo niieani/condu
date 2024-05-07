@@ -55,6 +55,9 @@ export const moonCi = ({}: {} = {}) =>
                 // 0 indicates all history for all branches and tags:
                 with: { "fetch-depth": 0 },
               },
+              ...(config.node.packageManager.name !== "npm"
+                ? [{ run: `corepack enable` }]
+                : []),
               {
                 uses: "actions/setup-node@v4",
                 with: {
@@ -65,9 +68,6 @@ export const moonCi = ({}: {} = {}) =>
                     "${{ inputs.registry-url || 'https://registry.npmjs.org/' }}",
                 },
               },
-              ...(config.node.packageManager.name !== "npm"
-                ? [{ run: `corepack enable && corepack install` }]
-                : []),
               { run: `${config.node.packageManager.name} install --immutable` },
               { run: `./node_modules/.bin/moon ci :build` },
             ],
