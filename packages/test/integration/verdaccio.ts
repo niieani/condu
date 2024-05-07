@@ -1,13 +1,11 @@
 import { runServer as _runServer } from "verdaccio";
-import type { ConfigFile } from "@verdaccio/types";
+import type { AuthHtpasswd, Config } from "@verdaccio/types";
 import type { Application } from "express";
 import path from "node:path";
+import { satisfies } from "semver";
 
 const runServer = _runServer as any as (
-  config: Omit<ConfigFile, "notifications" | "plugins"> & {
-    notifications?: ConfigFile["notifications"];
-    plugins?: ConfigFile["plugins"];
-  },
+  config: Omit<Config, "security" | "secret" | "server_id">,
 ) => Promise<Application>;
 const __dirname = new URL(".", import.meta.url).pathname;
 const selfPath = path.join(__dirname, ".cache");
@@ -19,9 +17,10 @@ export const runVerdaccio = async () => {
     web: {
       enable: true,
       title: "Verdaccio",
+      primaryColor: "#4b5e40",
     },
     auth: {
-      htpasswd: { file: "./htpasswd" },
+      htpasswd: { file: "./htpasswd" } satisfies Partial<AuthHtpasswd>,
     },
     uplinks: {
       npmjs: { url: "https://registry.npmjs.org/" },
@@ -43,7 +42,13 @@ export const runVerdaccio = async () => {
         proxy: ["npmjs"],
       },
     },
-    logs: [{ log: { type: "stdout", format: "pretty", level: "http" } }],
+    logs: {
+      type: "stdout",
+      format: "pretty",
+      level: "http",
+    },
+    server_id: "verdaccio",
+    secret: "test",
   });
 };
 
