@@ -65,7 +65,6 @@
     "rollup": "^4.17.2",
     "rollup-plugin-swc3": "^0.11.1",
     "swc-loader": "^0.2.6",
-    "swc-mockify": "portal:../mockify/swc-mockify",
     "tsx": "^4.9.1",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0",

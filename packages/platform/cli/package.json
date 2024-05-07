@@ -23,7 +23,6 @@
     "zx": "^8.0.2"
   },
   "devDependencies": {
-    "swc-mockify": "portal:../../../../mockify/swc-mockify",
     "vitest": "^1.6.0"
   },
   "peerDependencies": {
