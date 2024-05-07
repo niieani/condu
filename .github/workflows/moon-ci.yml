@@ -25,5 +25,6 @@ jobs:
           node-version-file: package.json
           cache: yarn
           registry-url: ${{ inputs.registry-url || 'https://registry.npmjs.org/' }}
+      - uses: oven-sh/setup-bun@v1
       - run: yarn install --immutable
       - run: ./node_modules/.bin/moon ci :build

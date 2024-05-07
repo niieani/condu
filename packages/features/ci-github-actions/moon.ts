@@ -68,6 +68,7 @@ export const moonCi = ({}: {} = {}) =>
                     "${{ inputs.registry-url || 'https://registry.npmjs.org/' }}",
                 },
               },
+              { uses: "oven-sh/setup-bun@v1" },
               { run: `${config.node.packageManager.name} install --immutable` },
               { run: `./node_modules/.bin/moon ci :build` },
             ],
