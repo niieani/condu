@@ -11,7 +11,7 @@
     "@condu/cli": "workspace:^*"
   },
   "devDependencies": {
-    "@yarnpkg/core": "^4.0.3",
+    "@yarnpkg/core": "^4.0.5",
     "@yarnpkg/fslib": "^3.0.2"
   }
 }
