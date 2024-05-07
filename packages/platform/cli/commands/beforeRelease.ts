@@ -1,4 +1,5 @@
-import type { Project, WorkspacePackage } from "../loadProject.js";
+import type { Project } from "../loadProject.js";
+import type { WorkspacePackage } from "@condu/core/configTypes.js";
 import * as fs from "node:fs/promises";
 import sortPackageJson from "sort-package-json";
 import * as path from "node:path";

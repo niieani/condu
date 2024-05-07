@@ -11,11 +11,8 @@ import type {
   StateFlags,
 } from "@condu/core/configTypes.js";
 import { groupBy, isDeepEqual } from "remeda";
-import {
-  type LoadConfigOptions,
-  loadRepoProject,
-  type Project,
-} from "../../loadProject.js";
+import { loadRepoProject, type Project } from "../../loadProject.js";
+import { type LoadConfigOptions } from "@condu/core/configTypes.js";
 import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
 import { nonEmpty } from "@condu/core/utils/filter.js";
 import { isMatching } from "ts-pattern";

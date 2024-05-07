@@ -4,6 +4,11 @@ on:
     branches:
       - main
   pull_request: {}
+  workflow_call:
+    inputs:
+      registry-url:
+        type: string
+        required: false
 jobs:
   ci:
     name: Moon CI
@@ -18,5 +23,7 @@ jobs:
         with:
           node-version-file: package.json
           cache: yarn
+          registry-url: ${{ inputs.registry-url || 'https://registry.npmjs.org/' }}
+      - run: corepack enable && corepack install
       - run: yarn install --immutable
-      - run: ./node_modules/@moonrepo/cli/moon ci :build
+      - run: ./node_modules/.bin/moon ci :build

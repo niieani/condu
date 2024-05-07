@@ -25,22 +25,10 @@ import {
 } from "./commands/apply/constants.js";
 import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
 import sortPackageJson from "sort-package-json";
-
-export interface LoadConfigOptions {
-  startDir?: string;
-}
-
-export type WriteManifestFn = (
-  manifest: RepoPackageJson | PackageJson,
-  force?: boolean,
-) => Promise<void>;
-
-export interface WorkspacePackage {
-  /** relative directory of the package from the projectDir */
-  dir: string;
-  manifest: RepoPackageJson;
-  writeProjectManifest: WriteManifestFn;
-}
+import type {
+  WorkspacePackage,
+  LoadConfigOptions,
+} from "@condu/core/configTypes.js";
 
 export interface Project
   extends WorkspacePackage,

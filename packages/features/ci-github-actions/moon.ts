@@ -33,6 +33,14 @@ export const moonCi = ({}: {} = {}) =>
         on: {
           push: { branches: [config.git.defaultBranch] },
           pull_request: {},
+          workflow_call: {
+            inputs: {
+              "registry-url": {
+                type: "string",
+                required: false,
+              },
+            },
+          },
         },
         jobs: {
           ci: {
@@ -44,6 +52,7 @@ export const moonCi = ({}: {} = {}) =>
             steps: [
               {
                 uses: "actions/checkout@v4",
+                // 0 indicates all history for all branches and tags:
                 with: { "fetch-depth": 0 },
               },
               {
@@ -52,10 +61,15 @@ export const moonCi = ({}: {} = {}) =>
                   "node-version-file": "package.json",
                   // "node-version": config.node.version,
                   cache: config.node.packageManager.name,
+                  "registry-url":
+                    "${{ inputs.registry-url || 'https://registry.npmjs.org/' }}",
                 },
               },
+              ...(config.node.packageManager.name !== "npm"
+                ? [{ run: `corepack enable && corepack install` }]
+                : []),
               { run: `${config.node.packageManager.name} install --immutable` },
-              { run: `./node_modules/@moonrepo/cli/moon ci :build` },
+              { run: `./node_modules/.bin/moon ci :build` },
             ],
           },
         },

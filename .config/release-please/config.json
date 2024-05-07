@@ -3,86 +3,12 @@
   "tag-separator": "@",
   "include-v-in-tag": false,
   "bootstrap-sha": "487dfcb00e029d0c8f483f41d0de82a992885f3d",
+  "group-pull-request-title-pattern": "chore: release condu",
   "packages": {
-    "packages/features/auto": {
-      "release-type": "node",
-      "component": "@condu-feature/auto"
-    },
-    "packages/features/ci-github-actions": {
-      "release-type": "node",
-      "component": "@condu-feature/ci-github-actions"
-    },
-    "packages/features/condu-packages": {
-      "release-type": "node",
-      "component": "@condu-feature/condu-packages"
-    },
-    "packages/features/eslint": {
-      "release-type": "node",
-      "component": "@condu-feature/eslint"
-    },
     "packages/features/gitignore": {
       "release-type": "node",
-      "component": "@condu-feature/gitignore"
-    },
-    "packages/features/gpt-summarizer": {
-      "release-type": "node",
-      "component": "@condu-feature/gpt-summarizer"
-    },
-    "packages/features/lerna": {
-      "release-type": "node",
-      "component": "@condu-feature/lerna"
-    },
-    "packages/features/library-bundle": {
-      "release-type": "node",
-      "component": "@condu-feature/library-bundle"
-    },
-    "packages/features/moon": {
-      "release-type": "node",
-      "component": "@condu-feature/moon"
-    },
-    "packages/features/release-please": {
-      "release-type": "node",
-      "component": "@condu-feature/release-please"
-    },
-    "packages/features/typescript": {
-      "release-type": "node",
-      "component": "@condu-feature/typescript"
-    },
-    "packages/features/vitest": {
-      "release-type": "node",
-      "component": "@condu-feature/vitest"
-    },
-    "packages/features/vscode": {
-      "release-type": "node",
-      "component": "@condu-feature/vscode"
-    },
-    "packages/features/yarn": {
-      "release-type": "node",
-      "component": "@condu-feature/yarn"
-    },
-    "packages/platform/auto-plugin-package-structure": {
-      "release-type": "node",
-      "component": "@condu/auto-plugin-package-structure"
-    },
-    "packages/platform/cli": {
-      "release-type": "node",
-      "component": "@condu/cli"
-    },
-    "packages/platform/core": {
-      "release-type": "node",
-      "component": "@condu/core"
-    },
-    "packages/platform/schema-types": {
-      "release-type": "node",
-      "component": "@condu/schema-types"
-    },
-    "packages/platform/update-specifiers": {
-      "release-type": "node",
-      "component": "@condu/update-specifiers"
-    },
-    "packages/platform/yarn-plugin": {
-      "release-type": "node",
-      "component": "@condu/yarn-plugin"
+      "component": "@condu-feature/gitignore",
+      "initial-version": "1.0.0"
     }
   },
   "plugins": [

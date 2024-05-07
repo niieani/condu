@@ -55,7 +55,9 @@ export default configure({
     eslint(),
     moon(),
     moonCi(),
-    releasePlease(),
+    releasePlease({
+      selectPackages: (pkg) => pkg.manifest.name === "@condu-feature/gitignore",
+    }),
     lerna(),
     auto(),
     vscode({
