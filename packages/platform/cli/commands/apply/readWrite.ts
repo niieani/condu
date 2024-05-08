@@ -110,10 +110,12 @@ const writeFileFromDef = async ({
     return previouslyWritten;
   }
 
-  // only show diff if we're not "enhancing" a manually editable file
+  // only show diff if we're not "enhancing" a manually editable file,
+  // and the file doesn't have the 'alwaysOverwrite' flag
   if (
     typeof previouslyWritten?.manuallyChanged === "object" &&
-    !usedExistingContent
+    !usedExistingContent &&
+    !file.alwaysOverwrite
   ) {
     if (throwOnManualChanges) {
       throw new Error(

@@ -56,7 +56,7 @@ export default configure({
     moon(),
     moonCi(),
     releasePlease({
-      selectPackages: (pkg) => pkg.manifest.name === "@condu-feature/gitignore",
+      selectPackages: (pkg) => pkg.dir.startsWith("packages/test/dummy"),
     }),
     lerna(),
     auto(),

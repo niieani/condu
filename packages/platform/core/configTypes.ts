@@ -29,6 +29,11 @@ export interface FileDef {
    * will affect the behavior for features like gitignore
    **/
   type?: "ephemeral" | "committed" | "ignore-only";
+  /**
+   * always overwrite the file, even if it was changed by the user
+   * CAREFUL: this *will* overwrite user changes without warning
+   */
+  alwaysOverwrite?: boolean;
   /** should this file be published when making a distributable package */
   publish?: boolean;
   /**

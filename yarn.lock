@@ -696,6 +696,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@condu-test/dummy-dep@workspace:packages/test/dummy-dep":
+  version: 0.0.0-use.local
+  resolution: "@condu-test/dummy-dep@workspace:packages/test/dummy-dep"
+  languageName: unknown
+  linkType: soft
+
+"@condu-test/dummy@workspace:packages/test/dummy":
+  version: 0.0.0-use.local
+  resolution: "@condu-test/dummy@workspace:packages/test/dummy"
+  languageName: unknown
+  linkType: soft
+
 "@condu-test/integration@workspace:packages/test/integration":
   version: 0.0.0-use.local
   resolution: "@condu-test/integration@workspace:packages/test/integration"

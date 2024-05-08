@@ -1,3 +1,4 @@
 {
-  "packages/features/gitignore": "0.0.0"
+  "packages/test/dummy": "0.0.0",
+  "packages/test/dummy-dep": "0.0.0"
 }

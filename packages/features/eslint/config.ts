@@ -87,6 +87,7 @@ export default [
           cases: {
             camelCase: true,
             pascalCase: true,
+            kebabCase: true,
           },
           ignore: [`\\.d\\.ts$`],
         },

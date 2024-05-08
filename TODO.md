@@ -141,6 +141,12 @@ Options:
 - if not, let's try semantic-release with `pkgRoot` option
   - might need to move files from `build` to `.dist` or sth to make it work
 
+Next step:
+
+- [ ] ensure that merging the test release PR will ONLY release the selected packages, rather than EVERYTHING via lerna
+  - maybe make all non-released packages private for the duration of the release?
+- [ ] what is up with yarnrc auto-changing?
+
 ## Later:
 
 - [ ] commitlint + husky for linting commit messages
