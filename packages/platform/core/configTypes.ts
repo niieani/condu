@@ -236,6 +236,7 @@ export interface RepoConfigWithInferredValuesAndProject
 
 export interface LoadConfigOptions {
   startDir?: string;
+  throwOnManualChanges?: boolean;
 }
 
 export type WriteManifestFn = (

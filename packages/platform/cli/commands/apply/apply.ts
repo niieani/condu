@@ -177,6 +177,8 @@ export async function collectState(
 }
 
 export async function apply(options: LoadConfigOptions = {}) {
+  // TODO: add a mutex lock to prevent concurrent runs of apply
+  const { throwOnManualChanges } = options;
   const project = await loadRepoProject(options);
   if (!project) {
     return;
@@ -235,6 +237,7 @@ export async function apply(options: LoadConfigOptions = {}) {
       targetPackageDir,
       manifest: target,
       previouslyWrittenFiles,
+      throwOnManualChanges,
     });
 
     writtenFiles.push(...written);
@@ -256,6 +259,7 @@ export async function apply(options: LoadConfigOptions = {}) {
     projectDir,
     targetPackageDir: ".",
     previouslyWrittenFiles: new Map(),
+    throwOnManualChanges,
   });
 
   for (const packageNameOrDef of collectedState.devDependencies) {
