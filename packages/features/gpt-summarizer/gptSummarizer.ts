@@ -58,10 +58,10 @@ export const summarize = async ({
     const type = isDoc
       ? "doc"
       : isTest
-      ? "test"
-      : isSource
-      ? "source"
-      : undefined;
+        ? "test"
+        : isSource
+          ? "source"
+          : undefined;
 
     // skip unknown file types
     if (!type) continue;
@@ -135,7 +135,9 @@ export const gptSummarizer = ({
           files: [
             {
               path: summaryFileName,
-              content: async () => {
+              alwaysOverwrite: true,
+              content: async (c) => {
+                c.getExistingContentAndMarkAsUserEditable();
                 const packages = await config.project.getWorkspacePackages();
                 const summarized = await summarize({
                   rootDir: config.workspaceDir,
