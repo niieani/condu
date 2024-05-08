@@ -701,7 +701,7 @@ __metadata:
   resolution: "@condu-test/integration@workspace:packages/test/integration"
   dependencies:
     "@types/express": "npm:^4.17.21"
-    "@verdaccio/types": "npm:^12.0.0-next-7.3"
+    "@verdaccio/types": "patch:@verdaccio/types@npm%3A12.0.0-next-7.3#~/.yarn/patches/@verdaccio-types-npm-12.0.0-next-7.3-88649149df.patch"
     verdaccio: "npm:^6.0.0-beta.2"
   languageName: unknown
   linkType: soft
@@ -4135,10 +4135,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@verdaccio/types@npm:^12.0.0-next-7.3":
+"@verdaccio/types@npm:12.0.0-next-7.3":
   version: 12.0.0-next-7.3
   resolution: "@verdaccio/types@npm:12.0.0-next-7.3"
   checksum: 10c0/a9b028ea6f6458414466fe9344907e98f47a92d6905cfe97bdff02c59f7895b6dec353fd355b9b5149fe27b84b811ece2be6df01b244e51e047961d33d6824bd
+  languageName: node
+  linkType: hard
+
+"@verdaccio/types@patch:@verdaccio/types@npm%3A12.0.0-next-7.3#~/.yarn/patches/@verdaccio-types-npm-12.0.0-next-7.3-88649149df.patch":
+  version: 12.0.0-next-7.3
+  resolution: "@verdaccio/types@patch:@verdaccio/types@npm%3A12.0.0-next-7.3#~/.yarn/patches/@verdaccio-types-npm-12.0.0-next-7.3-88649149df.patch::version=12.0.0-next-7.3&hash=20021d"
+  checksum: 10c0/fad976f7c701920d239c83a20d47f8022b10060ccd32b94f869ec034b9ce603e07c986c0d058e3dec3fe4b0e41e6cea99b2ba716cf49732489a408c28bc96e7d
   languageName: node
   linkType: hard
 
