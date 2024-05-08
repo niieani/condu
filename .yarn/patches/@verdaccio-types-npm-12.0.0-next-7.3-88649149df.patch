@@ -1,0 +1,1513 @@
+diff --git a/package.json b/package.json
+index 2e1e000e2054577a68c37242857b37474c3a97f8..4466786c4c2653d472edbfb7b234b7be4eb17bf8 100644
+--- a/package.json
++++ b/package.json
+@@ -30,8 +30,8 @@
+   "publishConfig": {
+     "access": "public"
+   },
+-  "main": "src/types.ts",
+-  "types": "src/types.ts",
++  "main": "src/types.d.ts",
++  "types": "src/types.d.ts",
+   "devDependencies": {
+     "typedoc": "0.23.25"
+   },
+diff --git a/src/commons.d.ts b/src/commons.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..bdb2b7719aa44393decb3c2a7fb3c4548df51b4a
+--- /dev/null
++++ b/src/commons.d.ts
+@@ -0,0 +1,37 @@
++// @deprecated add proper type fot the callback
++export type Callback = Function;
++// FIXME: err should be something flexible enough for any implementation
++export type CallbackAction = (err: any | null) => void;
++// eslint-disable-next-line no-undef
++export type CallbackError = (err: NodeJS.ErrnoException) => void;
++
++export interface RemoteUser {
++  real_groups: string[];
++  groups: string[];
++  name: string | void;
++  error?: string;
++}
++
++export type StringValue = string | void | null;
++
++// FIXME: error should be export type `VerdaccioError = HttpError & { code: number };`
++// instead of VerdaccioError
++// but this type is on @verdaccio/core and cannot be used here yet (I don't know why)
++export interface HttpError extends Error {
++  status: number;
++  statusCode: number;
++  expose: boolean;
++  headers?: {
++    [key: string]: string;
++  };
++  [key: string]: any;
++}
++
++export type URLPrefix = {
++  // if is false, it would be relative by default
++  absolute: boolean;
++  // base path
++  // eg: absolute: true, https://somedomain.com/xxx/
++  // eg: absolute: false, /xxx/ (default) if url_prefix is an string instead an object
++  basePath: string;
++};
+diff --git a/src/commons.ts b/src/commons.ts
+deleted file mode 100644
+index bdb2b7719aa44393decb3c2a7fb3c4548df51b4a..0000000000000000000000000000000000000000
+--- a/src/commons.ts
++++ /dev/null
+@@ -1,37 +0,0 @@
+-// @deprecated add proper type fot the callback
+-export type Callback = Function;
+-// FIXME: err should be something flexible enough for any implementation
+-export type CallbackAction = (err: any | null) => void;
+-// eslint-disable-next-line no-undef
+-export type CallbackError = (err: NodeJS.ErrnoException) => void;
+-
+-export interface RemoteUser {
+-  real_groups: string[];
+-  groups: string[];
+-  name: string | void;
+-  error?: string;
+-}
+-
+-export type StringValue = string | void | null;
+-
+-// FIXME: error should be export type `VerdaccioError = HttpError & { code: number };`
+-// instead of VerdaccioError
+-// but this type is on @verdaccio/core and cannot be used here yet (I don't know why)
+-export interface HttpError extends Error {
+-  status: number;
+-  statusCode: number;
+-  expose: boolean;
+-  headers?: {
+-    [key: string]: string;
+-  };
+-  [key: string]: any;
+-}
+-
+-export type URLPrefix = {
+-  // if is false, it would be relative by default
+-  absolute: boolean;
+-  // base path
+-  // eg: absolute: true, https://somedomain.com/xxx/
+-  // eg: absolute: false, /xxx/ (default) if url_prefix is an string instead an object
+-  basePath: string;
+-};
+diff --git a/src/configuration.d.ts b/src/configuration.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..1e1c7e924ff07ce51d7c9f7863d0e8a3d5096238
+--- /dev/null
++++ b/src/configuration.d.ts
+@@ -0,0 +1,323 @@
++import { PackageAccess, PackageList } from "./manifest";
++
++export type TypeToken = "Bearer" | "Basic";
++
++export interface Logger {
++  child: (conf: any) => any;
++  debug: (conf: any, template?: string) => void;
++  error: (conf: any, template?: string) => void;
++  http: (conf: any, template?: string) => void;
++  trace: (conf: any, template?: string) => void;
++  warn: (conf: any, template?: string) => void;
++  info: (conf: any, template?: string) => void;
++}
++
++export type LoggerType = "stdout" | "file";
++export type LoggerFormat = "pretty" | "pretty-timestamped" | "json";
++export type LoggerLevel =
++  | "http"
++  | "fatal"
++  | "warn"
++  | "info"
++  | "debug"
++  | "trace";
++
++export type LoggerConfigItem = {
++  type?: LoggerType;
++  format?: LoggerFormat;
++  path?: string;
++  level?: string;
++  colors?: boolean;
++  async?: boolean;
++};
++
++export interface ConfigWithHttps extends Config {
++  https: HttpsConf;
++}
++
++export interface PackageAccessYaml {
++  storage?: string;
++  publish?: string;
++  proxy?: string;
++  access?: string;
++  unpublish?: string;
++}
++
++export interface LoggerConfItem {
++  type: LoggerType;
++  format: LoggerFormat;
++  level: LoggerLevel;
++}
++
++export interface Headers {
++  [key: string]: string;
++}
++
++export interface UpLinkTokenConf {
++  type: TypeToken;
++  token?: string;
++  token_env?: boolean | string;
++}
++
++export interface UpLinkConf {
++  url: string;
++  ca?: string;
++  cache?: boolean;
++  timeout?: string | void;
++  maxage?: string | void;
++  max_fails?: number | void;
++  fail_timeout?: string | void;
++  headers?: Headers;
++  auth?: UpLinkTokenConf;
++  strict_ssl?: boolean | void;
++  _autogenerated?: boolean;
++}
++
++export type RateLimit = {
++  windowMs?: number;
++  max?: number;
++};
++
++export type FlagsConfig = {
++  searchRemote?: boolean;
++  changePassword?: boolean;
++};
++
++export type PackageManagers = "pnpm" | "yarn" | "npm";
++
++// FUTURE: WebConf and TemplateUIOptions should be merged .
++export type CommonWebConf = {
++  title?: string;
++  logo?: string;
++  favicon?: string;
++  gravatar?: boolean;
++  sort_packages?: string;
++  darkMode?: boolean;
++  url_prefix?: string;
++  language?: string;
++  login?: boolean;
++  scope?: string;
++  pkgManagers?: PackageManagers[];
++  showInfo?: boolean;
++  showSettings?: boolean;
++  showSearch?: boolean;
++  showFooter?: boolean;
++  showThemeSwitch?: boolean;
++  showDownloadTarball?: boolean;
++  hideDeprecatedVersions?: boolean;
++  primaryColor: string;
++  showRaw?: boolean;
++};
++
++/**
++ * Options are passed to the index.html
++ */
++export type TemplateUIOptions = {
++  uri?: string;
++  protocol?: string;
++  host?: string;
++  // @deprecated use base instead
++  basename?: string;
++  base: string;
++  version?: string;
++  flags: FlagsConfig;
++} & CommonWebConf;
++
++/**
++ * Options on config.yaml for web
++ */
++export type WebConf = {
++  // @deprecated use primaryColor
++  primary_color?: string;
++  primaryColor?: string;
++  enable?: boolean;
++  scriptsHead?: string[];
++  scriptsBodyAfter?: string[];
++  scriptsbodyBefore?: string[];
++  metaScripts?: string[];
++  bodyBefore?: string[];
++  bodyAfter?: string[];
++  rateLimit?: RateLimit;
++  html_cache?: boolean;
++} & CommonWebConf;
++
++export interface UpLinksConfList {
++  [key: string]: UpLinkConf;
++}
++
++export interface AuthHtpasswd {
++  file: string;
++  max_users: number;
++}
++
++export type AuthConf = any | AuthHtpasswd;
++
++export interface JWTOptions {
++  sign: JWTSignOptions;
++  verify: JWTVerifyOptions;
++}
++
++export type Algorithm =
++  | "HS256"
++  | "HS384"
++  | "HS512"
++  | "RS256"
++  | "RS384"
++  | "RS512"
++  | "ES256"
++  | "ES384"
++  | "ES512"
++  | "PS256"
++  | "PS384"
++  | "PS512"
++  | "none";
++
++export interface JWTSignOptions {
++  algorithm?: Algorithm | undefined;
++  expiresIn?: string | number | undefined;
++  notBefore?: string | number | undefined;
++}
++
++export interface JWTVerifyOptions {
++  algorithm?: Algorithm | undefined;
++  notBefore?: string | number;
++  ignoreExpiration?: boolean;
++  maxAge?: string | number;
++  clockTimestamp?: number;
++}
++
++export interface APITokenOptions {
++  legacy: boolean;
++  /**
++   * Temporary flag to allow migration to the new legacy signature
++   */
++  migrateToSecureLegacySignature: boolean;
++  jwt?: JWTOptions;
++}
++
++export interface Security {
++  web: JWTOptions;
++  api: APITokenOptions;
++}
++
++export interface PublishOptions {
++  allow_offline: boolean;
++}
++
++export interface ListenAddress {
++  [key: string]: string;
++}
++
++export interface HttpsConfKeyCert {
++  key: string;
++  cert: string;
++  ca?: string;
++}
++
++export interface HttpsConfPfx {
++  pfx: string;
++  passphrase?: string;
++}
++
++export type HttpsConf = HttpsConfKeyCert | HttpsConfPfx;
++
++export interface Notifications {
++  method: string;
++  packagePattern: RegExp;
++  packagePatternFlags: string;
++  endpoint: string;
++  content: string;
++  headers: Headers;
++}
++
++export type Notification = Notifications;
++
++export type ServerSettingsConf = {
++  // express-rate-limit settings
++  rateLimit: RateLimit;
++  keepAliveTimeout?: number;
++  /**
++   * Plugins should be prefixed verdaccio-XXXXXX by default.
++   * To override the default prefix, use this property without `-`
++   * If you set pluginPrefix: acme, the packages to resolve will be
++   * acme-XXXXXX
++   */
++  pluginPrefix?: string;
++  passwordValidationRegex?: RegExp;
++  // docs on `trustProxy` can be found at: https://expressjs.com/en/guide/behind-proxies.html
++  trustProxy?: string;
++};
++
++/**
++ * YAML configuration file available options.
++ */
++export interface ConfigYaml {
++  _debug?: boolean;
++  storage?: string | void;
++  packages: PackageList;
++  uplinks: UpLinksConfList;
++  log?: LoggerConfItem;
++  // @deprecated deprecation path from 5.x
++  logs?: LoggerConfItem;
++  web?: WebConf;
++  auth?: AuthConf;
++  security: Security;
++  publish?: PublishOptions;
++  store?: any;
++  listen?: ListenAddress;
++  https?: HttpsConf;
++  user_agent?: string;
++  http_proxy?: string;
++  plugins?: string | void | null;
++  https_proxy?: string;
++  no_proxy?: string;
++  max_body_size?: string;
++  notifications?: Notifications;
++  notify?: Notifications | Notifications[];
++  middlewares?: any;
++  filters?: any;
++  url_prefix?: string;
++  server?: ServerSettingsConf;
++  flags?: FlagsConfig;
++  // @deprecated use flags instead
++  experiments?: FlagsConfig;
++  userRateLimit?: RateLimit;
++  // internal objects, added by internal yaml to JS config parser
++  // save the configuration file path
++  configPath?: string;
++  i18n?: { web: string };
++}
++
++/**
++ * Configuration object with additional methods for configuration, includes yaml and internal medatada.
++ * @interface Config
++ * @extends {ConfigYaml}
++ */
++export interface Config
++  extends Omit<ConfigYaml, "packages" | "security" | "configPath"> {
++  server_id: string;
++  secret: string;
++  // save the configuration file path, it's fails without thi configPath
++  configPath: string;
++  // @deprecated use configPath
++  self_path?: string;
++  // packages from yaml file looks different from packages inside the config file
++  packages: PackageList;
++  // security object defaults is added by the config file but optional in the yaml file
++  security: Security;
++  // @deprecated (pending adding the replacement)
++  checkSecretKey(token: string | void): string;
++  getMatchedPackagesSpec(storage: string): PackageAccess | void;
++  // TODO: verify how to handle this in the future
++  [key: string]: any;
++}
++
++export interface AllowAccess {
++  name: string;
++  version?: string;
++  tag?: string;
++}
++
++// info passed to the auth plugin when a package is package is being published
++
++export interface AuthPackageAllow extends PackageAccess, AllowAccess {}
+diff --git a/src/configuration.ts b/src/configuration.ts
+deleted file mode 100644
+index 8fdc403d8f95cc0475a1912cd574b0bd0cef0ca3..0000000000000000000000000000000000000000
+--- a/src/configuration.ts
++++ /dev/null
+@@ -1,316 +0,0 @@
+-import { PackageAccess, PackageList } from '@verdaccio/types/src/manifest';
+-
+-export type TypeToken = 'Bearer' | 'Basic';
+-
+-export interface Logger {
+-  child: (conf: any) => any;
+-  debug: (conf: any, template?: string) => void;
+-  error: (conf: any, template?: string) => void;
+-  http: (conf: any, template?: string) => void;
+-  trace: (conf: any, template?: string) => void;
+-  warn: (conf: any, template?: string) => void;
+-  info: (conf: any, template?: string) => void;
+-}
+-
+-export type LoggerType = 'stdout' | 'file';
+-export type LoggerFormat = 'pretty' | 'pretty-timestamped' | 'json';
+-export type LoggerLevel = 'http' | 'fatal' | 'warn' | 'info' | 'debug' | 'trace';
+-
+-export type LoggerConfigItem = {
+-  type?: LoggerType;
+-  format?: LoggerFormat;
+-  path?: string;
+-  level?: string;
+-  colors?: boolean;
+-  async?: boolean;
+-};
+-
+-export interface ConfigWithHttps extends Config {
+-  https: HttpsConf;
+-}
+-
+-export interface PackageAccessYaml {
+-  storage?: string;
+-  publish?: string;
+-  proxy?: string;
+-  access?: string;
+-  unpublish?: string;
+-}
+-
+-export interface LoggerConfItem {
+-  type: LoggerType;
+-  format: LoggerFormat;
+-  level: LoggerLevel;
+-}
+-
+-export interface Headers {
+-  [key: string]: string;
+-}
+-
+-export interface UpLinkTokenConf {
+-  type: TypeToken;
+-  token?: string;
+-  token_env?: boolean | string;
+-}
+-
+-export interface UpLinkConf {
+-  url: string;
+-  ca?: string;
+-  cache?: boolean;
+-  timeout?: string | void;
+-  maxage?: string | void;
+-  max_fails?: number | void;
+-  fail_timeout?: string | void;
+-  headers?: Headers;
+-  auth?: UpLinkTokenConf;
+-  strict_ssl?: boolean | void;
+-  _autogenerated?: boolean;
+-}
+-
+-export type RateLimit = {
+-  windowMs?: number;
+-  max?: number;
+-};
+-
+-export type FlagsConfig = {
+-  searchRemote?: boolean;
+-  changePassword?: boolean;
+-};
+-
+-export type PackageManagers = 'pnpm' | 'yarn' | 'npm';
+-
+-// FUTURE: WebConf and TemplateUIOptions should be merged .
+-export type CommonWebConf = {
+-  title?: string;
+-  logo?: string;
+-  favicon?: string;
+-  gravatar?: boolean;
+-  sort_packages?: string;
+-  darkMode?: boolean;
+-  url_prefix?: string;
+-  language?: string;
+-  login?: boolean;
+-  scope?: string;
+-  pkgManagers?: PackageManagers[];
+-  showInfo?: boolean;
+-  showSettings?: boolean;
+-  showSearch?: boolean;
+-  showFooter?: boolean;
+-  showThemeSwitch?: boolean;
+-  showDownloadTarball?: boolean;
+-  hideDeprecatedVersions?: boolean;
+-  primaryColor: string;
+-  showRaw?: boolean;
+-};
+-
+-/**
+- * Options are passed to the index.html
+- */
+-export type TemplateUIOptions = {
+-  uri?: string;
+-  protocol?: string;
+-  host?: string;
+-  // @deprecated use base instead
+-  basename?: string;
+-  base: string;
+-  version?: string;
+-  flags: FlagsConfig;
+-} & CommonWebConf;
+-
+-/**
+- * Options on config.yaml for web
+- */
+-export type WebConf = {
+-  // @deprecated use primaryColor
+-  primary_color?: string;
+-  primaryColor?: string;
+-  enable?: boolean;
+-  scriptsHead?: string[];
+-  scriptsBodyAfter?: string[];
+-  scriptsbodyBefore?: string[];
+-  metaScripts?: string[];
+-  bodyBefore?: string[];
+-  bodyAfter?: string[];
+-  rateLimit?: RateLimit;
+-  html_cache?: boolean;
+-} & CommonWebConf;
+-
+-export interface UpLinksConfList {
+-  [key: string]: UpLinkConf;
+-}
+-
+-export interface AuthHtpasswd {
+-  file: string;
+-  max_users: number;
+-}
+-
+-export type AuthConf = any | AuthHtpasswd;
+-
+-export interface JWTOptions {
+-  sign: JWTSignOptions;
+-  verify: JWTVerifyOptions;
+-}
+-
+-export type Algorithm =
+-  | 'HS256'
+-  | 'HS384'
+-  | 'HS512'
+-  | 'RS256'
+-  | 'RS384'
+-  | 'RS512'
+-  | 'ES256'
+-  | 'ES384'
+-  | 'ES512'
+-  | 'PS256'
+-  | 'PS384'
+-  | 'PS512'
+-  | 'none';
+-
+-export interface JWTSignOptions {
+-  algorithm?: Algorithm | undefined;
+-  expiresIn?: string | number | undefined;
+-  notBefore?: string | number | undefined;
+-}
+-
+-export interface JWTVerifyOptions {
+-  algorithm?: Algorithm | undefined;
+-  notBefore?: string | number;
+-  ignoreExpiration?: boolean;
+-  maxAge?: string | number;
+-  clockTimestamp?: number;
+-}
+-
+-export interface APITokenOptions {
+-  legacy: boolean;
+-  /**
+-   * Temporary flag to allow migration to the new legacy signature
+-   */
+-  migrateToSecureLegacySignature: boolean;
+-  jwt?: JWTOptions;
+-}
+-
+-export interface Security {
+-  web: JWTOptions;
+-  api: APITokenOptions;
+-}
+-
+-export interface PublishOptions {
+-  allow_offline: boolean;
+-}
+-
+-export interface ListenAddress {
+-  [key: string]: string;
+-}
+-
+-export interface HttpsConfKeyCert {
+-  key: string;
+-  cert: string;
+-  ca?: string;
+-}
+-
+-export interface HttpsConfPfx {
+-  pfx: string;
+-  passphrase?: string;
+-}
+-
+-export type HttpsConf = HttpsConfKeyCert | HttpsConfPfx;
+-
+-export interface Notifications {
+-  method: string;
+-  packagePattern: RegExp;
+-  packagePatternFlags: string;
+-  endpoint: string;
+-  content: string;
+-  headers: Headers;
+-}
+-
+-export type Notification = Notifications;
+-
+-export type ServerSettingsConf = {
+-  // express-rate-limit settings
+-  rateLimit: RateLimit;
+-  keepAliveTimeout?: number;
+-  /**
+-   * Plugins should be prefixed verdaccio-XXXXXX by default.
+-   * To override the default prefix, use this property without `-`
+-   * If you set pluginPrefix: acme, the packages to resolve will be
+-   * acme-XXXXXX
+-   */
+-  pluginPrefix?: string;
+-  passwordValidationRegex?: RegExp;
+-  // docs on `trustProxy` can be found at: https://expressjs.com/en/guide/behind-proxies.html
+-  trustProxy?: string;
+-};
+-
+-/**
+- * YAML configuration file available options.
+- */
+-export interface ConfigYaml {
+-  _debug?: boolean;
+-  storage?: string | void;
+-  packages: PackageList;
+-  uplinks: UpLinksConfList;
+-  log?: LoggerConfItem;
+-  // @deprecated deprecation path from 5.x
+-  logs?: LoggerConfItem;
+-  web?: WebConf;
+-  auth?: AuthConf;
+-  security: Security;
+-  publish?: PublishOptions;
+-  store?: any;
+-  listen?: ListenAddress;
+-  https?: HttpsConf;
+-  user_agent?: string;
+-  http_proxy?: string;
+-  plugins?: string | void | null;
+-  https_proxy?: string;
+-  no_proxy?: string;
+-  max_body_size?: string;
+-  notifications?: Notifications;
+-  notify?: Notifications | Notifications[];
+-  middlewares?: any;
+-  filters?: any;
+-  url_prefix?: string;
+-  server?: ServerSettingsConf;
+-  flags?: FlagsConfig;
+-  // @deprecated use flags instead
+-  experiments?: FlagsConfig;
+-  userRateLimit?: RateLimit;
+-  // internal objects, added by internal yaml to JS config parser
+-  // save the configuration file path
+-  configPath?: string;
+-  i18n?: { web: string };
+-}
+-
+-/**
+- * Configuration object with additional methods for configuration, includes yaml and internal medatada.
+- * @interface Config
+- * @extends {ConfigYaml}
+- */
+-export interface Config extends Omit<ConfigYaml, 'packages' | 'security' | 'configPath'> {
+-  server_id: string;
+-  secret: string;
+-  // save the configuration file path, it's fails without thi configPath
+-  configPath: string;
+-  // @deprecated use configPath
+-  self_path?: string;
+-  // packages from yaml file looks different from packages inside the config file
+-  packages: PackageList;
+-  // security object defaults is added by the config file but optional in the yaml file
+-  security: Security;
+-  // @deprecated (pending adding the replacement)
+-  checkSecretKey(token: string | void): string;
+-  getMatchedPackagesSpec(storage: string): PackageAccess | void;
+-  // TODO: verify how to handle this in the future
+-  [key: string]: any;
+-}
+-
+-export interface AllowAccess {
+-  name: string;
+-  version?: string;
+-  tag?: string;
+-}
+-
+-// info passed to the auth plugin when a package is package is being published
+-
+-export interface AuthPackageAllow extends PackageAccess, AllowAccess {}
+diff --git a/src/manifest.d.ts b/src/manifest.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..6bc887c93561f822d52b017a3c93b5f10ba01431
+--- /dev/null
++++ b/src/manifest.d.ts
+@@ -0,0 +1,267 @@
++export interface PackageAccess {
++  storage?: string;
++  publish?: string[];
++  proxy?: string[];
++  access?: string[];
++  unpublish?: string[];
++}
++
++export interface PackageList {
++  [key: string]: PackageAccess;
++}
++
++export interface MergeTags {
++  [key: string]: string;
++}
++
++export interface DistFile {
++  url: string;
++  sha: string;
++  registry?: string;
++}
++
++export interface DistFiles {
++  [key: string]: DistFile;
++}
++
++export interface Token {
++  user: string;
++  token: string;
++  key: string;
++  cidr?: string[];
++  readonly: boolean;
++  created: number | string;
++  updated?: number | string;
++}
++
++export interface AttachMents {
++  [key: string]: AttachMentsItem;
++}
++
++export interface AttachMentsItem {
++  content_type?: string;
++  data?: string;
++  length?: number;
++  shasum?: string;
++  version?: string;
++}
++
++export interface GenericBody {
++  [key: string]: string;
++}
++
++export interface UpLinkMetadata {
++  etag: string;
++  fetched: number;
++}
++
++export interface UpLinks {
++  [key: string]: UpLinkMetadata;
++}
++
++export interface Signatures {
++  keyid: string;
++  sig: string;
++}
++
++export interface Dist {
++  'npm-signature'?: string;
++  signatures?: Signatures[];
++  fileCount?: number;
++  integrity?: string;
++  shasum: string;
++  unpackedSize?: number;
++  tarball: string;
++}
++
++export interface Author {
++  username?: string;
++  name: string;
++  email?: string;
++  url?: string;
++}
++
++export interface PackageUsers {
++  [key: string]: boolean;
++}
++
++export interface Tags {
++  [key: string]: Version;
++}
++
++export interface PeerDependenciesMeta {
++  [dependencyName: string]: {
++    optional?: boolean;
++  };
++}
++
++export interface Version {
++  name: string;
++  version: string;
++  directories?: any;
++  dist: Dist;
++  author: string | Author;
++  main: string;
++  homemage?: string;
++  license?: string;
++  readme: string;
++  readmeFileName?: string;
++  readmeFilename?: string;
++  description: string;
++  bin?: string;
++  bugs?: any;
++  files?: string[];
++  gitHead?: string;
++  maintainers?: Author[];
++  contributors?: Author[];
++  repository?: string | any;
++  scripts?: any;
++  homepage?: string;
++  etag?: string;
++  dependencies?: Dependencies;
++  peerDependencies?: Dependencies;
++  devDependencies?: Dependencies;
++  optionalDependencies?: Dependencies;
++  peerDependenciesMeta?: PeerDependenciesMeta;
++  bundleDependencies?: Dependencies;
++  keywords?: string | string[];
++  nodeVersion?: string;
++  _id: string;
++  _npmVersion?: string;
++  _npmUser: Author;
++  _hasShrinkwrap?: boolean;
++  deprecated?: string;
++  funding?: { type: string; url: string };
++  engines?: Engines;
++  hasInstallScript?: boolean;
++  cpu?: string[];
++  os?: string[];
++}
++
++export interface Dependencies {
++  [key: string]: string;
++}
++
++export interface Engines {
++  [key: string]: string;
++}
++
++export interface Versions {
++  [key: string]: Version;
++}
++
++/**
++ * @deprecated use Manifest instead
++ */
++export interface Package {
++  _id?: string;
++  name: string;
++  versions: Versions;
++  'dist-tags': GenericBody;
++  time: GenericBody;
++  readme?: string;
++  users?: PackageUsers;
++  _distfiles: DistFiles;
++  _attachments: AttachMents;
++  _uplinks: UpLinks;
++  _rev: string;
++}
++
++/**
++ * Represents upstream manifest from another registry
++ */
++export interface FullRemoteManifest {
++  _id?: string;
++  _rev?: string;
++  name: string;
++  description?: string;
++  'dist-tags': GenericBody;
++  time: GenericBody;
++  versions: Versions;
++  maintainers?: Author[];
++  /** store the latest readme **/
++  readme?: string;
++  /** store star assigned to this packages by users */
++  users?: PackageUsers;
++  // TODO: not clear what access exactly means
++  access?: any;
++  bugs?: { url: string };
++  license?: string;
++  homepage?: string;
++  repository?: string | { type?: string; url: string; directory?: string };
++  keywords?: string[];
++  author?: string | Author;
++}
++
++export interface Manifest extends FullRemoteManifest, PublishManifest {
++  // private fields only used by verdaccio
++  /**
++   * store fast access to the dist url of an specific tarball, instead search version
++   * by id, just the tarball id is faster.
++   *
++   * The _distfiles is created only when a package is being sync from an upstream.
++   * also used to fetch tarballs from upstream, the private publish tarballs are not stored in
++   * this object because they are not published in the upstream registry.
++   */
++  _distfiles: DistFiles;
++  /**
++   * Store access cache metadata, to avoid to fetch the same metadata multiple times.
++   *
++   * The key represents the uplink id which is composed of a etag and a fetched timestamp.
++   *
++   * The fetched timestamp is the time when the metadata was fetched, used to avoid to fetch the
++   * same metadata until the metadata is older than the last fetch.
++   */
++  _uplinks: UpLinks;
++  /**
++   * store the revision of the manifest
++   */
++  _rev: string;
++}
++
++export type AbbreviatedVersion = Pick<
++  Version,
++  | 'name'
++  | 'version'
++  | 'description'
++  | 'dependencies'
++  | 'devDependencies'
++  | 'bin'
++  | 'dist'
++  | 'engines'
++  | 'funding'
++  | 'peerDependencies'
++>;
++
++export interface AbbreviatedVersions {
++  [key: string]: AbbreviatedVersion;
++}
++/**
++ *
++ */
++export type AbbreviatedManifest = Pick<Manifest, 'name' | 'dist-tags' | 'time'> & {
++  modified: string;
++  versions: AbbreviatedVersions;
++};
++
++export interface PublishManifest {
++  /**
++   * The `_attachments` object has different usages:
++   *
++   * - When a package is published, it contains the tarball as an string, this string is used to be
++   * converted as a tarball, usually attached to the package but not stored in the database.
++   * - If user runs `npm star` the _attachments will be at the manifest body but empty.
++   *
++   * It has also an internal usage:
++   *
++   * - Used as a cache for the tarball, quick access to the tarball shasum, etc. Instead
++   * iterate versions and find the right one, just using the tarball as a key which is what
++   * the package manager sends to the registry.
++   *
++   * - A `_attachments` object is added every time a private tarball is published, upstream cached tarballs are
++   * not being part of this object, only for published private packages.
++   *
++   * Note: This field is removed when the package is accesed through the web user interface.
++   * */
++  _attachments: AttachMents;
++}
+diff --git a/src/manifest.ts b/src/manifest.ts
+deleted file mode 100644
+index 6bc887c93561f822d52b017a3c93b5f10ba01431..0000000000000000000000000000000000000000
+--- a/src/manifest.ts
++++ /dev/null
+@@ -1,267 +0,0 @@
+-export interface PackageAccess {
+-  storage?: string;
+-  publish?: string[];
+-  proxy?: string[];
+-  access?: string[];
+-  unpublish?: string[];
+-}
+-
+-export interface PackageList {
+-  [key: string]: PackageAccess;
+-}
+-
+-export interface MergeTags {
+-  [key: string]: string;
+-}
+-
+-export interface DistFile {
+-  url: string;
+-  sha: string;
+-  registry?: string;
+-}
+-
+-export interface DistFiles {
+-  [key: string]: DistFile;
+-}
+-
+-export interface Token {
+-  user: string;
+-  token: string;
+-  key: string;
+-  cidr?: string[];
+-  readonly: boolean;
+-  created: number | string;
+-  updated?: number | string;
+-}
+-
+-export interface AttachMents {
+-  [key: string]: AttachMentsItem;
+-}
+-
+-export interface AttachMentsItem {
+-  content_type?: string;
+-  data?: string;
+-  length?: number;
+-  shasum?: string;
+-  version?: string;
+-}
+-
+-export interface GenericBody {
+-  [key: string]: string;
+-}
+-
+-export interface UpLinkMetadata {
+-  etag: string;
+-  fetched: number;
+-}
+-
+-export interface UpLinks {
+-  [key: string]: UpLinkMetadata;
+-}
+-
+-export interface Signatures {
+-  keyid: string;
+-  sig: string;
+-}
+-
+-export interface Dist {
+-  'npm-signature'?: string;
+-  signatures?: Signatures[];
+-  fileCount?: number;
+-  integrity?: string;
+-  shasum: string;
+-  unpackedSize?: number;
+-  tarball: string;
+-}
+-
+-export interface Author {
+-  username?: string;
+-  name: string;
+-  email?: string;
+-  url?: string;
+-}
+-
+-export interface PackageUsers {
+-  [key: string]: boolean;
+-}
+-
+-export interface Tags {
+-  [key: string]: Version;
+-}
+-
+-export interface PeerDependenciesMeta {
+-  [dependencyName: string]: {
+-    optional?: boolean;
+-  };
+-}
+-
+-export interface Version {
+-  name: string;
+-  version: string;
+-  directories?: any;
+-  dist: Dist;
+-  author: string | Author;
+-  main: string;
+-  homemage?: string;
+-  license?: string;
+-  readme: string;
+-  readmeFileName?: string;
+-  readmeFilename?: string;
+-  description: string;
+-  bin?: string;
+-  bugs?: any;
+-  files?: string[];
+-  gitHead?: string;
+-  maintainers?: Author[];
+-  contributors?: Author[];
+-  repository?: string | any;
+-  scripts?: any;
+-  homepage?: string;
+-  etag?: string;
+-  dependencies?: Dependencies;
+-  peerDependencies?: Dependencies;
+-  devDependencies?: Dependencies;
+-  optionalDependencies?: Dependencies;
+-  peerDependenciesMeta?: PeerDependenciesMeta;
+-  bundleDependencies?: Dependencies;
+-  keywords?: string | string[];
+-  nodeVersion?: string;
+-  _id: string;
+-  _npmVersion?: string;
+-  _npmUser: Author;
+-  _hasShrinkwrap?: boolean;
+-  deprecated?: string;
+-  funding?: { type: string; url: string };
+-  engines?: Engines;
+-  hasInstallScript?: boolean;
+-  cpu?: string[];
+-  os?: string[];
+-}
+-
+-export interface Dependencies {
+-  [key: string]: string;
+-}
+-
+-export interface Engines {
+-  [key: string]: string;
+-}
+-
+-export interface Versions {
+-  [key: string]: Version;
+-}
+-
+-/**
+- * @deprecated use Manifest instead
+- */
+-export interface Package {
+-  _id?: string;
+-  name: string;
+-  versions: Versions;
+-  'dist-tags': GenericBody;
+-  time: GenericBody;
+-  readme?: string;
+-  users?: PackageUsers;
+-  _distfiles: DistFiles;
+-  _attachments: AttachMents;
+-  _uplinks: UpLinks;
+-  _rev: string;
+-}
+-
+-/**
+- * Represents upstream manifest from another registry
+- */
+-export interface FullRemoteManifest {
+-  _id?: string;
+-  _rev?: string;
+-  name: string;
+-  description?: string;
+-  'dist-tags': GenericBody;
+-  time: GenericBody;
+-  versions: Versions;
+-  maintainers?: Author[];
+-  /** store the latest readme **/
+-  readme?: string;
+-  /** store star assigned to this packages by users */
+-  users?: PackageUsers;
+-  // TODO: not clear what access exactly means
+-  access?: any;
+-  bugs?: { url: string };
+-  license?: string;
+-  homepage?: string;
+-  repository?: string | { type?: string; url: string; directory?: string };
+-  keywords?: string[];
+-  author?: string | Author;
+-}
+-
+-export interface Manifest extends FullRemoteManifest, PublishManifest {
+-  // private fields only used by verdaccio
+-  /**
+-   * store fast access to the dist url of an specific tarball, instead search version
+-   * by id, just the tarball id is faster.
+-   *
+-   * The _distfiles is created only when a package is being sync from an upstream.
+-   * also used to fetch tarballs from upstream, the private publish tarballs are not stored in
+-   * this object because they are not published in the upstream registry.
+-   */
+-  _distfiles: DistFiles;
+-  /**
+-   * Store access cache metadata, to avoid to fetch the same metadata multiple times.
+-   *
+-   * The key represents the uplink id which is composed of a etag and a fetched timestamp.
+-   *
+-   * The fetched timestamp is the time when the metadata was fetched, used to avoid to fetch the
+-   * same metadata until the metadata is older than the last fetch.
+-   */
+-  _uplinks: UpLinks;
+-  /**
+-   * store the revision of the manifest
+-   */
+-  _rev: string;
+-}
+-
+-export type AbbreviatedVersion = Pick<
+-  Version,
+-  | 'name'
+-  | 'version'
+-  | 'description'
+-  | 'dependencies'
+-  | 'devDependencies'
+-  | 'bin'
+-  | 'dist'
+-  | 'engines'
+-  | 'funding'
+-  | 'peerDependencies'
+->;
+-
+-export interface AbbreviatedVersions {
+-  [key: string]: AbbreviatedVersion;
+-}
+-/**
+- *
+- */
+-export type AbbreviatedManifest = Pick<Manifest, 'name' | 'dist-tags' | 'time'> & {
+-  modified: string;
+-  versions: AbbreviatedVersions;
+-};
+-
+-export interface PublishManifest {
+-  /**
+-   * The `_attachments` object has different usages:
+-   *
+-   * - When a package is published, it contains the tarball as an string, this string is used to be
+-   * converted as a tarball, usually attached to the package but not stored in the database.
+-   * - If user runs `npm star` the _attachments will be at the manifest body but empty.
+-   *
+-   * It has also an internal usage:
+-   *
+-   * - Used as a cache for the tarball, quick access to the tarball shasum, etc. Instead
+-   * iterate versions and find the right one, just using the tarball as a key which is what
+-   * the package manager sends to the registry.
+-   *
+-   * - A `_attachments` object is added every time a private tarball is published, upstream cached tarballs are
+-   * not being part of this object, only for published private packages.
+-   *
+-   * Note: This field is removed when the package is accesed through the web user interface.
+-   * */
+-  _attachments: AttachMents;
+-}
+diff --git a/src/plugins/index.d.ts b/src/plugins/index.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..e2f63aacd1eb3d66b50ec07fb78eb11d00b0a711
+--- /dev/null
++++ b/src/plugins/index.d.ts
+@@ -0,0 +1 @@
++export * from "./storage";
+diff --git a/src/plugins/index.ts b/src/plugins/index.ts
+deleted file mode 100644
+index d92f1edb8b5e2ac88bdca98ae0f6adc9b8000008..0000000000000000000000000000000000000000
+--- a/src/plugins/index.ts
++++ /dev/null
+@@ -1 +0,0 @@
+-export * from '@verdaccio/types/src/plugins/storage';
+diff --git a/src/plugins/storage.d.ts b/src/plugins/storage.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..4db2e0d9ac6d33194257256cf83b596b406a8f5e
+--- /dev/null
++++ b/src/plugins/storage.d.ts
+@@ -0,0 +1,53 @@
++import { Callback, CallbackAction } from "../commons";
++import { Manifest, Token } from "../manifest";
++
++export type StorageList = string[];
++
++export interface ILocalStorage {
++  add(name: string): void;
++  remove(name: string): void;
++  get(): StorageList;
++  sync(): void;
++}
++
++export interface TokenFilter {
++  user: string;
++}
++
++export interface ITokenActions {
++  saveToken(token: Token): Promise<any>;
++  deleteToken(user: string, tokenKey: string): Promise<any>;
++  readTokens(filter: TokenFilter): Promise<Token[]>;
++}
++
++/**
++ * This method expect return a Package object
++ * eg:
++ * {
++ *   name: string;
++ *   time: number;
++ *   ... and other props
++ * }
++ *
++ * The `cb` callback object will be executed if:
++ *  - it might return object (truly)
++ *  - it might reutrn null
++ */
++export type onSearchPackage = (item: Manifest, cb: CallbackAction) => void;
++// FIXME: error should be export type `VerdaccioError = HttpError & { code: number };`
++// but this type is on @verdaccio/commons-api and cannot be used here yet
++export type onEndSearchPackage = (error?: any) => void;
++export type onValidatePackage = (name: string) => boolean;
++
++export type StorageUpdateCallback = (
++  data: Manifest,
++  cb: CallbackAction,
++) => void;
++
++export type StorageWriteCallback = (
++  name: string,
++  json: Manifest,
++  callback: Callback,
++) => void;
++export type PackageTransformer = (pkg: Manifest) => Manifest;
++export type ReadPackageCallback = (err: any | null, data?: Manifest) => void;
+diff --git a/src/plugins/storage.ts b/src/plugins/storage.ts
+deleted file mode 100644
+index 41304a35011fe533451a5f6759bf8c9d224bf6fc..0000000000000000000000000000000000000000
+--- a/src/plugins/storage.ts
++++ /dev/null
+@@ -1,46 +0,0 @@
+-import { Callback, CallbackAction } from '@verdaccio/types/src/commons';
+-import { Manifest, Token } from '@verdaccio/types/src/manifest';
+-
+-export type StorageList = string[];
+-
+-export interface ILocalStorage {
+-  add(name: string): void;
+-  remove(name: string): void;
+-  get(): StorageList;
+-  sync(): void;
+-}
+-
+-export interface TokenFilter {
+-  user: string;
+-}
+-
+-export interface ITokenActions {
+-  saveToken(token: Token): Promise<any>;
+-  deleteToken(user: string, tokenKey: string): Promise<any>;
+-  readTokens(filter: TokenFilter): Promise<Token[]>;
+-}
+-
+-/**
+- * This method expect return a Package object
+- * eg:
+- * {
+- *   name: string;
+- *   time: number;
+- *   ... and other props
+- * }
+- *
+- * The `cb` callback object will be executed if:
+- *  - it might return object (truly)
+- *  - it might reutrn null
+- */
+-export type onSearchPackage = (item: Manifest, cb: CallbackAction) => void;
+-// FIXME: error should be export type `VerdaccioError = HttpError & { code: number };`
+-// but this type is on @verdaccio/commons-api and cannot be used here yet
+-export type onEndSearchPackage = (error?: any) => void;
+-export type onValidatePackage = (name: string) => boolean;
+-
+-export type StorageUpdateCallback = (data: Manifest, cb: CallbackAction) => void;
+-
+-export type StorageWriteCallback = (name: string, json: Manifest, callback: Callback) => void;
+-export type PackageTransformer = (pkg: Manifest) => Manifest;
+-export type ReadPackageCallback = (err: any | null, data?: Manifest) => void;
+diff --git a/src/search.d.ts b/src/search.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..d1e04af2efab103b53f2bfe0d504b69671d94326
+--- /dev/null
++++ b/src/search.d.ts
+@@ -0,0 +1,28 @@
++export type PublisherMaintainer = {
++  username: string;
++  email: string;
++};
++
++export type SearchPackageBody = {
++  name: string;
++  scope: string;
++  description: string;
++  author: string | PublisherMaintainer;
++  version: string;
++  keywords: string | string[] | undefined;
++  date: string;
++  links?: {
++    npm: string; // only include placeholder for URL eg: {url}/{packageName}
++    homepage?: string;
++    repository?: string;
++    bugs?: string;
++  };
++  publisher?: any;
++  maintainers?: PublisherMaintainer[];
++};
++
++export type SearchResultWeb = {
++  name: string;
++  version: string;
++  description: string;
++};
+diff --git a/src/search.ts b/src/search.ts
+deleted file mode 100644
+index d1e04af2efab103b53f2bfe0d504b69671d94326..0000000000000000000000000000000000000000
+--- a/src/search.ts
++++ /dev/null
+@@ -1,28 +0,0 @@
+-export type PublisherMaintainer = {
+-  username: string;
+-  email: string;
+-};
+-
+-export type SearchPackageBody = {
+-  name: string;
+-  scope: string;
+-  description: string;
+-  author: string | PublisherMaintainer;
+-  version: string;
+-  keywords: string | string[] | undefined;
+-  date: string;
+-  links?: {
+-    npm: string; // only include placeholder for URL eg: {url}/{packageName}
+-    homepage?: string;
+-    repository?: string;
+-    bugs?: string;
+-  };
+-  publisher?: any;
+-  maintainers?: PublisherMaintainer[];
+-};
+-
+-export type SearchResultWeb = {
+-  name: string;
+-  version: string;
+-  description: string;
+-};
+diff --git a/src/types.d.ts b/src/types.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..022477eb2e8ce8f23ff5fb4f5b5d3dc8b48da402
+--- /dev/null
++++ b/src/types.d.ts
+@@ -0,0 +1,5 @@
++export * from "./plugins";
++export * from "./manifest";
++export * from "./search";
++export * from "./commons";
++export * from "./configuration";
+diff --git a/src/types.ts b/src/types.ts
+deleted file mode 100644
+index eeca08a40d06d7cf2d0ce83e01a60676fd2b3f84..0000000000000000000000000000000000000000
+--- a/src/types.ts
++++ /dev/null
+@@ -1,5 +0,0 @@
+-export * from '@verdaccio/types/src/plugins';
+-export * from '@verdaccio/types/src/manifest';
+-export * from '@verdaccio/types/src/search';
+-export * from '@verdaccio/types/src/commons';
+-export * from '@verdaccio/types/src/configuration';
