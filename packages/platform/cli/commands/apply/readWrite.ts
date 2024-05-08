@@ -1,6 +1,10 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { FileDef, RepoPackageJson } from "@condu/core/configTypes.js";
+import type {
+  FileDef,
+  GetExistingContentFn,
+  RepoPackageJson,
+} from "@condu/core/configTypes.js";
 import yaml from "yaml";
 import commentJson from "comment-json";
 import { P, match } from "ts-pattern";
@@ -31,10 +35,8 @@ interface CachedWrittenFile extends WrittenFile {
 }
 
 const createGetExistingContentFn =
-  (targetPath: string, onExecuted: () => void) =>
-  async (
-    defaultFallback?: string | object | undefined,
-  ): Promise<string | object | undefined> => {
+  (targetPath: string, onExecuted: () => void): GetExistingContentFn =>
+  async (defaultFallback?) => {
     onExecuted();
     const extension = path.extname(targetPath);
     try {
@@ -54,12 +56,14 @@ const writeFileFromDef = async ({
   manifest,
   projectDir,
   previouslyWrittenFiles,
+  throwOnManualChanges,
 }: {
   file: FileDef;
   rootDir: string;
   manifest: RepoPackageJson;
   projectDir: string;
   previouslyWrittenFiles: Map<string, CachedWrittenFile>;
+  throwOnManualChanges?: boolean;
 }): Promise<(() => Promise<WrittenFile>) | WrittenFile | undefined> => {
   const targetPath = path.join(rootDir, file.path);
   const pathFromProjectDir = path.relative(projectDir, targetPath);
@@ -111,6 +115,11 @@ const writeFileFromDef = async ({
     typeof previouslyWritten?.manuallyChanged === "object" &&
     !usedExistingContent
   ) {
+    if (throwOnManualChanges) {
+      throw new Error(
+        `Manual changes present in ${pathFromProjectDir}, cannot continue.`,
+      );
+    }
     const manuallyChanged = previouslyWritten.manuallyChanged;
     const isInteractive = process.stdin.isTTY;
     // this needs to happen sequentially, because we're prompting the user for input:
@@ -176,12 +185,14 @@ export async function writeFiles({
   manifest,
   projectDir,
   previouslyWrittenFiles,
+  throwOnManualChanges,
 }: {
   files: readonly FileDef[];
   targetPackageDir: string;
   manifest: RepoPackageJson;
   projectDir: string;
   previouslyWrittenFiles: Map<string, CachedWrittenFile>;
+  throwOnManualChanges?: boolean;
 }) {
   const rootDir = path.join(projectDir, targetPackageDir);
   const filesOrFns = await Promise.all(
@@ -192,6 +203,7 @@ export async function writeFiles({
         manifest,
         projectDir,
         previouslyWrittenFiles,
+        throwOnManualChanges,
       }),
     ),
   );

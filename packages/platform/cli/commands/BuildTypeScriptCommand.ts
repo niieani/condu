@@ -25,7 +25,8 @@ export class BuildTypeScriptCommand extends Command {
   static override paths = [["tsc"]];
 
   static override usage = Command.Usage({
-    description: "Build the project using TypeScript, additionally creating mts/cts versions of the code.",
+    description:
+      "Build the project using TypeScript, additionally creating mts/cts versions of the code.",
   });
 
   opts = Option.Proxy();
@@ -66,10 +67,12 @@ export class BuildTypeScriptCommand extends Command {
     });
 
     if (tsc.status !== 0) {
-      throw new Error(`tsc exited with status code ${tsc.status}`);
+      console.error(new Error(`tsc exited with status code ${tsc.status}`));
+      return tsc.status ?? 0;
     }
     console.log("tsc built");
     const { buildTypeScriptPipeline } = await import("./buildTypeScript.js");
     await buildTypeScriptPipeline({ project, preset });
+    return 0;
   }
 }

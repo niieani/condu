@@ -268,7 +268,7 @@ export async function beforeReleasePipeline(input: {
   target?: string;
   packages: string[];
 }) {
-  const applyResult = await apply();
+  const applyResult = await apply({ throwOnManualChanges: true });
   if (!applyResult) {
     throw new Error(`Unable to find a condu project in the current directory`);
   }

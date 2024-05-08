@@ -57,6 +57,7 @@
 - [ ] add an 'init' command to create a new repo with config (or update existing one) from scratch
 - [ ] vitest feature
 - [ ] CI build and test using moon
+- [ ] add a mutex lock to prevent concurrent runs of apply, maybe something like [this](https://github.com/szikszail/cross-process-lock/blob/master/src/lock.ts) (auto-expire lock after a few seconds)
 
 - alpha shippable state -
 
