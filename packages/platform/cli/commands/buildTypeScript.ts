@@ -1,13 +1,16 @@
 import * as path from "node:path";
 import { correctSourceMaps } from "@condu/core/utils/correctSourceMaps.js";
-import { buildRemappedProject, type TypeScriptPipelinePreset } from "@condu/update-specifiers/main.js";
+import {
+  buildRemappedProject,
+  type TypeScriptPipelinePreset,
+} from "@condu/update-specifiers/main.js";
 import { apply } from "./apply/apply.js";
 
 export async function buildTypeScriptPipeline(input: {
   project?: string;
   preset?: TypeScriptPipelinePreset;
 }) {
-  const applyResult = await apply();
+  const applyResult = await apply({ throwOnManualChanges: true });
   if (!applyResult) {
     throw new Error(`Unable to find a condu project in the current directory`);
   }

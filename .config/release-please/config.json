@@ -5,9 +5,14 @@
   "bootstrap-sha": "487dfcb00e029d0c8f483f41d0de82a992885f3d",
   "group-pull-request-title-pattern": "chore: release condu",
   "packages": {
-    "packages/features/gitignore": {
+    "packages/test/dummy": {
       "release-type": "node",
-      "component": "@condu-feature/gitignore",
+      "component": "@condu/test-dummy",
+      "initial-version": "1.0.0"
+    },
+    "packages/test/dummy-dep": {
+      "release-type": "node",
+      "component": "@condu/test-dummy-dep",
       "initial-version": "1.0.0"
     }
   },

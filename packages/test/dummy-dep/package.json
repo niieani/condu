@@ -1,0 +1,8 @@
+{
+  "name": "@condu/test-dummy-dep",
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "directory": "../../../build/packages/test/dummy-dep"
+  }
+}

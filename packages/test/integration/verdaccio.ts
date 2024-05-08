@@ -2,7 +2,6 @@ import { runServer as _runServer } from "verdaccio";
 import type { AuthHtpasswd, Config } from "@verdaccio/types";
 import type { Application } from "express";
 import path from "node:path";
-import { satisfies } from "semver";
 
 const runServer = _runServer as any as (
   config: Omit<Config, "security" | "secret" | "server_id">,
