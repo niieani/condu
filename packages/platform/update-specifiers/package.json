@@ -2,15 +2,15 @@
   "name": "@condu/update-specifiers",
   "version": "1.0.0",
   "type": "module",
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/platform/update-specifiers"
-  },
   "dependencies": {
     "@ts-morph/common": "^0.23.0",
     "ts-morph": "^22.0.0"
   },
   "peerDependencies": {
     "@condu/core": "workspace:^*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "../../../build/packages/platform/update-specifiers"
   }
 }

@@ -1,14 +1,14 @@
 {
   "name": "@condu-feature/condu-packages",
-  "license": "MIT",
   "version": "1.0.0",
+  "license": "MIT",
   "type": "module",
+  "peerDependencies": {
+    "@condu/core": "workspace:^*"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "../../../build/packages/features/condu-packages"
-  },
-  "peerDependencies": {
-    "@condu/core": "workspace:^*"
   },
   "publishDependencies": []
 }

@@ -1,13 +1,13 @@
 {
   "name": "@condu-feature/gpt-summarizer",
-  "license": "MIT",
   "version": "1.0.0",
+  "license": "MIT",
   "type": "module",
+  "peerDependencies": {
+    "@condu/core": "workspace:^*"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "../../../build/packages/features/gpt-summarizer"
-  },
-  "peerDependencies": {
-    "@condu/core": "workspace:^*"
   }
 }

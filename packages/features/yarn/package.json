@@ -2,11 +2,11 @@
   "name": "@condu-feature/yarn",
   "version": "1.0.0",
   "type": "module",
+  "peerDependencies": {
+    "@condu/core": "workspace:^*"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "../../../build/packages/features/yarn"
-  },
-  "peerDependencies": {
-    "@condu/core": "workspace:^*"
   }
 }

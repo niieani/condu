@@ -2,11 +2,11 @@
   "name": "@condu-feature/vitest",
   "version": "1.0.0",
   "type": "module",
+  "peerDependencies": {
+    "@condu/core": "workspace:^*"
+  },
   "publishConfig": {
     "access": "public",
     "directory": "../../../build/packages/features/vitest"
-  },
-  "peerDependencies": {
-    "@condu/core": "workspace:^*"
   }
 }

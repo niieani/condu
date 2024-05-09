@@ -28,12 +28,12 @@
   "peerDependencies": {
     "@condu/core": "workspace:^*"
   },
+  "publishConfig": {
+    "directory": "../../../build/packages/platform/cli"
+  },
   "publishDependencies": [
     "@pnpm",
     "@condu",
     "spdx-license-list"
-  ],
-  "publishConfig": {
-    "directory": "../../../build/packages/platform/cli"
-  }
+  ]
 }
