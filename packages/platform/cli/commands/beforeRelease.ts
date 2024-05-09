@@ -282,10 +282,15 @@ export async function beforeReleasePipeline({
       }).path,
   );
   const packages = await project.getWorkspacePackages();
+
   const [selectedPackages, unselectedPackages] =
     selectedPackagePaths.length > 0
       ? partition(packages, (pkg) => selectedPackagePaths.includes(pkg.dir))
       : [packages, []];
+
+  if (selectedPackages.length === 0) {
+    throw new Error(`No packages found to prepare for release.`);
+  }
 
   const { projectDir, config } = project;
   // TODO: make conventions non-optional in a loaded project
