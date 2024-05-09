@@ -70,6 +70,7 @@ export const releasePlease = ({
                 path: ".github/workflows/release-please.yml",
                 type: "committed",
                 content: {
+                  name: "Release Please",
                   on: {
                     push: { branches: [config.git.defaultBranch] },
                   },
@@ -88,6 +89,17 @@ export const releasePlease = ({
                       },
                       steps: [
                         {
+                          id: "release-please-prs",
+                          // uses: 'google-github-actions/release-please-action@v4',
+                          uses: "niieani/release-please-action@use-fork",
+                          with: {
+                            "config-file": ".config/release-please/config.json",
+                            "manifest-file":
+                              ".config/release-please/manifest.json",
+                            "skip-github-release": true,
+                          },
+                        },
+                        {
                           id: "release-please",
                           // uses: 'google-github-actions/release-please-action@v4',
                           uses: "niieani/release-please-action@use-fork",
@@ -95,6 +107,7 @@ export const releasePlease = ({
                             "config-file": ".config/release-please/config.json",
                             "manifest-file":
                               ".config/release-please/manifest.json",
+                            "skip-github-pull-request": true,
                           },
                         },
                       ],

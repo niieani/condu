@@ -1,3 +1,4 @@
+name: Release Please
 on:
   push:
     branches:
@@ -12,11 +13,18 @@ jobs:
       releases_created: ${{ steps.release-please.outputs.releases_created }}
       paths_released: ${{ steps.release-please.outputs.paths_released }}
     steps:
+      - id: release-please-prs
+        uses: niieani/release-please-action@use-fork
+        with:
+          config-file: .config/release-please/config.json
+          manifest-file: .config/release-please/manifest.json
+          skip-github-release: true
       - id: release-please
         uses: niieani/release-please-action@use-fork
         with:
           config-file: .config/release-please/config.json
           manifest-file: .config/release-please/manifest.json
+          skip-github-pull-request: true
   release:
     runs-on: ubuntu-latest
     needs:
