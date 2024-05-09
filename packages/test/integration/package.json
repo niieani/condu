@@ -1,8 +1,8 @@
 {
   "name": "@condu-test/integration",
+  "version": "1.0.0",
   "private": true,
   "license": "MIT",
-  "version": "1.0.0",
   "type": "module",
   "dependencies": {
     "@verdaccio/types": "patch:@verdaccio/types@npm%3A12.0.0-next-7.3#~/.yarn/patches/@verdaccio-types-npm-12.0.0-next-7.3-88649149df.patch",

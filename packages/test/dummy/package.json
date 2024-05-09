@@ -2,10 +2,10 @@
   "name": "@condu/test-dummy",
   "license": "MIT",
   "type": "module",
-  "publishConfig": {
-    "directory": "../../../build/packages/test/dummy"
-  },
   "dependencies": {
     "@condu/test-dummy-dep": "workspace:^*"
+  },
+  "publishConfig": {
+    "directory": "../../../build/packages/test/dummy"
   }
 }

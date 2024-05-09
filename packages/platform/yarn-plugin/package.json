@@ -1,17 +1,17 @@
 {
   "name": "@condu/yarn-plugin",
-  "license": "MIT",
   "version": "1.0.0",
+  "license": "MIT",
   "type": "module",
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/platform/yarn-plugin"
-  },
   "dependencies": {
     "@condu/cli": "workspace:^*"
   },
   "devDependencies": {
     "@yarnpkg/core": "^4.0.5",
     "@yarnpkg/fslib": "^3.0.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "../../../build/packages/platform/yarn-plugin"
   }
 }

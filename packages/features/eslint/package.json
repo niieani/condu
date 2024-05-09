@@ -2,15 +2,15 @@
   "name": "@condu-feature/eslint",
   "version": "1.0.0",
   "type": "module",
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/features/eslint"
-  },
   "peerDependencies": {
     "@condu/core": "workspace:^*",
     "@typescript-eslint/eslint-plugin": "6.8.0",
     "@typescript-eslint/parser": "6.8.0",
     "eslint-plugin-import": "*",
     "eslint-plugin-unicorn": "^48.0.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "../../../build/packages/features/eslint"
   }
 }

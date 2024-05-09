@@ -2,15 +2,15 @@
   "name": "@condu-feature/ci-github-actions",
   "version": "1.0.0",
   "type": "module",
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/features/ci-github-actions"
-  },
   "dependencies": {
     "@condu/schema-types": "workspace:^*",
     "remeda": "^1.61.0"
   },
   "peerDependencies": {
     "@condu/core": "workspace:^*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "../../../build/packages/features/ci-github-actions"
   }
 }

@@ -2,14 +2,14 @@
   "name": "@condu-feature/vscode",
   "version": "1.0.0",
   "type": "module",
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/features/vscode"
-  },
   "dependencies": {
     "comment-json": "^4.2.3"
   },
   "peerDependencies": {
     "@condu/core": "workspace:^*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "../../../build/packages/features/vscode"
   }
 }

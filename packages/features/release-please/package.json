@@ -1,14 +1,14 @@
 {
   "name": "@condu-feature/release-please",
-  "license": "MIT",
   "version": "1.0.0",
+  "license": "MIT",
   "type": "module",
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/features/release-please"
-  },
   "dependencies": {
     "@condu/core": "workspace:^*",
     "@condu/schema-types": "workspace:^*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "../../../build/packages/features/release-please"
   }
 }

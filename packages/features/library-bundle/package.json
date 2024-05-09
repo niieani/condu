@@ -1,16 +1,16 @@
 {
   "name": "@condu-feature/library-bundle",
-  "license": "MIT",
   "version": "1.0.0",
+  "license": "MIT",
   "type": "module",
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/features/library-bundle"
+  "devDependencies": {
+    "webpack": "^5.91.0"
   },
   "peerDependencies": {
     "@condu/core": "workspace:^*"
   },
-  "devDependencies": {
-    "webpack": "^5.91.0"
+  "publishConfig": {
+    "access": "public",
+    "directory": "../../../build/packages/features/library-bundle"
   }
 }
