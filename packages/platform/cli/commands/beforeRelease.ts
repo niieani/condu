@@ -9,8 +9,6 @@ import spdxLicenseList from "spdx-license-list/full.js";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import type { CollectedState } from "@condu/core/configTypes.js";
 import { partition } from "remeda";
-import { correctSourceMaps } from "@condu/core/utils/correctSourceMaps.js";
-import { buildRemappedProject } from "@condu/update-specifiers/main.js";
 import { getSingleMatch } from "../matchPackage.js";
 import { apply } from "./apply/apply.js";
 
@@ -264,9 +262,12 @@ function getReleaseDependencies(manifest: PackageJson) {
   return dependencyManifestOverride;
 }
 
-export async function beforeReleasePipeline(input: {
-  target?: string;
+export async function beforeReleasePipeline({
+  ci = Boolean(process.env["CI"]),
+  ...input
+}: {
   packages: string[];
+  ci?: boolean;
 }) {
   const applyResult = await apply({ throwOnManualChanges: true });
   if (!applyResult) {
@@ -281,14 +282,14 @@ export async function beforeReleasePipeline(input: {
       }).path,
   );
   const packages = await project.getWorkspacePackages();
-  const packageList =
+  const [selectedPackages, unselectedPackages] =
     selectedPackagePaths.length > 0
-      ? packages.filter((pkg) => selectedPackagePaths.includes(pkg.dir))
-      : packages;
+      ? partition(packages, (pkg) => selectedPackagePaths.includes(pkg.dir))
+      : [packages, []];
 
   const { projectDir, config } = project;
   // TODO: make conventions non-optional in a loaded project
-  const buildDirName = input.target ?? config.conventions.buildDir;
+  const buildDirName = config.conventions.buildDir;
   const srcDirName = config.conventions.sourceDir;
   const absBuildDir = path.join(projectDir, buildDirName);
 
@@ -296,7 +297,7 @@ export async function beforeReleasePipeline(input: {
 
   await prepareBuildDirectoryPackages({
     projectDir,
-    packageList,
+    packageList: selectedPackages,
     absBuildDir,
     srcDirName,
     buildDirName,
@@ -304,10 +305,18 @@ export async function beforeReleasePipeline(input: {
     collectedState,
   });
 
-  // TODO: just run the command in parallel during build?
-  // console.log(`Building remapped project...`);
-  // await buildRemappedProject({
-  //   tsConfigFilePath: input.project ?? "tsconfig.json",
-  //   mappingPreset: input.preset === "ts-to-mts" ? "ts-to-mts" : "ts-to-cts",
-  // });
+  if (ci) {
+    // mark all the non-selected packages as private in the package.json
+    await Promise.all(
+      unselectedPackages
+        .filter((pkg) => !pkg.manifest.private)
+        .map((pkg) =>
+          pkg.writeProjectManifest({
+            ...pkg.manifest,
+            $internal$: true,
+            private: true,
+          }),
+        ),
+    );
+  }
 }

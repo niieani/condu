@@ -2,25 +2,6 @@ import type { TypeScriptPipelinePreset } from "@condu/update-specifiers/main.js"
 import { Command, Option } from "clipanion";
 import childProcess from "node:child_process";
 
-// export class InternalBuildTypeScriptCommand extends Command {
-//   project = Option.String("--project,-p");
-//   preset = Option.String("--preset");
-
-//   async execute() {
-//     console.log(this);
-//     // const { buildRemappedProject } = await import(
-//     //   "@condu/update-specifiers/main.js"
-//     // );
-//     // await buildRemappedProject({
-//     //   tsConfigFilePath: this.project ?? "tsconfig.json",
-//     //   mappingPreset: this.preset === "ts-to-mts" ? "ts-to-mts" : "ts-to-cts",
-//     // });
-//   }
-// }
-
-// const internalCli = new Cli();
-// internalCli.register(InternalBuildTypeScriptCommand);
-
 export class BuildTypeScriptCommand extends Command {
   static override paths = [["tsc"]];
 
@@ -66,9 +47,9 @@ export class BuildTypeScriptCommand extends Command {
       shell: true,
     });
 
-    if (tsc.status !== 0) {
+    if (tsc.status && tsc.status !== 0) {
       console.error(new Error(`tsc exited with status code ${tsc.status}`));
-      return tsc.status ?? 0;
+      return tsc.status;
     }
     console.log("tsc built");
     const { buildTypeScriptPipeline } = await import("./buildTypeScript.js");

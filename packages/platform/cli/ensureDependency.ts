@@ -56,7 +56,14 @@ export async function getManifest(cwd: string) {
       workspacePath: ".",
     } satisfies RepoPackageJson,
     writeProjectManifest: (
-      { path, kind, ...pJson }: Partial<RepoPackageJson>,
+      {
+        // omit these internal fields (see RepoPackageJson type):
+        path,
+        kind,
+        workspacePath,
+        // and keep the rest of package.json:
+        ...pJson
+      }: Partial<RepoPackageJson>,
       force?: boolean,
     ) =>
       writeProjectManifest(

@@ -146,10 +146,16 @@ Next step:
 - [ ] ensure that merging the test release PR will ONLY release the selected packages, rather than EVERYTHING via lerna
   - maybe make all non-released packages private for the duration of the release?
 - [ ] what is up with yarnrc auto-changing?
+- [ ] add a `condu` package that just wraps `@condu/cli` and adds the build script - this way @condu/cli can exist as its own package
 
 ## Later:
 
 - [ ] commitlint + husky for linting commit messages
+- [ ] jsr.io feature - publish to JSR (sets `isolatedDeclarations: true` in tsconfig)
+- [ ] use the [new configDir in tsconfig](https://devblogs.microsoft.com/typescript/announcing-typescript-5-5-beta/#the-configdir-template-variable-for-configuration-files)
+- [ ] eventually use TS' [transpileDeclaration API](https://devblogs.microsoft.com/typescript/announcing-typescript-5-5-beta/#the-transpiledeclaration-api) for d.ts, and SWC for compiling
+- [ ] additional eslints:
+  - [ ] https://github.com/eslint-community/eslint-plugin-n
 - [ ] consider swapping pnpm internals for https://www.npmjs.com/package/@manypkg/get-packages
 - [ ] "recommended" preset of features that always opts you in to the latest and greatest of the JS ecosystem
 - [ ] website
