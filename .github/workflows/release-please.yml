@@ -26,6 +26,7 @@ jobs:
       - uses: ./.github/workflows/moon-ci.yml
       - run: yarn run condu before-release --ci ${{ join( fromJSON(
           needs.release-please.outputs.paths_released ), ' ' ) }}
+      - run: 'git add . && git commit -m "chore: satisfy lerna requirements"'
       - run: ./node_modules/.bin/lerna publish from-package --no-git-reset --no-push
           --yes
         env:
