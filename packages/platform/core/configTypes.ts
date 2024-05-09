@@ -244,9 +244,14 @@ export interface LoadConfigOptions {
   throwOnManualChanges?: boolean;
 }
 
+export interface WriteManifestFnOptions {
+  force?: boolean;
+  merge?: boolean;
+}
+
 export type WriteManifestFn = (
   manifest: RepoPackageJson | PackageJson,
-  force?: boolean,
+  options?: WriteManifestFnOptions,
 ) => Promise<void>;
 
 export interface WorkspacePackage {
