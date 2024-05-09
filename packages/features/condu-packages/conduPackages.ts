@@ -11,8 +11,8 @@ export const condu = ({}: {} = {}) =>
           {
             tasks: [
               {
-                type: "build",
-                name: "prepare-package",
+                type: "publish",
+                name: "before-release",
                 definition: {
                   // TODO: add configurability/arguments
                   command: `${

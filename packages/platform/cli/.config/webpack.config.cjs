@@ -67,7 +67,7 @@ module.exports = (
         /^node:/,
         "typescript",
         "@ts-morph/common",
-        'ts-morph',
+        "ts-morph",
         "spdx-license-list",
         "graceful-fs",
         "fs-extra",

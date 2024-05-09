@@ -6,6 +6,6 @@
     "directory": "../../../build/packages/test/dummy"
   },
   "dependencies": {
-    "@condu/test-dummy-dep": "workspace:*"
+    "@condu/test-dummy-dep": "workspace:^*"
   }
 }
