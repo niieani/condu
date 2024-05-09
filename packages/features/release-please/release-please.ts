@@ -108,6 +108,13 @@ export const releasePlease = ({
                         // TODO: decouple this reusable workflow
                         { uses: "./.github/workflows/moon-ci.yml" },
                         {
+                          run: `${
+                            isInternalCondu
+                              ? `${config.node.packageManager.name} run `
+                              : ""
+                          }${CORE_NAME} before-release --ci \${{ join( fromJSON( needs.release-please.outputs.paths_released ), ' ' ) }}`,
+                        },
+                        {
                           run: "./node_modules/.bin/lerna publish from-package --no-git-reset --no-push --yes",
                           env: {
                             NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}",
