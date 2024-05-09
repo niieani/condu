@@ -4,5 +4,6 @@
   "type": "module",
   "publishConfig": {
     "directory": "../../../build/packages/test/dummy-dep"
-  }
+  },
+  "version": "1.0.0"
 }
