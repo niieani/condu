@@ -28,7 +28,7 @@ const defaultToolchain: Toolchain = {
 
     /** The version of the package manager to use. */
     yarn: {
-      version: "4.0.0-rc.49",
+      version: "4.2.2",
     },
 
     /** Add `node.version` as a constraint in the root `package.json` `engines`. */

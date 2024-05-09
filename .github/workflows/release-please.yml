@@ -24,6 +24,8 @@ jobs:
     if: ${{ needs.release-please.outputs.releases_created == 'true' }}
     steps:
       - uses: ./.github/workflows/moon-ci.yml
+      - run: yarn run condu before-release --ci ${{ join( fromJSON(
+          needs.release-please.outputs.paths_released ), ' ' ) }}
       - run: ./node_modules/.bin/lerna publish from-package --no-git-reset --no-push
           --yes
         env:
