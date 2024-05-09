@@ -10,6 +10,7 @@ import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import type {
   DependencyDef,
   RepoPackageJson,
+  WriteManifestFnOptions,
 } from "@condu/core/configTypes.js";
 import type { ProjectManifest } from "@pnpm/types";
 import sortPackageJson from "sort-package-json";
@@ -64,10 +65,13 @@ export async function getManifest(cwd: string) {
         // and keep the rest of package.json:
         ...pJson
       }: Partial<RepoPackageJson>,
-      force?: boolean,
+      { force, merge }: WriteManifestFnOptions = {},
     ) =>
       writeProjectManifest(
-        sortPackageJson({ ...manifest, ...(pJson as ProjectManifest) }),
+        sortPackageJson({
+          ...(merge ? manifest : {}),
+          ...(pJson as ProjectManifest),
+        }),
         force,
       ),
     projectDir,

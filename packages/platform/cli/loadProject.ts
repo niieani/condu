@@ -28,6 +28,7 @@ import sortPackageJson from "sort-package-json";
 import type {
   WorkspacePackage,
   LoadConfigOptions,
+  WriteManifestFnOptions,
 } from "@condu/core/configTypes.js";
 
 export interface Project
@@ -151,10 +152,13 @@ export const getWorkspacePackages = async (
       } satisfies RepoPackageJson,
       writeProjectManifest: (
         { path, workspacePath, kind, ...pJson }: Partial<RepoPackageJson>,
-        force?: boolean,
+        { force, merge }: WriteManifestFnOptions = {},
       ) =>
         writeProjectManifest(
-          sortPackageJson({ ...manifest, ...(pJson as ProjectManifest) }),
+          sortPackageJson({
+            ...(merge ? manifest : {}),
+            ...(pJson as ProjectManifest),
+          }),
           force,
         ),
     };
