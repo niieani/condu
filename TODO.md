@@ -151,6 +151,7 @@ Next step:
 ## Later:
 
 - [ ] commitlint + husky for linting commit messages
+- [ ] ensure `packageManager` includes a SHA after the version
 - [ ] jsr.io feature - publish to JSR (sets `isolatedDeclarations: true` in tsconfig)
 - [ ] use the [new configDir in tsconfig](https://devblogs.microsoft.com/typescript/announcing-typescript-5-5-beta/#the-configdir-template-variable-for-configuration-files)
 - [ ] eventually use TS' [transpileDeclaration API](https://devblogs.microsoft.com/typescript/announcing-typescript-5-5-beta/#the-transpiledeclaration-api) for d.ts, and SWC for compiling
