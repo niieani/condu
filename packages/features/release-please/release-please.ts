@@ -115,6 +115,9 @@ export const releasePlease = ({
                           }${CORE_NAME} before-release --ci \${{ join( fromJSON( needs.release-please.outputs.paths_released ), ' ' ) }}`,
                         },
                         {
+                          run: 'git add . && git commit -m "chore: satisfy lerna requirements"',
+                        },
+                        {
                           run: "./node_modules/.bin/lerna publish from-package --no-git-reset --no-push --yes",
                           env: {
                             NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}",
