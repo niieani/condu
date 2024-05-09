@@ -23,11 +23,16 @@ export const yarn = ({ yarnrc }: { yarnrc?: Yarnrc } = {}) =>
           // if we moved fully to 'bun' for package management,
           // we could get rid of one more file ¯\_(ツ)_/¯
           type: "committed",
-          content: {
-            enableConstraintsChecks: true,
-            ...yarnrc,
-            nodeLinker: yarnrc?.nodeLinker ?? "node-modules",
-          } satisfies Yarnrc,
+          content: async (f) => {
+            const existingContent =
+              await f.getExistingContentAndMarkAsUserEditable<object>();
+            return {
+              enableConstraintsChecks: true,
+              ...yarnrc,
+              nodeLinker: yarnrc?.nodeLinker ?? "node-modules",
+              ...existingContent,
+            } satisfies Yarnrc;
+          },
         },
       ];
       const devDependencies: DependencyDef[] = [];
