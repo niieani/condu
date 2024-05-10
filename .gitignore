@@ -30,8 +30,6 @@ node_modules
 # lerna:
 /lerna.json
 /lerna-debug.log
-# auto:
-/auto.config.cjs
 # vscode:
 /.vscode/settings.json
 # gpt-summarizer:
