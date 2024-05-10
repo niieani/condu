@@ -7,5 +7,6 @@
   },
   "publishConfig": {
     "directory": "../../../build/packages/test/dummy"
-  }
+  },
+  "version": "1.0.0"
 }
