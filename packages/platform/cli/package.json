@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "@condu/update-specifiers": "workspace:^*",
+    "@condu/update-specifiers": "workspace:^",
     "@pnpm/fetch": "^8.0.0",
     "@pnpm/logger": "^5.0.0",
     "@pnpm/network.auth-header": "^3.0.0",
@@ -26,7 +26,7 @@
     "vitest": "^1.6.0"
   },
   "peerDependencies": {
-    "@condu/core": "workspace:^*"
+    "@condu/core": "workspace:^"
   },
   "publishConfig": {
     "access": "public",

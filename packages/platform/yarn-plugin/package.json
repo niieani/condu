@@ -4,7 +4,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "@condu/cli": "workspace:^*"
+    "@condu/cli": "workspace:^"
   },
   "devDependencies": {
     "@yarnpkg/core": "^4.0.5",

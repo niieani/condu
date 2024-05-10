@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "peerDependencies": {
-    "@condu/core": "workspace:^*",
+    "@condu/core": "workspace:^",
     "@typescript-eslint/eslint-plugin": "6.8.0",
     "@typescript-eslint/parser": "6.8.0",
     "eslint-plugin-import": "*",

@@ -3,7 +3,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "@condu/test-dummy-dep": "workspace:^*"
+    "@condu/test-dummy-dep": "workspace:^"
   },
   "publishConfig": {
     "access": "public",

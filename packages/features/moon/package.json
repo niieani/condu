@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "@condu/schema-types": "workspace:^*",
+    "@condu/schema-types": "workspace:^",
     "@moonrepo/types": "^1.17.2"
   },
   "peerDependencies": {
-    "@condu/core": "workspace:^*"
+    "@condu/core": "workspace:^"
   },
   "publishConfig": {
     "access": "public",

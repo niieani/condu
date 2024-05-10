@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "@condu/schema-types": "workspace:^*",
+    "@condu/schema-types": "workspace:^",
     "remeda": "^1.61.0"
   },
   "peerDependencies": {
-    "@condu/core": "workspace:^*"
+    "@condu/core": "workspace:^"
   },
   "publishConfig": {
     "access": "public",

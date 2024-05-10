@@ -10,7 +10,7 @@
     "@types/signale": "^1.4.7"
   },
   "peerDependencies": {
-    "@condu/core": "workspace:^*"
+    "@condu/core": "workspace:^"
   },
   "publishConfig": {
     "access": "public",
