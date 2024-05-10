@@ -13,18 +13,18 @@ jobs:
       releases_pending: ${{ steps.release-please.outputs.releases_pending }}
       paths_to_release: ${{ steps.release-please.outputs.paths_to_release }}
     steps:
-      - id: release-please-prs
-        uses: niieani/release-please-action@use-fork
-        with:
-          config-file: .config/release-please/config.json
-          manifest-file: .config/release-please/manifest.json
-          only: update-pull-requests
       - id: release-please
         uses: niieani/release-please-action@use-fork
         with:
           config-file: .config/release-please/config.json
           manifest-file: .config/release-please/manifest.json
           only: list-candidate-releases
+      - id: release-please-prs
+        uses: niieani/release-please-action@use-fork
+        with:
+          config-file: .config/release-please/config.json
+          manifest-file: .config/release-please/manifest.json
+          only: update-pull-requests
   release:
     runs-on: ubuntu-latest
     needs:
@@ -32,7 +32,9 @@ jobs:
     if: ${{ needs.release-please.outputs.releases_pending == 'true' }}
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/workflows/moon-ci.yml
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/moon-ci-setup
       - run: yarn run condu before-release --ci ./${{ join( fromJSON(
           needs.release-please.outputs.paths_to_release ), ' ./' ) }}
       - run: 'git add . && git commit -m "chore: satisfy lerna requirements"'

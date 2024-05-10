@@ -14,6 +14,7 @@ import type {
   Conventions,
 } from "@condu/core/configTypes.js";
 import { nonEmpty } from "@condu/core/utils/filter.js";
+import type GithubAction from "@condu/schema-types/schemas/githubAction.gen.js";
 // import { match } from "ts-pattern";
 
 type TasksByType = Record<
@@ -28,19 +29,50 @@ export const moonCi = ({}: {} = {}) =>
     name: "moonCi",
     order: { priority: "end" },
     actionFn: async (config, state) => {
+      const ciSetupAction: GithubAction = {
+        name: "Moon CI Setup",
+        description: "Setup the environment for Moon CI",
+        inputs: {
+          "registry-url": {
+            description: "The NPM registry URL",
+            required: false,
+            default: "https://registry.npmjs.org/",
+          },
+        },
+        runs: {
+          using: "composite",
+          steps: [
+            // {
+            //   uses: "actions/checkout@v4",
+            //   // 0 indicates all history for all branches and tags:
+            //   with: { "fetch-depth": 0 },
+            // },
+            ...(config.node.packageManager.name !== "npm"
+              ? [{ run: `corepack enable`, shell: "bash" }]
+              : []),
+            {
+              uses: "actions/setup-node@v4",
+              with: {
+                "node-version-file": "package.json",
+                // "node-version": config.node.version,
+                cache: config.node.packageManager.name,
+                "registry-url": "${{ inputs.registry-url }}",
+              },
+            },
+            { uses: "oven-sh/setup-bun@v1" },
+            {
+              run: `${config.node.packageManager.name} install --immutable`,
+              shell: "bash",
+            },
+            { run: `./node_modules/.bin/moon ci :build`, shell: "bash" },
+          ],
+        },
+      };
       const ciWorkflow: GithubWorkflow = {
         name: "Moon CI",
         on: {
           push: { branches: [config.git.defaultBranch] },
           pull_request: {},
-          workflow_call: {
-            inputs: {
-              "registry-url": {
-                type: "string",
-                required: false,
-              },
-            },
-          },
         },
         jobs: {
           ci: {
@@ -55,22 +87,8 @@ export const moonCi = ({}: {} = {}) =>
                 // 0 indicates all history for all branches and tags:
                 with: { "fetch-depth": 0 },
               },
-              ...(config.node.packageManager.name !== "npm"
-                ? [{ run: `corepack enable` }]
-                : []),
-              {
-                uses: "actions/setup-node@v4",
-                with: {
-                  "node-version-file": "package.json",
-                  // "node-version": config.node.version,
-                  cache: config.node.packageManager.name,
-                  "registry-url":
-                    "${{ inputs.registry-url || 'https://registry.npmjs.org/' }}",
-                },
-              },
-              { uses: "oven-sh/setup-bun@v1" },
-              { run: `${config.node.packageManager.name} install --immutable` },
-              { run: `./node_modules/.bin/moon ci :build` },
+              // TODO: always use the version from main, not the checked out one
+              { uses: "./.github/actions/moon-ci-setup" },
             ],
           },
         },
@@ -146,9 +164,13 @@ export const moonCi = ({}: {} = {}) =>
           {
             files: [
               {
+                path: ".github/actions/moon-ci-setup/action.yml",
+                type: "committed",
+                content: ciSetupAction,
+              },
+              {
                 path: ".github/workflows/moon-ci.yml",
                 type: "committed",
-                publish: false,
                 content: ciWorkflow,
               },
               {

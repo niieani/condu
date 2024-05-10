@@ -876,6 +876,7 @@ concurrency?: (string | Concurrency)
 }
 export interface PermissionsEvent {
 actions?: PermissionsLevel
+attestations?: PermissionsLevel
 checks?: PermissionsLevel
 contents?: PermissionsLevel
 deployments?: PermissionsLevel

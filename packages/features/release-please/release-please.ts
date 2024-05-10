@@ -89,17 +89,6 @@ export const releasePlease = ({
                       },
                       steps: [
                         {
-                          id: "release-please-prs",
-                          // uses: 'google-github-actions/release-please-action@v4',
-                          uses: "niieani/release-please-action@use-fork",
-                          with: {
-                            "config-file": ".config/release-please/config.json",
-                            "manifest-file":
-                              ".config/release-please/manifest.json",
-                            only: "update-pull-requests",
-                          },
-                        },
-                        {
                           id: "release-please",
                           // uses: 'google-github-actions/release-please-action@v4',
                           uses: "niieani/release-please-action@use-fork",
@@ -110,6 +99,18 @@ export const releasePlease = ({
                             only: "list-candidate-releases",
                           },
                         },
+                        // TODO: only run this if no releases are pending, or after the release step is done
+                        {
+                          id: "release-please-prs",
+                          // uses: 'google-github-actions/release-please-action@v4',
+                          uses: "niieani/release-please-action@use-fork",
+                          with: {
+                            "config-file": ".config/release-please/config.json",
+                            "manifest-file":
+                              ".config/release-please/manifest.json",
+                            only: "update-pull-requests",
+                          },
+                        },
                       ],
                     },
                     // TODO: the next steps should be NPM publishing with lerna
@@ -118,9 +119,12 @@ export const releasePlease = ({
                       needs: ["release-please"],
                       if: "${{ needs.release-please.outputs.releases_pending == 'true' }}",
                       steps: [
-                        { uses: "actions/checkout@v4" },
-                        // TODO: decouple this reusable workflow
-                        { uses: "./.github/workflows/moon-ci.yml" },
+                        {
+                          uses: "actions/checkout@v4",
+                          with: { "fetch-depth": 0 },
+                        },
+                        // TODO: always use the version from main, not the checked out one
+                        { uses: "./.github/actions/moon-ci-setup" },
                         {
                           run: `${
                             isInternalCondu
