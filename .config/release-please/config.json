@@ -3,7 +3,7 @@
   "tag-separator": "@",
   "include-v-in-tag": false,
   "bootstrap-sha": "487dfcb00e029d0c8f483f41d0de82a992885f3d",
-  "group-pull-request-title-pattern": "chore: release condu",
+  "group-pull-request-title-pattern": "chore: release condu (${branch} branch)",
   "packages": {
     "packages/test/dummy": {
       "release-type": "node",
