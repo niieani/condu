@@ -1,4 +1,4 @@
 {
-  "packages/test/dummy": "1.0.0",
-  "packages/test/dummy-dep": "1.0.0"
+  "packages/test/dummy": "1.0.1",
+  "packages/test/dummy-dep": "1.0.1"
 }
