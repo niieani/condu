@@ -6,6 +6,7 @@
     "@condu/test-dummy-dep": "workspace:^*"
   },
   "publishConfig": {
+    "access": "public",
     "directory": "../../../build/packages/test/dummy"
   }
 }
