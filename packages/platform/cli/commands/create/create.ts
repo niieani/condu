@@ -91,6 +91,7 @@ export async function createPackage({
   const packageJson: PackageJson = sortPackageJson({
     name: match.name,
     description,
+    version: "0.0.0",
     type: "module",
     // copy author from workspace package.json
     author: manifest.author,
