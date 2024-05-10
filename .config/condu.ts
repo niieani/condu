@@ -2,7 +2,6 @@ import { gitignore } from "@condu-feature/gitignore/gitignore.js";
 import { typescript } from "@condu-feature/typescript/typescript.js";
 import { condu } from "@condu-feature/condu-packages/conduPackages.js";
 import { moon } from "@condu-feature/moon/moon.js";
-import { auto } from "@condu-feature/auto/auto.js";
 import { moonCi } from "@condu-feature/ci-github-actions/moon.js";
 import { eslint } from "@condu-feature/eslint/eslint.js";
 import { lerna } from "@condu-feature/lerna/lerna.js";
@@ -59,7 +58,6 @@ export default configure({
       selectPackages: (pkg) => pkg.dir.startsWith("packages/test/dummy"),
     }),
     lerna(),
-    auto(),
     vscode({
       hideGeneratedFiles: false,
       suggestedConfig: {
