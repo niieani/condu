@@ -47,7 +47,7 @@ export const releasePlease = ({
                   "tag-separator": "@",
                   "include-v-in-tag": false,
                   "bootstrap-sha": "487dfcb00e029d0c8f483f41d0de82a992885f3d",
-                  "group-pull-request-title-pattern": `chore: release ${config.project.manifest.name}`,
+                  "group-pull-request-title-pattern": `chore: release ${config.project.manifest.name} (\${branch} branch)`,
                   packages: releaserConfigPackages,
                   plugins: [
                     {
