@@ -143,8 +143,10 @@ Options:
 
 Next step:
 
-- [ ] ensure that merging the test release PR will ONLY release the selected packages, rather than EVERYTHING via lerna
-  - maybe make all non-released packages private for the duration of the release?
+- [x] ensure that merging the test release PR will ONLY release the selected packages, rather than EVERYTHING via lerna
+  - [x] maybe make all non-released packages private for the duration of the release?
+- [ ] lerna seems very poorly written, maybe I can just make my own releasing logic?
+  - i.e. set correct version and (peer/dev)dependencies based on workspace? or steal pnpm publish logic for this? and then just publish required deps using the selected package manager
 - [ ] what is up with yarnrc auto-changing?
 - [ ] add a `condu` package that just wraps `@condu/cli` and adds the build script - this way @condu/cli can exist as its own package
 
