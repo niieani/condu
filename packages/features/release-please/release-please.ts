@@ -133,7 +133,11 @@ export const releasePlease = ({
                           }${CORE_NAME} before-release --ci ./\${{ join( fromJSON( needs.release-please.outputs.paths_to_release ), ' ./' ) }}`,
                         },
                         {
-                          run: 'git add . && git commit -m "chore: satisfy lerna requirements"',
+                          run: `
+git config --global user.email "72759630+google-github-actions-bot@users.noreply.github.com"
+git config --global user.name "Google GitHub Actions Bot"
+git add . && git commit -m "chore: satisfy lerna requirements"
+`.trim(),
                         },
                         {
                           run: "./node_modules/.bin/lerna publish from-package --no-git-reset --no-push --yes",
