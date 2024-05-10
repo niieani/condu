@@ -141,6 +141,9 @@ export async function prepareBuildDirectoryPackages({
 
     const dependencyManifestOverride = getReleaseDependencies(manifest);
 
+    // omit 'directory' from publishConfig in the published package.json
+    const { directory: _, ...publishConfig } = manifest.publishConfig ?? {};
+
     const newPackageJson: PackageJson = {
       ...manifest,
       ...dependencyManifestOverride,
@@ -148,7 +151,7 @@ export async function prepareBuildDirectoryPackages({
       publishConfig: {
         // access: "public",
         registry: project.config.publish?.registry,
-        ...manifest.publishConfig,
+        ...publishConfig,
       },
       exports: {
         ...entrySources,

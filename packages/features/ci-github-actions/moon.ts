@@ -64,7 +64,13 @@ export const moonCi = ({}: {} = {}) =>
               run: `${config.node.packageManager.name} install --immutable`,
               shell: "bash",
             },
-            { run: `./node_modules/.bin/moon ci :build`, shell: "bash" },
+            {
+              run: `./node_modules/.bin/moon ci :build`,
+              shell: "bash",
+              env: {
+                MOON_TOOLCHAIN_FORCE_GLOBALS: "true",
+              },
+            },
           ],
         },
       };
@@ -78,9 +84,6 @@ export const moonCi = ({}: {} = {}) =>
           ci: {
             name: "Moon CI",
             "runs-on": "ubuntu-latest",
-            env: {
-              MOON_TOOLCHAIN_FORCE_GLOBALS: "true",
-            },
             steps: [
               {
                 uses: "actions/checkout@v4",

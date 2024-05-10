@@ -8,8 +8,6 @@ jobs:
   ci:
     name: Moon CI
     runs-on: ubuntu-latest
-    env:
-      MOON_TOOLCHAIN_FORCE_GLOBALS: "true"
     steps:
       - uses: actions/checkout@v4
         with:
