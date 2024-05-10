@@ -10,32 +10,39 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     outputs:
-      releases_created: ${{ steps.release-please.outputs.releases_created }}
-      paths_released: ${{ steps.release-please.outputs.paths_released }}
+      releases_pending: ${{ steps.release-please.outputs.releases_pending }}
+      paths_to_release: ${{ steps.release-please.outputs.paths_to_release }}
     steps:
       - id: release-please-prs
         uses: niieani/release-please-action@use-fork
         with:
           config-file: .config/release-please/config.json
           manifest-file: .config/release-please/manifest.json
-          skip-github-release: true
+          only: update-pull-requests
       - id: release-please
         uses: niieani/release-please-action@use-fork
         with:
           config-file: .config/release-please/config.json
           manifest-file: .config/release-please/manifest.json
-          skip-github-pull-request: true
+          only: list-candidate-releases
   release:
     runs-on: ubuntu-latest
     needs:
       - release-please
-    if: ${{ needs.release-please.outputs.releases_created == 'true' }}
+    if: ${{ needs.release-please.outputs.releases_pending == 'true' }}
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/workflows/moon-ci.yml
-      - run: yarn run condu before-release --ci ${{ join( fromJSON(
-          needs.release-please.outputs.paths_released ), ' ' ) }}
+      - run: yarn run condu before-release --ci ./${{ join( fromJSON(
+          needs.release-please.outputs.paths_to_release ), ' ./' ) }}
       - run: 'git add . && git commit -m "chore: satisfy lerna requirements"'
       - run: ./node_modules/.bin/lerna publish from-package --no-git-reset --no-push
           --yes
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - id: release-please
+        uses: niieani/release-please-action@use-fork
+        with:
+          config-file: .config/release-please/config.json
+          manifest-file: .config/release-please/manifest.json
+          only: create-github-releases

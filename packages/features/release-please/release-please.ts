@@ -82,10 +82,10 @@ export const releasePlease = ({
                     "release-please": {
                       "runs-on": "ubuntu-latest",
                       outputs: {
-                        releases_created:
-                          "${{ steps.release-please.outputs.releases_created }}",
-                        paths_released:
-                          "${{ steps.release-please.outputs.paths_released }}",
+                        releases_pending:
+                          "${{ steps.release-please.outputs.releases_pending }}",
+                        paths_to_release:
+                          "${{ steps.release-please.outputs.paths_to_release }}",
                       },
                       steps: [
                         {
@@ -96,7 +96,7 @@ export const releasePlease = ({
                             "config-file": ".config/release-please/config.json",
                             "manifest-file":
                               ".config/release-please/manifest.json",
-                            "skip-github-release": true,
+                            only: "update-pull-requests",
                           },
                         },
                         {
@@ -107,7 +107,7 @@ export const releasePlease = ({
                             "config-file": ".config/release-please/config.json",
                             "manifest-file":
                               ".config/release-please/manifest.json",
-                            "skip-github-pull-request": true,
+                            only: "list-candidate-releases",
                           },
                         },
                       ],
@@ -116,8 +116,9 @@ export const releasePlease = ({
                     release: {
                       "runs-on": "ubuntu-latest",
                       needs: ["release-please"],
-                      if: "${{ needs.release-please.outputs.releases_created == 'true' }}",
+                      if: "${{ needs.release-please.outputs.releases_pending == 'true' }}",
                       steps: [
+                        { uses: "actions/checkout@v4" },
                         // TODO: decouple this reusable workflow
                         { uses: "./.github/workflows/moon-ci.yml" },
                         {
@@ -125,7 +126,7 @@ export const releasePlease = ({
                             isInternalCondu
                               ? `${config.node.packageManager.name} run `
                               : ""
-                          }${CORE_NAME} before-release --ci \${{ join( fromJSON( needs.release-please.outputs.paths_released ), ' ' ) }}`,
+                          }${CORE_NAME} before-release --ci ./\${{ join( fromJSON( needs.release-please.outputs.paths_to_release ), ' ./' ) }}`,
                         },
                         {
                           run: 'git add . && git commit -m "chore: satisfy lerna requirements"',
@@ -136,9 +137,20 @@ export const releasePlease = ({
                             NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}",
                           },
                         },
+                        {
+                          id: "release-please",
+                          // uses: 'google-github-actions/release-please-action@v4',
+                          uses: "niieani/release-please-action@use-fork",
+                          with: {
+                            "config-file": ".config/release-please/config.json",
+                            "manifest-file":
+                              ".config/release-please/manifest.json",
+                            only: "create-github-releases",
+                          },
+                        },
                         // {
                         //   name: "Upload Release Artifacts",
-                        //   run: "gh release upload ${{ steps.release.outputs.tag_name }} ./artifact/some-build-artifact.zip",
+                        //   run: "gh release upload ${{ steps.release-please.outputs.tag_name }} ./artifact/some-build-artifact.zip",
                         // },
                       ],
                     },
