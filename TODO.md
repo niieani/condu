@@ -153,6 +153,21 @@ Next step:
 ## Later:
 
 - [ ] commitlint + husky for linting commit messages
+- [ ] fix the issue with default git branch not resolving on CI
+- [ ] verified published packages:
+  - [ ] https://publint.dev/
+  - [ ] https://arethetypeswrong.github.io/
+- [x] fix generated license author
+- [ ] homegrown replacement for release-please / semantic-release / auto?
+  - something simple and pluggable, and most of all, really robust. These tools are a joke.
+  - use commit messages as the base to build a changelog
+  - keep an updated, editable "release me PR" with the changelog and bump type (becomes the source of truth)
+    - list in the form: "feat: some change (SHA, SHA, SHA...)" if squashing multiple changes, ref those SHAs to keep the history
+    - more flexibility than semantic release, less manual work (and lower contribution barrier) than changesets
+    - you can still release every change automatically like semrel by automatically merging the PR (or maybe there an option for this)
+    - pluggable bumping strategies for various languages/tools
+  - 3 part CI actions: "PR keeper", "release preparer", "release publisher"
+  - everything is a function, exportable. zx-bulk-release does this well.
 - [ ] ensure `packageManager` includes a SHA after the version
 - [ ] jsr.io feature - publish to JSR (sets `isolatedDeclarations: true` in tsconfig)
 - [ ] use the [new configDir in tsconfig](https://devblogs.microsoft.com/typescript/announcing-typescript-5-5-beta/#the-configdir-template-variable-for-configuration-files)
@@ -160,6 +175,13 @@ Next step:
 - [ ] additional eslints:
   - [ ] https://github.com/eslint-community/eslint-plugin-n
 - [ ] consider swapping pnpm internals for https://www.npmjs.com/package/@manypkg/get-packages
+- [ ] implement package.json linter:
+  - https://github.com/JamieMason/syncpack
+  - or https://github.com/Thinkmill/manypkg
+- [ ] document Dual Package Hazard: https://www.npmjs.com/package/tshy
+  - potentially offer not publishing dual-package, but instead having CJS require and re-export ESM for Node >=22
+- [ ] prettier plugins: https://github.com/un-ts/prettier
+- [ ] inspiration from monorepo starter kit: https://github.com/ixahmedxi/orbitkit
 - [ ] "recommended" preset of features that always opts you in to the latest and greatest of the JS ecosystem
 - [ ] website
   - inspiration: [tailwind](https://tailwindcss.com/) - make configs disappear and appear in a mock vscode/github UI?
@@ -241,6 +263,7 @@ Next step:
 - [ ] Product Hunt release
 - [ ] to get good quality TS errors for both .cjs and .mjs, a wild idea would be to just dump the generated .cts files for build, and then remove them after build. maybe this could be done in the memoryFS that's overlaid on top of the real FS, where we use memFS only for the project directory, and the rest is real FS? or better yet, exclude from real FS specifically all the renamed files only. Mocked FS and we just run real `tsc --build` inside of it?
 - [ ] write a generic TS helper for records/maps that contain arrays, it's a pain to always have to initialize them. or maybe have an initializer getOrSet or push/add() helper that pre-initializes it for you?
+- [ ] add [ts-reset](https://github.com/total-typescript/ts-reset) to typescript
 
 Other ideas:
 
@@ -249,3 +272,7 @@ Other ideas:
 Post-release:
 
 - https://gist.github.com/khalidx/1c670478427cc0691bda00a80208c8cc
+
+References:
+
+- https://github.com/nodejs/cjs-module-lexer - extract named exports via analysis from CommonJS modules

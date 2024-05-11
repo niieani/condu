@@ -25,7 +25,7 @@ export async function buildTypeScriptPipeline(input: {
   if (!input.preset) return;
 
   // TODO: just run the command in parallel during build?
-  console.log(`Building remapped project...`);
+  console.log(`Building remapped project (${input.preset})...`);
   await buildRemappedProject({
     tsConfigFilePath: input.project ?? "tsconfig.json",
     mappingPreset: input.preset === "ts-to-mts" ? "ts-to-mts" : "ts-to-cts",

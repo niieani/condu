@@ -58,7 +58,7 @@ export const typescript = ({
                       ? `${config.node.packageManager.name} run `
                       : ""
                   }${CORE_NAME} tsc --preset ${
-                    preset === "esm-first" ? "ts-to-mts" : "ts-to-cjs"
+                    preset === "esm-first" ? "ts-to-cts" : "ts-to-mts"
                   }`,
                 },
               },
@@ -111,17 +111,17 @@ export const typescript = ({
                           // assumeChangesOnlyAffectDirectDependencies: true,
                         }
                       : config.projects
-                      ? {
-                          // TODO: infer normalized project conventions from config.projects
-                          paths: Object.fromEntries(
-                            config.projects?.map((p) =>
-                              typeof p === "object" && "parentPath" in p
-                                ? [p.nameConvention, [`./${p.parentPath}/*`]]
-                                : [],
+                        ? {
+                            // TODO: infer normalized project conventions from config.projects
+                            paths: Object.fromEntries(
+                              config.projects?.map((p) =>
+                                typeof p === "object" && "parentPath" in p
+                                  ? [p.nameConvention, [`./${p.parentPath}/*`]]
+                                  : [],
+                              ),
                             ),
-                          ),
-                        }
-                      : {}),
+                          }
+                        : {}),
                     // TODO: this should be true for projects that use external compilers
                     // emitDeclarationOnly: true,
                     // strongly encourage importHelpers: true

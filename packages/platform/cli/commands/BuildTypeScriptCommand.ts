@@ -24,7 +24,7 @@ export class BuildTypeScriptCommand extends Command {
         continue;
       }
       if (next === "preset") {
-        preset = opt !== "ts-to-cts" ? "ts-to-mts" : "ts-to-cts";
+        preset = opt === "ts-to-mts" ? "ts-to-mts" : "ts-to-cts";
         next = undefined;
         continue;
       }
