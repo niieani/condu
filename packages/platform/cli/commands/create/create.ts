@@ -100,6 +100,7 @@ export async function createPackage({
     ...(isPrivate
       ? { private: isPrivate }
       : { publishConfig: { access: "public" } }),
+    sideEffects: false,
     ...existingPackageJson,
   });
 
