@@ -1,11 +1,11 @@
 import { defineFeature } from "@condu/core/defineFeature.js";
-import { CORE_NAME } from "@condu/core/constants.js";
+import { CONDU_WORKSPACE_PACKAGE_NAME, CORE_NAME } from "@condu/core/constants.js";
 
 export const condu = ({}: {} = {}) =>
   defineFeature({
     name: "condu",
     actionFn: (config, state) => {
-      const isInternalCondu = config.project.manifest.name === CORE_NAME;
+      const isInternalCondu = config.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME;
       return {
         effects: [
           {

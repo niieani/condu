@@ -49,6 +49,13 @@ and [this](https://x.com/_swanson/status/1715073746073973203).
 
 `condu` is here to help out.
 
+## Philosophy / conventions
+
+- Publish and expose all files
+- So often it happens that a package has a function that's even exported, but the package uses a build system, that ends up making it private.
+
+## More
+
 Embrace convention over configuration, but allow for easy configuration overrides.
 
 - Simple repo management system:

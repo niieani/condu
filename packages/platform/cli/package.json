@@ -6,12 +6,13 @@
     "@condu/update-specifiers": "workspace:^",
     "@pnpm/fetch": "^8.0.0",
     "@pnpm/logger": "^5.0.0",
-    "@pnpm/network.auth-header": "^3.0.0",
-    "@pnpm/npm-resolver": "^19.0.0",
-    "@pnpm/read-project-manifest": "^6.0.0",
+    "@pnpm/network.auth-header": "^3.0.1",
+    "@pnpm/npm-resolver": "^19.0.3",
+    "@pnpm/read-project-manifest": "^6.0.1",
     "@pnpm/types": "^10.0.0",
-    "@pnpm/workspace.find-packages": "^2.0.3",
-    "async-memoize-one": "^1.1.7",
+    "@pnpm/workspace.find-packages": "^2.0.5",
+    "@types/which": "^3.0.3",
+    "async-memoize-one": "^1.1.8",
     "clipanion": "^4.0.0-rc.3",
     "comment-json": "^4.2.3",
     "print-diff": "^2.0.0",
@@ -19,8 +20,8 @@
     "sort-package-json": "^2.10.0",
     "spdx-license-list": "^6.9.0",
     "ts-pattern": "^5.1.1",
-    "yaml": "^2.4.2",
-    "zx": "^8.0.2"
+    "which": "^4.0.0",
+    "yaml": "^2.4.2"
   },
   "devDependencies": {
     "vitest": "^1.6.0"
