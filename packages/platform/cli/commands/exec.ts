@@ -12,8 +12,8 @@ import * as fs from "node:fs/promises";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import { filter, find } from "remeda";
 import { safeFn } from "@condu/core/utils/safeFn.js";
-import { which } from "zx";
 import { spawn } from "node:child_process";
+import which from "which";
 
 export async function execCommand(input: {
   cwd?: string;

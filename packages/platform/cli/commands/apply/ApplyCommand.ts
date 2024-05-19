@@ -1,5 +1,4 @@
 import { Command, Option } from "clipanion";
-// import { $ } from "./zx.js";
 
 export class ApplyCommand extends Command {
   static override paths = [["apply"]];

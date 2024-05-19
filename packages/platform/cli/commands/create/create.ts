@@ -4,7 +4,6 @@ import * as fs from "node:fs/promises";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import sortPackageJson from "sort-package-json";
 import * as path from "node:path";
-import { cd } from "zx";
 import { getSingleMatch, type MatchOptions } from "../../matchPackage.js";
 import type { CommandContext } from "./CreateCommand.js";
 import childProcess from "node:child_process";
@@ -111,12 +110,12 @@ export async function createPackage({
 
   if (!existingPackageJson) {
     // run yarn to link the new package
-    cd(projectDir);
     // TODO: use correct package manager
 
     const yarn = childProcess.spawnSync(`yarn install`, {
       stdio: "inherit",
       shell: true,
+      cwd: projectDir,
     });
     if (yarn.status !== 0) {
       context.error(`yarn exited with status code ${yarn.status}`);

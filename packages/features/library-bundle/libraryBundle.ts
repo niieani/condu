@@ -1,7 +1,7 @@
 import { defineFeature } from "@condu/core/defineFeature.js";
 import type { LibraryBundleConfig } from "./types.js";
 import * as path from "node:path";
-import { CORE_NAME } from "@condu/core/constants.js";
+import { CONDU_WORKSPACE_PACKAGE_NAME } from "@condu/core/constants.js";
 
 export const libraryBundle = ({
   id,
@@ -49,7 +49,7 @@ export const libraryBundle = ({
         outDir,
       );
       const configExtension =
-        config.project.manifest.name === CORE_NAME ? "ts" : "js";
+        config.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME ? "ts" : "js";
 
       // TODO: consider using an esm transpiled webpack config with WEBPACK_CLI_FORCE_LOAD_ESM_CONFIG
       const configPathRelativeToPackage = `./.config/generated/webpack.config.cjs`;

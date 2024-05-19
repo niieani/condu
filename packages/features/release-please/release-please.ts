@@ -1,5 +1,5 @@
 import { defineFeature } from "@condu/core/defineFeature.js";
-import { CORE_NAME } from "@condu/core/constants.js";
+import { CORE_NAME, CONDU_WORKSPACE_PACKAGE_NAME } from "@condu/core/constants.js";
 import { schemas } from "@condu/schema-types/utils/schemas.js";
 import type {
   ReleaserConfigOptions,
@@ -16,7 +16,7 @@ export const releasePlease = ({
   defineFeature({
     name: "release-please",
     actionFn: async (config, state) => {
-      const isInternalCondu = config.project.manifest.name === CORE_NAME;
+      const isInternalCondu = config.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME;
       const packages = (await config.project.getWorkspacePackages()).filter(
         (pkg) =>
           !pkg.manifest.private && (!selectPackages || selectPackages(pkg)),
@@ -90,7 +90,7 @@ export const releasePlease = ({
                       steps: [
                         {
                           id: "release-please",
-                          // uses: 'google-github-actions/release-please-action@v4',
+                          // uses: 'googleapis/release-please-action@v4',
                           uses: "niieani/release-please-action@use-fork",
                           with: {
                             "config-file": ".config/release-please/config.json",
@@ -102,7 +102,7 @@ export const releasePlease = ({
                         // TODO: only run this if no releases are pending, or after the release step is done
                         {
                           id: "release-please-prs",
-                          // uses: 'google-github-actions/release-please-action@v4',
+                          // uses: 'googleapis/release-please-action@v4',
                           uses: "niieani/release-please-action@use-fork",
                           with: {
                             "config-file": ".config/release-please/config.json",
@@ -147,7 +147,7 @@ git add . && git commit -m "chore: satisfy lerna requirements"
                         },
                         {
                           id: "release-please",
-                          // uses: 'google-github-actions/release-please-action@v4',
+                          // uses: 'googleapis/release-please-action@v4',
                           uses: "niieani/release-please-action@use-fork",
                           with: {
                             "config-file": ".config/release-please/config.json",

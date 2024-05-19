@@ -139,6 +139,7 @@ export async function prepareBuildDirectoryPackages({
       (await hooks?.modifyEntrySourcesForRelease?.(generatedEntrySources)) ??
       generatedEntrySources;
 
+    // TODO: logic to update package.jsons for release
     const dependencyManifestOverride = getReleaseDependencies(manifest);
 
     // omit 'directory' from publishConfig in the published package.json
@@ -214,7 +215,10 @@ export async function prepareBuildDirectoryPackages({
             licenseDefinition.licenseText
               // TODO: add start year based on git history
               .replace("<year>", new Date().getFullYear().toString())
-              .replace("<copyright holders>", manifest.author?.name ?? ""),
+              .replace(
+                "<copyright holders>",
+                manifest.author?.name ?? project.manifest.author?.name ?? "",
+              ),
           );
         }
       }

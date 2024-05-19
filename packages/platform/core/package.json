@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "async-memoize-one": "^1.1.7",
+    "async-memoize-one": "^1.1.8",
     "fp-ts": "^2.16.5",
     "io-ts": "^2.2.21",
     "remeda": "^1.61.0"
