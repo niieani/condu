@@ -21,7 +21,8 @@
     "spdx-license-list": "^6.9.0",
     "ts-pattern": "^5.1.1",
     "which": "^4.0.0",
-    "yaml": "^2.4.2"
+    "yaml": "^2.4.2",
+    "@condu/workspace-utils": "workspace:*"
   },
   "devDependencies": {
     "vitest": "^1.6.0"

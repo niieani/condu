@@ -1,5 +1,8 @@
 import type { Project } from "../loadProject.js";
-import type { WorkspacePackage } from "@condu/core/configTypes.js";
+import type {
+  WorkspacePackage,
+  type CollectedState,
+} from "@condu/core/configTypes.js";
 import * as fs from "node:fs/promises";
 import sortPackageJson from "sort-package-json";
 import * as path from "node:path";
@@ -7,10 +10,10 @@ import { copyFiles } from "@condu/core/utils/copy.js";
 import { readPreviouslyWrittenFileCache } from "./apply/readWrite.js";
 import spdxLicenseList from "spdx-license-list/full.js";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
-import type { CollectedState } from "@condu/core/configTypes.js";
 import { partition } from "remeda";
 import { getSingleMatch } from "../matchPackage.js";
 import { apply } from "./apply/apply.js";
+import { topo } from "@condu/workspace-utils/topo.js";
 
 const DECLARATION_FILE_EXT_REGEXP = /\.d\.[cm]?ts$/;
 const TSCONFIG_LIKE_FILENAME_REGEXP = /tsconfig\..*\.json$/;
@@ -22,16 +25,16 @@ const TSCONFIG_LIKE_FILENAME_REGEXP = /tsconfig\..*\.json$/;
  * - Fills in package.json fields.
  */
 export async function prepareBuildDirectoryPackages({
-  projectDir,
-  packageList,
+  workspaceDirAbs,
+  packagesToPrepare,
   absBuildDir,
   srcDirName,
   buildDirName,
   project,
   collectedState,
 }: {
-  projectDir: string;
-  packageList: readonly WorkspacePackage[];
+  workspaceDirAbs: string;
+  packagesToPrepare: readonly WorkspacePackage[];
   absBuildDir: string;
   srcDirName: string;
   buildDirName: string;
@@ -39,18 +42,21 @@ export async function prepareBuildDirectoryPackages({
   collectedState: CollectedState;
 }) {
   // TODO: ensure we had run build step before this, so that the cache has been populated
-  const configFileCache = await readPreviouslyWrittenFileCache(projectDir);
+  const configFileCache = await readPreviouslyWrittenFileCache(workspaceDirAbs);
   const configFileAbsolutePaths = Array.from(configFileCache.keys()).map(
-    (filePath) => path.join(projectDir, filePath),
+    (filePath) => path.join(workspaceDirAbs, filePath),
   );
 
-  for (const pkg of packageList) {
-    const {
-      dir: packageDir,
-      manifest: { path: _p, kind: _k, workspacePath: _w, ...manifest },
-    } = pkg;
+  const { queue } = topo(packagesToPrepare);
+  const packagesToPrepareObj = Object.fromEntries(
+    packagesToPrepare.map((pkg) => [pkg.name, pkg]),
+  );
+
+  for (const name of queue) {
+    const pkg = packagesToPrepareObj[name]!;
+    const { relPath: packageDir, manifest } = pkg;
     const packageBuildDir = path.join(absBuildDir, packageDir);
-    const packageSourceDir = path.join(projectDir, packageDir, srcDirName);
+    const packageSourceDir = path.join(workspaceDirAbs, packageDir, srcDirName);
     console.log(
       `Copying ${packageDir} for ${manifest.name} to ${buildDirName}`,
     );
@@ -292,24 +298,24 @@ export async function beforeReleasePipeline({
 
   const [selectedPackages, unselectedPackages] =
     selectedPackagePaths.length > 0
-      ? partition(packages, (pkg) => selectedPackagePaths.includes(pkg.dir))
+      ? partition(packages, (pkg) => selectedPackagePaths.includes(pkg.relPath))
       : [packages, []];
 
   if (selectedPackages.length === 0) {
     throw new Error(`No packages found to prepare for release.`);
   }
 
-  const { projectDir, config } = project;
+  const { absPath: workspaceDirAbs, config } = project;
   // TODO: make conventions non-optional in a loaded project
   const buildDirName = config.conventions.buildDir;
   const srcDirName = config.conventions.sourceDir;
-  const absBuildDir = path.join(projectDir, buildDirName);
+  const absBuildDir = path.join(workspaceDirAbs, buildDirName);
 
   // await correctSourceMaps({ buildDir: absBuildDir });
 
   await prepareBuildDirectoryPackages({
-    projectDir,
-    packageList: selectedPackages,
+    workspaceDirAbs,
+    packagesToPrepare: selectedPackages,
     absBuildDir,
     srcDirName,
     buildDirName,

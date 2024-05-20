@@ -1,4 +1,7 @@
-import { CORE_NAME, CONDU_WORKSPACE_PACKAGE_NAME } from "@condu/core/constants.js";
+import {
+  CORE_NAME,
+  CONDU_WORKSPACE_PACKAGE_NAME,
+} from "@condu/core/constants.js";
 import { defineFeature } from "@condu/core/defineFeature.js";
 import type TSConfig from "@condu/schema-types/schemas/tsconfig.gen.js";
 import * as path from "node:path";
@@ -37,7 +40,8 @@ export const typescript = ({
     name: "typescript",
     order: { priority: "beginning" },
     actionFn: (config, state) => {
-      const isInternalCondu = config.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME;
+      const isInternalCondu =
+        config.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME;
       // TODO: explain pros and cons of composite projects
       // cons: slower, more memory, no incremental builds
       // pros: more responsive to changes in other projects, auto-import suggestions from other projects
@@ -166,9 +170,9 @@ export const typescript = ({
               {
                 path: "tsconfig.json",
                 matchPackage: { kind: "package" },
-                content: ({ manifest }) => {
+                content: ({ pkg }) => {
                   const pathToWorkspaceDir = path.relative(
-                    manifest.path,
+                    pkg.absPath,
                     config.workspaceDir,
                   );
 
@@ -181,7 +185,7 @@ export const typescript = ({
                       outDir: path.join(
                         pathToWorkspaceDir,
                         config.conventions.buildDir,
-                        path.relative(config.project.dir, manifest.path),
+                        path.relative(config.project.relPath, manifest.absPath),
                       ),
                       // required so that when using tsc --build it doesn't create nested dist directories
                       rootDir: config.conventions.sourceDir,

@@ -1,8 +1,13 @@
 import * as path from "node:path";
 import * as fs from "node:fs";
 
+export type FileTestFunction =
+  | ((file: fs.Dirent) => boolean)
+  | ((file: fs.Dirent) => Promise<boolean>);
+export type PossibleNameTypes = string | string[] | RegExp | FileTestFunction;
+
 async function* findUpGenerator(
-  test: (file: fs.Dirent) => boolean,
+  test: FileTestFunction,
   cwd: string,
   stopAt?: string,
 ): AsyncGenerator<string, undefined, undefined> {
@@ -10,7 +15,12 @@ async function* findUpGenerator(
     const files = await fs.promises.readdir(cwd, { withFileTypes: true });
     let match = false;
     for (const file of files) {
-      if (test(file)) {
+      const testResultMaybePromise = test(file);
+      const testResult =
+        testResultMaybePromise instanceof Promise
+          ? await testResultMaybePromise
+          : testResultMaybePromise;
+      if (testResult) {
         yield path.join(cwd, file.name);
         match = true;
       }
@@ -34,7 +44,7 @@ export interface Options {
 }
 
 export function getFindUpGenerator(
-  name: string | string[] | RegExp | ((file: fs.Dirent) => boolean),
+  name: PossibleNameTypes,
   {
     cwd = process.cwd(),
     type = "file",
@@ -46,8 +56,8 @@ export function getFindUpGenerator(
     type === "any"
       ? () => true
       : type === "file"
-      ? (file: fs.Dirent) => file.isFile()
-      : (file: fs.Dirent) => file.isDirectory();
+        ? (file: fs.Dirent) => file.isFile()
+        : (file: fs.Dirent) => file.isDirectory();
   const testSymlink = allowSymlinks
     ? () => true
     : (file: fs.Dirent) => !file.isSymbolicLink();
@@ -55,19 +65,19 @@ export function getFindUpGenerator(
     typeof name === "function"
       ? name
       : typeof name === "string"
-      ? (file: fs.Dirent) =>
-          file.name === name && testType(file) && testSymlink(file)
-      : Array.isArray(name)
-      ? (file: fs.Dirent) =>
-          name.includes(file.name) && testType(file) && testSymlink(file)
-      : (file: fs.Dirent) =>
-          name.test(file.name) && testType(file) && testSymlink(file);
+        ? (file: fs.Dirent) =>
+            file.name === name && testType(file) && testSymlink(file)
+        : Array.isArray(name)
+          ? (file: fs.Dirent) =>
+              name.includes(file.name) && testType(file) && testSymlink(file)
+          : (file: fs.Dirent) =>
+              name.test(file.name) && testType(file) && testSymlink(file);
 
   return findUpGenerator(test, cwd, stopAt);
 }
 
 export async function findUp(
-  name: string | string[] | RegExp | ((file: fs.Dirent) => boolean),
+  name: PossibleNameTypes,
   options: Options = {},
 ): Promise<string | undefined> {
   const generator = getFindUpGenerator(name, options);
@@ -76,13 +86,16 @@ export async function findUp(
 }
 
 export async function findUpMultiple(
-  name: string | string[] | RegExp | ((file: fs.Dirent) => boolean),
-  options: Options = {},
+  name: PossibleNameTypes,
+  options: Options & { limit?: number } = {},
 ): Promise<string[]> {
   const generator = getFindUpGenerator(name, options);
   const files: string[] = [];
   for await (const file of generator) {
     files.push(file);
+    if (options.limit && files.length >= options.limit) {
+      break;
+    }
   }
   return files;
 }

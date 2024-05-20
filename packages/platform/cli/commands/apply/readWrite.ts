@@ -4,6 +4,7 @@ import type {
   FileDef,
   GetExistingContentFn,
   RepoPackageJson,
+  WorkspacePackage,
 } from "@condu/core/configTypes.js";
 import yaml from "yaml";
 import commentJson from "comment-json";
@@ -50,33 +51,33 @@ const createGetExistingContentFn =
     }
   };
 
+interface WriteFileConfig extends WriteFilesConfigBase {
+  file: FileDef;
+  rootDir: string;
+}
+
 const writeFileFromDef = async ({
   file,
   rootDir,
-  manifest,
-  projectDir,
+  targetPackage,
+  workspaceDirAbs,
   previouslyWrittenFiles,
   throwOnManualChanges,
-}: {
-  file: FileDef;
-  rootDir: string;
-  manifest: RepoPackageJson;
-  projectDir: string;
-  previouslyWrittenFiles: Map<string, CachedWrittenFile>;
-  throwOnManualChanges?: boolean;
-}): Promise<(() => Promise<WrittenFile>) | WrittenFile | undefined> => {
+}: WriteFileConfig): Promise<
+  (() => Promise<WrittenFile>) | WrittenFile | undefined
+> => {
   const targetPath = path.join(rootDir, file.path);
-  const pathFromProjectDir = path.relative(projectDir, targetPath);
+  const pathFromWorkspaceDirAbs = path.relative(workspaceDirAbs, targetPath);
 
-  const previouslyWritten = previouslyWrittenFiles.get(pathFromProjectDir);
+  const previouslyWritten = previouslyWrittenFiles.get(pathFromWorkspaceDirAbs);
   // marking as handled:
-  previouslyWrittenFiles.delete(pathFromProjectDir);
+  previouslyWrittenFiles.delete(pathFromWorkspaceDirAbs);
 
   let usedExistingContent = false;
   const resolvedContent =
     typeof file.content === "function"
       ? ((await file.content({
-          manifest,
+          pkg: targetPackage,
           getExistingContentAndMarkAsUserEditable: createGetExistingContentFn(
             targetPath,
             () => {
@@ -88,7 +89,7 @@ const writeFileFromDef = async ({
 
   if (resolvedContent === undefined) {
     if (previouslyWritten) {
-      console.log(`Deleting, no longer needed: ${pathFromProjectDir}`);
+      console.log(`Deleting, no longer needed: ${pathFromWorkspaceDirAbs}`);
       await fs.rm(targetPath);
     }
     // nothing to add to cache state:
@@ -106,7 +107,7 @@ const writeFileFromDef = async ({
     content === previouslyWritten.content
   ) {
     // TODO: if (DEBUG)
-    // console.log(`Already fresh: ${pathFromProjectDir}`);
+    // console.log(`Already fresh: ${pathFromWorkspaceDirAbs}`);
     return previouslyWritten;
   }
 
@@ -119,14 +120,14 @@ const writeFileFromDef = async ({
   ) {
     if (throwOnManualChanges) {
       throw new Error(
-        `Manual changes present in ${pathFromProjectDir}, cannot continue.`,
+        `Manual changes present in ${pathFromWorkspaceDirAbs}, cannot continue.`,
       );
     }
     const manuallyChanged = previouslyWritten.manuallyChanged;
     const isInteractive = process.stdin.isTTY;
     // this needs to happen sequentially, because we're prompting the user for input:
     return async () => {
-      console.log(`Manual changes present in ${pathFromProjectDir}:`);
+      console.log(`Manual changes present in ${pathFromWorkspaceDirAbs}:`);
       printUnifiedDiff(manuallyChanged.content, content, process.stdout);
       const rl = readline.createInterface({
         input: process.stdin,
@@ -143,10 +144,14 @@ const writeFileFromDef = async ({
           .otherwise(() => false);
 
       if (shouldOverwrite) {
-        return write({ targetPath, content, pathFromProjectDir });
+        return write({
+          targetPath,
+          content,
+          pathFromWorkspaceDirAbs: pathFromWorkspaceDirAbs,
+        });
       } else {
         process.exitCode = 1;
-        console.log(`Skipping: ${pathFromProjectDir}`);
+        console.log(`Skipping: ${pathFromWorkspaceDirAbs}`);
         return {
           path: file.path,
           writtenAt: previouslyWritten.writtenAt,
@@ -156,17 +161,17 @@ const writeFileFromDef = async ({
     };
   }
 
-  return write({ targetPath, content, pathFromProjectDir });
+  return write({ targetPath, content, pathFromWorkspaceDirAbs });
 };
 
 async function write({
   targetPath,
   content,
-  pathFromProjectDir,
+  pathFromWorkspaceDirAbs,
 }: {
   targetPath: string;
   content: string;
-  pathFromProjectDir: string;
+  pathFromWorkspaceDirAbs: string;
 }): Promise<WrittenFile> {
   console.log(`Writing: ${targetPath}`);
   const parentDir = path.dirname(targetPath);
@@ -174,38 +179,40 @@ async function write({
   await fs.writeFile(targetPath, content);
   const stat = await fs.stat(targetPath);
   const result: WrittenFile = {
-    path: pathFromProjectDir,
+    path: pathFromWorkspaceDirAbs,
     content,
     writtenAt: stat.mtimeMs,
   };
   return result;
 }
 
+interface WriteFilesConfigBase {
+  targetPackage: WorkspacePackage;
+  /** workspace directory */
+  workspaceDirAbs: string;
+  previouslyWrittenFiles: Map<string, CachedWrittenFile>;
+  throwOnManualChanges?: boolean;
+}
+
+interface WriteFilesConfig extends WriteFilesConfigBase {
+  files: readonly FileDef[];
+  targetPackageDir: string;
+}
+
 export async function writeFiles({
   files,
   targetPackageDir,
-  manifest,
-  projectDir,
-  previouslyWrittenFiles,
-  throwOnManualChanges,
-}: {
-  files: readonly FileDef[];
-  targetPackageDir: string;
-  manifest: RepoPackageJson;
-  projectDir: string;
-  previouslyWrittenFiles: Map<string, CachedWrittenFile>;
-  throwOnManualChanges?: boolean;
-}) {
-  const rootDir = path.join(projectDir, targetPackageDir);
+  workspaceDirAbs,
+  ...rest
+}: WriteFilesConfig) {
+  const rootDir = path.join(workspaceDirAbs, targetPackageDir);
   const filesOrFns = await Promise.all(
     files.map((file) =>
       writeFileFromDef({
         file,
         rootDir,
-        manifest,
-        projectDir,
-        previouslyWrittenFiles,
-        throwOnManualChanges,
+        workspaceDirAbs: workspaceDirAbs,
+        ...rest,
       }),
     ),
   );
@@ -221,10 +228,10 @@ export async function writeFiles({
 }
 
 export async function readPreviouslyWrittenFileCache(
-  projectDir: string,
+  workspaceDir: string,
 ): Promise<Map<string, CachedWrittenFile>> {
   try {
-    const file = await fs.readFile(path.join(projectDir, FILE_STATE_PATH));
+    const file = await fs.readFile(path.join(workspaceDir, FILE_STATE_PATH));
     const cache = JSON.parse(file.toString()) as WrittenFile[];
     return new Map(
       await Promise.all(
@@ -236,7 +243,7 @@ export async function readPreviouslyWrittenFileCache(
               // ignore changes for now
               return [file.path, file];
             }
-            const fullPath = path.join(projectDir, file.path);
+            const fullPath = path.join(workspaceDir, file.path);
             const stat = await fs.stat(fullPath).catch(() => undefined);
             if (!stat) {
               return [file.path, { ...file, manuallyChanged: "deleted" }];

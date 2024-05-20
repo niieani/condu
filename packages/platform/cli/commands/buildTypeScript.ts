@@ -15,10 +15,10 @@ export async function buildTypeScriptPipeline(input: {
     throw new Error(`Unable to find a condu project in the current directory`);
   }
   const { project } = applyResult;
-  const { projectDir, config } = project;
+  const { config } = project;
   // TODO: make conventions non-optional in a loaded project
   const buildDirName = config.conventions.buildDir;
-  const absBuildDir = path.join(projectDir, buildDirName);
+  const absBuildDir = path.join(project.absPath, buildDirName);
 
   await correctSourceMaps({ buildDir: absBuildDir });
 

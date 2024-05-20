@@ -1,5 +1,8 @@
 import { defineFeature } from "@condu/core/defineFeature.js";
-import { CORE_NAME, CONDU_WORKSPACE_PACKAGE_NAME } from "@condu/core/constants.js";
+import {
+  CORE_NAME,
+  CONDU_WORKSPACE_PACKAGE_NAME,
+} from "@condu/core/constants.js";
 import { schemas } from "@condu/schema-types/utils/schemas.js";
 import type {
   ReleaserConfigOptions,
@@ -16,13 +19,14 @@ export const releasePlease = ({
   defineFeature({
     name: "release-please",
     actionFn: async (config, state) => {
-      const isInternalCondu = config.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME;
+      const isInternalCondu =
+        config.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME;
       const packages = (await config.project.getWorkspacePackages()).filter(
         (pkg) =>
           !pkg.manifest.private && (!selectPackages || selectPackages(pkg)),
       );
       const releaserConfigPackages = Object.fromEntries(
-        packages.map(({ manifest, dir }) => [
+        packages.map(({ manifest, relPath: dir }) => [
           dir,
           {
             "release-type": "node",
@@ -32,7 +36,7 @@ export const releasePlease = ({
         ]),
       );
       const defaultManifest = Object.fromEntries(
-        packages.map(({ dir }) => [dir, "0.0.0"]),
+        packages.map(({ relPath: dir }) => [dir, "0.0.0"]),
       );
 
       return {

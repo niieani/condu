@@ -97,7 +97,7 @@ export const moonCi = ({}: {} = {}) =>
         },
       };
 
-      const projects = [
+      const packages = [
         ...(await config.project.getWorkspacePackages()),
         config.project,
       ];
@@ -110,29 +110,26 @@ export const moonCi = ({}: {} = {}) =>
         start: [],
       };
 
-      const projectStates = projects.flatMap<Effects>((project) => {
+      const projectStates = packages.flatMap<Effects>((pkg) => {
         const tasksForProject = taskList.flatMap((task) => {
           if (task.name in tasksByType) {
             throw new Error(
-              `In ${project.manifest.name}: Task name '${task.name}' is reserved for the global task type`,
+              `In ${pkg.manifest.name}: Task name '${task.name}' is reserved for the global task type`,
             );
           }
-          if (task.target.name === project.manifest.name) {
-            tasksByType[task.type].push([project.manifest.name, task.name]);
+          if (task.target.name === pkg.manifest.name) {
+            tasksByType[task.type].push([pkg.manifest.name, task.name]);
             return [[task.name, task.definition]] as const;
           }
           return [];
         });
-        if (
-          tasksForProject.length === 0 &&
-          project.manifest.kind === "package"
-        ) {
+        if (tasksForProject.length === 0 && pkg.kind === "package") {
           return [];
         }
         return {
           matchPackage: {
-            name: project.manifest.name,
-            kind: project.manifest.kind,
+            name: pkg.manifest.name,
+            kind: pkg.manifest.kind,
           },
           files: [
             {
@@ -140,7 +137,7 @@ export const moonCi = ({}: {} = {}) =>
               content: {
                 $schema: schemas.project,
                 tasks:
-                  project.manifest.kind === "package"
+                  pkg.kind === "package"
                     ? Object.fromEntries(tasksForProject)
                     : {
                         ...Object.fromEntries(tasksForProject),

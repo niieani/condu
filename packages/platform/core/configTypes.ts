@@ -2,7 +2,7 @@ import type { PartialProjectConfig, PartialTaskConfig } from "@moonrepo/types";
 import type { WorkspaceProjectsConvention } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import type { Pattern } from "ts-pattern";
-import type { Project } from "@condu/cli/loadProject.js";
+import type { IPackageEntry } from "@condu/workspace-utils/interface.js";
 
 export interface DependencyDef {
   packageAlias: string;
@@ -49,7 +49,7 @@ export interface FileDef {
     | string
     | object
     | ((opts: {
-        manifest: RepoPackageJson;
+        pkg: WorkspacePackage;
         getExistingContentAndMarkAsUserEditable: GetExistingContentFn;
       }) => Promise<string | object> | string | object);
   path: string;
@@ -70,11 +70,10 @@ export interface RepoPackageJson extends PackageJson {
   // name is mandatory
   name: string;
   condu?: RepoPackageConfig;
-  /** absolute directory of the package */
-  path: string;
-  /** relative directory of the package (from workspace dir) */
-  workspacePath: string;
-  kind: "workspace" | "package";
+
+  bolt?: {
+    workspaces?: string[];
+  };
 }
 
 export interface CollectedTaskDef extends Task {
@@ -92,7 +91,7 @@ export interface CollectedFileDef extends FileDef {
    **/
   skipIgnore?: boolean | string[];
   targetDir: string;
-  target: RepoPackageJson;
+  targetPackage: WorkspacePackage;
 }
 
 export type EntrySources = Record<
@@ -150,7 +149,7 @@ export type Effects = {
    * ts-pattern for package.jsons that the state applies to. Defaults to workspace.
    * @default { kind: "workspace" }
    * */
-  matchPackage?: Pattern.Pattern<RepoPackageJson> | Partial<RepoPackageJson>;
+  matchPackage?: Pattern.Pattern<WorkspacePackage> | Partial<WorkspacePackage>;
 };
 
 export interface FeatureResult {
@@ -236,7 +235,7 @@ export interface RepoConfigWithInferredValues extends ConfiguredRepoConfig {
 
 export interface RepoConfigWithInferredValuesAndProject
   extends RepoConfigWithInferredValues {
-  project: Omit<Project, "writeProjectManifest">;
+  project: WorkspaceRootPackage;
 }
 
 export interface LoadConfigOptions {
@@ -254,9 +253,14 @@ export type WriteManifestFn = (
   options?: WriteManifestFnOptions,
 ) => Promise<void>;
 
-export interface WorkspacePackage {
-  /** relative directory of the package from the projectDir */
-  dir: string;
-  manifest: RepoPackageJson;
-  writeProjectManifest: WriteManifestFn;
+export interface WorkspacePackage extends IPackageEntry {
+  kind: "workspace" | "package";
+}
+
+export interface WorkspaceRootPackage extends WorkspacePackage {
+  kind: "workspace";
+}
+
+export interface WorkspaceSubPackage extends WorkspacePackage {
+  kind: "package";
 }

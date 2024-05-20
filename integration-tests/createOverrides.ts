@@ -17,11 +17,11 @@ async function createOverrides({
     throw new Error("Could not find project");
   }
   const packages = await project.getWorkspacePackages();
-  const overrideList = packages.map(({ dir, manifest }) => [
+  const overrideList = packages.map(({ relPath: dir, manifest }) => [
     manifest.name,
     `${protocol}${path.relative(
       relativeToDir,
-      path.join(project.projectDir, "build", dir),
+      path.join(project.absPath, "build", dir),
     )}`,
   ]);
   return Object.fromEntries(overrideList);

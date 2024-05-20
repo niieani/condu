@@ -147,9 +147,9 @@ export const gptSummarizer = ({
                 });
                 let fullSummary = `# Workspace Documentation\n${summarized}\n`;
                 fullSummary += "# Packages\n";
-                for (const { manifest } of packages) {
+                for (const { manifest, absPath } of packages) {
                   const summarized = await summarize({
-                    rootDir: manifest.path,
+                    rootDir: absPath,
                     ignore,
                     removeComments,
                   });
