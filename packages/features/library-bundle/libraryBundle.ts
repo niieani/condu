@@ -32,10 +32,10 @@ export const libraryBundle = ({
         return;
       }
 
-      const entryPath = path.join(matchingPackage.dir, entry);
+      const entryPath = path.join(matchingPackage.relPath, entry);
       const packageRelativePathToEntry = path.dirname(entry);
       const entryDir = path.join(
-        matchingPackage.dir,
+        matchingPackage.relPath,
         packageRelativePathToEntry,
       );
       const builtEntryName = `${path.basename(
@@ -45,11 +45,13 @@ export const libraryBundle = ({
       const outDir = path.join(config.conventions.buildDir, entryDir);
       // TODO: right now this is incorrect
       const outDirRelativeToPackageSource = path.relative(
-        matchingPackage.dir,
+        matchingPackage.relPath,
         outDir,
       );
       const configExtension =
-        config.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME ? "ts" : "js";
+        config.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME
+          ? "ts"
+          : "js";
 
       // TODO: consider using an esm transpiled webpack config with WEBPACK_CLI_FORCE_LOAD_ESM_CONFIG
       const configPathRelativeToPackage = `./.config/generated/webpack.config.cjs`;

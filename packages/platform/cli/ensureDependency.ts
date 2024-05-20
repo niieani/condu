@@ -1,19 +1,10 @@
 // import semver from "semver";
-import { readProjectManifest } from "@pnpm/read-project-manifest";
 import { createNpmResolver } from "@pnpm/npm-resolver";
 import { getCacheDir } from "@condu/core/utils/dirs.js";
 import { createFetchFromRegistry } from "@pnpm/fetch";
 import { createGetAuthHeaderByURI } from "@pnpm/network.auth-header";
-import * as path from "node:path";
-import { findUp } from "@condu/core/utils/findUp.js";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
-import type {
-  DependencyDef,
-  RepoPackageJson,
-  WriteManifestFnOptions,
-} from "@condu/core/configTypes.js";
-import type { ProjectManifest } from "@pnpm/types";
-import sortPackageJson from "sort-package-json";
+import type { DependencyDef } from "@condu/core/configTypes.js";
 
 const registry = "https://registry.npmjs.org/";
 const resolveFromNpm = createNpmResolver(
@@ -29,54 +20,6 @@ const resolveFromNpm = createNpmResolver(
   // },
   { offline: false, cacheDir: getCacheDir(process) },
 );
-
-export async function getManifest(cwd: string) {
-  const manifestPath = await findUp(
-    [
-      "package.json",
-      "package.json5",
-      "package.yaml",
-      // "yarn.lock",
-      // "package-lock.json",
-      // "pnpm-workspace.yaml",
-      // "pnpm-lock.yaml",
-    ],
-    { cwd },
-  );
-  const projectDir = manifestPath ? path.dirname(manifestPath) : cwd;
-
-  const { manifest, writeProjectManifest, ...manifestWrapper } =
-    await readProjectManifest(projectDir);
-  return {
-    ...manifestWrapper,
-    manifest: {
-      ...(manifest as PackageJson),
-      name: manifest.name ?? path.basename(projectDir),
-      kind: "workspace",
-      path: projectDir,
-      workspacePath: ".",
-    } satisfies RepoPackageJson,
-    writeProjectManifest: (
-      {
-        // omit these internal fields (see RepoPackageJson type):
-        path,
-        kind,
-        workspacePath,
-        // and keep the rest of package.json:
-        ...pJson
-      }: Partial<RepoPackageJson>,
-      { force, merge }: WriteManifestFnOptions = {},
-    ) =>
-      writeProjectManifest(
-        sortPackageJson({
-          ...(merge ? manifest : {}),
-          ...(pJson as ProjectManifest),
-        }),
-        force,
-      ),
-    projectDir,
-  };
-}
 
 export async function ensureDependency({
   packageAlias,

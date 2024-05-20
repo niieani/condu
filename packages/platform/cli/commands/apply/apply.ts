@@ -9,10 +9,10 @@ import type {
   RepoConfigWithInferredValues,
   RepoConfigWithInferredValuesAndProject,
   StateFlags,
+  LoadConfigOptions,
 } from "@condu/core/configTypes.js";
 import { groupBy, isDeepEqual } from "remeda";
 import { loadRepoProject, type Project } from "../../loadProject.js";
-import { type LoadConfigOptions } from "@condu/core/configTypes.js";
 import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
 import { nonEmpty } from "@condu/core/utils/filter.js";
 import { isMatching } from "ts-pattern";
@@ -64,7 +64,7 @@ export async function collectState(
     for (const featureEffect of featureConfig.effects ?? []) {
       if (!featureEffect) continue;
 
-      const matchManifest = isMatching(featureEffect.matchPackage);
+      const matchPackageFn = isMatching(featureEffect.matchPackage);
       const matchAllPackages =
         featureEffect.matchPackage &&
         Object.keys(featureEffect.matchPackage).length === 1 &&
@@ -75,7 +75,7 @@ export async function collectState(
       const matchedPackages = featureEffect.matchPackage
         ? matchAllPackages
           ? workspacePackages
-          : packages.filter((pkg) => matchManifest(pkg.manifest))
+          : packages.filter((pkg) => matchPackageFn(pkg))
         : [project];
 
       if (featureEffect.files) {
@@ -83,16 +83,18 @@ export async function collectState(
           (file): CollectedFileDef[] => {
             if (!file) return [];
 
-            const matches = matchedPackages.map((pkg) => ({
-              ...file,
-              targetDir: pkg.dir,
-              target: pkg.manifest,
-              featureName: feature.name,
-              skipIgnore: matchAllPackages,
-            }));
+            const matches = matchedPackages.map(
+              (pkg): CollectedFileDef => ({
+                ...file,
+                targetDir: pkg.relPath,
+                targetPackage: pkg,
+                featureName: feature.name,
+                skipIgnore: matchAllPackages,
+              }),
+            );
 
             return matchAllPackages
-              ? [
+              ? ([
                   ...matches,
                   // this one is used by the gitignore-like features, as it doesn't contain 'content'
                   ...project.projectConventions.map((convention) => ({
@@ -101,9 +103,9 @@ export async function collectState(
                     type: file.type,
                     featureName: feature.name,
                     targetDir: convention.glob,
-                    target: project.manifest,
+                    targetPackage: project,
                   })),
-                ]
+                ] satisfies CollectedFileDef[])
               : matches;
           },
         );
@@ -187,7 +189,7 @@ export async function apply(options: LoadConfigOptions = {}) {
   const {
     manifest,
     writeProjectManifest,
-    projectDir,
+    absPath: workspaceDirAbs,
     config,
     projectConventions,
   } = project;
@@ -224,18 +226,18 @@ export async function apply(options: LoadConfigOptions = {}) {
   // TODO: provide the manually changed previouslyWrittenFiles to respective features
   // TODO: would need to add feature name to each cache entry
   const previouslyWrittenFiles =
-    await readPreviouslyWrittenFileCache(projectDir);
+    await readPreviouslyWrittenFileCache(workspaceDirAbs);
 
   const writtenFiles: WrittenFile[] = [];
   for (const [targetPackageDir, files] of Object.entries(filesByPackageDir)) {
-    const [{ target }] = files;
-    if (!target) continue;
+    const [{ targetPackage }] = files;
+    if (!targetPackage) continue;
 
     const written = await writeFiles({
       files,
-      projectDir,
+      workspaceDirAbs,
       targetPackageDir,
-      manifest: target,
+      targetPackage,
       previouslyWrittenFiles,
       throwOnManualChanges,
     });
@@ -247,7 +249,7 @@ export async function apply(options: LoadConfigOptions = {}) {
   await Promise.all(
     [...previouslyWrittenFiles.values()].map(async (file) => {
       if (file.manuallyChanged) return;
-      const fullPath = path.join(projectDir, file.path);
+      const fullPath = path.join(workspaceDirAbs, file.path);
       console.log(`Deleting, no longer needed: ${fullPath}`);
       await fs.rm(fullPath);
     }),
@@ -255,8 +257,8 @@ export async function apply(options: LoadConfigOptions = {}) {
 
   await writeFiles({
     files: [{ path: FILE_STATE_PATH, content: writtenFiles }],
-    manifest,
-    projectDir,
+    targetPackage: project,
+    workspaceDirAbs: workspaceDirAbs,
     targetPackageDir: ".",
     previouslyWrittenFiles: new Map(),
     throwOnManualChanges,
@@ -300,11 +302,11 @@ async function ensurePublishConfigDirectorySet(project: Project) {
   for (const pkg of await project.getWorkspacePackages()) {
     // ensure there's a publishConfig.directory set for each package
     // see https://pnpm.io/package_json#publishconfigdirectory
-    const originalPackageDir = path.join(project.projectDir, pkg.dir);
+    const originalPackageDir = path.join(project.absPath, pkg.relPath);
     const publishablePackageDir = path.join(
-      project.projectDir,
+      project.absPath,
       project.config.conventions.buildDir,
-      pkg.dir,
+      pkg.relPath,
     );
     const relativePath = path.relative(
       originalPackageDir,

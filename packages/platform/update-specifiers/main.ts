@@ -149,12 +149,12 @@ const buildTsWithRenamedSpecifiers = async ({
   await Promise.all(
     Array.from(tsConfigPathToRemappedProject).flatMap((compilerOptions) => {
       const tsConfigPath = compilerOptions.project;
-      const projectDir = path.dirname(tsConfigPath);
+      const tsProjectDir = path.dirname(tsConfigPath);
       const newFileSpecs = getNewSourcesWithinProject({
         changeSets,
         fsExtensionMapping,
         // TODO: consider using the original 'ref.commandLine.fileNames' instead of a projectDir jail
-        projectDir,
+        projectDir: tsProjectDir,
       });
 
       // a temporary in-memory TS project that holds the sources with remapped extensions

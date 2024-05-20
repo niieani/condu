@@ -1,18 +1,27 @@
 /// <reference path="./async-memoize-one.d.ts" />
 
 import * as path from "node:path";
-import { getManifest } from "./ensureDependency.js";
-import { CORE_NAME } from "@condu/core/constants.js";
+import { getManifest } from "./getManifest.js";
+import {
+  CONDU_CONFIG_DIR_NAME,
+  CONDU_CONFIG_FILE_NAME,
+  CORE_NAME,
+} from "@condu/core/constants.js";
 import {
   CONFIGURED,
   type ConfiguredRepoConfig,
   type RepoConfigWithInferredValues,
   type RepoPackageJson,
+  type WorkspacePackage,
+  type LoadConfigOptions,
+  type WriteManifestFnOptions,
+  type WorkspaceRootPackage,
+  type WorkspaceSubPackage,
 } from "@condu/core/configTypes.js";
 import {
   getProjectDefinitionsFromConventionConfig,
   type WorkspaceProjectDefined,
-} from "../core/utils/getProjectGlobsFromMoonConfig.js";
+} from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
 import memoizeOne from "async-memoize-one";
@@ -25,34 +34,44 @@ import {
 } from "./commands/apply/constants.js";
 import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
 import sortPackageJson from "sort-package-json";
-import type {
-  WorkspacePackage,
-  LoadConfigOptions,
-  WriteManifestFnOptions,
-} from "@condu/core/configTypes.js";
+import { findUp } from "@condu/core/utils/findUp.js";
+import * as fs from "node:fs";
+import { getManifestsPaths, getPackage } from "@condu/workspace-utils/topo.js";
 
-export interface Project
-  extends WorkspacePackage,
-    Omit<
-      Awaited<ReturnType<typeof getManifest>>,
-      "fileName" | "manifest" | "writeProjectManifest"
-    > {
+export interface Project extends WorkspaceRootPackage {
   projectConventions: WorkspaceProjectDefined[];
-  /** absolute path to the project */
-  projectDir: string;
   config: RepoConfigWithInferredValues;
-  getWorkspacePackages: () => Promise<readonly WorkspacePackage[]>;
+  getWorkspacePackages: () => Promise<readonly WorkspaceSubPackage[]>;
 }
 
 export async function loadRepoProject({
   startDir = process.cwd(),
 }: LoadConfigOptions = {}): Promise<Project | undefined> {
-  const { manifest, writeProjectManifest, projectDir } =
-    await getManifest(startDir);
-  const configFile = path.join(projectDir, `.config`, `${CORE_NAME}.ts`);
+  const configDirPath = await findUp(
+    async (file) => {
+      if (file.name === CONDU_CONFIG_DIR_NAME) {
+        return fs.promises.exists(
+          path.join(
+            file.parentPath,
+            CONDU_CONFIG_DIR_NAME,
+            CONDU_CONFIG_FILE_NAME,
+          ),
+        );
+      }
+      return false;
+    },
+    { cwd: startDir, type: "directory" },
+  );
+  const workspaceDir = configDirPath ? path.dirname(configDirPath) : startDir;
+  const configFilePath = path.join(
+    workspaceDir,
+    CONDU_CONFIG_DIR_NAME,
+    CONDU_CONFIG_FILE_NAME,
+  );
+
   const importedConfigFile = await import(
     /* webpackIgnore: true */
-    configFile
+    configFilePath
   ).catch((error) => {
     console.error(
       `Unable to load the ${CORE_NAME} config file:\n${error.message}`,
@@ -72,8 +91,15 @@ export async function loadRepoProject({
     config.projects,
   );
 
+  const workspacePackage = await getPackage(
+    workspaceDir,
+    path.resolve(workspaceDir, "package.json"),
+  );
+  const { manifest } = workspacePackage;
+
   const defaultBranch: string =
-    config.git?.defaultBranch ?? (await getDefaultGitBranch(projectDir));
+    config.git?.defaultBranch ?? (await getDefaultGitBranch(workspaceDir));
+
   const { packageManager, engines } = manifest;
   const [packageManagerName, packageManagerVersion] = packageManager?.split(
     "@",
@@ -110,57 +136,34 @@ export async function loadRepoProject({
       sourceExtensions:
         config.conventions?.sourceExtensions ?? DEFAULT_SOURCE_EXTENSIONS,
     },
-    workspaceDir: projectDir,
-    configDir: path.join(projectDir, CONFIG_DIR),
+    workspaceDir: workspacePackage.absPath,
+    configDir: path.join(workspacePackage.absPath, CONFIG_DIR),
   } as const;
 
   const project: Project = {
-    manifest,
-    writeProjectManifest,
-    projectDir,
+    kind: "workspace",
     projectConventions,
-    dir: ".",
     config: configWithInferredValues,
     getWorkspacePackages: memoizeOne(() => getWorkspacePackages(project)),
+    ...workspacePackage,
   };
 
   return project;
 }
 
 export const getWorkspacePackages = async (
-  project: Pick<Project, "projectConventions" | "projectDir">,
-) => {
+  project: Pick<Project, "projectConventions" | "absPath">,
+): Promise<WorkspaceSubPackage[]> => {
   // note: could use 'moon query projects --json' instead
   // though that would lock us into 'moon'
-  const packages = await findWorkspacePackagesNoCheck(project.projectDir, {
-    patterns: project.projectConventions.map(({ glob }) => glob).sort(),
+  const packageJsonPaths = await getManifestsPaths({
+    cwd: project.absPath,
+    workspaces: project.projectConventions.map(({ glob }) => glob).sort(),
   });
-  return packages.flatMap(({ dir, manifest, writeProjectManifest }) => {
-    const relativePath = path.relative(project.projectDir, dir);
-    if (relativePath === "") {
-      // skip workspace package
-      return [];
-    }
-    return {
-      dir: relativePath,
-      manifest: {
-        ...(manifest as PackageJson),
-        name: manifest.name ?? path.basename(dir),
-        kind: "package",
-        path: dir,
-        workspacePath: relativePath,
-      } satisfies RepoPackageJson,
-      writeProjectManifest: (
-        { path, workspacePath, kind, ...pJson }: Partial<RepoPackageJson>,
-        { force, merge }: WriteManifestFnOptions = {},
-      ) =>
-        writeProjectManifest(
-          sortPackageJson({
-            ...(merge ? manifest : {}),
-            ...(pJson as ProjectManifest),
-          }),
-          force,
-        ),
-    };
-  });
+  return Promise.all(
+    packageJsonPaths.map(async (manifestPath) => ({
+      kind: "package",
+      ...(await getPackage(project.absPath, manifestPath)),
+    })),
+  );
 };

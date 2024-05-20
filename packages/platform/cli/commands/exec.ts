@@ -27,14 +27,13 @@ export async function execCommand(input: {
     throw new Error(`Unable to load project`);
   }
   const { package: packageNamePart, exec, args, cwd } = input;
-  const { projectDir } = project;
   const pkg = packageNamePart
     ? await findExistingPackage({
         partialPackage: packageNamePart,
         project,
       })
     : {
-        dir: projectDir,
+        dir: project.absPath,
         manifest: project.manifest,
       };
 
@@ -42,7 +41,7 @@ export async function execCommand(input: {
     if (pkg) {
       yield path.join(pkg.dir, "node_modules", ".bin", exec);
     }
-    yield path.join(projectDir, "node_modules", ".bin", exec);
+    yield path.join(project.absPath, "node_modules", ".bin", exec);
     yield await which(exec, { nothrow: true });
     throw new Error(`Unable to find executable: ${exec}`);
   };
@@ -66,8 +65,8 @@ export async function execCommand(input: {
         ? cwd
         : path.normalize(path.join(process.cwd(), cwd))
       : packageNamePart
-      ? pkg.dir
-      : process.cwd();
+        ? pkg.dir
+        : process.cwd();
     context.log(
       `${
         pkg.manifest.name
@@ -91,7 +90,7 @@ export async function findExistingPackage({
   partialPackage: string;
   project: Project;
 }) {
-  const { projectConventions, manifest, projectDir } = project;
+  const { projectConventions, manifest, absPath: workspaceDirAbs } = project;
   const matchBox = safeFn(getSingleMatch)({
     projectConventions,
     partialPath: partialPackage,
@@ -99,7 +98,7 @@ export async function findExistingPackage({
   let matched = await match(matchBox)
     .with({ status: "rejected" }, () => undefined)
     .otherwise(async ({ value: matched }) => {
-      const modulePath = path.join(projectDir, matched.path);
+      const modulePath = path.join(workspaceDirAbs, matched.path);
       const packageJsonPath = path.join(modulePath, "package.json");
       const existingPackageJson = await fs
         .readFile(packageJsonPath)
@@ -115,7 +114,7 @@ export async function findExistingPackage({
 
   if (!matched) {
     const packages = [
-      { manifest, dir: project.dir },
+      { manifest, dir: project.relPath },
       ...(await getWorkspacePackages(project)),
     ];
     matched = find(
@@ -125,7 +124,7 @@ export async function findExistingPackage({
     if (!matched) {
       const matches = filter(
         packages,
-        ({ dir, manifest }) =>
+        ({ relPath: dir, manifest }) =>
           manifest.name?.includes(partialPackage) ||
           dir.includes(partialPackage),
       );

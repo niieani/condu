@@ -1,4 +1,4 @@
-import type { WorkspaceProjectDefined } from "../../../core/utils/getProjectGlobsFromMoonConfig.js";
+import type { WorkspaceProjectDefined } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
 import { loadRepoProject } from "../../loadProject.js";
 import * as fs from "node:fs/promises";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
@@ -7,6 +7,7 @@ import * as path from "node:path";
 import { getSingleMatch, type MatchOptions } from "../../matchPackage.js";
 import type { CommandContext } from "./CreateCommand.js";
 import childProcess from "node:child_process";
+import type { WorkspaceRootPackage } from "@condu/core/configTypes.js";
 
 // const gitUser = (await $`git config user.name`).stdout.trim();
 // const gitEmail = (await $`git config user.email`).stdout.trim();
@@ -26,7 +27,7 @@ export async function createCommand({
   if (!project) {
     throw new Error(`Unable to load project`);
   }
-  const { projectConventions, manifest, dir: projectDir } = project;
+  const { projectConventions } = project;
 
   const match = getSingleMatch({
     projectConventions,
@@ -39,7 +40,7 @@ export async function createCommand({
   // TODO: do I want to add prompts for description with inquirer package?
   // maybe not, since the workflow should be as simple as possible
   // and the user can always edit the package.json after creation
-  await createPackage({ match, manifest, description, projectDir, context });
+  await createPackage({ match, project, description, context });
 }
 
 export interface ConventionMatch {
@@ -57,18 +58,16 @@ export type Match =
 
 export async function createPackage({
   match,
-  manifest,
+  project,
   description,
-  projectDir,
   context,
 }: {
   match: Match;
-  manifest: PackageJson;
+  project: WorkspaceRootPackage;
   description: string | undefined;
-  projectDir: string;
   context: CommandContext;
 }) {
-  const modulePath = path.normalize(path.join(projectDir, match.path));
+  const modulePath = path.normalize(path.join(project.absPath, match.path));
   const packageJsonPath = path.join(modulePath, "package.json");
   const existingPackageJson = await fs
     .readFile(packageJsonPath)
@@ -93,9 +92,9 @@ export async function createPackage({
     version: "0.0.0",
     type: "module",
     // copy author from workspace package.json
-    author: manifest.author,
-    license: manifest.license,
-    contributors: manifest.contributors,
+    author: project.manifest.author,
+    license: project.manifest.license,
+    contributors: project.manifest.contributors,
     ...(isPrivate
       ? { private: isPrivate }
       : { publishConfig: { access: "public" } }),
@@ -115,7 +114,7 @@ export async function createPackage({
     const yarn = childProcess.spawnSync(`yarn install`, {
       stdio: "inherit",
       shell: true,
-      cwd: projectDir,
+      cwd: project.absPath,
     });
     if (yarn.status !== 0) {
       context.error(`yarn exited with status code ${yarn.status}`);
