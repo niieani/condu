@@ -19,15 +19,15 @@ const promock = {
         preserveAllComments: true,
         keepClassNames: true,
         experimental: {
-          plugins: [
-            [
-              "swc-mockify",
-              {
-                basePath: __dirname,
-                importFrom: "swc-mockify/src/mockify.ts",
-              },
-            ],
-          ],
+          // plugins: [
+          //   [
+          //     "swc-mockify",
+          //     {
+          //       basePath: __dirname,
+          //       importFrom: "swc-mockify/src/mockify.ts",
+          //     },
+          //   ],
+          // ],
           disableBuiltinTransformsForInternalTesting: true,
         },
       },

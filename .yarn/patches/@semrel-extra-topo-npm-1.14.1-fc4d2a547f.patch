@@ -1,0 +1,22 @@
+diff --git a/target/dts/index.d.ts b/target/dts/index.d.ts
+index 3b3de00c5907e5dad2512290e8ce603e81f57ae6..37304238d0c1d1b61720eaac5a06aceb14dd52e7 100644
+--- a/target/dts/index.d.ts
++++ b/target/dts/index.d.ts
+@@ -1,2 +1,2 @@
+-export { topo, traverseDeps, traverseQueue } from './topo';
+-export * from './interface';
++export type { topo, traverseDeps, traverseQueue } from './topo.d.ts';
++export type * from './interface.d.ts';
+diff --git a/target/dts/topo.d.ts b/target/dts/topo.d.ts
+index 1ca2a103cf97c57cfc12d13da52ef2398bf61b38..b03ea6f44627d5559588c3f07485338c8f20b0d9 100644
+--- a/target/dts/topo.d.ts
++++ b/target/dts/topo.d.ts
+@@ -1,6 +1,6 @@
+ import { TTopoResult } from 'toposource';
+-import { ITopoOptionsNormalized, IDepEntry, IDepEntryEnriched, IPackageEntry, IPackageJson, IPackageDeps, ITopoOptions, ITopoContext } from './interface';
+-export * from './interface';
++import type { ITopoOptionsNormalized, IDepEntry, IDepEntryEnriched, IPackageEntry, IPackageJson, IPackageDeps, ITopoOptions, ITopoContext } from './interface.d.ts';
++export type * from './interface.d.ts';
+ export declare const getPackages: (options: ITopoOptionsNormalized) => Promise<Record<string, IPackageEntry>>;
+ export declare const getPackage: (cwd: string, manifestPath: string) => Promise<IPackageEntry>;
+ export declare const topo: (options?: ITopoOptions) => Promise<ITopoContext>;

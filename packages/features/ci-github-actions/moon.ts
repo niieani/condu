@@ -6,14 +6,8 @@ import type {
   PartialProjectConfig as Project,
 } from "@moonrepo/types";
 import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
-import { mapValues, groupBy, uniq, partition } from "remeda";
-import type {
-  FileDef,
-  Effects,
-  Task,
-  Conventions,
-} from "@condu/core/configTypes.js";
-import { nonEmpty } from "@condu/core/utils/filter.js";
+import { mapValues } from "remeda";
+import type { Effects, Task, Conventions } from "@condu/core/configTypes.js";
 import type GithubAction from "@condu/schema-types/schemas/githubAction.gen.js";
 // import { match } from "ts-pattern";
 
@@ -129,7 +123,7 @@ export const moonCi = ({}: {} = {}) =>
         return {
           matchPackage: {
             name: pkg.manifest.name,
-            kind: pkg.manifest.kind,
+            kind: pkg.kind,
           },
           files: [
             {

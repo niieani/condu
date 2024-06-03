@@ -1,5 +1,8 @@
 import type { PartialProjectConfig, PartialTaskConfig } from "@moonrepo/types";
-import type { WorkspaceProjectsConvention } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
+import type {
+  WorkspaceProjectDefined,
+  WorkspaceProjectsConvention,
+} from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import type { Pattern } from "ts-pattern";
 import type { IPackageEntry } from "@condu/workspace-utils/interface.js";
@@ -233,9 +236,15 @@ export interface RepoConfigWithInferredValues extends ConfiguredRepoConfig {
   node: Required<NodeConfig>;
 }
 
+export interface Project extends WorkspaceRootPackage {
+  projectConventions: WorkspaceProjectDefined[];
+  config: RepoConfigWithInferredValues;
+  getWorkspacePackages: () => Promise<readonly WorkspaceSubPackage[]>;
+}
+
 export interface RepoConfigWithInferredValuesAndProject
   extends RepoConfigWithInferredValues {
-  project: WorkspaceRootPackage;
+  project: Project;
 }
 
 export interface LoadConfigOptions {

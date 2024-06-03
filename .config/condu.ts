@@ -55,7 +55,7 @@ export default configure({
     moon(),
     moonCi(),
     releasePlease({
-      selectPackages: (pkg) => pkg.dir.startsWith("packages/test/dummy"),
+      selectPackages: (pkg) => pkg.relPath.startsWith("packages/test/dummy"),
     }),
     lerna(),
     vscode({

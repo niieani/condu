@@ -35,17 +35,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/moon-ci-setup
-      - run: yarn run condu before-release --ci ./${{ join( fromJSON(
-          needs.release-please.outputs.paths_to_release ), ' ./' ) }}
-      - run: >-
-          git config --global user.email
-          "72759630+google-github-actions-bot@users.noreply.github.com"
-
-          git config --global user.name "Google GitHub Actions Bot"
-
-          git add . && git commit -m "chore: satisfy lerna requirements"
-      - run: ./node_modules/.bin/lerna publish from-package --no-git-reset --no-push
-          --yes
+      - run: yarn run condu release --ci --dry-run --npm-tag=latest  ./${{ join(
+          fromJSON( needs.release-please.outputs.paths_to_release ), ' ./' ) }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - id: release-please

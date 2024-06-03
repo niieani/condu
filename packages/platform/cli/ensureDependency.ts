@@ -7,7 +7,7 @@ import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import type { DependencyDef } from "@condu/core/configTypes.js";
 
 const registry = "https://registry.npmjs.org/";
-const resolveFromNpm = createNpmResolver(
+const { resolveFromNpm } = createNpmResolver(
   createFetchFromRegistry({}),
   // async (url) => {
   //   // @ts-expect-error pnpm types are wrong, it used node-fetch internally which isn't necessary

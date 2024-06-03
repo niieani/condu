@@ -1,7 +1,7 @@
-import type { Project } from "../loadProject.js";
 import type {
+  Project,
   WorkspacePackage,
-  type CollectedState,
+  CollectedState,
 } from "@condu/core/configTypes.js";
 import * as fs from "node:fs/promises";
 import sortPackageJson from "sort-package-json";
@@ -14,6 +14,8 @@ import { partition } from "remeda";
 import { getSingleMatch } from "../matchPackage.js";
 import { apply } from "./apply/apply.js";
 import { topo } from "@condu/workspace-utils/topo.js";
+import { spawn } from "node:child_process";
+import { safelyParseLastJsonFromString } from "@condu/core/utils/safelyParseJsonFromString.js";
 
 const DECLARATION_FILE_EXT_REGEXP = /\.d\.[cm]?ts$/;
 const TSCONFIG_LIKE_FILENAME_REGEXP = /tsconfig\..*\.json$/;
@@ -24,7 +26,7 @@ const TSCONFIG_LIKE_FILENAME_REGEXP = /tsconfig\..*\.json$/;
  * - Ensures there is a LICENSE
  * - Fills in package.json fields.
  */
-export async function prepareBuildDirectoryPackages({
+export async function prepareAndReleaseDirectoryPackages({
   workspaceDirAbs,
   packagesToPrepare,
   absBuildDir,
@@ -32,6 +34,8 @@ export async function prepareBuildDirectoryPackages({
   buildDirName,
   project,
   collectedState,
+  npmTag,
+  dryRun,
 }: {
   workspaceDirAbs: string;
   packagesToPrepare: readonly WorkspacePackage[];
@@ -40,6 +44,8 @@ export async function prepareBuildDirectoryPackages({
   buildDirName: string;
   project: Project;
   collectedState: CollectedState;
+  npmTag?: string;
+  dryRun?: boolean;
 }) {
   // TODO: ensure we had run build step before this, so that the cache has been populated
   const configFileCache = await readPreviouslyWrittenFileCache(workspaceDirAbs);
@@ -62,7 +68,8 @@ export async function prepareBuildDirectoryPackages({
     );
     const existingLicensePaths = new Set<string>();
     const preferredDirectoryEntries = new Map<string, string>();
-    // copy all the project files
+    // copy all the project files that haven't been copied by tsc
+    // this includes all source files, but also other files like README.md, LICENSE, etc.
     void (await copyFiles({
       sourceDir: packageSourceDir,
       targetDir: packageBuildDir,
@@ -175,6 +182,8 @@ export async function prepareBuildDirectoryPackages({
       main: entrySources["."]?.require,
       module: entrySources["."]?.import,
       source: entrySources["."]?.source,
+      // ensure there's a scripts field so npm doesn't complain with a warning about an invalid package.json
+      scripts: manifest.scripts ?? {},
       // TODO: types is probably unnecessary?
       // types: entrySources["."]?.types,
       // TODO: funding
@@ -229,6 +238,48 @@ export async function prepareBuildDirectoryPackages({
         }
       }
     }
+
+    // publish:
+    if (npmTag) {
+      // TODO: add support for --provenance https://docs.npmjs.com/generating-provenance-statements
+      const publishProcess = spawn(
+        "npm",
+        [
+          "publish",
+          "--json",
+          "--tag",
+          npmTag,
+          ...(dryRun ? ["--dry-run"] : []),
+        ],
+        { cwd: packageBuildDir },
+      );
+      let stdout = "";
+      publishProcess.stdout.on("data", (data) => {
+        stdout += data;
+      });
+      let stderr = "";
+      publishProcess.stderr.on("data", (data) => {
+        stderr += data;
+      });
+      publishProcess.stdout.pipe(process.stdout);
+      publishProcess.stderr.pipe(process.stderr);
+      const exitCode = await new Promise<number>((resolve) =>
+        publishProcess.on("exit", resolve),
+      );
+      if (exitCode !== 0) {
+        const json =
+          safelyParseLastJsonFromString(stderr) ||
+          safelyParseLastJsonFromString(stdout);
+        if (json && "error" in json) {
+          throw new Error(
+            `Failed to publish ${manifest.name}:\n${JSON.stringify(json.error)}`,
+          );
+        }
+        throw new Error(`Failed to publish ${manifest.name}:\n${stderr}`);
+      }
+    }
+
+    // packageBuildDir
   }
 }
 
@@ -275,19 +326,22 @@ function getReleaseDependencies(manifest: PackageJson) {
   return dependencyManifestOverride;
 }
 
-export async function beforeReleasePipeline({
+export async function releasePipeline({
   ci = Boolean(process.env["CI"]),
+  packages: pkgs,
   ...input
 }: {
   packages: string[];
+  npmTag?: string;
   ci?: boolean;
+  dryRun?: boolean;
 }) {
   const applyResult = await apply({ throwOnManualChanges: true });
   if (!applyResult) {
     throw new Error(`Unable to find a condu project in the current directory`);
   }
   const { project, collectedState } = applyResult;
-  const selectedPackagePaths = input.packages.map(
+  const selectedPackagePaths = pkgs.map(
     (packageName) =>
       getSingleMatch({
         partialPath: packageName,
@@ -313,7 +367,7 @@ export async function beforeReleasePipeline({
 
   // await correctSourceMaps({ buildDir: absBuildDir });
 
-  await prepareBuildDirectoryPackages({
+  await prepareAndReleaseDirectoryPackages({
     workspaceDirAbs,
     packagesToPrepare: selectedPackages,
     absBuildDir,
@@ -321,6 +375,7 @@ export async function beforeReleasePipeline({
     buildDirName,
     project,
     collectedState,
+    ...input,
   });
 
   if (ci) {

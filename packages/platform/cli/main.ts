@@ -4,7 +4,7 @@ import { ApplyCommand } from "./commands/apply/ApplyCommand.js";
 import { CreateCommand } from "./commands/create/CreateCommand.js";
 import { ExecCommand } from "./commands/ExecCommand.js";
 import { BuildTypeScriptCommand } from "./commands/BuildTypeScriptCommand.js";
-import { BeforeReleaseCommand } from "./commands/BeforeReleaseCommand.js";
+import { ReleaseCommand } from "./commands/ReleaseCommand.js";
 import * as path from "node:path";
 import { CORE_NAME } from "@condu/core/constants.js";
 
@@ -30,7 +30,7 @@ if (!globalThis.__yarnPlugin__) {
   cli.register(CreateCommand);
   cli.register(ExecCommand);
   cli.register(BuildTypeScriptCommand);
-  cli.register(BeforeReleaseCommand);
+  cli.register(ReleaseCommand);
   cli.register(Builtins.VersionCommand);
   cli.register(Builtins.HelpCommand);
   cli.runExit(args);

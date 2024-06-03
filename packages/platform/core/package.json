@@ -4,12 +4,13 @@
   "type": "module",
   "dependencies": {
     "async-memoize-one": "^1.1.8",
-    "fp-ts": "^2.16.5",
+    "fp-ts": "^2.16.6",
     "io-ts": "^2.2.21",
-    "remeda": "^1.61.0"
+    "remeda": "^2.0.0"
   },
   "devDependencies": {
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "vitest": "^1.6.0"
   },
   "publishConfig": {
     "access": "public",
