@@ -9,7 +9,6 @@ import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
 import { mapValues } from "remeda";
 import type { Effects, Task, Conventions } from "@condu/core/configTypes.js";
 import type GithubAction from "@condu/schema-types/schemas/githubAction.gen.js";
-// import { match } from "ts-pattern";
 
 type TasksByType = Record<
   Task["type"],
@@ -85,7 +84,10 @@ export const moonCi = ({}: {} = {}) =>
                 with: { "fetch-depth": 0 },
               },
               // TODO: always use the version from main, not the checked out one
-              { uses: "./.github/actions/moon-ci-setup" },
+              {
+                name: "Moon CI",
+                uses: "./.github/actions/moon-ci-setup",
+              },
             ],
           },
         },
