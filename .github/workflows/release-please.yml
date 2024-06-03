@@ -35,8 +35,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/moon-ci-setup
-      - run: yarn run condu release --ci --dry-run --npm-tag=latest  ./${{ join(
-          fromJSON( needs.release-please.outputs.paths_to_release ), ' ./' ) }}
+      - run: yarn run condu release --ci --npm-tag=latest  ./${{ join( fromJSON(
+          needs.release-please.outputs.paths_to_release ), ' ./' ) }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - id: release-please

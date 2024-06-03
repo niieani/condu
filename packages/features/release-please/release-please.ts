@@ -135,7 +135,7 @@ export const releasePlease = ({
                             isInternalCondu
                               ? `${config.node.packageManager.name} run `
                               : ""
-                          }${CORE_NAME} release --ci --dry-run --npm-tag=latest  ./\${{ join( fromJSON( needs.release-please.outputs.paths_to_release ), ' ./' ) }}`,
+                          }${CORE_NAME} release --ci --npm-tag=latest  ./\${{ join( fromJSON( needs.release-please.outputs.paths_to_release ), ' ./' ) }}`,
                           env: {
                             NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}",
                           },
