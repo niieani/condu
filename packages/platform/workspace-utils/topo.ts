@@ -205,12 +205,7 @@ export const getGraph = (
   };
 };
 
-const DEFAULT_IGNORE = [
-  "**/node_modules/**",
-  "**/bower_components/**",
-  "**/test/**",
-  "**/tests/**",
-];
+const DEFAULT_IGNORE = ["**/node_modules/**", "**/bower_components/**"];
 
 // deterministically sort the packages by name
 export const deterministicSort = <T>(a: T, b: T) =>

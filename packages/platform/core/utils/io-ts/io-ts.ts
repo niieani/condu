@@ -1,7 +1,5 @@
-/* eslint-disable unicorn/filename-case */
 import t from "io-ts";
-import R from "remeda";
-import { PathReporter } from "io-ts/PathReporter";
+import { unique } from "remeda";
 
 export * from "io-ts";
 export { isLeft, isRight } from "fp-ts/Either";
@@ -28,7 +26,7 @@ export const decodeOrThrow = <I, A>(
     case "Left": {
       // throw new Error(`${error}:\n${PathReporter.report(either).join("\n")}`);
       throw new Error(
-        `${error}:\n${R.uniq(
+        `${error}:\n${unique(
           either.left.map(
             (error) =>
               error.message ??
@@ -37,8 +35,8 @@ export const decodeOrThrow = <I, A>(
                   !key
                     ? ""
                     : index < error.context.length - 1
-                    ? `${index > 1 ? "." : ""}${key}`
-                    : `.${key}: got '${actual}', but expected ${type.name}`,
+                      ? `${index > 1 ? "." : ""}${key}`
+                      : `.${key}: got '${actual}', but expected ${type.name}`,
                 )
                 .join(""),
           ),

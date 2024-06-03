@@ -1,7 +1,7 @@
 import { Command, Option } from "clipanion";
 
-export class BeforeReleaseCommand extends Command {
-  static override paths = [["before-release"]];
+export class ReleaseCommand extends Command {
+  static override paths = [["release"]];
 
   static override usage = Command.Usage({
     description:
@@ -11,10 +11,16 @@ export class BeforeReleaseCommand extends Command {
   ci = Option.Boolean("--ci", {
     description: `All packages that are not requested to be published will be marked as private.`,
   });
+  npmTag = Option.String("--npm-tag", {
+    description: `The tag to use when publishing packages.`,
+  });
+  dryRun = Option.Boolean("--dry-run", {
+    description: `Do not actually publish anything.`,
+  });
   packages = Option.Rest({ name: "packages" });
 
   async execute() {
-    const { beforeReleasePipeline } = await import("./beforeRelease.js");
-    await beforeReleasePipeline(this);
+    const { releasePipeline } = await import("./release.js");
+    await releasePipeline(this);
   }
 }

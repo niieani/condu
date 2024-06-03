@@ -21,7 +21,8 @@ export const releasePlease = ({
     actionFn: async (config, state) => {
       const isInternalCondu =
         config.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME;
-      const packages = (await config.project.getWorkspacePackages()).filter(
+      const allWorkspacePackages = await config.project.getWorkspacePackages();
+      const packages = allWorkspacePackages.filter(
         (pkg) =>
           !pkg.manifest.private && (!selectPackages || selectPackages(pkg)),
       );
@@ -134,21 +135,24 @@ export const releasePlease = ({
                             isInternalCondu
                               ? `${config.node.packageManager.name} run `
                               : ""
-                          }${CORE_NAME} before-release --ci ./\${{ join( fromJSON( needs.release-please.outputs.paths_to_release ), ' ./' ) }}`,
-                        },
-                        {
-                          run: `
-git config --global user.email "72759630+google-github-actions-bot@users.noreply.github.com"
-git config --global user.name "Google GitHub Actions Bot"
-git add . && git commit -m "chore: satisfy lerna requirements"
-`.trim(),
-                        },
-                        {
-                          run: "./node_modules/.bin/lerna publish from-package --no-git-reset --no-push --yes",
+                          }${CORE_NAME} release --ci --dry-run --npm-tag=latest  ./\${{ join( fromJSON( needs.release-please.outputs.paths_to_release ), ' ./' ) }}`,
                           env: {
                             NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}",
                           },
                         },
+                        //                         {
+                        //                           run: `
+                        // git config --global user.email "72759630+google-github-actions-bot@users.noreply.github.com"
+                        // git config --global user.name "Google GitHub Actions Bot"
+                        // git add . && git commit -m "chore: satisfy lerna requirements"
+                        // `.trim(),
+                        //                         },
+                        // {
+                        //   run: "./node_modules/.bin/lerna publish from-package --no-git-reset --no-push --yes",
+                        //   env: {
+                        //     NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}",
+                        //   },
+                        // },
                         {
                           id: "release-please",
                           // uses: 'googleapis/release-please-action@v4',

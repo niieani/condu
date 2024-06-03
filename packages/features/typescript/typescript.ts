@@ -185,7 +185,7 @@ export const typescript = ({
                       outDir: path.join(
                         pathToWorkspaceDir,
                         config.conventions.buildDir,
-                        path.relative(config.project.relPath, manifest.absPath),
+                        pkg.relPath,
                       ),
                       // required so that when using tsc --build it doesn't create nested dist directories
                       rootDir: config.conventions.sourceDir,
