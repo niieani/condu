@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.3](https://github.com/niieani/toolchain/compare/@condu/test-dummy@1.0.2...@condu/test-dummy@1.0.3) (2024-06-03)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/test-dummy-dep bumped to 1.0.3
+
 ## [1.0.2](https://github.com/niieani/toolchain/compare/@condu/test-dummy@1.0.1...@condu/test-dummy@1.0.2) (2024-06-03)
 
 
