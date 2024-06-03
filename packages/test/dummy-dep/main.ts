@@ -1,1 +1,1 @@
-export const dummyDep = "dummy-dep";
+export const dummyDep = "dummy-dep-again";
