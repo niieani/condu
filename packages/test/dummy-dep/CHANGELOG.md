@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/niieani/toolchain/compare/@condu/test-dummy-dep@1.0.1...@condu/test-dummy-dep@1.0.2) (2024-06-03)
+
+
+### Bug Fixes
+
+* bump dummy-dep ([e57b6b9](https://github.com/niieani/toolchain/commit/e57b6b99e56fe61486129e3013a40aa1c6aadbed))
+
 ## [1.0.1](https://github.com/niieani/toolchain/compare/@condu/test-dummy-dep@1.0.0...@condu/test-dummy-dep@1.0.1) (2024-05-10)
 
 
