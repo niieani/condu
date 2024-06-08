@@ -43,17 +43,19 @@
 - [x] vscode auto-ignore generated files
 - [x] use https://www.npmjs.com/package/comment-json to keep the comments and only amend input if it exists
 - [x] fully fleshed out build step on CI (incl. prepare dependency)
+- [x] CI & semantic-release or [Auto](https://github.com/intuit/auto)
+- [x] "clean"/"default" feature? before build, we need to run apply and clean 'build' dir
+- [ ] what is up with yarnrc auto-changing?
+- [ ] add a `condu` package that just wraps `@condu/cli` and adds the build script - this way @condu/cli can exist as its own package
 - [ ] pnpm feature
 - [ ] fix the CLI command displayed (instead of "bun main.bundle.js") + add help
 - [ ] better support for making '@condu/core' a peerDependency
 - [ ] should we collocate per-package build config in the respective packages, or keep them global?
   - [ ] if yes, then how do we do it? `.config` folder per package?
   - [ ] make decision: where do we keep local config files? are they centrally managed? do we use config identifiers in folders names to nest configs?
-- [ ] CI & semantic-release or [Auto](https://github.com/intuit/auto)
 - [ ] some basic integration tests that use the built packages
   - what do I actually want to test here? ooh the release process!!!
   - inspiration: [zx-bulk-release](https://github.com/semrel-extra/zx-bulk-release/blob/b2a22a483a810be63e059bcbcb1db08289729809/src/test/js/integration.test.js)
-- [ ] "clean"/"default" feature? before build, we need to run apply and clean 'build' dir
 - [ ] add an 'init' command to create a new repo with config (or update existing one) from scratch
 - [ ] vitest feature
 - [ ] CI build and test using moon
@@ -145,14 +147,14 @@ Next step:
 
 - [x] ensure that merging the test release PR will ONLY release the selected packages, rather than EVERYTHING via lerna
   - [x] maybe make all non-released packages private for the duration of the release?
-- [ ] lerna seems very poorly written, maybe I can just make my own releasing logic?
+- [x] lerna seems very poorly written, maybe I can just make my own releasing logic?
   - i.e. set correct version and (peer/dev)dependencies based on workspace? or steal pnpm publish logic for this? and then just publish required deps using the selected package manager
-- [ ] what is up with yarnrc auto-changing?
-- [ ] add a `condu` package that just wraps `@condu/cli` and adds the build script - this way @condu/cli can exist as its own package
 
 ## Later:
 
 - [ ] commitlint + husky for linting commit messages
+- [ ] website with a catalog of features
+- [ ] invitation to folks to contribute features
 - [ ] fix the issue with default git branch not resolving on CI
 - [ ] verified published packages:
   - [ ] https://publint.dev/

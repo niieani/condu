@@ -26,27 +26,27 @@
     "@pnpm/npm-resolver": "^20.0.0",
     "@pnpm/read-project-manifest": "^6.0.2",
     "@pnpm/types": "^10.1.0",
-    "@pnpm/workspace.find-packages": "^2.0.7",
+    "@pnpm/workspace.find-packages": "^2.1.0",
     "async-memoize-one": "^1.1.8",
     "fp-ts": "^2.16.6",
     "io-ts": "^2.2.21",
-    "json-schema-to-typescript": "^14.0.4",
-    "remeda": "^2.0.0",
+    "json-schema-to-typescript": "^14.0.5",
+    "remeda": "^2.0.5",
     "semver": "^7.6.2",
     "sort-package-json": "^2.10.0",
-    "type-fest": "^4.18.3",
-    "yaml": "^2.4.2"
+    "type-fest": "^4.20.0",
+    "yaml": "^2.4.3"
   },
   "devDependencies": {
-    "@moonrepo/cli": "^1.25.1",
+    "@moonrepo/cli": "1.25.4",
     "@moonrepo/types": "^1.17.3",
-    "@swc/core": "^1.5.24",
+    "@swc/core": "^1.5.25",
     "@swc/register": "^0.1.10",
     "@types/eslint": "^8.56.10",
-    "@types/node": "^20.13.0",
+    "@types/node": "^20.14.2",
     "@types/semver": "^7.5.8",
-    "@typescript-eslint/eslint-plugin": "^7.11.0",
-    "@typescript-eslint/parser": "^7.11.0",
+    "@typescript-eslint/eslint-plugin": "^7.12.0",
+    "@typescript-eslint/parser": "^7.12.0",
     "@yarnpkg/types": "^4.0.0",
     "bun-types": "^1.1.12",
     "commonjs-extension-resolution-loader": "^0.1.0",
@@ -63,7 +63,7 @@
     "rollup": "^4.18.0",
     "rollup-plugin-swc3": "^0.11.2",
     "swc-loader": "^0.2.6",
-    "tsx": "^4.11.0",
+    "tsx": "^4.13.2",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0",
     "webpack": "^5.91.0",
@@ -73,6 +73,5 @@
   "packageManager": "yarn@4.2.2",
   "engines": {
     "node": "22.1.0"
-  },
-  "workspacePath": "."
+  }
 }

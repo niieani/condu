@@ -6,7 +6,7 @@
     "async-memoize-one": "^1.1.8",
     "fp-ts": "^2.16.6",
     "io-ts": "^2.2.21",
-    "remeda": "^2.0.0"
+    "remeda": "^2.0.5"
   },
   "devDependencies": {
     "node-fetch": "^3.3.2",

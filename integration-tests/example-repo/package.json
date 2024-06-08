@@ -44,7 +44,6 @@
     "@condu/core": "file:../../build/packages/platform/core@0.0.0",
     "typescript": "^5.4.5"
   },
-  "workspacePath": ".",
   "workspaces": [
     "packages/*"
   ]
