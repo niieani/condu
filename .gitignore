@@ -14,7 +14,7 @@ node_modules
 # typescript:
 /tsconfig.json
 # library-bundle:cli:
-/packages/platform/cli/.config/generated/webpack.config.cjs
+/packages/platform/condu/.config/generated/webpack.config.cjs
 # eslint:
 /eslint.config.js
 # moon:
@@ -24,7 +24,7 @@ node_modules
 /.moon/toolchain.yml
 /.moon/workspace.yml
 # moonCi:
-/packages/platform/cli/moon.yml
+/packages/platform/condu/moon.yml
 /moon.yml
 /.moon/tasks.yml
 # lerna:

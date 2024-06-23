@@ -7,7 +7,7 @@
     "@condu/cli": "workspace:^"
   },
   "devDependencies": {
-    "@yarnpkg/core": "^4.0.5",
+    "@yarnpkg/core": "^4.1.0",
     "@yarnpkg/fslib": "^3.1.0"
   },
   "publishConfig": {

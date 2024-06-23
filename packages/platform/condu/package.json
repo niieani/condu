@@ -6,5 +6,26 @@
   "publishConfig": {
     "access": "public",
     "directory": "../../../build/packages/platform/condu"
-  }
+  },
+  "sideEffects": true,
+  "dependencies": {
+    "@condu/cli": "workspace:^",
+    "@condu/update-specifiers": "workspace:^",
+    "@condu/workspace-utils": "workspace:^",
+    "@pnpm/fetch": "^8.0.1",
+    "@pnpm/logger": "^5.0.0",
+    "@pnpm/network.auth-header": "^3.0.1",
+    "@pnpm/npm-resolver": "^20.0.0",
+    "@pnpm/read-project-manifest": "^6.0.2",
+    "@pnpm/types": "^10.1.0",
+    "@pnpm/workspace.find-packages": "^2.1.1",
+    "@types/which": "^3.0.4",
+    "spdx-license-list": "^6.9.0"
+  },
+  "publishDependencies": [
+    "@pnpm",
+    "@condu/update-specifiers",
+    "@condu/workspace-utils",
+    "spdx-license-list"
+  ]
 }

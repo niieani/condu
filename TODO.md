@@ -152,6 +152,7 @@ Next step:
 
 ## Later:
 
+- [ ] mark which dependencies are managed by condu, and which are managed by the user (e.g. key in package.json: managedDependencies: { "name": "condu" })
 - [ ] commitlint + husky for linting commit messages
 - [ ] website with a catalog of features
 - [ ] invitation to folks to contribute features

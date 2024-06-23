@@ -62,9 +62,14 @@ module.exports = (
     externals: async (data) => {
       const { request, context, getResolve } = data;
       const externals = [
-        /^@pnpm\/.*/,
-        /^@condu\/.*/,
         /^node:/,
+        // TODO: do we want to keep @condu here? is any package pulling any heavy dependencies?
+        /^@condu\/.*/,
+        // TODO: just use the list of dependencies in the package
+        //       and ensure the package includes some transitive dependencies in correct versions somehow
+        //       perhaps by adding "externalDependencies" to package.json (with boolean values),
+        //       we could make sure to extract the correct versions from the lockfile
+        /^@pnpm\/.*/,
         "typescript",
         "@ts-morph/common",
         "ts-morph",
@@ -73,6 +78,9 @@ module.exports = (
         "fs-extra",
         // "zx" // required to get rid of Warning: async_hooks.createHook is not implemented in Bun.
       ];
+      if (request === "@condu/cli/main.js") {
+        return false;
+      }
       const isExternal = externals.some((external) => {
         if (typeof external === "string") {
           return request === external || request.startsWith(`${external}/`);

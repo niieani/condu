@@ -135,7 +135,7 @@ export async function prepareAndReleaseDirectoryPackages({
         return [
           pathToDir === "" ? "." : `./${pathToDir}`,
           {
-            types: `./${suffixedPath}${basename}.d.ts`,
+            // types: `./${suffixedPath}${basename}.d.ts`,
             source: `./${suffixedPath}${entry}`,
             bun: `./${suffixedPath}${entry}`,
             import: `./${suffixedPath}${basename}.js`,
@@ -171,7 +171,7 @@ export async function prepareAndReleaseDirectoryPackages({
         ...entrySources,
         "./*.json": "./*.json",
         "./*.js": {
-          types: `./*.d.ts`,
+          // types: `./*.d.ts`,
           bun: `./*.ts`,
           import: `./*.js`,
           require: `./*.cjs`,
