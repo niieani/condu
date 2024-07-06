@@ -4,10 +4,10 @@
   "type": "module",
   "peerDependencies": {
     "@condu/core": "workspace:^",
-    "@typescript-eslint/eslint-plugin": "6.8.0",
-    "@typescript-eslint/parser": "6.8.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0-alpha.39",
+    "@typescript-eslint/parser": "^8.0.0-alpha.40",
     "eslint-plugin-import": "*",
-    "eslint-plugin-unicorn": "^48.0.1"
+    "eslint-plugin-unicorn": "^54.0.0"
   },
   "publishConfig": {
     "access": "public",

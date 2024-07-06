@@ -1,7 +1,6 @@
 /// <reference path="./async-memoize-one.d.ts" />
 
 import * as path from "node:path";
-import { getManifest } from "./getManifest.js";
 import {
   CONDU_CONFIG_DIR_NAME,
   CONDU_CONFIG_FILE_NAME,
@@ -11,10 +10,7 @@ import {
   CONFIGURED,
   type ConfiguredRepoConfig,
   type RepoConfigWithInferredValues,
-  type RepoPackageJson,
-  type WorkspacePackage,
   type LoadConfigOptions,
-  type WriteManifestFnOptions,
   type WorkspaceRootPackage,
   type WorkspaceSubPackage,
 } from "@condu/core/configTypes.js";
@@ -22,10 +18,7 @@ import {
   getProjectDefinitionsFromConventionConfig,
   type WorkspaceProjectDefined,
 } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
-import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
-import { findWorkspacePackagesNoCheck } from "@pnpm/workspace.find-packages";
 import memoizeOne from "async-memoize-one";
-import type { ProjectManifest } from "@pnpm/types";
 import {
   CONFIG_DIR,
   DEFAULT_NODE_VERSION,

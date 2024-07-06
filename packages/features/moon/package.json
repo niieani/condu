@@ -4,7 +4,7 @@
   "type": "module",
   "dependencies": {
     "@condu/schema-types": "workspace:^",
-    "@moonrepo/types": "^1.17.3"
+    "@moonrepo/types": "^1.18.0"
   },
   "peerDependencies": {
     "@condu/core": "workspace:^"

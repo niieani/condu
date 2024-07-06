@@ -156,6 +156,9 @@ export const moon = ({
                       ...(workspace?.hasher?.ignorePatterns ?? []),
                     ],
                   },
+                  experiments: {
+                    actionPipelineV2: true,
+                  },
                 } satisfies Workspace,
               },
             ],

@@ -6,6 +6,10 @@ import memoize from "async-memoize-one";
 export const getDefaultGitBranch_ = async (
   rootDir: string,
 ): Promise<string> => {
+  const { GIT_DEFAULT_BRANCH } = process.env;
+  if (GIT_DEFAULT_BRANCH) {
+    return GIT_DEFAULT_BRANCH;
+  }
   try {
     const remotes = await fs.readdir(
       path.join(rootDir, ".git", "refs", "remotes"),

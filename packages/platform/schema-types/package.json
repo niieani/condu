@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "devDependencies": {
-    "json-schema-to-typescript": "^14.0.5"
+    "json-schema-to-typescript": "^14.1.0"
   },
   "publishConfig": {
     "access": "public",

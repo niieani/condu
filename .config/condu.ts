@@ -4,7 +4,6 @@ import { condu } from "@condu-feature/condu-packages/conduPackages.js";
 import { moon } from "@condu-feature/moon/moon.js";
 import { moonCi } from "@condu-feature/ci-github-actions/moon.js";
 import { eslint } from "@condu-feature/eslint/eslint.js";
-import { lerna } from "@condu-feature/lerna/lerna.js";
 import { yarn } from "@condu-feature/yarn/yarn.js";
 import { vscode } from "@condu-feature/vscode/vscode.js";
 import { libraryBundle } from "@condu-feature/library-bundle/libraryBundle.js";
@@ -57,7 +56,6 @@ export default configure({
     releasePlease({
       selectPackages: (pkg) => pkg.relPath.startsWith("packages/test/dummy"),
     }),
-    lerna(),
     vscode({
       hideGeneratedFiles: false,
       suggestedConfig: {

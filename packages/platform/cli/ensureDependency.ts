@@ -1,4 +1,3 @@
-// import semver from "semver";
 import { createNpmResolver } from "@pnpm/npm-resolver";
 import { getCacheDir } from "@condu/core/utils/dirs.js";
 import { createFetchFromRegistry } from "@pnpm/fetch";

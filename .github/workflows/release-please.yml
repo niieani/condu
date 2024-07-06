@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+env:
+  GIT_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
 permissions:
   contents: write
   pull-requests: write

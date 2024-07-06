@@ -79,6 +79,10 @@ export const releasePlease = ({
                   on: {
                     push: { branches: [config.git.defaultBranch] },
                   },
+                  env: {
+                    GIT_DEFAULT_BRANCH:
+                      "${{ github.event.repository.default_branch }}",
+                  },
                   permissions: {
                     contents: "write",
                     "pull-requests": "write",

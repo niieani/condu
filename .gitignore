@@ -27,9 +27,6 @@ node_modules
 /packages/platform/condu/moon.yml
 /moon.yml
 /.moon/tasks.yml
-# lerna:
-/lerna.json
-/lerna-debug.log
 # vscode:
 /.vscode/settings.json
 # gpt-summarizer:

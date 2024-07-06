@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "remeda": "^2.0.10"
+    "remeda": "^2.3.0"
   },
   "peerDependencies": {
     "@condu/core": "workspace:^"

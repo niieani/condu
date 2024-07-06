@@ -3,21 +3,22 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
+    "@condu/core": "workspace:^",
     "@condu/update-specifiers": "workspace:^",
     "@condu/workspace-utils": "workspace:^",
-    "@pnpm/fetch": "^8.0.1",
+    "@pnpm/fetch": "^8.0.3",
     "@pnpm/logger": "^5.0.0",
     "@pnpm/network.auth-header": "^3.0.1",
-    "@pnpm/npm-resolver": "^20.0.0",
-    "@pnpm/read-project-manifest": "^6.0.2",
-    "@pnpm/types": "^10.1.0",
-    "@pnpm/workspace.find-packages": "^2.1.1",
+    "@pnpm/npm-resolver": "^21.0.0",
+    "@pnpm/read-project-manifest": "^6.0.4",
+    "@pnpm/types": "^11.0.0",
+    "@pnpm/workspace.find-packages": "^4.0.0",
     "@types/which": "^3.0.4",
     "async-memoize-one": "^1.1.8",
     "clipanion": "^4.0.0-rc.3",
-    "comment-json": "^4.2.3",
+    "comment-json": "^4.2.4",
     "print-diff": "^2.0.0",
-    "remeda": "^2.0.10",
+    "remeda": "^2.3.0",
     "sort-package-json": "^2.10.0",
     "spdx-license-list": "^6.9.0",
     "ts-pattern": "^5.2.0",
@@ -27,11 +28,11 @@
   "devDependencies": {
     "vitest": "^1.6.0"
   },
-  "peerDependencies": {
-    "@condu/core": "workspace:^"
-  },
   "publishConfig": {
     "access": "public",
     "directory": "../../../build/packages/platform/cli"
+  },
+  "peerDependencies": {
+    "@condu/core": "workspace:^"
   }
 }

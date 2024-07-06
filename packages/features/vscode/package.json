@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "comment-json": "^4.2.3"
+    "comment-json": "^4.2.4"
   },
   "peerDependencies": {
     "@condu/core": "workspace:^"

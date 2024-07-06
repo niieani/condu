@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "@ts-morph/common": "^0.23.0",
-    "ts-morph": "^22.0.0"
+    "@ts-morph/common": "^0.24.0",
+    "ts-morph": "^23.0.0"
   },
   "peerDependencies": {
     "@condu/core": "workspace:^"

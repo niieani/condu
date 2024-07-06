@@ -73,6 +73,9 @@ export const moonCi = ({}: {} = {}) =>
           push: { branches: [config.git.defaultBranch] },
           pull_request: {},
         },
+        env: {
+          GIT_DEFAULT_BRANCH: "${{ github.event.repository.default_branch }}",
+        },
         jobs: {
           ci: {
             name: "Moon CI",

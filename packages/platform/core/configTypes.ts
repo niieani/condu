@@ -100,12 +100,12 @@ export interface CollectedFileDef extends FileDef {
 export type EntrySources = Record<
   string,
   {
-    types: string;
-    source: string;
-    bun: string;
-    import: string;
-    require: string;
-    default: string;
+    types?: string;
+    source?: string;
+    bun?: string;
+    import?: string;
+    require?: string;
+    default?: string;
   }
 >;
 
