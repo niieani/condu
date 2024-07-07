@@ -1,46 +1,11 @@
 import type {
+  WorkspaceProjectsConvention,
+  WorkspaceProjectDefined,
+} from "@condu/types/configTypes.js";
+import type {
   PartialWorkspaceProjects,
   PartialWorkspaceProjectsConfig,
 } from "@moonrepo/types";
-
-interface ProjectConventionConfig {
-  private?: boolean
-}
-
-interface ParentDirectoryProjectConvention extends ProjectConventionConfig {
-  /**
-   * defines how the name should be created from the project directory name.
-   * '*' in the string refers to the project directory name
-   * @example when '@condu/*' will name the project '@condu/utils' if the project folder is 'utils'
-   * @default '*'
-   **/
-  nameConvention?: string;
-  /**
-   * defines the path to the project directory
-   * @example when set to 'packages/tools' will expect that packages will live in the 'packages/tools' directory
-   **/
-  parentPath: string;
-}
-
-interface ExplicitPathProjectConvention extends ProjectConventionConfig {
-  path: string;
-  name?: string;
-}
-
-export type WorkspaceProjectsConvention =
-  | ExplicitPathProjectConvention
-  | ParentDirectoryProjectConvention
-  | string;
-
-export type WorkspaceProjectDefined =
-  | ({
-      readonly glob: string;
-      readonly type: "explicit";
-    } & Partial<ExplicitPathProjectConvention>)
-  | ({
-      readonly glob: string;
-      readonly type: "glob";
-    } & Partial<ParentDirectoryProjectConvention>);
 
 export const getProjectDefinitionsFromConventionConfig = (
   projects?: WorkspaceProjectsConvention[],

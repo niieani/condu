@@ -8,8 +8,12 @@
     "directory": "../../../build/packages/platform/condu"
   },
   "sideEffects": true,
+  "condu": {
+    "initialDevelopment": true
+  },
   "dependencies": {
     "@condu/cli": "workspace:^",
+    "@condu/types": "workspace:^",
     "@condu/update-specifiers": "workspace:^",
     "@condu/workspace-utils": "workspace:^",
     "@pnpm/fetch": "^8.0.3",
@@ -18,12 +22,15 @@
     "@pnpm/npm-resolver": "^21.0.0",
     "@pnpm/read-project-manifest": "^6.0.4",
     "@pnpm/types": "^11.0.0",
-    "@types/which": "^3.0.4",
     "spdx-license-list": "^6.9.0"
+  },
+  "devDependencies": {
+    "@types/which": "^3.0.4"
   },
   "publishDependencies": [
     "@pnpm",
     "@condu/update-specifiers",
+    "@condu/types",
     "@condu/workspace-utils",
     "spdx-license-list"
   ]

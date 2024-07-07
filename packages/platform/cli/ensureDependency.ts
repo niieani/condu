@@ -3,7 +3,7 @@ import { getCacheDir } from "@condu/core/utils/dirs.js";
 import { createFetchFromRegistry } from "@pnpm/fetch";
 import { createGetAuthHeaderByURI } from "@pnpm/network.auth-header";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
-import type { DependencyDef } from "@condu/core/configTypes.js";
+import type { DependencyDef } from "@condu/types/configTypes.js";
 
 const registry = "https://registry.npmjs.org/";
 const { resolveFromNpm } = createNpmResolver(

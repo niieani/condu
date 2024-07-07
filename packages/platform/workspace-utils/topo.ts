@@ -9,17 +9,17 @@ import type {
   ITopoOptionsNormalized,
   IDepEntry,
   IDepEntryEnriched,
-  IPackageEntry,
   IPackageDeps,
   ITopoOptions,
   ITopoContext,
   IGetManifestPaths,
 } from "./interface.js";
-import { readProjectManifest } from "@pnpm/read-project-manifest";
 import type {
+  IPackageEntry,
   RepoPackageJson,
   WriteManifestFnOptions,
-} from "@condu/core/configTypes.js";
+} from "@condu/types/configTypes.js";
+import { readProjectManifest } from "@pnpm/read-project-manifest";
 import sortPackageJson from "sort-package-json";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 

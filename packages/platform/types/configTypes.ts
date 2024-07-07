@@ -1,11 +1,7 @@
 import type { PartialProjectConfig, PartialTaskConfig } from "@moonrepo/types";
-import type {
-  WorkspaceProjectDefined,
-  WorkspaceProjectsConvention,
-} from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import type { Pattern } from "ts-pattern";
-import type { IPackageEntry } from "@condu/workspace-utils/interface.js";
+import type { CONFIGURED } from "./configure.js";
 
 export interface DependencyDef {
   packageAlias: string;
@@ -66,8 +62,10 @@ but if you want to customize, you then create a config file?
 export interface RepoPackageConfig
   extends Pick<
     PartialProjectConfig,
-    "language" | "platform" | "tags" | "type"
-  > {}
+    "language" | "platform" | "tags" | "type" | "stack"
+  > {
+  initialDevelopment?: boolean;
+}
 
 export interface RepoPackageJson extends PackageJson {
   // name is mandatory
@@ -215,17 +213,9 @@ export interface RepoConfig {
   conventions?: Conventions;
 }
 
-// export const CONFIGURED = Symbol.for("Configured");
-export const CONFIGURED = "__configured__";
-
 export interface ConfiguredRepoConfig extends RepoConfig {
   [CONFIGURED]: true;
 }
-
-export const configure = (config: RepoConfig): ConfiguredRepoConfig => ({
-  ...config,
-  [CONFIGURED]: true,
-});
 
 export interface RepoConfigWithInferredValues extends ConfiguredRepoConfig {
   // TODO: add error / warning functions
@@ -273,3 +263,55 @@ export interface WorkspaceRootPackage extends WorkspacePackage {
 export interface WorkspaceSubPackage extends WorkspacePackage {
   kind: "package";
 }
+
+export interface IPackageEntry {
+  /** shortcut to manifest.name */
+  name: string;
+  manifest: RepoPackageJson;
+  manifestRelPath: string;
+  manifestAbsPath: string;
+  /** relative directory of the package from the workspace path */
+  relPath: string;
+  /** absolute directory of the package */
+  absPath: string;
+  writeProjectManifest: WriteManifestFn;
+}
+export interface ProjectConventionConfig {
+  private?: boolean;
+}
+
+export interface ParentDirectoryProjectConvention
+  extends ProjectConventionConfig {
+  /**
+   * defines how the name should be created from the project directory name.
+   * '*' in the string refers to the project directory name
+   * @example when '@condu/*' will name the project '@condu/utils' if the project folder is 'utils'
+   * @default '*'
+   **/
+  nameConvention?: string;
+  /**
+   * defines the path to the project directory
+   * @example when set to 'packages/tools' will expect that packages will live in the 'packages/tools' directory
+   **/
+  parentPath: string;
+}
+
+export interface ExplicitPathProjectConvention extends ProjectConventionConfig {
+  path: string;
+  name?: string;
+}
+
+export type WorkspaceProjectsConvention =
+  | ExplicitPathProjectConvention
+  | ParentDirectoryProjectConvention
+  | string;
+
+export type WorkspaceProjectDefined =
+  | ({
+      readonly glob: string;
+      readonly type: "explicit";
+    } & Partial<ExplicitPathProjectConvention>)
+  | ({
+      readonly glob: string;
+      readonly type: "glob";
+    } & Partial<ParentDirectoryProjectConvention>);

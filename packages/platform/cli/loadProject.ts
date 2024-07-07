@@ -5,19 +5,17 @@ import {
   CONDU_CONFIG_DIR_NAME,
   CONDU_CONFIG_FILE_NAME,
   CORE_NAME,
-} from "@condu/core/constants.js";
-import {
-  CONFIGURED,
-  type ConfiguredRepoConfig,
-  type RepoConfigWithInferredValues,
-  type LoadConfigOptions,
-  type WorkspaceRootPackage,
-  type WorkspaceSubPackage,
-} from "@condu/core/configTypes.js";
-import {
-  getProjectDefinitionsFromConventionConfig,
-  type WorkspaceProjectDefined,
-} from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
+} from "@condu/types/constants.js";
+import type {
+  ConfiguredRepoConfig,
+  RepoConfigWithInferredValues,
+  LoadConfigOptions,
+  WorkspaceRootPackage,
+  WorkspaceSubPackage,
+  WorkspaceProjectDefined,
+} from "@condu/types/configTypes.js";
+import { CONFIGURED } from "@condu/types/configure.js";
+import { getProjectDefinitionsFromConventionConfig } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
 import memoizeOne from "async-memoize-one";
 import {
   CONFIG_DIR,

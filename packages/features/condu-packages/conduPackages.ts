@@ -1,8 +1,8 @@
-import { defineFeature } from "@condu/core/defineFeature.js";
+import { defineFeature } from "condu/defineFeature.js";
 import {
   CONDU_WORKSPACE_PACKAGE_NAME,
   CORE_NAME,
-} from "@condu/core/constants.js";
+} from "@condu/types/constants.js";
 
 export const condu = ({}: {} = {}) =>
   defineFeature({

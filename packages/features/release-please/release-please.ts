@@ -1,20 +1,22 @@
-import { defineFeature } from "@condu/core/defineFeature.js";
+import { defineFeature } from "condu/defineFeature.js";
 import {
   CORE_NAME,
   CONDU_WORKSPACE_PACKAGE_NAME,
-} from "@condu/core/constants.js";
+} from "@condu/types/constants.js";
 import { schemas } from "@condu/schema-types/utils/schemas.js";
 import type {
   ReleaserConfigOptions,
   default as ReleasePleaseConfig,
 } from "@condu/schema-types/schemas/releasePleaseConfig.gen.js";
 import type GithubWorkflow from "@condu/schema-types/schemas/githubWorkflow.gen.js";
-import type { WorkspacePackage } from "@condu/core/configTypes.js";
+import type { WorkspacePackage } from "@condu/types/configTypes.js";
 
 export const releasePlease = ({
   selectPackages,
+  initialVersion,
 }: {
   selectPackages?: (pkg: WorkspacePackage) => boolean;
+  initialVersion?: string;
 } = {}) =>
   defineFeature({
     name: "release-please",
@@ -32,7 +34,9 @@ export const releasePlease = ({
           {
             "release-type": "node",
             component: manifest.name,
-            "initial-version": "1.0.0",
+            "initial-version":
+              initialVersion ??
+              (manifest.condu?.initialDevelopment ? "0.0.1" : "1.0.0"),
           } satisfies ReleaserConfigOptions,
         ]),
       );

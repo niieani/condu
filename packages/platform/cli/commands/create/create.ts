@@ -1,4 +1,7 @@
-import type { WorkspaceProjectDefined } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
+import type {
+  WorkspaceProjectDefined,
+  WorkspaceRootPackage,
+} from "@condu/types/configTypes.js";
 import { loadRepoProject } from "../../loadProject.js";
 import * as fs from "node:fs/promises";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
@@ -7,7 +10,6 @@ import * as path from "node:path";
 import { getSingleMatch, type MatchOptions } from "../../matchPackage.js";
 import type { CommandContext } from "./CreateCommand.js";
 import childProcess from "node:child_process";
-import type { WorkspaceRootPackage } from "@condu/core/configTypes.js";
 
 // const gitUser = (await $`git config user.name`).stdout.trim();
 // const gitEmail = (await $`git config user.email`).stdout.trim();

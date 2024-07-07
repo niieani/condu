@@ -1,7 +1,7 @@
-import { defineFeature } from "@condu/core/defineFeature.js";
+import { defineFeature } from "condu/defineFeature.js";
 import type { LibraryBundleConfig } from "./types.js";
 import * as path from "node:path";
-import { CONDU_WORKSPACE_PACKAGE_NAME } from "@condu/core/constants.js";
+import { CONDU_WORKSPACE_PACKAGE_NAME } from "@condu/types/constants.js";
 
 export const libraryBundle = ({
   id,
@@ -76,6 +76,7 @@ export const libraryBundle = ({
                 )}`;
                 rootEntry.bun = rootEntry.import;
                 rootEntry.default = rootEntry.import;
+                delete rootEntry.require;
                 return {
                   ...entrySources,
                   ".": rootEntry,

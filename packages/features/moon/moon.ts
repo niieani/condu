@@ -1,9 +1,8 @@
-import { defineFeature } from "@condu/core/defineFeature.js";
+import { defineFeature } from "condu/defineFeature.js";
 import type {
   PartialVcsConfig,
   PartialToolchainConfig as Toolchain,
   PartialWorkspaceConfig as Workspace,
-  PartialInheritedTasksConfig as Tasks,
 } from "@moonrepo/types";
 
 // import type Toolchain from "./schemas/toolchain.js";

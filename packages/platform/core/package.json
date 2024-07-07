@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
+    "@condu/types": "workspace:^",
     "async-memoize-one": "^1.1.8",
-    "fp-ts": "^2.16.7",
-    "io-ts": "^2.2.21",
     "remeda": "^2.3.0"
   },
   "devDependencies": {

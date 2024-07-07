@@ -2,7 +2,7 @@ import type {
   Project,
   WorkspacePackage,
   CollectedState,
-} from "@condu/core/configTypes.js";
+} from "@condu/types/configTypes.js";
 import * as fs from "node:fs/promises";
 import sortPackageJson from "sort-package-json";
 import * as path from "node:path";
@@ -305,23 +305,24 @@ function getReleaseDependencies(manifest: PackageJson) {
 
   const dependencyManifestOverride = {
     dependencies: Object.fromEntries(finalDependencyEntries),
-    ...(removedDependencyEntries.length > 0
-      ? {
-          peerDependencies: {
-            ...manifest.peerDependencies,
-            ...Object.fromEntries(removedDependencyEntries),
-          },
-          peerDependenciesMeta: {
-            ...manifest.peerDependenciesMeta,
-            ...Object.fromEntries(
-              removedDependencyEntries.map(([dep]) => [
-                dep,
-                { optional: true },
-              ]),
-            ),
-          },
-        }
-      : {}),
+    // mark removed dependencies as optional peerDependencies:
+    // ...(removedDependencyEntries.length > 0
+    //   ? {
+    //       peerDependencies: {
+    //         ...manifest.peerDependencies,
+    //         ...Object.fromEntries(removedDependencyEntries),
+    //       },
+    //       peerDependenciesMeta: {
+    //         ...manifest.peerDependenciesMeta,
+    //         ...Object.fromEntries(
+    //           removedDependencyEntries.map(([dep]) => [
+    //             dep,
+    //             { optional: true },
+    //           ]),
+    //         ),
+    //       },
+    //     }
+    //   : {}),
   };
   return dependencyManifestOverride;
 }

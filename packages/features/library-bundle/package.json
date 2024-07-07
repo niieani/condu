@@ -7,10 +7,13 @@
     "webpack": "^5.92.1"
   },
   "peerDependencies": {
-    "@condu/core": "workspace:^"
+    "condu": "workspace:^"
   },
   "publishConfig": {
     "access": "public",
     "directory": "../../../build/packages/features/library-bundle"
+  },
+  "dependencies": {
+    "@condu/types": "workspace:^"
   }
 }

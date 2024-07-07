@@ -1,7 +1,7 @@
 import type { BaseContext } from "clipanion";
 import { createCommandContext } from "../createCommandContext.js";
-import { getWorkspacePackages, loadRepoProject } from "../loadProject.js";
-import type { Project } from "@condu/core/configTypes.js";
+import { loadRepoProject } from "../loadProject.js";
+import type { Project } from "@condu/types/configTypes.js";
 import { getSingleMatch } from "../matchPackage.js";
 import { match } from "ts-pattern";
 import * as path from "node:path";

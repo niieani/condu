@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
+    "@condu/types": "workspace:^",
     "comment-json": "^4.2.4"
   },
   "peerDependencies": {
-    "@condu/core": "workspace:^"
+    "condu": "workspace:^"
   },
   "publishConfig": {
     "access": "public",

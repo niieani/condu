@@ -6,7 +6,7 @@ import { ExecCommand } from "./commands/ExecCommand.js";
 import { BuildTypeScriptCommand } from "./commands/BuildTypeScriptCommand.js";
 import { ReleaseCommand } from "./commands/ReleaseCommand.js";
 import * as path from "node:path";
-import { CORE_NAME } from "@condu/core/constants.js";
+import { CORE_NAME } from "@condu/types/constants.js";
 
 // export { apply } from "./commands/apply/apply.js";
 

@@ -1,5 +1,5 @@
-import { defineFeature } from "@condu/core/defineFeature.js";
-import { CONDU_WORKSPACE_PACKAGE_NAME } from "@condu/core/constants.js";
+import { defineFeature } from "condu/defineFeature.js";
+import { CONDU_WORKSPACE_PACKAGE_NAME } from "@condu/types/constants.js";
 
 export const eslint = ({}: {} = {}) =>
   defineFeature({

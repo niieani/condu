@@ -1,4 +1,4 @@
-import { defineFeature } from "@condu/core/defineFeature.js";
+import { defineFeature } from "condu/defineFeature.js";
 import type Lerna from "@condu/schema-types/schemas/lerna.gen.js";
 
 export const lerna = ({}: {} = {}) =>

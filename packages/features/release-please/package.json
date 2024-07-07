@@ -4,8 +4,9 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "@condu/core": "workspace:^",
-    "@condu/schema-types": "workspace:^"
+    "@condu/schema-types": "workspace:^",
+    "@condu/types": "workspace:^",
+    "condu": "workspace:^"
   },
   "publishConfig": {
     "access": "public",

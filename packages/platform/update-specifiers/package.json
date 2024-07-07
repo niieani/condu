@@ -3,11 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
+    "@condu/core": "workspace:^",
     "@ts-morph/common": "^0.24.0",
     "ts-morph": "^23.0.0"
-  },
-  "peerDependencies": {
-    "@condu/core": "workspace:^"
   },
   "publishConfig": {
     "access": "public",

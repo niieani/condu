@@ -1,6 +1,6 @@
 import { gitignore } from "@condu-feature/gitignore/gitignore.js";
 import { typescript } from "@condu-feature/typescript/typescript.js";
-import { configure } from "@condu/core/configTypes.js";
+import { configure } from "condu/configure.js";
 
 export default configure({
   engine: "bun",

@@ -11,7 +11,7 @@ import type {
   StateFlags,
   LoadConfigOptions,
   Project,
-} from "@condu/core/configTypes.js";
+} from "@condu/types/configTypes.js";
 import { groupBy, isDeepEqual } from "remeda";
 import { loadRepoProject } from "../../loadProject.js";
 import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";

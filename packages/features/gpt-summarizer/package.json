@@ -4,6 +4,9 @@
   "license": "MIT",
   "type": "module",
   "peerDependencies": {
+    "condu": "workspace:^"
+  },
+  "dependencies": {
     "@condu/core": "workspace:^"
   },
   "publishConfig": {

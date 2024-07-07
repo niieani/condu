@@ -1,5 +1,5 @@
 import { isDeepEqual } from "remeda";
-import type { WorkspaceProjectDefined } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
+import type { WorkspaceProjectDefined } from "@condu/types/configTypes.js";
 import type { Match, ConventionMatch } from "./commands/create/create.js";
 
 export interface MatchOptions {

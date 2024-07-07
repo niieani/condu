@@ -48,6 +48,8 @@
 - [x] add a `condu` package that just wraps `@condu/cli` and adds the build script - this way @condu/cli can exist as its own package
   - [x] make sure the NPM token has permissions to publish both
 - [x] fix "Unable to determine the default git branch"
+- [x] support defining dependencies for features w/o importing from @condu/core
+  - [x] extract that defineFunction into a separate package and keep it external? put it all in 'condu' along with the types? or does that create a circular dependency? maybe re-export the types from 'condu'
 - [ ] what is up with yarnrc auto-changing?
 - [ ] cli to autoremove excess/unused dependencies (see if anything exists like this)
 - [ ] pnpm feature

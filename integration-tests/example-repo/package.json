@@ -36,7 +36,8 @@
     }
   },
   "dependencies": {
-    "@condu/cli": "file:../../build/packages/platform/cli@0.0.0"
+    "@condu/cli": "file:../../build/packages/platform/cli@0.0.0",
+    "@condu/types": "workspace:^"
   },
   "devDependencies": {
     "@condu-feature/gitignore": "file:../../build/packages/features/gitignore@0.0.0",

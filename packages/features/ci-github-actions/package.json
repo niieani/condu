@@ -4,10 +4,11 @@
   "type": "module",
   "dependencies": {
     "@condu/schema-types": "workspace:^",
+    "@condu/types": "workspace:^",
     "remeda": "^2.3.0"
   },
   "peerDependencies": {
-    "@condu/core": "workspace:^"
+    "condu": "workspace:^"
   },
   "publishConfig": {
     "access": "public",

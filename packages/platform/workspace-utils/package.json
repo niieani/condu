@@ -9,6 +9,7 @@
     "directory": "../../../build/packages/platform/workspace-utils"
   },
   "dependencies": {
+    "@condu/types": "workspace:^",
     "@pnpm/read-project-manifest": "^6.0.4",
     "fast-glob": "^3.3.2",
     "slash": "^5.1.0",

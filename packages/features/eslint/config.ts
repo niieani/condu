@@ -55,8 +55,9 @@ export default [
         {
           devDependencies: ["**/*.test.{js,jsx,ts,tsx}", "**/.config/**"],
           autoFixVersionMapping: [
-            ["@condu/", "workspace:*"],
-            ["@condu-feature/", "workspace:*"],
+            ["@condu/", "workspace:^"],
+            ["@condu-feature/", "workspace:^"],
+            ["condu", "workspace:^"],
           ],
           autoFixFallback: "^",
         },

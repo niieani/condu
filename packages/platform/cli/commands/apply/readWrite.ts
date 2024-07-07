@@ -5,7 +5,7 @@ import type {
   GetExistingContentFn,
   RepoPackageJson,
   WorkspacePackage,
-} from "@condu/core/configTypes.js";
+} from "@condu/types/configTypes.js";
 import yaml from "yaml";
 import commentJson from "comment-json";
 import { P, match } from "ts-pattern";

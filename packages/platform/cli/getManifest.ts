@@ -5,7 +5,7 @@ import type {
   RepoPackageJson,
   WorkspaceRootPackage,
   WriteManifestFnOptions,
-} from "@condu/core/configTypes.js";
+} from "@condu/types/configTypes.js";
 import type { ProjectManifest } from "@pnpm/types";
 import sortPackageJson from "sort-package-json";
 import { topoFromWorkspace } from "@condu/workspace-utils/topo.js";
@@ -13,7 +13,7 @@ import * as fs from "node:fs";
 import {
   CONDU_CONFIG_DIR_NAME,
   CONDU_CONFIG_FILE_NAME,
-} from "@condu/core/constants.js";
+} from "@condu/types/constants.js";
 
 export async function getManifest(cwd: string): Promise<WorkspaceRootPackage> {
   const configDirPath = await findUp(

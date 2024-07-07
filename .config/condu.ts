@@ -9,7 +9,7 @@ import { vscode } from "@condu-feature/vscode/vscode.js";
 import { libraryBundle } from "@condu-feature/library-bundle/libraryBundle.js";
 import { gptSummarizer } from "@condu-feature/gpt-summarizer/gptSummarizer.js";
 import { releasePlease } from "@condu-feature/release-please/release-please.js";
-import { configure } from "@condu/core/configTypes.js";
+import { configure } from "condu/configure.js";
 
 export default configure({
   engine: "bun",
@@ -54,7 +54,7 @@ export default configure({
     moon(),
     moonCi(),
     releasePlease({
-      selectPackages: (pkg) => pkg.relPath.startsWith("packages/test/dummy"),
+      initialVersion: "0.0.1",
     }),
     vscode({
       hideGeneratedFiles: false,

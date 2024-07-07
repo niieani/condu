@@ -1,8 +1,8 @@
 import {
   CORE_NAME,
   CONDU_WORKSPACE_PACKAGE_NAME,
-} from "@condu/core/constants.js";
-import { defineFeature } from "@condu/core/defineFeature.js";
+} from "@condu/types/constants.js";
+import { defineFeature } from "condu/defineFeature.js";
 import type TSConfig from "@condu/schema-types/schemas/tsconfig.gen.js";
 import * as path from "node:path";
 

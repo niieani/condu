@@ -3,14 +3,17 @@
   "version": "1.0.0",
   "type": "module",
   "peerDependencies": {
-    "@condu/core": "workspace:^",
     "@typescript-eslint/eslint-plugin": "^8.0.0-alpha.39",
     "@typescript-eslint/parser": "^8.0.0-alpha.40",
+    "condu": "workspace:^",
     "eslint-plugin-import": "*",
     "eslint-plugin-unicorn": "^54.0.0"
   },
   "publishConfig": {
     "access": "public",
     "directory": "../../../build/packages/features/eslint"
+  },
+  "dependencies": {
+    "@condu/types": "workspace:^"
   }
 }

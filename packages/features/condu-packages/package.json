@@ -4,11 +4,14 @@
   "license": "MIT",
   "type": "module",
   "peerDependencies": {
-    "@condu/core": "workspace:^"
+    "condu": "workspace:^"
   },
   "publishConfig": {
     "access": "public",
     "directory": "../../../build/packages/features/condu-packages"
   },
-  "publishDependencies": []
+  "publishDependencies": [],
+  "dependencies": {
+    "@condu/types": "workspace:^"
+  }
 }
