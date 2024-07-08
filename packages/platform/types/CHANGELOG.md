@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.1](https://github.com/niieani/toolchain/compare/@condu/types@0.1.0...@condu/types@0.1.1) (2024-07-08)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/schema-types bumped to 0.0.1
+
 ## [0.1.0](https://github.com/niieani/toolchain/compare/@condu/types@0.0.1...@condu/types@0.1.0) (2024-07-08)
 
 
