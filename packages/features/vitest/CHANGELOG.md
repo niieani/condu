@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.1](https://github.com/niieani/toolchain/compare/@condu-feature/vitest@0.1.0...@condu-feature/vitest@0.1.1) (2024-07-08)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * peerDependencies
+    * condu bumped to 0.1.1
+
 ## [0.1.0](https://github.com/niieani/toolchain/compare/@condu-feature/vitest@0.0.1...@condu-feature/vitest@0.1.0) (2024-07-08)
 
 

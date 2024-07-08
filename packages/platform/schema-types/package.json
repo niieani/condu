@@ -1,6 +1,6 @@
 {
   "name": "@condu/schema-types",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "type": "module",
   "devDependencies": {
     "json-schema-to-typescript": "^14.1.0"
