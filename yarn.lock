@@ -227,6 +227,8 @@ __metadata:
     "@condu/types": "workspace:^"
     "@condu/update-specifiers": "workspace:^"
     "@condu/workspace-utils": "workspace:^"
+    "@pnpm/catalogs.config": "npm:^0.1.0"
+    "@pnpm/exportable-manifest": "npm:^7.0.0"
     "@pnpm/fetch": "npm:^8.0.3"
     "@pnpm/logger": "npm:^5.0.0"
     "@pnpm/network.auth-header": "npm:^3.0.1"
@@ -234,6 +236,7 @@ __metadata:
     "@pnpm/read-project-manifest": "npm:^6.0.4"
     "@pnpm/types": "npm:^11.0.0"
     "@pnpm/workspace.find-packages": "npm:^4.0.0"
+    "@pnpm/workspace.read-manifest": "npm:^2.2.0"
     "@types/which": "npm:^3.0.4"
     async-memoize-one: "npm:^1.1.8"
     clipanion: "npm:^4.0.0-rc.3"
@@ -988,12 +991,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pnpm/catalogs.config@npm:0.1.0":
+"@pnpm/catalogs.config@npm:0.1.0, @pnpm/catalogs.config@npm:^0.1.0":
   version: 0.1.0
   resolution: "@pnpm/catalogs.config@npm:0.1.0"
   dependencies:
     "@pnpm/error": "npm:6.0.1"
   checksum: 10c0/b820910b653360542f42ba175f3e8f951144cec70d79448b230872f7aa1e0490b275293191aa7c35b17c3cb91f8d095d19a3dcf5c4c2c55c7cb576d23eb8f0ae
+  languageName: node
+  linkType: hard
+
+"@pnpm/catalogs.protocol-parser@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@pnpm/catalogs.protocol-parser@npm:0.1.0"
+  checksum: 10c0/d642cd788dbad986e816ab83c11d5c1229497515f558419f372da5218e18db24e30c1d052eeb50ea5fcab44cc017119d8ea50ea097faf07813c7debff5c35bd8
+  languageName: node
+  linkType: hard
+
+"@pnpm/catalogs.resolver@npm:0.1.0":
+  version: 0.1.0
+  resolution: "@pnpm/catalogs.resolver@npm:0.1.0"
+  dependencies:
+    "@pnpm/catalogs.protocol-parser": "npm:^0.1.0"
+    "@pnpm/error": "npm:^6.0.1"
+  checksum: 10c0/b951b84b9b5146cab3671e49dfb093a6a678620ce094da7a54dd583caf878d34ea4952902cb91257702462236e5468107d7d868600cac54716610fe95c40f4a6
   languageName: node
   linkType: hard
 
@@ -1155,12 +1175,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pnpm/error@npm:6.0.1, @pnpm/error@npm:^6.0.0":
+"@pnpm/error@npm:6.0.1, @pnpm/error@npm:^6.0.0, @pnpm/error@npm:^6.0.1":
   version: 6.0.1
   resolution: "@pnpm/error@npm:6.0.1"
   dependencies:
     "@pnpm/constants": "npm:8.0.0"
   checksum: 10c0/c4444c63c9918b7975af36bc2184ada3a407d2f8b3216314dc6a980e2adec06569c1e894210e2ac41dcd2f1cc95baaac7ca0c795a4fd7eaa5ce0175514100f82
+  languageName: node
+  linkType: hard
+
+"@pnpm/exportable-manifest@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@pnpm/exportable-manifest@npm:7.0.0"
+  dependencies:
+    "@pnpm/catalogs.resolver": "npm:0.1.0"
+    "@pnpm/error": "npm:6.0.1"
+    "@pnpm/read-project-manifest": "npm:6.0.4"
+    "@pnpm/types": "npm:11.0.0"
+    p-map-values: "npm:^1.0.0"
+    ramda: "npm:@pnpm/ramda@0.28.1"
+  checksum: 10c0/106d08672a6996ab3fa6cbc4c793a49b2d0f350d5fca19d4222acf08f71c7150dc14d5aec52df36be4165d8e003f6872481b8b8baa3c9299139d53b024869e78
   languageName: node
   linkType: hard
 
@@ -1536,7 +1570,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pnpm/workspace.read-manifest@npm:2.2.0":
+"@pnpm/workspace.read-manifest@npm:2.2.0, @pnpm/workspace.read-manifest@npm:^2.2.0":
   version: 2.2.0
   resolution: "@pnpm/workspace.read-manifest@npm:2.2.0"
   dependencies:
@@ -7677,6 +7711,13 @@ __metadata:
   dependencies:
     p-limit: "npm:^3.0.2"
   checksum: 10c0/2290d627ab7903b8b70d11d384fee714b797f6040d9278932754a6860845c4d3190603a0772a663c8cb5a7b21d1b16acb3a6487ebcafa9773094edc3dfe6009a
+  languageName: node
+  linkType: hard
+
+"p-map-values@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "p-map-values@npm:1.0.0"
+  checksum: 10c0/04afa68bd123b4f2800fe27724a8aa32b8358501751b551dac80f9154c4bcc8d676ef880917e3714f9f516008e51b53e6dee37e3fc5c706527c4a1ea406f0372
   languageName: node
   linkType: hard
 

@@ -11,6 +11,7 @@ import type {
   StateFlags,
   LoadConfigOptions,
   Project,
+  WorkspaceSubPackage,
 } from "@condu/types/configTypes.js";
 import { groupBy, isDeepEqual } from "remeda";
 import { loadRepoProject } from "../../loadProject.js";
@@ -291,7 +292,7 @@ export async function apply(options: LoadConfigOptions = {}) {
     // TODO: run 'yarn install' or whatever the package manager is if manifest changed
   }
 
-  await ensurePublishConfigDirectorySet(project);
+  await ensurePublishConfigDirectorySetInManifestFiles(project);
 
   return {
     project,
@@ -299,20 +300,34 @@ export async function apply(options: LoadConfigOptions = {}) {
   };
 }
 
-async function ensurePublishConfigDirectorySet(project: Project) {
+export function getPublishablePackageDirectory(
+  project: Project,
+  pkg: Pick<WorkspaceSubPackage, "relPath" | "manifest">,
+): string {
+  return path.join(
+    project.absPath,
+    project.config.conventions.buildDir,
+    pkg.relPath,
+  );
+}
+
+export function getRelativePublishConfigDirectory(
+  project: Project,
+  pkg: Pick<WorkspaceSubPackage, "relPath" | "manifest">,
+): string {
+  // see https://pnpm.io/package_json#publishconfigdirectory
+  const originalPackageDir = path.join(project.absPath, pkg.relPath);
+  const publishablePackageDir = getPublishablePackageDirectory(project, pkg);
+  const relativePath = path.relative(originalPackageDir, publishablePackageDir);
+  return relativePath;
+}
+
+async function ensurePublishConfigDirectorySetInManifestFiles(
+  project: Project,
+) {
   for (const pkg of await project.getWorkspacePackages()) {
     // ensure there's a publishConfig.directory set for each package
-    // see https://pnpm.io/package_json#publishconfigdirectory
-    const originalPackageDir = path.join(project.absPath, pkg.relPath);
-    const publishablePackageDir = path.join(
-      project.absPath,
-      project.config.conventions.buildDir,
-      pkg.relPath,
-    );
-    const relativePath = path.relative(
-      originalPackageDir,
-      publishablePackageDir,
-    );
+    const relativePath = getRelativePublishConfigDirectory(project, pkg);
     const publishableDirectory = pkg.manifest.publishConfig?.["directory"];
     if (publishableDirectory !== relativePath) {
       pkg.manifest.publishConfig ??= {};

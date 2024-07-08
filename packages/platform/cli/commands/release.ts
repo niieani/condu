@@ -10,9 +10,16 @@ import { copyFiles } from "@condu/core/utils/copy.js";
 import { readPreviouslyWrittenFileCache } from "./apply/readWrite.js";
 import spdxLicenseList from "spdx-license-list/full.js";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
+import { createExportableManifest } from "@pnpm/exportable-manifest";
+import { readWorkspaceManifest } from "@pnpm/workspace.read-manifest";
+import { getCatalogsFromWorkspaceManifest } from "@pnpm/catalogs.config";
 import { partition } from "remeda";
 import { getSingleMatch } from "../matchPackage.js";
-import { apply } from "./apply/apply.js";
+import {
+  apply,
+  getPublishablePackageDirectory,
+  getRelativePublishConfigDirectory,
+} from "./apply/apply.js";
 import { topo } from "@condu/workspace-utils/topo.js";
 import { spawn } from "node:child_process";
 import { safelyParseLastJsonFromString } from "@condu/core/utils/safelyParseJsonFromString.js";
@@ -67,6 +74,7 @@ export async function prepareAndReleaseDirectoryPackages({
       `Copying ${packageDir} for ${manifest.name} to ${buildDirName}`,
     );
     const existingLicensePaths = new Set<string>();
+    const existingReadmeNames: Array<string> = [];
     const preferredDirectoryEntries = new Map<string, string>();
     // copy all the project files that haven't been copied by tsc
     // this includes all source files, but also other files like README.md, LICENSE, etc.
@@ -90,13 +98,21 @@ export async function prepareAndReleaseDirectoryPackages({
         const isTypeScriptConfigFile = TSCONFIG_LIKE_FILENAME_REGEXP.test(
           entry.name,
         );
-        const isPackageJson = entry.name === "package.json";
+        const isPkgRootDir = packageSourceDir === directoryPath;
+        const isPackageJson = isPkgRootDir && entry.name === "package.json";
         const isGeneratedConfigFile =
           configFileAbsolutePaths.includes(fullPath);
-        if (entry.name === "LICENSE") {
-          existingLicensePaths.add(fullPath);
+
+        if (isPkgRootDir) {
+          if (/^license\..*/i.test(entry.name)) {
+            existingLicensePaths.add(fullPath);
+          }
+          if (/^readme\..*/i.test(entry.name)) {
+            existingReadmeNames.push(entry.name);
+          }
         }
 
+        // TODO: respect 'files' field in package.json and .npmignore/.gitignore
         const isPublishableFile =
           !isTestFile &&
           !isFixtureFile &&
@@ -166,6 +182,7 @@ export async function prepareAndReleaseDirectoryPackages({
         // access: "public",
         registry: project.config.publish?.registry,
         ...publishConfig,
+        directory: getRelativePublishConfigDirectory(project, pkg),
       },
       exports: {
         ...entrySources,
@@ -210,32 +227,60 @@ export async function prepareAndReleaseDirectoryPackages({
       (await hooks?.modifyPublishPackageJson?.(newPackageJson)) ??
       newPackageJson;
 
+    const pnpmWorkspaceManifest = await readWorkspaceManifest(project.absPath);
+    // should we just use the whole pack pipeline from pnpm?
+    // see https://github.com/pnpm/pnpm/blob/07a7ac4a93505fc75fa397cd4a3965295d76a689/releasing/plugin-commands-publishing/src/pack.ts#L61
+    const exportablePackageJson = await createExportableManifest(
+      getPublishablePackageDirectory(project, pkg),
+      transformedPackageJson as any,
+      {
+        // support pnpm catalogs
+        catalogs: getCatalogsFromWorkspaceManifest(pnpmWorkspaceManifest),
+        // modulesDir is used to resolve 'workspace:' protocol
+        modulesDir: path.join(workspaceDirAbs, "node_modules"),
+        readmeFile: existingReadmeNames[0],
+      },
+    );
+
     // save new package.json:
     await fs.writeFile(
       path.join(packageBuildDir, "package.json"),
-      JSON.stringify(sortPackageJson(transformedPackageJson), undefined, 2),
+      JSON.stringify(sortPackageJson(exportablePackageJson), undefined, 2),
     );
 
     const license = manifest.license ?? project.manifest.license;
-    // TODO: support copying LICENSE from root of project if it exists
-    if (license && license !== "UNLICENSED") {
+    if (
+      license &&
+      license !== "UNLICENSED" &&
+      existingLicensePaths.size === 0
+    ) {
       // in addition, copy LICENSE if it doesn't exist:
       const licenseDefinition = spdxLicenseList[license];
       if (licenseDefinition) {
+        // add LICENSE text file where missing
         const licenseFilePath = path.join(packageBuildDir, "LICENSE");
-        if (!existingLicensePaths.has(licenseFilePath)) {
-          // add LICENSE where missing
-          await fs.writeFile(
-            licenseFilePath,
-            licenseDefinition.licenseText
-              // TODO: add start year based on git history
-              .replace("<year>", new Date().getFullYear().toString())
-              .replace(
-                "<copyright holders>",
-                manifest.author?.name ?? project.manifest.author?.name ?? "",
-              ),
-          );
-        }
+        await fs.writeFile(
+          licenseFilePath,
+          licenseDefinition.licenseText
+            // TODO: add start year based on git history
+            .replace("<year>", new Date().getFullYear().toString())
+            .replace(
+              "<copyright holders>",
+              manifest.author?.name ?? project.manifest.author?.name ?? "",
+            ),
+        );
+      }
+    }
+    // TODO: support copying LICENSE(.md/.txt/.rst/etc) from root of project if it exists
+
+    if (existingReadmeNames.length === 0) {
+      // if README file doesn't exist, reuse the one from the root of the project:
+      const readmeFilePath = path.join(project.absPath, "README.md");
+      const packageReadmeFilePath = path.join(packageBuildDir, "README.md");
+      try {
+        await fs.copyFile(readmeFilePath, packageReadmeFilePath);
+      } catch {
+        // no README.md in the root of the project
       }
     }
 
@@ -278,8 +323,6 @@ export async function prepareAndReleaseDirectoryPackages({
         throw new Error(`Failed to publish ${manifest.name}:\n${stderr}`);
       }
     }
-
-    // packageBuildDir
   }
 }
 

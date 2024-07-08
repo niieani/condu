@@ -36,13 +36,13 @@
     }
   },
   "dependencies": {
-    "@condu/cli": "file:../../build/packages/platform/cli@0.0.0",
+    "condu": "file:../../build/packages/platform/condu@0.0.2",
     "@condu/types": "workspace:^"
   },
   "devDependencies": {
-    "@condu-feature/gitignore": "file:../../build/packages/features/gitignore@0.0.0",
-    "@condu-feature/typescript": "file:../../build/packages/features/typescript@0.0.0",
-    "@condu/core": "file:../../build/packages/platform/core@0.0.0",
+    "@condu-feature/gitignore": "file:../../build/packages/features/gitignore@0.0.2",
+    "@condu-feature/typescript": "file:../../build/packages/features/typescript@0.0.2",
+    "@condu/core": "file:../../build/packages/platform/core@0.0.2",
     "typescript": "^5.4.5"
   },
   "workspaces": [
