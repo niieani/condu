@@ -428,8 +428,11 @@ entrypoint?: string
  * When you define a matrix of operating systems, you must set the required runs-on keyword to the operating system of the current job, rather than hard-coding the operating system name. To access the operating system name, you can use the matrix.os context parameter to set runs-on. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
  */
 export type Matrix = ({
-[k: string]: unknown | undefined
+[k: string]: ([Configuration | undefined, ...(Configuration | undefined)[]] | ExpressionSyntax) | undefined
 } | ExpressionSyntax)
+export type Configuration = (string | number | boolean | {
+[k: string]: Configuration | undefined
+} | undefined[]) | undefined
 /**
  * To set custom environment variables, you need to specify the variables in the workflow file. You can define environment variables for a step, job, or entire workflow using the jobs.<job_id>.steps[*].env, jobs.<job_id>.env, and env keywords. For more information, see https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idstepsenv
  */
@@ -604,7 +607,6 @@ inputs?: {
 [k: string]: unknown | undefined
 }
 }
-[k: string]: unknown | undefined
 }
 workflow_run?: EventObject17
 /**

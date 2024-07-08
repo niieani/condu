@@ -965,11 +965,11 @@ optional?: boolean
 /**
  * Array of package names that will be bundled when publishing the package.
  */
-bundledDependencies?: (string[] | boolean)
-/**
- * DEPRECATED: This field is honored, but "bundledDependencies" is the correct field name.
- */
 bundleDependencies?: (string[] | boolean)
+/**
+ * DEPRECATED: This field is honored, but "bundleDependencies" is the correct field name.
+ */
+bundledDependencies?: (string[] | boolean)
 /**
  * Resolutions is used to support selective version resolutions using yarn, which lets you define custom package versions or ranges inside your dependencies. For npm, use overrides instead. See: https://classic.yarnpkg.com/en/docs/selective-version-resolutions
  */
@@ -1353,9 +1353,9 @@ export interface Globals {
 export interface ParserOptions {
 ecmaFeatures?: EcmaFeatures
 /**
- * Set to 3, 5, 6, 7, 8, 9, 10, 11 (default), 12, 13, 14 or "latest" to specify the version of ECMAScript syntax you want to use. You can also set to 2015 (same as 6), 2016 (same as 7), 2017 (same as 8), 2018 (same as 9), 2019 (same as 10), 2020 (same as 11), 2021 (same as 12), 2022 (same as 13) or 2023 (same as 14) to use the year-based naming. "latest" always enables the latest supported ECMAScript version.
+ * Set to 3, 5 (default), 6, 7, 8, 9, 10, 11, 12, 13, 14, or 15 to specify the version of ECMAScript syntax you want to use. You can also set it to 2015 (same as 6), 2016 (same as 7), 2017 (same as 8), 2018 (same as 9), 2019 (same as 10), 2020 (same as 11), 2021 (same as 12), 2022 (same as 13), 2023 (same as 14), or 2024 (same as 15) to use the year-based naming. You can also set "latest" to use the most recently supported version.
  */
-ecmaVersion?: (3 | 5 | 6 | 2015 | 7 | 2016 | 8 | 2017 | 9 | 2018 | 10 | 2019 | 11 | 2020 | 12 | 2021 | 13 | 2022 | 14 | 2023 | "latest")
+ecmaVersion?: (3 | 5 | 6 | 2015 | 7 | 2016 | 8 | 2017 | 9 | 2018 | 10 | 2019 | 11 | 2020 | 12 | 2021 | 13 | 2022 | 14 | 2023 | 15 | 2024 | "latest")
 /**
  * set to "script" (default), "commonjs", or "module" if your code is in ECMAScript modules
  */
@@ -2425,30 +2425,40 @@ export interface Legacy {
 }
 export interface HttpsJsonSchemastoreOrgPartialEslintPluginsJson {
 /**
- * Classes decorated with @Component must have suffix "Component" (or custom) in their name. See more at https://angular.io/styleguide#style-02-03
+ * Classes decorated with @Component must have suffix "Component" (or custom) in their name. See more at https://angular.dev/style-guide#style-02-03
  * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/component-class-suffix.md
  */
 "@angular-eslint/component-class-suffix"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 suffixes?: string[]
+[k: string]: unknown | undefined
 }])
 /**
- * Enforces a maximum number of lines in inline template, styles and animations. See more at https://angular.io/guide/styleguide#style-05-04
+ * Enforces a maximum number of lines in inline template, styles and animations. See more at https://angular.dev/style-guide#style-05-04
  * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/component-max-inline-declarations.md
  */
 "@angular-eslint/component-max-inline-declarations"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 template?: number
 styles?: number
 animations?: number
+[k: string]: unknown | undefined
 }])
 /**
- * Component selectors should follow given naming rules. See more at https://angular.io/guide/styleguide#style-02-07, https://angular.io/guide/styleguide#style-05-02
- *       and https://angular.io/guide/styleguide#style-05-03.
+ * Component selectors should follow given naming rules. See more at https://angular.dev/style-guide#style-02-07, https://angular.dev/style-guide#style-05-02
+ *       and https://angular.dev/style-guide#style-05-03.
  * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/component-selector.md
  */
 "@angular-eslint/component-selector"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 type?: (string | ("element" | "attribute")[])
 prefix?: (string | unknown[])
 style?: ("camelCase" | "kebab-case")
+[k: string]: unknown | undefined
+}])
+/**
+ * Ensures consistent usage of `styles`/`styleUrls`/`styleUrl` within Component metadata
+ * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/consistent-component-styles.md
+ */
+"@angular-eslint/consistent-component-styles"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
+[k: string]: unknown | undefined
 }])
 /**
  * Ensures that classes use contextual decorators in its body
@@ -2465,21 +2475,30 @@ style?: ("camelCase" | "kebab-case")
 [k: string]: unknown | undefined
 }
 /**
- * Classes decorated with @Directive must have suffix "Directive" (or custom) in their name. See more at https://angular.io/styleguide#style-02-03
+ * Classes decorated with @Directive must have suffix "Directive" (or custom) in their name. See more at https://angular.dev/style-guide#style-02-03
  * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/directive-class-suffix.md
  */
 "@angular-eslint/directive-class-suffix"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 suffixes?: string[]
+[k: string]: unknown | undefined
 }])
 /**
- * Directive selectors should follow given naming rules. See more at https://angular.io/guide/styleguide#style-02-06 and https://angular.io/guide/styleguide#style-02-08.
+ * Directive selectors should follow given naming rules. See more at https://angular.dev/style-guide#style-02-06 and https://angular.dev/style-guide#style-02-08.
  * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/directive-selector.md
  */
 "@angular-eslint/directive-selector"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 type?: (string | ("element" | "attribute")[])
 prefix?: (string | unknown[])
 style?: ("camelCase" | "kebab-case")
+[k: string]: unknown | undefined
 }])
+/**
+ * Angular Lifecycle methods should not be async. Angular does not wait for async lifecycle but the code incorrectly suggests it does.
+ * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/no-async-lifecycle-method.md
+ */
+"@angular-eslint/no-async-lifecycle-method"?: {
+[k: string]: unknown | undefined
+}
 /**
  * The @Attribute decorator is used to obtain a single value for an attribute. This is a much less common use-case than getting a stream of values (using @Input), so often the @Attribute decorator is mistakenly used when @Input was what was intended. This rule disallows usage of @Attribute decorator altogether in order to prevent these mistakes.
  * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/no-attribute-decorator.md
@@ -2492,6 +2511,13 @@ style?: ("camelCase" | "kebab-case")
  * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/no-conflicting-lifecycle.md
  */
 "@angular-eslint/no-conflicting-lifecycle"?: {
+[k: string]: unknown | undefined
+}
+/**
+ * Ensures that metadata arrays do not contain duplicate entries.
+ * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/no-duplicates-in-metadata-arrays.md
+ */
+"@angular-eslint/no-duplicates-in-metadata-arrays"?: {
 [k: string]: unknown | undefined
 }
 /**
@@ -2509,11 +2535,12 @@ style?: ("camelCase" | "kebab-case")
 [k: string]: unknown | undefined
 }
 /**
- * Disallows usage of the `host` metadata property. See more at https://angular.io/styleguide#style-06-03
+ * Disallows usage of the `host` metadata property. NOTE: This used to be recommended by the Angular Team, but now they recommend the exact opposite: https://github.com/angular/angular/issues/54284
  * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/no-host-metadata-property.md
  */
 "@angular-eslint/no-host-metadata-property"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowStatic?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Ensures that input bindings, including aliases, are not named or prefixed by the configured disallowed prefixes
@@ -2521,6 +2548,7 @@ allowStatic?: boolean
  */
 "@angular-eslint/no-input-prefix"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 prefixes?: string[]
+[k: string]: unknown | undefined
 }])
 /**
  * Ensures that input bindings are not aliased
@@ -2531,9 +2559,10 @@ prefixes?: string[]
  * A list with allowed input names
  */
 allowedNames?: string[]
+[k: string]: unknown | undefined
 }])
 /**
- * Disallows usage of the `inputs` metadata property. See more at https://angular.io/styleguide#style-05-12
+ * Disallows usage of the `inputs` metadata property. See more at https://angular.dev/style-guide#style-05-12
  * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/no-inputs-metadata-property.md
  */
 "@angular-eslint/no-inputs-metadata-property"?: {
@@ -2554,7 +2583,7 @@ allowedNames?: string[]
 [k: string]: unknown | undefined
 }
 /**
- * Ensures that output bindings, including aliases, are not named "on", nor prefixed with it. See more at https://angular.io/guide/styleguide#style-05-16
+ * Ensures that output bindings, including aliases, are not named "on", nor prefixed with it. See more at https://angular.dev/style-guide#style-05-16
  * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/no-output-on-prefix.md
  */
 "@angular-eslint/no-output-on-prefix"?: {
@@ -2568,7 +2597,7 @@ allowedNames?: string[]
 [k: string]: unknown | undefined
 }
 /**
- * Disallows usage of the `outputs` metadata property. See more at https://angular.io/styleguide#style-05-12
+ * Disallows usage of the `outputs` metadata property. See more at https://angular.dev/style-guide#style-05-12
  * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/no-outputs-metadata-property.md
  */
 "@angular-eslint/no-outputs-metadata-property"?: {
@@ -2582,7 +2611,7 @@ allowedNames?: string[]
 [k: string]: unknown | undefined
 }
 /**
- * Disallows usage of the `queries` metadata property. See more at https://angular.io/styleguide#style-05-12.
+ * Disallows usage of the `queries` metadata property. See more at https://angular.dev/style-guide#style-05-12.
  * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/no-queries-metadata-property.md
  */
 "@angular-eslint/no-queries-metadata-property"?: {
@@ -2594,12 +2623,20 @@ allowedNames?: string[]
  */
 "@angular-eslint/pipe-prefix"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 prefixes?: string[]
+[k: string]: unknown | undefined
 }])
 /**
  * Ensures component's `changeDetection` is set to `ChangeDetectionStrategy.OnPush`
  * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-on-push-component-change-detection.md
  */
 "@angular-eslint/prefer-on-push-component-change-detection"?: {
+[k: string]: unknown | undefined
+}
+/**
+ * Ensures component, directive and pipe `standalone` property is set to `true` in the component decorator
+ * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-standalone.md
+ */
+"@angular-eslint/prefer-standalone"?: {
 [k: string]: unknown | undefined
 }
 /**
@@ -2617,7 +2654,7 @@ prefixes?: string[]
 [k: string]: unknown | undefined
 }
 /**
- * The ./ and ../ prefix is standard syntax for relative URLs; don't depend on Angular's current ability to do without that prefix. See more at https://angular.io/styleguide#style-05-04
+ * The ./ and ../ prefix is standard syntax for relative URLs; don't depend on Angular's current ability to do without that prefix. See more at https://angular.dev/style-guide#style-05-04
  * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/relative-url-prefix.md
  */
 "@angular-eslint/relative-url-prefix"?: {
@@ -2630,6 +2667,7 @@ prefixes?: string[]
 "@angular-eslint/require-localize-metadata"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 requireDescription?: boolean
 requireMeaning?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Ensures that lifecycle methods are declared in order of execution
@@ -2647,6 +2685,7 @@ requireMeaning?: boolean
  * A string with a BCP 47 language tag.
  */
 locale?: string
+[k: string]: unknown | undefined
 }])
 /**
  * Component selector must be declared
@@ -2668,9 +2707,10 @@ locale?: string
  */
 "@angular-eslint/use-injectable-provided-in"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignoreClassNamePattern?: string
+[k: string]: unknown | undefined
 }])
 /**
- * Ensures that classes implement lifecycle interfaces corresponding to the declared lifecycle methods. See more at https://angular.io/styleguide#style-09-01
+ * Ensures that classes implement lifecycle interfaces corresponding to the declared lifecycle methods. See more at https://angular.dev/style-guide#style-09-01
  * https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/use-lifecycle-interface.md
  */
 "@angular-eslint/use-lifecycle-interface"?: {
@@ -2685,7 +2725,7 @@ ignoreClassNamePattern?: string
 }
 /**
  * Ensure imports point to a file/module that can be resolved.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-unresolved.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-unresolved.md
  */
 "eslint-plugin-import/no-unresolved"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 commonjs?: boolean
@@ -2697,62 +2737,66 @@ esmodule?: boolean
 ignore?: [string, ...(string)[]]
 caseSensitive?: boolean
 caseSensitiveStrict?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Ensure named imports correspond to a named export in the remote file.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/named.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/named.md
  */
 "eslint-plugin-import/named"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 commonjs?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Ensure a default export is present, given a default import.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/default.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/default.md
  */
 "eslint-plugin-import/default"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Ensure imported namespaces contain dereferenced properties as they are dereferenced.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/namespace.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/namespace.md
  */
 "eslint-plugin-import/namespace"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 /**
  * If `false`, will report computed (and thus, un-lintable) references to namespace members.
  */
 allowComputed?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid namespace (a.k.a. "wildcard" `*`) imports.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-namespace.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-namespace.md
  */
 "eslint-plugin-import/no-namespace"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignore?: string[]
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid any invalid exports, i.e. re-export of the same name.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/export.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/export.md
  */
 "eslint-plugin-import/export"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Forbid the use of mutable exports with `var` or `let`.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-mutable-exports.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-mutable-exports.md
  */
 "eslint-plugin-import/no-mutable-exports"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Ensure consistent use of file extension within the import path.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/extensions.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/extensions.md
  */
 "eslint-plugin-import/extensions"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce which files can be imported in a given folder.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-restricted-paths.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-restricted-paths.md
  */
 "eslint-plugin-import/no-restricted-paths"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 /**
@@ -2770,24 +2814,25 @@ except?: string[]
 message?: string
 })[]]
 basePath?: string
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid importing the submodules of other modules.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-internal-modules.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-internal-modules.md
  */
 "eslint-plugin-import/no-internal-modules"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Prefer named exports to be grouped together in a single export declaration
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/group-exports.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/group-exports.md
  */
 "eslint-plugin-import/group-exports"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Forbid importing packages through relative paths.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-relative-packages.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-relative-packages.md
  */
 "eslint-plugin-import/no-relative-packages"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 commonjs?: boolean
@@ -2797,10 +2842,11 @@ esmodule?: boolean
  * @minItems 1
  */
 ignore?: [string, ...(string)[]]
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid importing modules from parent directories.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-relative-parent-imports.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-relative-parent-imports.md
  */
 "eslint-plugin-import/no-relative-parent-imports"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 commonjs?: boolean
@@ -2810,24 +2856,25 @@ esmodule?: boolean
  * @minItems 1
  */
 ignore?: [string, ...(string)[]]
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce or ban the use of inline type-only markers for named imports.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/consistent-type-specifier-style.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/consistent-type-specifier-style.md
  */
 "eslint-plugin-import/consistent-type-specifier-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid a module from importing itself.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-self-import.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-self-import.md
  */
 "eslint-plugin-import/no-self-import"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Forbid a module from importing a module with a dependency path back to itself.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-cycle.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-cycle.md
  */
 "eslint-plugin-import/no-cycle"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 commonjs?: boolean
@@ -2846,31 +2893,32 @@ ignoreExternal?: boolean
  * Allow cyclic dependency if there is at least one dynamic import in the chain
  */
 allowUnsafeDynamicCyclicDependency?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid named default exports.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-named-default.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-named-default.md
  */
 "eslint-plugin-import/no-named-default"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Forbid use of exported name as identifier of default export.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-named-as-default.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-named-as-default.md
  */
 "eslint-plugin-import/no-named-as-default"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Forbid use of exported name as property of default export.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-named-as-default-member.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-named-as-default-member.md
  */
 "eslint-plugin-import/no-named-as-default-member"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Forbid anonymous values as default exports.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-anonymous-default-export.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-anonymous-default-export.md
  */
 "eslint-plugin-import/no-anonymous-default-export"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 /**
@@ -2905,10 +2953,11 @@ allowObject?: boolean
  * If `false`, will report default export of a class instantiation
  */
 allowNew?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid modules without exports, or exports without matching import in another module.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-unused-modules.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-unused-modules.md
  */
 "eslint-plugin-import/no-unused-modules"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 /**
@@ -2927,47 +2976,50 @@ missingExports?: boolean
  * report exports without any usage
  */
 unusedExports?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid CommonJS `require` calls and `module.exports` or `exports.*`.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-commonjs.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-commonjs.md
  */
 "eslint-plugin-import/no-commonjs"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Forbid AMD `require` and `define` calls.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-amd.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-amd.md
  */
 "eslint-plugin-import/no-amd"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Forbid repeated import of the same module in multiple places.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-duplicates.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-duplicates.md
  */
 "eslint-plugin-import/no-duplicates"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 considerQueryString?: boolean
 "prefer-inline"?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Ensure all imports appear before other statements.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/first.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/first.md
  */
 "eslint-plugin-import/first"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce the maximum number of dependencies a module can have.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/max-dependencies.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/max-dependencies.md
  */
 "eslint-plugin-import/max-dependencies"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 max?: number
 ignoreTypeImports?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid the use of extraneous packages.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-extraneous-dependencies.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-extraneous-dependencies.md
  */
 "eslint-plugin-import/no-extraneous-dependencies"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 devDependencies?: (boolean | unknown[])
@@ -2977,10 +3029,11 @@ bundledDependencies?: (boolean | unknown[])
 packageDir?: (string | unknown[])
 includeInternal?: boolean
 includeTypes?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid import of modules using absolute paths.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-absolute-path.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-absolute-path.md
  */
 "eslint-plugin-import/no-absolute-path"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 commonjs?: boolean
@@ -2990,24 +3043,26 @@ esmodule?: boolean
  * @minItems 1
  */
 ignore?: [string, ...(string)[]]
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid Node.js builtin modules.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-nodejs-modules.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-nodejs-modules.md
  */
 "eslint-plugin-import/no-nodejs-modules"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allow?: string[]
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid webpack loader syntax in imports.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-webpack-loader-syntax.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-webpack-loader-syntax.md
  */
 "eslint-plugin-import/no-webpack-loader-syntax"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce a convention in module import order.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/order.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/order.md
  */
 "eslint-plugin-import/order"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 groups?: unknown[]
@@ -3028,76 +3083,83 @@ order?: ("ignore" | "asc" | "desc")
 orderImportKind?: ("ignore" | "asc" | "desc")
 }
 warnOnUnassignedImports?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce a newline after import statements.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/newline-after-import.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/newline-after-import.md
  */
 "eslint-plugin-import/newline-after-import"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 count?: number
 exactCount?: boolean
 considerComments?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Prefer a default export if module exports a single name or multiple names.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/prefer-default-export.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/prefer-default-export.md
  */
 "eslint-plugin-import/prefer-default-export"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 target?: ("single" | "any")
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid default exports.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-default-export.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-default-export.md
  */
 "eslint-plugin-import/no-default-export"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Forbid named exports.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-named-export.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-named-export.md
  */
 "eslint-plugin-import/no-named-export"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Forbid `requirestring` calls with expressions.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-dynamic-require.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-dynamic-require.md
  */
 "eslint-plugin-import/no-dynamic-require"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 esmodule?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid potentially ambiguous parse goal (`script` vs. `module`).
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/unambiguous.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/unambiguous.md
  */
 "eslint-plugin-import/unambiguous"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Forbid unassigned imports
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-unassigned-import.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-unassigned-import.md
  */
 "eslint-plugin-import/no-unassigned-import"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 devDependencies?: (boolean | unknown[])
 optionalDependencies?: (boolean | unknown[])
 peerDependencies?: (boolean | unknown[])
 allow?: string[]
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid unnecessary path segments in import and require statements.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-useless-path-segments.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-useless-path-segments.md
  */
 "eslint-plugin-import/no-useless-path-segments"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 commonjs?: boolean
 noUselessIndex?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce a leading comment with the webpackChunkName for dynamic imports.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/dynamic-import-chunkname.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/dynamic-import-chunkname.md
  */
 "eslint-plugin-import/dynamic-import-chunkname"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 importFunctions?: string[]
 webpackChunknameFormat?: string
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid import statements with CommonJS module.exports.
@@ -3105,24 +3167,25 @@ webpackChunknameFormat?: string
  */
 "eslint-plugin-import/no-import-module-exports"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 exceptions?: unknown[]
+[k: string]: unknown | undefined
 }])
 /**
  * Forbid empty named import blocks.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-empty-named-blocks.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-empty-named-blocks.md
  */
 "eslint-plugin-import/no-empty-named-blocks"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Ensure all exports appear after other statements.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/exports-last.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/exports-last.md
  */
 "eslint-plugin-import/exports-last"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Forbid imported names marked with `@deprecated` documentation tag.
- * https://github.com/import-js/eslint-plugin-import/blob/v2.29.0/docs/rules/no-deprecated.md
+ * https://github.com/import-js/eslint-plugin-import/blob/v2.29.1/docs/rules/no-deprecated.md
  */
 "eslint-plugin-import/no-deprecated"?: {
 [k: string]: unknown | undefined
@@ -3132,68 +3195,78 @@ exceptions?: unknown[]
  * https://github.com/import-js/eslint-plugin-import/blob/7b25c1cb95ee18acc1531002fd343e1e6031f9ed/docs/rules/imports-first.md
  */
 "eslint-plugin-import/imports-first"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Improve regexes by making them shorter, consistent, and safer.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/better-regex.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/better-regex.md
  */
 "eslint-plugin-unicorn/better-regex"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 sortCharacterClasses?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce a specific parameter name in catch clauses.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/catch-error-name.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/catch-error-name.md
  */
 "eslint-plugin-unicorn/catch-error-name"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 name?: string
 ignore?: unknown[]
+[k: string]: unknown | undefined
 }])
 /**
  * Use destructured variables over properties.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/consistent-destructuring.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/consistent-destructuring.md
  */
 "eslint-plugin-unicorn/consistent-destructuring"?: {
 [k: string]: unknown | undefined
 }
 /**
+ * Prefer consistent types when spreading a ternary in an array literal.
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/consistent-empty-array-spread.md
+ */
+"eslint-plugin-unicorn/consistent-empty-array-spread"?: {
+[k: string]: unknown | undefined
+}
+/**
  * Move function definitions to the highest possible scope.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/consistent-function-scoping.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/consistent-function-scoping.md
  */
 "eslint-plugin-unicorn/consistent-function-scoping"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 checkArrowFunctions?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce correct `Error` subclassing.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/custom-error-definition.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/custom-error-definition.md
  */
 "eslint-plugin-unicorn/custom-error-definition"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce no spaces between braces.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/empty-brace-spaces.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/empty-brace-spaces.md
  */
 "eslint-plugin-unicorn/empty-brace-spaces"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce passing a `message` value when creating a built-in error.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/error-message.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/error-message.md
  */
 "eslint-plugin-unicorn/error-message"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Require escape sequences to use uppercase values.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/escape-case.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/escape-case.md
  */
 "eslint-plugin-unicorn/escape-case"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Add expiration conditions to TODO comments.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/expiring-todo-comments.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/expiring-todo-comments.md
  */
 "eslint-plugin-unicorn/expiring-todo-comments"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 terms?: string[]
@@ -3201,136 +3274,161 @@ ignore?: unknown[]
 ignoreDatesOnPullRequests?: boolean
 allowWarningComments?: boolean
 date?: string
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce explicitly comparing the `length` or `size` property of a value.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/explicit-length-check.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/explicit-length-check.md
  */
 "eslint-plugin-unicorn/explicit-length-check"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 "non-zero"?: ("greater-than" | "not-equal")
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce a case style for filenames.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/filename-case.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/filename-case.md
  */
 "eslint-plugin-unicorn/filename-case"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce specific import styles per module.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/import-style.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/import-style.md
  */
 "eslint-plugin-unicorn/import-style"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce the use of `new` for all builtins, except `String`, `Number`, `Boolean`, `Symbol` and `BigInt`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/new-for-builtins.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/new-for-builtins.md
  */
 "eslint-plugin-unicorn/new-for-builtins"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce specifying rules to disable in `eslint-disable` comments.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-abusive-eslint-disable.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-abusive-eslint-disable.md
  */
 "eslint-plugin-unicorn/no-abusive-eslint-disable"?: {
 [k: string]: unknown | undefined
 }
 /**
+ * Disallow anonymous functions and classes as the default export.
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-anonymous-default-export.md
+ */
+"eslint-plugin-unicorn/no-anonymous-default-export"?: {
+[k: string]: unknown | undefined
+}
+/**
  * Prevent passing a function reference directly to iterator methods.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-array-callback-reference.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-array-callback-reference.md
  */
 "eslint-plugin-unicorn/no-array-callback-reference"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `for…of` over the `forEach` method.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-array-for-each.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-array-for-each.md
  */
 "eslint-plugin-unicorn/no-array-for-each"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow using the `this` argument in array methods.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-array-method-this-argument.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-array-method-this-argument.md
  */
 "eslint-plugin-unicorn/no-array-method-this-argument"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce combining multiple `Array#pushstring` into one call.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-array-push-push.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-array-push-push.md
  */
 "eslint-plugin-unicorn/no-array-push-push"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignore?: unknown[]
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow `Array#reducestring` and `Array#reduceRightstring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-array-reduce.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-array-reduce.md
  */
 "eslint-plugin-unicorn/no-array-reduce"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowSimpleOperations?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow member access from await expression.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-await-expression-member.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-await-expression-member.md
  */
 "eslint-plugin-unicorn/no-await-expression-member"?: {
 [k: string]: unknown | undefined
 }
 /**
+ * Disallow using `await` in `Promise` method parameters.
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-await-in-promise-methods.md
+ */
+"eslint-plugin-unicorn/no-await-in-promise-methods"?: {
+[k: string]: unknown | undefined
+}
+/**
  * Do not use leading/trailing space between `console.log` parameters.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-console-spaces.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-console-spaces.md
  */
 "eslint-plugin-unicorn/no-console-spaces"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Do not use `document.cookie` directly.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-document-cookie.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-document-cookie.md
  */
 "eslint-plugin-unicorn/no-document-cookie"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow empty files.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-empty-file.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-empty-file.md
  */
 "eslint-plugin-unicorn/no-empty-file"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Do not use a `for` loop that can be replaced with a `for-of` loop.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-for-loop.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-for-loop.md
  */
 "eslint-plugin-unicorn/no-for-loop"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce the use of Unicode escapes instead of hexadecimal escapes.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-hex-escape.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-hex-escape.md
  */
 "eslint-plugin-unicorn/no-hex-escape"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Require `Array.isArraystring` instead of `instanceof Array`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-instanceof-array.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-instanceof-array.md
  */
 "eslint-plugin-unicorn/no-instanceof-array"?: {
 [k: string]: unknown | undefined
 }
 /**
+ * Disallow invalid options in `fetchstring` and `new Requeststring`.
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-invalid-fetch-options.md
+ */
+"eslint-plugin-unicorn/no-invalid-fetch-options"?: {
+[k: string]: unknown | undefined
+}
+/**
  * Prevent calling `EventTarget#removeEventListenerstring` with the result of an expression.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-invalid-remove-event-listener.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-invalid-remove-event-listener.md
  */
 "eslint-plugin-unicorn/no-invalid-remove-event-listener"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow identifiers starting with `new` or `class`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-keyword-prefix.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-keyword-prefix.md
  */
 "eslint-plugin-unicorn/no-keyword-prefix"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 /**
@@ -3340,178 +3438,214 @@ allowSimpleOperations?: boolean
 disallowedPrefixes?: [string]
 checkProperties?: boolean
 onlyCamelCase?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow `if` statements as the only statement in `if` blocks without `else`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-lonely-if.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-lonely-if.md
  */
 "eslint-plugin-unicorn/no-lonely-if"?: {
 [k: string]: unknown | undefined
 }
 /**
+ * Disallow a magic number as the `depth` argument in `Array#flat(…).`
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-magic-array-flat-depth.md
+ */
+"eslint-plugin-unicorn/no-magic-array-flat-depth"?: {
+[k: string]: unknown | undefined
+}
+/**
  * Disallow negated conditions.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-negated-condition.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-negated-condition.md
  */
 "eslint-plugin-unicorn/no-negated-condition"?: {
 [k: string]: unknown | undefined
 }
 /**
+ * Disallow negated expression in equality check.
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-negation-in-equality-check.md
+ */
+"eslint-plugin-unicorn/no-negation-in-equality-check"?: {
+[k: string]: unknown | undefined
+}
+/**
  * Disallow nested ternary expressions.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-nested-ternary.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-nested-ternary.md
  */
 "eslint-plugin-unicorn/no-nested-ternary"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow `new Arraystring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-new-array.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-new-array.md
  */
 "eslint-plugin-unicorn/no-new-array"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce the use of `Buffer.fromstring` and `Buffer.allocstring` instead of the deprecated `new Bufferstring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-new-buffer.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-new-buffer.md
  */
 "eslint-plugin-unicorn/no-new-buffer"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow the use of the `null` literal.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-null.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-null.md
  */
 "eslint-plugin-unicorn/no-null"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 checkStrictEquality?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow the use of objects as default parameters.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-object-as-default-parameter.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-object-as-default-parameter.md
  */
 "eslint-plugin-unicorn/no-object-as-default-parameter"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow `process.exitstring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-process-exit.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-process-exit.md
  */
 "eslint-plugin-unicorn/no-process-exit"?: {
 [k: string]: unknown | undefined
 }
 /**
+ * Disallow passing single-element arrays to `Promise` methods.
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-single-promise-in-promise-methods.md
+ */
+"eslint-plugin-unicorn/no-single-promise-in-promise-methods"?: {
+[k: string]: unknown | undefined
+}
+/**
  * Disallow classes that only have static members.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-static-only-class.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-static-only-class.md
  */
 "eslint-plugin-unicorn/no-static-only-class"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow `then` property.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-thenable.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-thenable.md
  */
 "eslint-plugin-unicorn/no-thenable"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow assigning `this` to a variable.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-this-assignment.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-this-assignment.md
  */
 "eslint-plugin-unicorn/no-this-assignment"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow comparing `undefined` using `typeof`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-typeof-undefined.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-typeof-undefined.md
  */
 "eslint-plugin-unicorn/no-typeof-undefined"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 checkGlobalVariables?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow awaiting non-promise values.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-unnecessary-await.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-unnecessary-await.md
  */
 "eslint-plugin-unicorn/no-unnecessary-await"?: {
 [k: string]: unknown | undefined
 }
 /**
+ * Enforce the use of built-in methods instead of unnecessary polyfills.
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-unnecessary-polyfills.md
+ */
+"eslint-plugin-unicorn/no-unnecessary-polyfills"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
+targets?: (string | unknown[] | {
+[k: string]: unknown | undefined
+})
+[k: string]: unknown | undefined
+}])
+/**
  * Disallow unreadable array destructuring.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-unreadable-array-destructuring.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-unreadable-array-destructuring.md
  */
 "eslint-plugin-unicorn/no-unreadable-array-destructuring"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow unreadable IIFEs.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-unreadable-iife.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-unreadable-iife.md
  */
 "eslint-plugin-unicorn/no-unreadable-iife"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow unused object properties.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-unused-properties.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-unused-properties.md
  */
 "eslint-plugin-unicorn/no-unused-properties"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow useless fallback when spreading in object literals.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-useless-fallback-in-spread.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-useless-fallback-in-spread.md
  */
 "eslint-plugin-unicorn/no-useless-fallback-in-spread"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow useless array length check.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-useless-length-check.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-useless-length-check.md
  */
 "eslint-plugin-unicorn/no-useless-length-check"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow returning/yielding `Promise.resolve/rejectstring` in async functions or promise callbacks
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-useless-promise-resolve-reject.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-useless-promise-resolve-reject.md
  */
 "eslint-plugin-unicorn/no-useless-promise-resolve-reject"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow unnecessary spread.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-useless-spread.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-useless-spread.md
  */
 "eslint-plugin-unicorn/no-useless-spread"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow useless case in switch statements.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-useless-switch-case.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-useless-switch-case.md
  */
 "eslint-plugin-unicorn/no-useless-switch-case"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Disallow useless `undefined`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-useless-undefined.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-useless-undefined.md
  */
 "eslint-plugin-unicorn/no-useless-undefined"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 checkArguments?: boolean
+checkArrowFunctionBody?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow number literals with zero fractions or dangling dots.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/no-zero-fractions.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/no-zero-fractions.md
  */
 "eslint-plugin-unicorn/no-zero-fractions"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce proper case for numeric literals.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/number-literal-case.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/number-literal-case.md
  */
 "eslint-plugin-unicorn/number-literal-case"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce the style of numeric separators by correctly grouping digits.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/numeric-separators-style.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/numeric-separators-style.md
  */
 "eslint-plugin-unicorn/numeric-separators-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 binary?: {
@@ -3535,369 +3669,394 @@ minimumDigits?: number
 groupLength?: number
 }
 onlyIfContainsSeparator?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Prefer `.addEventListenerstring` and `.removeEventListenerstring` over `on`-functions.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-add-event-listener.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-add-event-listener.md
  */
 "eslint-plugin-unicorn/prefer-add-event-listener"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 excludedPackages?: string[]
+[k: string]: unknown | undefined
 }])
 /**
  * Prefer `.find(…)` and `.findLast(…)` over the first or last element from `.filter(…)`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-array-find.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-array-find.md
  */
 "eslint-plugin-unicorn/prefer-array-find"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 checkFromLast?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Prefer `.flatMap(…)` over `.map(…).flatstring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-array-flat-map.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-array-flat-map.md
  */
 "eslint-plugin-unicorn/prefer-array-flat-map"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `Array#flatstring` over legacy techniques to flatten arrays.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-array-flat.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-array-flat.md
  */
 "eslint-plugin-unicorn/prefer-array-flat"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 functions?: unknown[]
+[k: string]: unknown | undefined
 }])
 /**
  * Prefer `Array#{indexOf,lastIndexOf}string` over `Array#{findIndex,findLastIndex}string` when looking for the index of an item.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-array-index-of.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-array-index-of.md
  */
 "eslint-plugin-unicorn/prefer-array-index-of"?: {
 [k: string]: unknown | undefined
 }
 /**
- * Prefer `.some(…)` over `.filter(…).length` check and `.{find,findLast}(…)`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-array-some.md
+ * Prefer `.some(…)` over `.filter(…).length` check and `.{find,findLast,findIndex,findLastIndex}(…)`.
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-array-some.md
  */
 "eslint-plugin-unicorn/prefer-array-some"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `.atstring` method for index access and `String#charAtstring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-at.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-at.md
  */
 "eslint-plugin-unicorn/prefer-at"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 getLastElementFunctions?: unknown[]
 checkAllIndexAccess?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Prefer `Blob#arrayBufferstring` over `FileReader#readAsArrayBuffer(…)` and `Blob#textstring` over `FileReader#readAsText(…)`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-blob-reading-methods.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-blob-reading-methods.md
  */
 "eslint-plugin-unicorn/prefer-blob-reading-methods"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `String#codePointAt(…)` over `String#charCodeAt(…)` and `String.fromCodePoint(…)` over `String.fromCharCode(…)`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-code-point.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-code-point.md
  */
 "eslint-plugin-unicorn/prefer-code-point"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `Date.nowstring` to get the number of milliseconds since the Unix Epoch.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-date-now.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-date-now.md
  */
 "eslint-plugin-unicorn/prefer-date-now"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer default parameters over reassignment.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-default-parameters.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-default-parameters.md
  */
 "eslint-plugin-unicorn/prefer-default-parameters"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `Node#appendstring` over `Node#appendChildstring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-dom-node-append.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-dom-node-append.md
  */
 "eslint-plugin-unicorn/prefer-dom-node-append"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer using `.dataset` on DOM elements over calling attribute methods.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-dom-node-dataset.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-dom-node-dataset.md
  */
 "eslint-plugin-unicorn/prefer-dom-node-dataset"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `childNode.removestring` over `parentNode.removeChild(childNode)`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-dom-node-remove.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-dom-node-remove.md
  */
 "eslint-plugin-unicorn/prefer-dom-node-remove"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `.textContent` over `.innerText`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-dom-node-text-content.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-dom-node-text-content.md
  */
 "eslint-plugin-unicorn/prefer-dom-node-text-content"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `EventTarget` over `EventEmitter`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-event-target.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-event-target.md
  */
 "eslint-plugin-unicorn/prefer-event-target"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `export…from` when re-exporting.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-export-from.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-export-from.md
  */
 "eslint-plugin-unicorn/prefer-export-from"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignoreUsedVariables?: boolean
+[k: string]: unknown | undefined
 }])
 /**
- * Prefer `.includesstring` over `.indexOfstring` and `Array#somestring` when checking for existence or non-existence.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-includes.md
+ * Prefer `.includesstring` over `.indexOfstring`, `.lastIndexOfstring`, and `Array#somestring` when checking for existence or non-existence.
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-includes.md
  */
 "eslint-plugin-unicorn/prefer-includes"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer reading a JSON file as a buffer.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-json-parse-buffer.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-json-parse-buffer.md
  */
 "eslint-plugin-unicorn/prefer-json-parse-buffer"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `KeyboardEvent#key` over `KeyboardEvent#keyCode`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-keyboard-event-key.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-keyboard-event-key.md
  */
 "eslint-plugin-unicorn/prefer-keyboard-event-key"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer using a logical operator over a ternary.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-logical-operator-over-ternary.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-logical-operator-over-ternary.md
  */
 "eslint-plugin-unicorn/prefer-logical-operator-over-ternary"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce the use of `Math.trunc` instead of bitwise operators.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-math-trunc.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-math-trunc.md
  */
 "eslint-plugin-unicorn/prefer-math-trunc"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `.beforestring` over `.insertBeforestring`, `.replaceWithstring` over `.replaceChildstring`, prefer one of `.beforestring`, `.afterstring`, `.appendstring` or `.prependstring` over `insertAdjacentTextstring` and `insertAdjacentElementstring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-modern-dom-apis.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-modern-dom-apis.md
  */
 "eslint-plugin-unicorn/prefer-modern-dom-apis"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer modern `Math` APIs over legacy patterns.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-modern-math-apis.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-modern-math-apis.md
  */
 "eslint-plugin-unicorn/prefer-modern-math-apis"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer JavaScript modules (ESM) over CommonJS.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-module.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-module.md
  */
 "eslint-plugin-unicorn/prefer-module"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer using `String`, `Number`, `BigInt`, `Boolean`, and `Symbol` directly.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-native-coercion-functions.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-native-coercion-functions.md
  */
 "eslint-plugin-unicorn/prefer-native-coercion-functions"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer negative index over `.length - index` when possible.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-negative-index.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-negative-index.md
  */
 "eslint-plugin-unicorn/prefer-negative-index"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer using the `node:` protocol when importing Node.js builtin modules.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-node-protocol.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-node-protocol.md
  */
 "eslint-plugin-unicorn/prefer-node-protocol"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `Number` static properties over global ones.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-number-properties.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-number-properties.md
  */
 "eslint-plugin-unicorn/prefer-number-properties"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 checkInfinity?: boolean
+checkNaN?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Prefer using `Object.fromEntries(…)` to transform a list of key-value pairs into an object.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-object-from-entries.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-object-from-entries.md
  */
 "eslint-plugin-unicorn/prefer-object-from-entries"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 functions?: unknown[]
+[k: string]: unknown | undefined
 }])
 /**
  * Prefer omitting the `catch` binding parameter.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-optional-catch-binding.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-optional-catch-binding.md
  */
 "eslint-plugin-unicorn/prefer-optional-catch-binding"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer borrowing methods from the prototype instead of the instance.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-prototype-methods.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-prototype-methods.md
  */
 "eslint-plugin-unicorn/prefer-prototype-methods"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `.querySelectorstring` over `.getElementByIdstring`, `.querySelectorAllstring` over `.getElementsByClassNamestring` and `.getElementsByTagNamestring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-query-selector.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-query-selector.md
  */
 "eslint-plugin-unicorn/prefer-query-selector"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `Reflect.applystring` over `Function#applystring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-reflect-apply.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-reflect-apply.md
  */
 "eslint-plugin-unicorn/prefer-reflect-apply"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `RegExp#teststring` over `String#matchstring` and `RegExp#execstring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-regexp-test.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-regexp-test.md
  */
 "eslint-plugin-unicorn/prefer-regexp-test"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `Set#hasstring` over `Array#includesstring` when checking for existence or non-existence.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-set-has.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-set-has.md
  */
 "eslint-plugin-unicorn/prefer-set-has"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer using `Set#size` instead of `Array#length`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-set-size.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-set-size.md
  */
 "eslint-plugin-unicorn/prefer-set-size"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer the spread operator over `Array.from(…)`, `Array#concat(…)`, `Array#{slice,toSpliced}string` and `String#split('')`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-spread.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-spread.md
  */
 "eslint-plugin-unicorn/prefer-spread"?: {
 [k: string]: unknown | undefined
 }
 /**
+ * Prefer using the `String.raw` tag to avoid escaping `\`.
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-string-raw.md
+ */
+"eslint-plugin-unicorn/prefer-string-raw"?: {
+[k: string]: unknown | undefined
+}
+/**
  * Prefer `String#replaceAllstring` over regex searches with the global flag.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-string-replace-all.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-string-replace-all.md
  */
 "eslint-plugin-unicorn/prefer-string-replace-all"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `String#slicestring` over `String#substrstring` and `String#substringstring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-string-slice.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-string-slice.md
  */
 "eslint-plugin-unicorn/prefer-string-slice"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `String#startsWithstring` & `String#endsWithstring` over `RegExp#teststring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-string-starts-ends-with.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-string-starts-ends-with.md
  */
 "eslint-plugin-unicorn/prefer-string-starts-ends-with"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prefer `String#trimStartstring` / `String#trimEndstring` over `String#trimLeftstring` / `String#trimRightstring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-string-trim-start-end.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-string-trim-start-end.md
  */
 "eslint-plugin-unicorn/prefer-string-trim-start-end"?: {
 [k: string]: unknown | undefined
 }
 /**
+ * Prefer using `structuredClone` to create a deep clone.
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-structured-clone.md
+ */
+"eslint-plugin-unicorn/prefer-structured-clone"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
+functions?: unknown[]
+[k: string]: unknown | undefined
+}])
+/**
  * Prefer `switch` over multiple `else-if`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-switch.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-switch.md
  */
 "eslint-plugin-unicorn/prefer-switch"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 minimumCases?: number
 emptyDefaultCase?: ("no-default-comment" | "do-nothing-comment" | "no-default-case")
+[k: string]: unknown | undefined
 }])
 /**
  * Prefer ternary expressions over simple `if-else` statements.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-ternary.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-ternary.md
  */
 "eslint-plugin-unicorn/prefer-ternary"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Prefer top-level await over top-level promises and async function calls.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-top-level-await.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-top-level-await.md
  */
 "eslint-plugin-unicorn/prefer-top-level-await"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce throwing `TypeError` in type checking conditions.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prefer-type-error.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prefer-type-error.md
  */
 "eslint-plugin-unicorn/prefer-type-error"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Prevent abbreviations.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/prevent-abbreviations.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/prevent-abbreviations.md
  */
 "eslint-plugin-unicorn/prevent-abbreviations"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce consistent relative URL style.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/relative-url-style.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/relative-url-style.md
  */
 "eslint-plugin-unicorn/relative-url-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce using the separator argument with `Array#joinstring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/require-array-join-separator.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/require-array-join-separator.md
  */
 "eslint-plugin-unicorn/require-array-join-separator"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce using the digits argument with `Number#toFixedstring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/require-number-to-fixed-digits-argument.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/require-number-to-fixed-digits-argument.md
  */
 "eslint-plugin-unicorn/require-number-to-fixed-digits-argument"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce using the `targetOrigin` argument with `window.postMessagestring`.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/require-post-message-target-origin.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/require-post-message-target-origin.md
  */
 "eslint-plugin-unicorn/require-post-message-target-origin"?: {
 [k: string]: unknown | undefined
 }
 /**
  * Enforce better string content.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/string-content.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/string-content.md
  */
 "eslint-plugin-unicorn/string-content"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 patterns?: {
@@ -3907,17 +4066,18 @@ fix?: boolean
 message?: string
 }) | undefined
 }
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent brace style for `case` clauses.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/switch-case-braces.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/switch-case-braces.md
  */
 "eslint-plugin-unicorn/switch-case-braces"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Fix whitespace-insensitive template indentation.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/template-indent.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/template-indent.md
  */
 "eslint-plugin-unicorn/template-indent"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 indent?: (string | number)
@@ -3925,136 +4085,137 @@ tags?: string[]
 functions?: string[]
 selectors?: string[]
 comments?: string[]
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent case for text encoding identifiers.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/text-encoding-identifier-case.md
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/text-encoding-identifier-case.md
  */
 "eslint-plugin-unicorn/text-encoding-identifier-case"?: {
 [k: string]: unknown | undefined
 }
 /**
- * Require `new` when throwing an error.
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/rules/throw-new-error.md
+ * Require `new` when creating an error.
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/rules/throw-new-error.md
  */
 "eslint-plugin-unicorn/throw-new-error"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#import-index
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#import-index
  */
 "eslint-plugin-unicorn/import-index"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#no-array-instanceof
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#no-array-instanceof
  */
 "eslint-plugin-unicorn/no-array-instanceof"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#no-fn-reference-in-iterator
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#no-fn-reference-in-iterator
  */
 "eslint-plugin-unicorn/no-fn-reference-in-iterator"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#no-reduce
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#no-reduce
  */
 "eslint-plugin-unicorn/no-reduce"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#no-unsafe-regex
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#no-unsafe-regex
  */
 "eslint-plugin-unicorn/no-unsafe-regex"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#prefer-dataset
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#prefer-dataset
  */
 "eslint-plugin-unicorn/prefer-dataset"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#prefer-event-key
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#prefer-event-key
  */
 "eslint-plugin-unicorn/prefer-event-key"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#prefer-exponentiation-operator
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#prefer-exponentiation-operator
  */
 "eslint-plugin-unicorn/prefer-exponentiation-operator"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#prefer-flat-map
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#prefer-flat-map
  */
 "eslint-plugin-unicorn/prefer-flat-map"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#prefer-node-append
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#prefer-node-append
  */
 "eslint-plugin-unicorn/prefer-node-append"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#prefer-node-remove
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#prefer-node-remove
  */
 "eslint-plugin-unicorn/prefer-node-remove"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#prefer-object-has-own
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#prefer-object-has-own
  */
 "eslint-plugin-unicorn/prefer-object-has-own"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#prefer-replace-all
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#prefer-replace-all
  */
 "eslint-plugin-unicorn/prefer-replace-all"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#prefer-starts-ends-with
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#prefer-starts-ends-with
  */
 "eslint-plugin-unicorn/prefer-starts-ends-with"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#prefer-text-content
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#prefer-text-content
  */
 "eslint-plugin-unicorn/prefer-text-content"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#prefer-trim-start-end
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#prefer-trim-start-end
  */
 "eslint-plugin-unicorn/prefer-trim-start-end"?: {
 [k: string]: unknown | undefined
 }
 /**
  * 
- * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v49.0.0/docs/deprecated-rules.md#regex-shorthand
+ * https://github.com/sindresorhus/eslint-plugin-unicorn/blob/v54.0.0/docs/deprecated-rules.md#regex-shorthand
  */
 "eslint-plugin-unicorn/regex-shorthand"?: {
 [k: string]: unknown | undefined
@@ -4064,14 +4225,14 @@ comments?: string[]
  * https://eslint.vuejs.org/rules/array-bracket-newline.html
  */
 "eslint-plugin-vue/array-bracket-newline"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent spacing inside array brackets in `<template>`
  * https://eslint.vuejs.org/rules/array-bracket-spacing.html
  */
 "eslint-plugin-vue/array-bracket-spacing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce line breaks after each array element in `<template>`
@@ -4087,13 +4248,14 @@ comments?: string[]
 "eslint-plugin-vue/arrow-spacing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 before?: boolean
 after?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * enforce attribute naming style on custom components in template
  * https://eslint.vuejs.org/rules/attribute-hyphenation.html
  */
 "eslint-plugin-vue/attribute-hyphenation"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce order of attributes
@@ -4102,13 +4264,14 @@ after?: boolean
 "eslint-plugin-vue/attributes-order"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 order?: (("DEFINITION" | "LIST_RENDERING" | "CONDITIONALS" | "RENDER_MODIFIERS" | "GLOBAL" | "UNIQUE" | "SLOT" | "TWO_WAY_BINDING" | "OTHER_DIRECTIVES" | "OTHER_ATTR" | "ATTR_STATIC" | "ATTR_DYNAMIC" | "ATTR_SHORTHAND_BOOL" | "EVENTS" | "CONTENT") | ("DEFINITION" | "LIST_RENDERING" | "CONDITIONALS" | "RENDER_MODIFIERS" | "GLOBAL" | "UNIQUE" | "SLOT" | "TWO_WAY_BINDING" | "OTHER_DIRECTIVES" | "OTHER_ATTR" | "ATTR_STATIC" | "ATTR_DYNAMIC" | "ATTR_SHORTHAND_BOOL" | "EVENTS" | "CONTENT")[])[]
 alphabetical?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * disallow use other than available `lang`
  * https://eslint.vuejs.org/rules/block-lang.html
  */
 "eslint-plugin-vue/block-lang"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce order of component top-level elements
@@ -4116,13 +4279,14 @@ alphabetical?: boolean
  */
 "eslint-plugin-vue/block-order"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 order?: (string | string[])[]
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow or enforce spaces inside of blocks after opening block and before closing block in `<template>`
  * https://eslint.vuejs.org/rules/block-spacing.html
  */
 "eslint-plugin-vue/block-spacing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce line breaks after opening and before closing block-level tags
@@ -4143,13 +4307,14 @@ multiline?: ("always" | "never" | "consistent" | "ignore")
 maxEmptyLines?: number
 }
 }
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent brace style for blocks in `<template>`
  * https://eslint.vuejs.org/rules/brace-style.html
  */
 "eslint-plugin-vue/brace-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce camelcase naming convention in `<template>`
@@ -4164,6 +4329,7 @@ properties?: ("always" | "never")
  * @minItems 0
  */
 allow?: []|[string]
+[k: string]: unknown | undefined
 }])
 /**
  * Require or disallow trailing commas in `<template>`
@@ -4179,13 +4345,14 @@ allow?: []|[string]
 "eslint-plugin-vue/comma-spacing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 before?: boolean
 after?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent comma style in `<template>`
  * https://eslint.vuejs.org/rules/comma-style.html
  */
 "eslint-plugin-vue/comma-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * support comment-directives in `<template>`
@@ -4193,34 +4360,35 @@ after?: boolean
  */
 "eslint-plugin-vue/comment-directive"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 reportUnusedDisableDirectives?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * enforce component API style
  * https://eslint.vuejs.org/rules/component-api-style.html
  */
 "eslint-plugin-vue/component-api-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce specific casing for component definition name
  * https://eslint.vuejs.org/rules/component-definition-name-casing.html
  */
 "eslint-plugin-vue/component-definition-name-casing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce specific casing for the component naming style in template
  * https://eslint.vuejs.org/rules/component-name-in-template-casing.html
  */
 "eslint-plugin-vue/component-name-in-template-casing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce the casing of component name in `components` options
  * https://eslint.vuejs.org/rules/component-options-name-casing.html
  */
 "eslint-plugin-vue/component-options-name-casing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce order of component top-level elements
@@ -4228,6 +4396,7 @@ reportUnusedDisableDirectives?: boolean
  */
 "eslint-plugin-vue/component-tags-order"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 order?: (string | string[])[]
+[k: string]: unknown | undefined
 }])
 /**
  * enforce specific casing for custom event name
@@ -4241,28 +4410,30 @@ order?: (string | string[])[]
  * https://eslint.vuejs.org/rules/define-emits-declaration.html
  */
 "eslint-plugin-vue/define-emits-declaration"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce order of `defineEmits` and `defineProps` compiler macros
  * https://eslint.vuejs.org/rules/define-macros-order.html
  */
 "eslint-plugin-vue/define-macros-order"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-order?: ("defineEmits" | "defineProps" | "defineOptions" | "defineSlots")[]
+order?: ("defineEmits" | "defineProps" | "defineOptions" | "defineSlots" | "defineModel")[]
+defineExposeLast?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * enforce declaration style of `defineProps`
  * https://eslint.vuejs.org/rules/define-props-declaration.html
  */
 "eslint-plugin-vue/define-props-declaration"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent newlines before and after dots in `<template>`
  * https://eslint.vuejs.org/rules/dot-location.html
  */
 "eslint-plugin-vue/dot-location"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce dot notation whenever possible in `<template>`
@@ -4271,6 +4442,18 @@ order?: ("defineEmits" | "defineProps" | "defineOptions" | "defineSlots")[]
 "eslint-plugin-vue/dot-notation"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowKeywords?: boolean
 allowPattern?: string
+[k: string]: unknown | undefined
+}])
+/**
+ * enforce or forbid the use of the `scoped` and `module` attributes in SFC top level style tags
+ * https://eslint.vuejs.org/rules/enforce-style-attribute.html
+ */
+"eslint-plugin-vue/enforce-style-attribute"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
+/**
+ * @minItems 1
+ */
+allow?: [("plain" | "scoped" | "module"), ...(("plain" | "scoped" | "module"))[]]
+[k: string]: unknown | undefined
 }])
 /**
  * Require the use of `===` and `!==` in `<template>`
@@ -4286,6 +4469,7 @@ allowPattern?: string
 "eslint-plugin-vue/first-attribute-linebreak"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 multiline?: ("below" | "beside" | "ignore")
 singleline?: ("below" | "beside" | "ignore")
+[k: string]: unknown | undefined
 }])
 /**
  * Require or disallow spacing between function identifiers and their invocations in `<template>`
@@ -4302,6 +4486,7 @@ singleline?: ("below" | "beside" | "ignore")
 button?: boolean
 submit?: boolean
 reset?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * require or disallow a line break before tag's closing brackets
@@ -4310,6 +4495,11 @@ reset?: boolean
 "eslint-plugin-vue/html-closing-bracket-newline"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 singleline?: ("always" | "never")
 multiline?: ("always" | "never")
+selfClosingTag?: {
+singleline?: ("always" | "never")
+multiline?: ("always" | "never")
+}
+[k: string]: unknown | undefined
 }])
 /**
  * require or disallow a space before tag's closing brackets
@@ -4319,27 +4509,28 @@ multiline?: ("always" | "never")
 startTag?: ("always" | "never")
 endTag?: ("always" | "never")
 selfClosingTag?: ("always" | "never")
+[k: string]: unknown | undefined
 }])
 /**
  * enforce unified line brake in HTML comments
  * https://eslint.vuejs.org/rules/html-comment-content-newline.html
  */
 "eslint-plugin-vue/html-comment-content-newline"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce unified spacing in HTML comments
  * https://eslint.vuejs.org/rules/html-comment-content-spacing.html
  */
 "eslint-plugin-vue/html-comment-content-spacing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce consistent indentation in HTML comments
  * https://eslint.vuejs.org/rules/html-comment-indent.html
  */
 "eslint-plugin-vue/html-comment-indent"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce end tag style
@@ -4353,14 +4544,14 @@ selfClosingTag?: ("always" | "never")
  * https://eslint.vuejs.org/rules/html-indent.html
  */
 "eslint-plugin-vue/html-indent"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce quotes style of HTML attributes
  * https://eslint.vuejs.org/rules/html-quotes.html
  */
 "eslint-plugin-vue/html-quotes"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce self-closing style
@@ -4381,7 +4572,7 @@ selfClosingTag?: ("always" | "never")
  * https://eslint.vuejs.org/rules/key-spacing.html
  */
 "eslint-plugin-vue/key-spacing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent spacing before and after keywords in `<template>`
@@ -4664,6 +4855,7 @@ before?: boolean
 after?: boolean
 }
 }
+[k: string]: unknown | undefined
 }])
 /**
  * require component name property to match its file name
@@ -4672,6 +4864,7 @@ after?: boolean
 "eslint-plugin-vue/match-component-file-name"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 extensions?: string[]
 shouldMatchCase?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * require the registered component name to match the imported component name
@@ -4691,13 +4884,14 @@ max?: number
 multiline?: (number | {
 max?: number
 })
+[k: string]: unknown | undefined
 }])
 /**
  * enforce a maximum line length in `.vue` files
  * https://eslint.vuejs.org/rules/max-len.html
  */
 "eslint-plugin-vue/max-len"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce maximum number of lines in Vue SFC blocks
@@ -4708,6 +4902,7 @@ style?: number
 template?: number
 script?: number
 skipBlankLines?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * require component names to be always multi-word
@@ -4715,6 +4910,7 @@ skipBlankLines?: boolean
  */
 "eslint-plugin-vue/multi-word-component-names"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignores?: string[]
+[k: string]: unknown | undefined
 }])
 /**
  * require a line break before and after the contents of a multiline element
@@ -4724,20 +4920,21 @@ ignores?: string[]
 ignoreWhenEmpty?: boolean
 ignores?: string[]
 allowEmptyLines?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce newlines between operands of ternary expressions in `<template>`
  * https://eslint.vuejs.org/rules/multiline-ternary.html
  */
 "eslint-plugin-vue/multiline-ternary"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce unified spacing in mustache interpolations
  * https://eslint.vuejs.org/rules/mustache-interpolation-spacing.html
  */
 "eslint-plugin-vue/mustache-interpolation-spacing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce new lines between multi-line properties in Vue components
@@ -4745,13 +4942,14 @@ allowEmptyLines?: boolean
  */
 "eslint-plugin-vue/new-line-between-multi-line-property"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 minLineOfMultilineProperty?: number
+[k: string]: unknown | undefined
 }])
 /**
  * enforce Promise or callback style in `nextTick`
  * https://eslint.vuejs.org/rules/next-tick-style.html
  */
 "eslint-plugin-vue/next-tick-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * disallow using arrow functions to define watcher
@@ -4781,13 +4979,14 @@ attributes?: {
 [k: string]: (string[]) | undefined
 }
 directives?: string[]
+[k: string]: unknown | undefined
 }])
 /**
  * disallow boolean defaults
  * https://eslint.vuejs.org/rules/no-boolean-default.html
  */
 "eslint-plugin-vue/no-boolean-default"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * disallow element's child contents which would be overwritten by a directive like `v-html` or `v-text`
@@ -4798,6 +4997,7 @@ directives?: string[]
  * @minItems 1
  */
 additionalDirectives?: [string, ...(string)[]]
+[k: string]: unknown | undefined
 }])
 /**
  * disallow accessing computed properties in `data`.
@@ -4815,6 +5015,7 @@ additionalDirectives?: [string, ...(string)[]]
  * @minItems 1
  */
 allow?: [string, ...(string)[]]
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow constant expressions in conditions in `<template>`
@@ -4822,6 +5023,7 @@ allow?: [string, ...(string)[]]
  */
 "eslint-plugin-vue/no-constant-condition"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 checkLoops?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * disallow custom modifiers on v-model used on the component
@@ -4899,6 +5101,7 @@ checkLoops?: boolean
  */
 "eslint-plugin-vue/no-deprecated-model-definition"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowVue3Compat?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * disallow deprecated `this` access in props default function (in Vue.js 3.0.0+)
@@ -4916,6 +5119,7 @@ allowVue3Compat?: boolean
  * @minItems 1
  */
 components?: [string, ...(string)[]]
+[k: string]: unknown | undefined
 }])
 /**
  * disallow deprecated `scope` attribute (in Vue.js 2.5.0+)
@@ -4928,9 +5132,10 @@ components?: [string, ...(string)[]]
  * disallow deprecated `slot` attribute (in Vue.js 2.6.0+)
  * https://eslint.vuejs.org/rules/no-deprecated-slot-attribute.html
  */
-"eslint-plugin-vue/no-deprecated-slot-attribute"?: {
+"eslint-plugin-vue/no-deprecated-slot-attribute"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
+ignore?: string[]
 [k: string]: unknown | undefined
-}
+}])
 /**
  * disallow deprecated `slot-scope` attribute (in Vue.js 2.6.0+)
  * https://eslint.vuejs.org/rules/no-deprecated-slot-scope-attribute.html
@@ -4979,6 +5184,7 @@ components?: [string, ...(string)[]]
  */
 "eslint-plugin-vue/no-dupe-keys"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 groups?: unknown[]
+[k: string]: unknown | undefined
 }])
 /**
  * disallow duplicate conditions in `v-if` / `v-else-if` chains
@@ -5001,6 +5207,7 @@ groups?: unknown[]
 "eslint-plugin-vue/no-duplicate-attributes"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowCoexistClass?: boolean
 allowCoexistStyle?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * disallow the `<template>` `<script>` `<style>` block to be empty
@@ -5015,6 +5222,7 @@ allowCoexistStyle?: boolean
  */
 "eslint-plugin-vue/no-empty-pattern"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowObjectPatternsAsParameters?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * disallow `export` in `<script setup>`
@@ -5055,6 +5263,7 @@ skipTemplates?: boolean
 skipRegExps?: boolean
 skipHTMLAttributeValues?: boolean
 skipHTMLTextContents?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * disallow asynchronously registered lifecycle hooks
@@ -5069,6 +5278,7 @@ skipHTMLTextContents?: boolean
  */
 "eslint-plugin-vue/no-lone-template"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignoreAccessible?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow literal numbers that lose precision in `<template>`
@@ -5083,6 +5293,7 @@ ignoreAccessible?: boolean
  */
 "eslint-plugin-vue/no-multi-spaces"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignoreProperties?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * disallow to pass multiple objects into array to class
@@ -5111,6 +5322,7 @@ ignoreProperties?: boolean
  */
 "eslint-plugin-vue/no-mutating-props"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 shallowOnly?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * disallow parsing errors in `<template>`
@@ -5153,6 +5365,7 @@ shallowOnly?: boolean
 "non-void-html-element-start-tag-with-trailing-solidus"?: boolean
 "x-invalid-end-tag"?: boolean
 "x-invalid-namespace"?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * disallow a potential typo in your component property
@@ -5168,6 +5381,7 @@ presets?: ("all" | "vue" | "vue-router" | "nuxt")[]
  */
 custom?: string[]
 threshold?: number
+[k: string]: unknown | undefined
 }])
 /**
  * disallow use of value wrapped by `refstring` (Composition API) as an operand
@@ -5196,6 +5410,7 @@ threshold?: number
  */
 "eslint-plugin-vue/no-required-prop-with-default"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 autofix?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * disallow the use of reserved names in component definitions
@@ -5204,6 +5419,7 @@ autofix?: boolean
 "eslint-plugin-vue/no-reserved-component-names"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 disallowVueBuiltInComponents?: boolean
 disallowVue3BuiltInComponents?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * disallow overwriting reserved keys
@@ -5212,6 +5428,7 @@ disallowVue3BuiltInComponents?: boolean
 "eslint-plugin-vue/no-reserved-keys"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 reserved?: unknown[]
 groups?: unknown[]
+[k: string]: unknown | undefined
 }])
 /**
  * disallow reserved names in props
@@ -5219,6 +5436,7 @@ groups?: unknown[]
  */
 "eslint-plugin-vue/no-reserved-props"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 vueVersion?: (2 | 3)
+[k: string]: unknown | undefined
 }])
 /**
  * disallow specific block
@@ -5298,6 +5516,13 @@ vueVersion?: (2 | 3)
 [k: string]: unknown | undefined
 }
 /**
+ * disallow specific argument in `v-on`
+ * https://eslint.vuejs.org/rules/no-restricted-v-on.html
+ */
+"eslint-plugin-vue/no-restricted-v-on"?: {
+[k: string]: unknown | undefined
+}
+/**
  * disallow `v-if` directives on root element
  * https://eslint.vuejs.org/rules/no-root-v-if.html
  */
@@ -5352,6 +5577,7 @@ vueVersion?: (2 | 3)
  */
 "eslint-plugin-vue/no-static-inline-styles"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowBinding?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * disallow `key` attribute on `<template>`
@@ -5364,9 +5590,10 @@ allowBinding?: boolean
  * disallow variable declarations from shadowing variables declared in the outer scope
  * https://eslint.vuejs.org/rules/no-template-shadow.html
  */
-"eslint-plugin-vue/no-template-shadow"?: {
+"eslint-plugin-vue/no-template-shadow"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
+allow?: string[]
 [k: string]: unknown | undefined
-}
+}])
 /**
  * disallow target="_blank" attribute without rel="noopener noreferrer"
  * https://eslint.vuejs.org/rules/no-template-target-blank.html
@@ -5374,6 +5601,7 @@ allowBinding?: boolean
 "eslint-plugin-vue/no-template-target-blank"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowReferrer?: boolean
 enforceDynamicLinks?: ("always" | "never")
+[k: string]: unknown | undefined
 }])
 /**
  * disallow mustaches in `<textarea>`
@@ -5395,6 +5623,7 @@ enforceDynamicLinks?: ("always" | "never")
  */
 "eslint-plugin-vue/no-undef-components"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignorePatterns?: unknown[]
+[k: string]: unknown | undefined
 }])
 /**
  * disallow undefined properties
@@ -5402,6 +5631,7 @@ ignorePatterns?: unknown[]
  */
 "eslint-plugin-vue/no-undef-properties"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignores?: string[]
+[k: string]: unknown | undefined
 }])
 /**
  * disallow unsupported Vue.js syntax on the specified version
@@ -5409,7 +5639,8 @@ ignores?: string[]
  */
 "eslint-plugin-vue/no-unsupported-features"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 version?: string
-ignores?: ("slot-scope-attribute" | "dynamic-directive-arguments" | "v-slot" | "script-setup" | "style-css-vars-injection" | "v-model-argument" | "v-model-custom-modifiers" | "v-is" | "is-attribute-with-vue-prefix" | "v-memo" | "v-bind-prop-modifier-shorthand" | "v-bind-attr-modifier" | "define-options" | "define-slots")[]
+ignores?: ("slot-scope-attribute" | "dynamic-directive-arguments" | "v-slot" | "script-setup" | "style-css-vars-injection" | "v-model-argument" | "v-model-custom-modifiers" | "v-is" | "is-attribute-with-vue-prefix" | "v-memo" | "v-bind-prop-modifier-shorthand" | "v-bind-attr-modifier" | "define-options" | "define-slots" | "define-model" | "v-bind-same-name-shorthand")[]
+[k: string]: unknown | undefined
 }])
 /**
  * disallow registering components that are not used inside templates
@@ -5417,7 +5648,15 @@ ignores?: ("slot-scope-attribute" | "dynamic-directive-arguments" | "v-slot" | "
  */
 "eslint-plugin-vue/no-unused-components"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignoreWhenBindingPresent?: boolean
+[k: string]: unknown | undefined
 }])
+/**
+ * disallow unused emit declarations
+ * https://eslint.vuejs.org/rules/no-unused-emit-declarations.html
+ */
+"eslint-plugin-vue/no-unused-emit-declarations"?: {
+[k: string]: unknown | undefined
+}
 /**
  * disallow unused properties
  * https://eslint.vuejs.org/rules/no-unused-properties.html
@@ -5427,6 +5666,7 @@ groups?: ("props" | "data" | "asyncData" | "computed" | "methods" | "setup")[]
 deepData?: boolean
 ignorePublicMembers?: boolean
 unreferencedOptions?: ("unknownMemberAsUnreferenced" | "returnAsUnreferenced")[]
+[k: string]: unknown | undefined
 }])
 /**
  * disallow unused refs
@@ -5441,6 +5681,7 @@ unreferencedOptions?: ("unknownMemberAsUnreferenced" | "returnAsUnreferenced")[]
  */
 "eslint-plugin-vue/no-unused-vars"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignorePattern?: string
+[k: string]: unknown | undefined
 }])
 /**
  * disallow use computed property like method
@@ -5462,6 +5703,7 @@ ignorePattern?: string
  */
 "eslint-plugin-vue/no-use-v-if-with-v-for"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowUsingIterationVar?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow unnecessary concatenation of literals or template literals in `<template>`
@@ -5477,6 +5719,7 @@ allowUsingIterationVar?: boolean
 "eslint-plugin-vue/no-useless-mustaches"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignoreIncludesComment?: boolean
 ignoreStringEscape?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * disallow useless attribute on `<template>`
@@ -5492,6 +5735,7 @@ ignoreStringEscape?: boolean
 "eslint-plugin-vue/no-useless-v-bind"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignoreIncludesComment?: boolean
 ignoreStringEscape?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * disallow key of `<template v-for>` placed on child elements
@@ -5525,9 +5769,10 @@ ignoreStringEscape?: boolean
  * disallow v-text / v-html on component
  * https://eslint.vuejs.org/rules/no-v-text-v-html-on-component.html
  */
-"eslint-plugin-vue/no-v-text-v-html-on-component"?: {
+"eslint-plugin-vue/no-v-text-v-html-on-component"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
+allow?: string[]
 [k: string]: unknown | undefined
-}
+}])
 /**
  * disallow use of v-text
  * https://eslint.vuejs.org/rules/no-v-text.html
@@ -5547,14 +5792,14 @@ ignoreStringEscape?: boolean
  * https://eslint.vuejs.org/rules/object-curly-newline.html
  */
 "eslint-plugin-vue/object-curly-newline"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent spacing inside braces in `<template>`
  * https://eslint.vuejs.org/rules/object-curly-spacing.html
  */
 "eslint-plugin-vue/object-curly-spacing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce placing object properties on separate lines in `<template>`
@@ -5563,6 +5808,7 @@ ignoreStringEscape?: boolean
 "eslint-plugin-vue/object-property-newline"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowAllPropertiesOnSameLine?: boolean
 allowMultiplePropertiesPerLine?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Require or disallow method and property shorthand syntax for object literals in `<template>`
@@ -5583,7 +5829,7 @@ allowMultiplePropertiesPerLine?: boolean
  * https://eslint.vuejs.org/rules/operator-linebreak.html
  */
 "eslint-plugin-vue/operator-linebreak"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce order of properties in components
@@ -5591,27 +5837,28 @@ allowMultiplePropertiesPerLine?: boolean
  */
 "eslint-plugin-vue/order-in-components"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 order?: unknown[]
+[k: string]: unknown | undefined
 }])
 /**
  * require or disallow padding lines between blocks
  * https://eslint.vuejs.org/rules/padding-line-between-blocks.html
  */
 "eslint-plugin-vue/padding-line-between-blocks"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * require or disallow newlines between sibling tags in template
  * https://eslint.vuejs.org/rules/padding-line-between-tags.html
  */
 "eslint-plugin-vue/padding-line-between-tags"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * require or disallow padding lines in component definition
  * https://eslint.vuejs.org/rules/padding-lines-in-component-definition.html
  */
 "eslint-plugin-vue/padding-lines-in-component-definition"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce use of `defineOptions` instead of default export.
@@ -5653,14 +5900,14 @@ order?: unknown[]
  * https://eslint.vuejs.org/rules/prefer-true-attribute-shorthand.html
  */
 "eslint-plugin-vue/prefer-true-attribute-shorthand"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce specific casing for the Prop name in Vue components
  * https://eslint.vuejs.org/rules/prop-name-casing.html
  */
 "eslint-plugin-vue/prop-name-casing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Require quotes around object literal property names in `<template>`
@@ -5689,6 +5936,7 @@ order?: unknown[]
  */
 "eslint-plugin-vue/require-direct-export"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 disallowFunctionalComponentFunction?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * require type definitions in emits
@@ -5703,7 +5951,15 @@ disallowFunctionalComponentFunction?: boolean
  */
 "eslint-plugin-vue/require-explicit-emits"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowProps?: boolean
+[k: string]: unknown | undefined
 }])
+/**
+ * require slots to be explicitly defined
+ * https://eslint.vuejs.org/rules/require-explicit-slots.html
+ */
+"eslint-plugin-vue/require-explicit-slots"?: {
+[k: string]: unknown | undefined
+}
 /**
  * require declare public properties using `expose`
  * https://eslint.vuejs.org/rules/require-expose.html
@@ -5721,6 +5977,7 @@ defineEmits?: string
 defineSlots?: string
 useSlots?: string
 useAttrs?: string
+[k: string]: unknown | undefined
 }])
 /**
  * require a name property in Vue components
@@ -5735,6 +5992,7 @@ useAttrs?: string
  */
 "eslint-plugin-vue/require-prop-comment"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 type?: ("JSDoc" | "line" | "block" | "any")
+[k: string]: unknown | undefined
 }])
 /**
  * require prop type to be a constructor
@@ -5805,6 +6063,7 @@ type?: ("JSDoc" | "line" | "block" | "any")
  */
 "eslint-plugin-vue/return-in-computed-property"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 treatUndefinedAsUnspecified?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * enforce that a return statement is present in emits validator
@@ -5818,7 +6077,7 @@ treatUndefinedAsUnspecified?: boolean
  * https://eslint.vuejs.org/rules/script-indent.html
  */
 "eslint-plugin-vue/script-indent"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * prevent `<script setup>` variables used in `<template>` to be marked as unused
@@ -5835,20 +6094,22 @@ treatUndefinedAsUnspecified?: boolean
 ignoreWhenNoAttributes?: boolean
 ignoreWhenEmpty?: boolean
 ignores?: string[]
+externalIgnores?: string[]
+[k: string]: unknown | undefined
 }])
 /**
  * enforce sort-keys in a manner that is compatible with order-in-components
  * https://eslint.vuejs.org/rules/sort-keys.html
  */
 "eslint-plugin-vue/sort-keys"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent spacing inside parentheses in `<template>`
  * https://eslint.vuejs.org/rules/space-in-parens.html
  */
 "eslint-plugin-vue/space-in-parens"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Require spacing around infix operators in `<template>`
@@ -5856,6 +6117,7 @@ ignores?: string[]
  */
 "eslint-plugin-vue/space-infix-ops"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 int32Hint?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent spacing before or after unary operators in `<template>`
@@ -5867,6 +6129,7 @@ nonwords?: boolean
 overrides?: {
 [k: string]: boolean | undefined
 }
+[k: string]: unknown | undefined
 }])
 /**
  * enforce static class names order
@@ -5880,14 +6143,14 @@ overrides?: {
  * https://eslint.vuejs.org/rules/template-curly-spacing.html
  */
 "eslint-plugin-vue/template-curly-spacing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * disallow usage of `this` in template
  * https://eslint.vuejs.org/rules/this-in-template.html
  */
 "eslint-plugin-vue/this-in-template"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce usage of `exact` modifier on `v-on`
@@ -5901,49 +6164,56 @@ overrides?: {
  * https://eslint.vuejs.org/rules/v-bind-style.html
  */
 "eslint-plugin-vue/v-bind-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce `v-for` directive's delimiter style
  * https://eslint.vuejs.org/rules/v-for-delimiter-style.html
  */
 "eslint-plugin-vue/v-for-delimiter-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
+/**
+ * require key attribute for conditionally rendered repeated components
+ * https://eslint.vuejs.org/rules/v-if-else-key.html
+ */
+"eslint-plugin-vue/v-if-else-key"?: {
+[k: string]: unknown | undefined
+}
 /**
  * enforce v-on event naming style on custom components in template
  * https://eslint.vuejs.org/rules/v-on-event-hyphenation.html
  */
 "eslint-plugin-vue/v-on-event-hyphenation"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce or forbid parentheses after method calls without arguments in `v-on` directives
  * https://eslint.vuejs.org/rules/v-on-function-call.html
  */
 "eslint-plugin-vue/v-on-function-call"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce writing style for handlers in `v-on` directives
  * https://eslint.vuejs.org/rules/v-on-handler-style.html
  */
 "eslint-plugin-vue/v-on-handler-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce `v-on` directive style
  * https://eslint.vuejs.org/rules/v-on-style.html
  */
 "eslint-plugin-vue/v-on-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * enforce `v-slot` directive style
  * https://eslint.vuejs.org/rules/v-slot-style.html
  */
 "eslint-plugin-vue/v-slot-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * require valid attribute names
@@ -6077,6 +6347,7 @@ overrides?: {
  */
 "eslint-plugin-vue/valid-v-on"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 modifiers?: unknown[]
+[k: string]: unknown | undefined
 }])
 /**
  * enforce valid `v-once` directives
@@ -6105,6 +6376,7 @@ modifiers?: unknown[]
  */
 "eslint-plugin-vue/valid-v-slot"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowModifiers?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * enforce valid `v-text` directives
@@ -6137,6 +6409,7 @@ default?: {
 readonly?: {
 [k: string]: unknown | undefined
 }
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow awaiting a value that is not a Thenable
@@ -6155,6 +6428,7 @@ readonly?: {
 "ts-nocheck"?: unknown
 "ts-check"?: unknown
 minimumDescriptionLength?: number
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow `// tslint:<rule-flag>` comments
@@ -6172,27 +6446,28 @@ types?: {
 [k: string]: unknown | undefined
 }
 extendDefaults?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow or enforce spaces inside of blocks after opening block and before closing block
  * https://typescript-eslint.io/rules/block-spacing
  */
 "@typescript-eslint/block-spacing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent brace style for blocks
  * https://typescript-eslint.io/rules/brace-style
  */
 "@typescript-eslint/brace-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce that literals on classes are exposed in a consistent style
  * https://typescript-eslint.io/rules/class-literal-property-style
  */
 "@typescript-eslint/class-literal-property-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce that class methods utilize `this`
@@ -6215,6 +6490,7 @@ ignoreOverrideMethods?: boolean
  * Ignore classes that specifically implement some interface
  */
 ignoreClassesThatImplementAnInterface?: (boolean | "public-fields")
+[k: string]: unknown | undefined
 }])
 /**
  * Require or disallow trailing commas
@@ -6230,19 +6506,28 @@ ignoreClassesThatImplementAnInterface?: (boolean | "public-fields")
 "@typescript-eslint/comma-spacing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 before?: boolean
 after?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce specifying generic type arguments on type annotation or constructor name of a constructor call
  * https://typescript-eslint.io/rules/consistent-generic-constructors
  */
 "@typescript-eslint/consistent-generic-constructors"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Require or disallow the `Record` type
  * https://typescript-eslint.io/rules/consistent-indexed-object-style
  */
 "@typescript-eslint/consistent-indexed-object-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), ("record" | "index-signature")])
+/**
+ * Require `return` statements to either always or never specify values
+ * https://typescript-eslint.io/rules/consistent-return
+ */
+"@typescript-eslint/consistent-return"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
+treatUndefinedAsUnspecified?: boolean
+[k: string]: unknown | undefined
+}])
 /**
  * Enforce consistent usage of type assertions
  * https://typescript-eslint.io/rules/consistent-type-assertions
@@ -6255,7 +6540,7 @@ after?: boolean
  * https://typescript-eslint.io/rules/consistent-type-definitions
  */
 "@typescript-eslint/consistent-type-definitions"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent usage of type exports
@@ -6263,15 +6548,17 @@ after?: boolean
  */
 "@typescript-eslint/consistent-type-exports"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 fixMixedExportsWithInlineTypeSpecifier?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent usage of type imports
  * https://typescript-eslint.io/rules/consistent-type-imports
  */
 "@typescript-eslint/consistent-type-imports"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-prefer?: ("type-imports" | "no-type-imports")
 disallowTypeAnnotations?: boolean
 fixStyle?: ("separate-type-imports" | "inline-type-imports")
+prefer?: ("type-imports" | "no-type-imports")
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce default parameters to be last
@@ -6290,6 +6577,7 @@ allowPattern?: string
 allowPrivateClassPropertyAccess?: boolean
 allowProtectedClassPropertyAccess?: boolean
 allowIndexSignaturePropertyAccess?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Require explicit return types on functions and class methods
@@ -6328,6 +6616,7 @@ allowedNames?: string[]
  * Whether to ignore immediately invoked function expressions (IIFEs).
  */
 allowIIFEs?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Require explicit accessibility modifiers on class properties and methods
@@ -6343,6 +6632,7 @@ properties?: unknown
 parameterProperties?: unknown
 }
 ignoredMethodNames?: string[]
+[k: string]: unknown | undefined
 }])
 /**
  * Require explicit return and argument types on exported functions' and classes' public class methods
@@ -6371,6 +6661,7 @@ allowHigherOrderFunctions?: boolean
  * Whether to ignore type annotations on the variable of a function expression.
  */
 allowTypedFunctionExpressions?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Require or disallow spacing between function identifiers and their invocations
@@ -6384,7 +6675,7 @@ allowTypedFunctionExpressions?: boolean
  * https://typescript-eslint.io/rules/indent
  */
 "@typescript-eslint/indent"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Require or disallow initialization in variable declarations
@@ -6398,7 +6689,7 @@ allowTypedFunctionExpressions?: boolean
  * https://typescript-eslint.io/rules/key-spacing
  */
 "@typescript-eslint/key-spacing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent spacing before and after keywords
@@ -6685,6 +6976,7 @@ before?: boolean
 after?: boolean
 }
 }
+[k: string]: unknown | undefined
 }])
 /**
  * Require empty lines around comments
@@ -6713,13 +7005,14 @@ allowModuleStart?: boolean
 allowModuleEnd?: boolean
 ignorePattern?: string
 applyDefaultIgnorePatterns?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Require or disallow an empty line between class members
  * https://typescript-eslint.io/rules/lines-between-class-members
  */
 "@typescript-eslint/lines-between-class-members"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce a maximum number of parameters in function definitions
@@ -6729,6 +7022,7 @@ applyDefaultIgnorePatterns?: boolean
 maximum?: number
 max?: number
 countVoidThis?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Require a specific member delimiter style for interfaces and type literals
@@ -6748,6 +7042,7 @@ interface?: unknown
 typeLiteral?: unknown
 }
 multilineDetection?: ("brackets" | "last-member")
+[k: string]: unknown | undefined
 }])
 /**
  * Require a consistent member declaration order
@@ -6759,13 +7054,14 @@ classes?: unknown
 classExpressions?: unknown
 interfaces?: unknown
 typeLiterals?: unknown
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce using a particular method signature syntax
  * https://typescript-eslint.io/rules/method-signature-style
  */
 "@typescript-eslint/method-signature-style"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce naming conventions for everything across a codebase
@@ -6782,11 +7078,19 @@ typeLiterals?: unknown
 [k: string]: unknown | undefined
 }
 /**
+ * Disallow using the `delete` operator on array values
+ * https://typescript-eslint.io/rules/no-array-delete
+ */
+"@typescript-eslint/no-array-delete"?: {
+[k: string]: unknown | undefined
+}
+/**
  * Require `.toStringstring` to only be called on objects which provide useful information when stringified
  * https://typescript-eslint.io/rules/no-base-to-string
  */
 "@typescript-eslint/no-base-to-string"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignoredTypeNames?: string[]
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow non-null assertion in locations that may be confusing
@@ -6802,6 +7106,7 @@ ignoredTypeNames?: string[]
 "@typescript-eslint/no-confusing-void-expression"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignoreArrowShorthand?: boolean
 ignoreVoidOperator?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow duplicate class members
@@ -6824,6 +7129,7 @@ ignoreVoidOperator?: boolean
 "@typescript-eslint/no-duplicate-type-constituents"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignoreIntersections?: boolean
 ignoreUnions?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow using the `delete` operator on computed key expressions
@@ -6838,6 +7144,7 @@ ignoreUnions?: boolean
  */
 "@typescript-eslint/no-empty-function"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allow?: ("functions" | "arrowFunctions" | "generatorFunctions" | "methods" | "generatorMethods" | "getters" | "setters" | "constructors" | "private-constructors" | "protected-constructors" | "asyncFunctions" | "asyncMethods" | "decoratedFunctions" | "overrideMethods")[]
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow the declaration of empty interfaces
@@ -6845,6 +7152,7 @@ allow?: ("functions" | "arrowFunctions" | "generatorFunctions" | "methods" | "ge
  */
 "@typescript-eslint/no-empty-interface"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowSingleExtends?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow the `any` type
@@ -6859,6 +7167,7 @@ fixToUnknown?: boolean
  * Whether to ignore rest parameter arrays.
  */
 ignoreRestArgs?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow extra non-null assertions
@@ -6902,6 +7211,7 @@ allowStaticOnly?: boolean
  * Whether to allow extraneous classes that include a decorator.
  */
 allowWithDecorator?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Require Promise-like statements to be handled appropriately
@@ -6916,6 +7226,19 @@ ignoreVoid?: boolean
  * Whether to ignore async IIFEs (Immediately Invoked Function Expressions).
  */
 ignoreIIFE?: boolean
+allowForKnownSafePromises?: (string | {
+from: "file"
+name: (string | [string, ...(string)[]])
+path?: string
+} | {
+from: "lib"
+name: (string | [string, ...(string)[]])
+} | {
+from: "package"
+name: (string | [string, ...(string)[]])
+package: string
+})[]
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow iterating over an array with a for-in loop
@@ -6945,6 +7268,7 @@ ignoreIIFE?: boolean
 "@typescript-eslint/no-inferrable-types"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 ignoreParameters?: boolean
 ignoreProperties?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow `this` keywords outside of classes or class-like objects
@@ -6952,6 +7276,7 @@ ignoreProperties?: boolean
  */
 "@typescript-eslint/no-invalid-this"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 capIsConstructor?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow `void` type outside of generic or return types
@@ -6960,6 +7285,7 @@ capIsConstructor?: boolean
 "@typescript-eslint/no-invalid-void-type"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowInGenericTypeArguments?: (boolean | [string, ...(string)[]])
 allowAsThisParameter?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow function declarations that contain unsafe references inside loop statements
@@ -6990,6 +7316,7 @@ ignoreNumericLiteralTypes?: boolean
 ignoreEnums?: boolean
 ignoreReadonlyClassProperties?: boolean
 ignoreTypeIndexes?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow the `void` operator except when used to discard a value
@@ -6997,6 +7324,7 @@ ignoreTypeIndexes?: boolean
  */
 "@typescript-eslint/no-meaningless-void-operator"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 checkNever?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce valid definition of `new` and `constructor`
@@ -7019,6 +7347,7 @@ returns?: boolean
 variables?: boolean
 })
 checksSpreads?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow enums from having both number and string members
@@ -7040,6 +7369,7 @@ allowDeclarations?: boolean
  * Whether to allow `declare` with custom TypeScript namespaces inside definition files.
  */
 allowDefinitionFiles?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow non-null assertions in the left operand of a nullish coalescing operator
@@ -7069,6 +7399,7 @@ allowDefinitionFiles?: boolean
 "@typescript-eslint/no-redeclare"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 builtinGlobals?: boolean
 ignoreDeclarationMerge?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow members of unions and intersections that do nothing or override type information
@@ -7081,9 +7412,13 @@ ignoreDeclarationMerge?: boolean
  * Disallow invocation of `requirestring`
  * https://typescript-eslint.io/rules/no-require-imports
  */
-"@typescript-eslint/no-require-imports"?: {
+"@typescript-eslint/no-require-imports"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
+/**
+ * Patterns of import paths to allow requiring from.
+ */
+allow?: string[]
 [k: string]: unknown | undefined
-}
+}])
 /**
  * Disallow specified modules when loaded by `import`
  * https://typescript-eslint.io/rules/no-restricted-imports
@@ -7102,6 +7437,7 @@ allow?: string[]
 ignoreOnInitialization?: boolean
 ignoreTypeValueShadow?: boolean
 ignoreFunctionTypeParameterNameValueShadow?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow aliasing `this`
@@ -7116,6 +7452,7 @@ allowDestructuring?: boolean
  * Names to ignore, such as ["self"] for `const self = this;`.
  */
 allowedNames?: string[]
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow throwing literals as exceptions
@@ -7124,6 +7461,7 @@ allowedNames?: string[]
 "@typescript-eslint/no-throw-literal"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowThrowingAny?: boolean
 allowThrowingUnknown?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow type aliases
@@ -7178,6 +7516,7 @@ allowTupleTypes?: {
 allowGenerics?: {
 [k: string]: unknown | undefined
 }
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow unnecessary equality comparisons against boolean literals
@@ -7192,6 +7531,7 @@ allowComparingNullableBooleansToTrue?: boolean
  * Whether to allow comparisons between nullable boolean variables and `false`.
  */
 allowComparingNullableBooleansToFalse?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow conditionals where the type is always truthy or always falsy
@@ -7206,12 +7546,20 @@ allowConstantLoopConditions?: boolean
  * Whether to not error when running with a tsconfig that has strictNullChecks turned.
  */
 allowRuleToRunWithoutStrictNullChecksIKnowWhatIAmDoing?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow unnecessary namespace qualifiers
  * https://typescript-eslint.io/rules/no-unnecessary-qualifier
  */
 "@typescript-eslint/no-unnecessary-qualifier"?: {
+[k: string]: unknown | undefined
+}
+/**
+ * Disallow unnecessary template expressions
+ * https://typescript-eslint.io/rules/no-unnecessary-template-expression
+ */
+"@typescript-eslint/no-unnecessary-template-expression"?: {
 [k: string]: unknown | undefined
 }
 /**
@@ -7230,6 +7578,7 @@ allowRuleToRunWithoutStrictNullChecksIKnowWhatIAmDoing?: boolean
  * A list of type names to ignore.
  */
 typesToIgnore?: string[]
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow unnecessary constraints on generic types
@@ -7303,27 +7652,21 @@ allowShortCircuit?: boolean
 allowTernary?: boolean
 allowTaggedTemplates?: boolean
 enforceForJSX?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow unused variables
  * https://typescript-eslint.io/rules/no-unused-vars
  */
 "@typescript-eslint/no-unused-vars"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-vars?: ("all" | "local")
-varsIgnorePattern?: string
-args?: ("after-used" | "all" | "none")
-argsIgnorePattern?: string
-caughtErrors?: ("none" | "all")
-caughtErrorsIgnorePattern?: string
-destructuredArrayIgnorePattern?: string
-ignoreRestSiblings?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow the use of variables before they are defined
  * https://typescript-eslint.io/rules/no-use-before-define
  */
 "@typescript-eslint/no-use-before-define"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow unnecessary constructors
@@ -7340,12 +7683,23 @@ ignoreRestSiblings?: boolean
 [k: string]: unknown | undefined
 }
 /**
+ * Disallow unnecessary template expressions
+ * https://typescript-eslint.io/rules/no-useless-template-literals
+ */
+"@typescript-eslint/no-useless-template-literals"?: {
+[k: string]: unknown | undefined
+}
+/**
  * Disallow `require` statements except in import statements
  * https://typescript-eslint.io/rules/no-var-requires
  */
-"@typescript-eslint/no-var-requires"?: {
+"@typescript-eslint/no-var-requires"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
+/**
+ * Patterns of import paths to allow requiring from.
+ */
+allow?: string[]
 [k: string]: unknown | undefined
-}
+}])
 /**
  * Enforce non-null assertions over explicit type casts
  * https://typescript-eslint.io/rules/non-nullable-type-assertion-style
@@ -7358,7 +7712,16 @@ ignoreRestSiblings?: boolean
  * https://typescript-eslint.io/rules/object-curly-spacing
  */
 "@typescript-eslint/object-curly-spacing"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
+}])
+/**
+ * Disallow throwing non-`Error` values as exceptions
+ * https://typescript-eslint.io/rules/only-throw-error
+ */
+"@typescript-eslint/only-throw-error"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
+allowThrowingAny?: boolean
+allowThrowingUnknown?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Require or disallow padding lines between statements
@@ -7374,6 +7737,7 @@ ignoreRestSiblings?: boolean
 "@typescript-eslint/parameter-properties"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allow?: unknown[]
 prefer?: ("class-property" | "parameter-property")
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce the use of `as const` over literal type
@@ -7387,13 +7751,20 @@ prefer?: ("class-property" | "parameter-property")
  * https://typescript-eslint.io/rules/prefer-destructuring
  */
 "@typescript-eslint/prefer-destructuring"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Require each enum member value to be explicitly initialized
  * https://typescript-eslint.io/rules/prefer-enum-initializers
  */
 "@typescript-eslint/prefer-enum-initializers"?: {
+[k: string]: unknown | undefined
+}
+/**
+ * Enforce the use of Array.prototype.findstring over Array.prototype.filterstring followed by [0] when looking for a single result
+ * https://typescript-eslint.io/rules/prefer-find
+ */
+"@typescript-eslint/prefer-find"?: {
 [k: string]: unknown | undefined
 }
 /**
@@ -7423,6 +7794,7 @@ prefer?: ("class-property" | "parameter-property")
  */
 "@typescript-eslint/prefer-literal-enum-member"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 allowBitwiseExpressions?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Require using `namespace` keyword over `module` keyword to declare custom TypeScript modules
@@ -7447,6 +7819,7 @@ string?: boolean
 [k: string]: unknown | undefined
 } | true)
 ignoreTernaryTests?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce using concise optional chain expressions instead of chained logical ands, negated logical ors, or empty objects
@@ -7485,6 +7858,15 @@ requireNullish?: boolean
  * Allow autofixers that will change the return type of the expression. This option is considered unsafe as it may break the build.
  */
 allowPotentiallyUnsafeFixesThatModifyTheReturnTypeIKnowWhatImDoing?: boolean
+[k: string]: unknown | undefined
+}])
+/**
+ * Require using Error objects as Promise rejection reasons
+ * https://typescript-eslint.io/rules/prefer-promise-reject-errors
+ */
+"@typescript-eslint/prefer-promise-reject-errors"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
+allowEmptyReject?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Require private members to be marked as `readonly` if they're never modified outside of the constructor
@@ -7492,6 +7874,7 @@ allowPotentiallyUnsafeFixesThatModifyTheReturnTypeIKnowWhatImDoing?: boolean
  */
 "@typescript-eslint/prefer-readonly"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 onlyInlineLambdas?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Require function parameters to be typed as `readonly` to prevent accidental mutation of inputs
@@ -7513,6 +7896,7 @@ package: string
 checkParameterProperties?: boolean
 ignoreInferredTypes?: boolean
 treatMethodsAsReadonly?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce using type parameter when calling `Array#reduce` instead of casting
@@ -7539,9 +7923,13 @@ treatMethodsAsReadonly?: boolean
  * Enforce using `String#startsWith` and `String#endsWith` over other equivalent methods of checking substrings
  * https://typescript-eslint.io/rules/prefer-string-starts-ends-with
  */
-"@typescript-eslint/prefer-string-starts-ends-with"?: {
+"@typescript-eslint/prefer-string-starts-ends-with"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
+/**
+ * Whether to allow equality checks against the first or last element of a string.
+ */
+allowSingleElementEquality?: ("always" | "never")
 [k: string]: unknown | undefined
-}
+}])
 /**
  * Enforce using `@ts-expect-error` over `@ts-ignore`
  * https://typescript-eslint.io/rules/prefer-ts-expect-error
@@ -7566,16 +7954,17 @@ checkArrowFunctions?: boolean
 checkFunctionDeclarations?: boolean
 checkFunctionExpressions?: boolean
 checkMethodDeclarations?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce the consistent use of either backticks, double, or single quotes
  * https://typescript-eslint.io/rules/quotes
  */
 "@typescript-eslint/quotes"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
- * Require `Array#sort` calls to always provide a `compareFunction`
+ * Require `Array#sort` and `Array#toSorted` calls to always provide a `compareFunction`
  * https://typescript-eslint.io/rules/require-array-sort-compare
  */
 "@typescript-eslint/require-array-sort-compare"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
@@ -7583,9 +7972,10 @@ checkMethodDeclarations?: boolean
  * Whether to ignore arrays in which all elements are strings.
  */
 ignoreStringArrays?: boolean
+[k: string]: unknown | undefined
 }])
 /**
- * Disallow async functions which have no `await` expression
+ * Disallow async functions which do not return promises and have no `await` expression
  * https://typescript-eslint.io/rules/require-await
  */
 "@typescript-eslint/require-await"?: {
@@ -7620,6 +8010,7 @@ allowRegExp?: boolean
  * Whether to skip compound assignments such as `+=`.
  */
 skipCompoundAssignments?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce template literal expressions to be of `string` type
@@ -7630,6 +8021,10 @@ skipCompoundAssignments?: boolean
  * Whether to allow `any` typed values in template expressions.
  */
 allowAny?: boolean
+/**
+ * Whether to allow `array` typed values in template expressions.
+ */
+allowArray?: boolean
 /**
  * Whether to allow `boolean` typed values in template expressions.
  */
@@ -7650,13 +8045,14 @@ allowRegExp?: boolean
  * Whether to allow `never` typed values in template expressions.
  */
 allowNever?: boolean
+[k: string]: unknown | undefined
 }])
 /**
- * Enforce consistent returning of awaited values
+ * Enforce consistent awaiting of returned promises
  * https://typescript-eslint.io/rules/return-await
  */
 "@typescript-eslint/return-await"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Require or disallow semicolons instead of ASI
@@ -7679,23 +8075,28 @@ checkIntersections?: boolean
  */
 checkUnions?: boolean
 /**
+ * Whether to sort using case sensitive sorting.
+ */
+caseSensitive?: boolean
+/**
  * Ordering of the groups.
  */
 groupOrder?: ("conditional" | "function" | "import" | "intersection" | "keyword" | "nullish" | "literal" | "named" | "object" | "operator" | "tuple" | "union")[]
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent spacing before blocks
  * https://typescript-eslint.io/rules/space-before-blocks
  */
 "@typescript-eslint/space-before-blocks"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce consistent spacing before function parenthesis
  * https://typescript-eslint.io/rules/space-before-function-paren
  */
 "@typescript-eslint/space-before-function-paren"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-
+[k: string]: unknown | undefined
 }])
 /**
  * Require spacing around infix operators
@@ -7703,6 +8104,7 @@ groupOrder?: ("conditional" | "function" | "import" | "intersection" | "keyword"
  */
 "@typescript-eslint/space-infix-ops"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 int32Hint?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow certain types in boolean expressions
@@ -7718,6 +8120,7 @@ allowNullableNumber?: boolean
 allowNullableEnum?: boolean
 allowAny?: boolean
 allowRuleToRunWithoutStrictNullChecksIKnowWhatIAmDoing?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Require switch-case statements to be exhaustive
@@ -7725,9 +8128,14 @@ allowRuleToRunWithoutStrictNullChecksIKnowWhatIAmDoing?: boolean
  */
 "@typescript-eslint/switch-exhaustiveness-check"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
 /**
+ * If 'true', allow 'default' cases on switch statements with exhaustive cases.
+ */
+allowDefaultCaseForExhaustiveSwitch?: boolean
+/**
  * If 'true', require a 'default' clause for switches on non-union types.
  */
 requireDefaultForNonUnion?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow certain triple slash directives in favor of ES6-style import declarations
@@ -7737,6 +8145,7 @@ requireDefaultForNonUnion?: boolean
 lib?: ("always" | "never")
 path?: ("always" | "never")
 types?: ("always" | "never" | "prefer-import")
+[k: string]: unknown | undefined
 }])
 /**
  * Require consistent spacing around type annotations
@@ -7753,6 +8162,7 @@ parameter?: unknown
 property?: unknown
 returnType?: unknown
 }
+[k: string]: unknown | undefined
 }])
 /**
  * Require type annotations in certain places
@@ -7767,6 +8177,7 @@ parameter?: boolean
 propertyDeclaration?: boolean
 variableDeclaration?: boolean
 variableDeclarationIgnoreFunction?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Enforce unbound methods are called with their expected scope
@@ -7777,6 +8188,7 @@ variableDeclarationIgnoreFunction?: boolean
  * Whether to skip checking whether `static` methods are correctly bound.
  */
 ignoreStatic?: boolean
+[k: string]: unknown | undefined
 }])
 /**
  * Disallow two overloads that could be unified into one with a union or an optional/rest parameter
@@ -7787,7 +8199,15 @@ ignoreStatic?: boolean
  * Whether two parameters with different names at the same index should be considered different even if their types are the same.
  */
 ignoreDifferentlyNamedParameters?: boolean
+[k: string]: unknown | undefined
 }])
+/**
+ * Enforce typing arguments in `.catchstring` callbacks as `unknown`
+ * https://typescript-eslint.io/rules/use-unknown-in-catch-callback-variable
+ */
+"@typescript-eslint/use-unknown-in-catch-callback-variable"?: {
+[k: string]: unknown | undefined
+}
 [k: string]: unknown | undefined
 }
 /**
