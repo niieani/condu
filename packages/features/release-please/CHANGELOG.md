@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.3](https://github.com/niieani/toolchain/compare/@condu-feature/release-please@0.1.2...@condu-feature/release-please@0.1.3) (2024-07-10)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * condu bumped to 0.1.3
+
 ## [0.1.2](https://github.com/niieani/toolchain/compare/@condu-feature/release-please@0.1.1...@condu-feature/release-please@0.1.2) (2024-07-10)
 
 
