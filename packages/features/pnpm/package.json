@@ -1,0 +1,14 @@
+{
+  "name": "@condu-feature/pnpm",
+  "version": "0.0.0",
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "publishConfig": {
+    "access": "public",
+    "directory": "../../../build/packages/features/pnpm"
+  },
+  "peerDependencies": {
+    "condu": "workspace:^"
+  }
+}

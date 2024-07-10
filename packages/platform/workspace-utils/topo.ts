@@ -1,9 +1,8 @@
 import { basename, dirname, join, relative, resolve } from "node:path";
-import { promises as fs } from "node:fs";
 import glob from "fast-glob";
 import { analyze, type TTopoResult } from "toposource";
-import * as yaml from "yaml";
 import slash from "slash";
+import { readWorkspaceManifest } from "@pnpm/workspace.read-manifest";
 
 import type {
   ITopoOptionsNormalized,
@@ -155,17 +154,7 @@ export const extractWorkspaces = async (root: IPackageEntry) =>
     ? root.manifest.workspaces
     : root.manifest.workspaces?.packages) ||
   root.manifest.bolt?.workspaces ||
-  (await (async () => {
-    try {
-      const pnpmWsCfg = resolve(root.absPath, "pnpm-workspace.yaml");
-      const contents = yaml.parse(await fs.readFile(pnpmWsCfg, "utf8")) as {
-        packages: string[];
-      };
-      return contents.packages;
-    } catch {
-      return undefined;
-    }
-  })()) ||
+  (await readWorkspaceManifest(root.absPath))?.packages ||
   [];
 
 export const getGraph = (

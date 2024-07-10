@@ -50,11 +50,16 @@
 - [x] fix "Unable to determine the default git branch"
 - [x] support defining dependencies for features w/o importing from @condu/core
   - [x] extract that defineFunction into a separate package and keep it external? put it all in 'condu' along with the types? or does that create a circular dependency? maybe re-export the types from 'condu'
+- [x] better support for making '@condu/core' a peerDependency
+- [ ] pnpm feature
+- [ ] `condu init` command or `npx condu init` to
+  - [ ] add a default config file
+  - [ ] a preset just exports an object, so applying a preset is just merging each of the properties
+  - [ ] optionally create a new folder/git repo
+- [ ] non-monorepo/single package mode
 - [ ] what is up with yarnrc auto-changing?
 - [ ] cli to autoremove excess/unused dependencies (see if anything exists like this)
-- [ ] pnpm feature
 - [ ] fix the CLI command displayed (instead of "bun main.bundle.js") + add help
-- [ ] better support for making '@condu/core' a peerDependency
 - [ ] should we collocate per-package build config in the respective packages, or keep them global?
   - [ ] if yes, then how do we do it? `.config` folder per package?
   - [ ] make decision: where do we keep local config files? are they centrally managed? do we use config identifiers in folders names to nest configs?

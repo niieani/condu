@@ -160,6 +160,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@condu-feature/pnpm@workspace:packages/features/pnpm":
+  version: 0.0.0-use.local
+  resolution: "@condu-feature/pnpm@workspace:packages/features/pnpm"
+  peerDependencies:
+    condu: "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@condu-feature/release-please@workspace:packages/features/release-please":
   version: 0.0.0-use.local
   resolution: "@condu-feature/release-please@workspace:packages/features/release-please"
@@ -312,6 +320,7 @@ __metadata:
   dependencies:
     "@condu/types": "workspace:^"
     "@pnpm/read-project-manifest": "npm:^6.0.4"
+    "@pnpm/workspace.read-manifest": "npm:^2.2.0"
     fast-glob: "npm:^3.3.2"
     slash: "npm:^5.1.0"
     sort-package-json: "npm:^2.10.0"
