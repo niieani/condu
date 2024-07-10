@@ -57,6 +57,8 @@ export const releasePlease = ({
                   "include-v-in-tag": false,
                   "bootstrap-sha": "487dfcb00e029d0c8f483f41d0de82a992885f3d",
                   "group-pull-request-title-pattern": `chore: release ${config.project.manifest.name} (\${branch} branch)`,
+                  "bump-minor-pre-major": true,
+                  "bump-patch-for-minor-pre-major": true,
                   packages: releaserConfigPackages,
                   plugins: [
                     {

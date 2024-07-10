@@ -11,17 +11,22 @@
   "condu": {
     "initialDevelopment": true
   },
+  "//dependencies": "these need to inherit/include all dependencies from @condu/cli",
   "dependencies": {
     "@condu/cli": "workspace:^",
     "@condu/types": "workspace:^",
     "@condu/update-specifiers": "workspace:^",
     "@condu/workspace-utils": "workspace:^",
+    "@pnpm/catalogs.config": "^0.1.0",
+    "@pnpm/exportable-manifest": "^7.0.0",
     "@pnpm/fetch": "^8.0.3",
     "@pnpm/logger": "^5.0.0",
     "@pnpm/network.auth-header": "^3.0.1",
     "@pnpm/npm-resolver": "^21.0.0",
     "@pnpm/read-project-manifest": "^6.0.4",
     "@pnpm/types": "^11.0.0",
+    "@pnpm/workspace.find-packages": "^4.0.0",
+    "@pnpm/workspace.read-manifest": "^2.2.0",
     "spdx-license-list": "^6.9.0"
   },
   "devDependencies": {
