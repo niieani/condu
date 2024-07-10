@@ -105,6 +105,7 @@ export const releasePlease = ({
                       steps: [
                         {
                           id: "release-please",
+                          name: "Release Please: list candidate releases",
                           // uses: 'googleapis/release-please-action@v4',
                           uses: "niieani/release-please-action@use-fork",
                           with: {
@@ -117,6 +118,7 @@ export const releasePlease = ({
                         // TODO: only run this if no releases are pending, or after the release step is done
                         {
                           id: "release-please-prs",
+                          name: "Release Please: update PRs",
                           // uses: 'googleapis/release-please-action@v4',
                           uses: "niieani/release-please-action@use-fork",
                           with: {
@@ -141,6 +143,7 @@ export const releasePlease = ({
                         // TODO: always use the version from main, not the checked out one
                         { uses: "./.github/actions/moon-ci-setup" },
                         {
+                          name: "Release packages to NPM",
                           run: `${
                             isInternalCondu
                               ? `${config.node.packageManager.name} run `
@@ -164,6 +167,7 @@ export const releasePlease = ({
                         //   },
                         // },
                         {
+                          name: "Create Github Releases",
                           id: "release-please",
                           // uses: 'googleapis/release-please-action@v4',
                           uses: "niieani/release-please-action@use-fork",

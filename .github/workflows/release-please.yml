@@ -16,12 +16,14 @@ jobs:
       paths_to_release: ${{ steps.release-please.outputs.paths_to_release }}
     steps:
       - id: release-please
+        name: "Release Please: list candidate releases"
         uses: niieani/release-please-action@use-fork
         with:
           config-file: .config/release-please/config.json
           manifest-file: .config/release-please/manifest.json
           only: list-candidate-releases
       - id: release-please-prs
+        name: "Release Please: update PRs"
         uses: niieani/release-please-action@use-fork
         with:
           config-file: .config/release-please/config.json
@@ -37,11 +39,13 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/moon-ci-setup
-      - run: yarn run condu release --ci --npm-tag=latest  ./${{ join( fromJSON(
+      - name: Release packages to NPM
+        run: yarn run condu release --ci --npm-tag=latest  ./${{ join( fromJSON(
           needs.release-please.outputs.paths_to_release ), ' ./' ) }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - id: release-please
+      - name: Create Github Releases
+        id: release-please
         uses: niieani/release-please-action@use-fork
         with:
           config-file: .config/release-please/config.json
