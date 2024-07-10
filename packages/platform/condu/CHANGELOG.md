@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.3](https://github.com/niieani/toolchain/compare/condu@0.1.2...condu@0.1.3) (2024-07-10)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/cli bumped to 0.1.2
+    * @condu/workspace-utils bumped to 0.1.2
+
 ## [0.1.2](https://github.com/niieani/toolchain/compare/condu@0.1.1...condu@0.1.2) (2024-07-10)
 
 

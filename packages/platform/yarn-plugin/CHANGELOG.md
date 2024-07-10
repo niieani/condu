@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.2](https://github.com/niieani/toolchain/compare/@condu/yarn-plugin@0.1.1...@condu/yarn-plugin@0.1.2) (2024-07-10)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/cli bumped to 0.1.2
+
 ## [0.1.1](https://github.com/niieani/toolchain/compare/@condu/yarn-plugin@0.1.0...@condu/yarn-plugin@0.1.1) (2024-07-08)
 
 
