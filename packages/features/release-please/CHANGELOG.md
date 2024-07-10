@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.2](https://github.com/niieani/toolchain/compare/@condu-feature/release-please@0.1.1...@condu-feature/release-please@0.1.2) (2024-07-10)
+
+
+### Bug Fixes
+
+* add missing dependencies ([fbb18db](https://github.com/niieani/toolchain/commit/fbb18db9a0e49843d60ed297df3af928a9577880))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * condu bumped to 0.1.2
+
 ## [0.1.1](https://github.com/niieani/toolchain/compare/@condu-feature/release-please@0.1.0...@condu-feature/release-please@0.1.1) (2024-07-08)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/niieani/toolchain/compare/condu@0.1.1...condu@0.1.2) (2024-07-10)
+
+
+### Bug Fixes
+
+* add missing dependencies ([fbb18db](https://github.com/niieani/toolchain/commit/fbb18db9a0e49843d60ed297df3af928a9577880))
+
 ## [0.1.1](https://github.com/niieani/toolchain/compare/condu@0.1.0...condu@0.1.1) (2024-07-08)
 
 
