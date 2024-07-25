@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.1.2](https://github.com/niieani/toolchain/compare/@condu/core@0.1.1...@condu/core@0.1.2) (2024-07-25)
+
+
+### Features
+
+* add sync version of findUp ([a03b63e](https://github.com/niieani/toolchain/commit/a03b63ecd905b4b0df5f1f3bf570435c70bcd905))
+* enable linking other monorepos ([e707687](https://github.com/niieani/toolchain/commit/e707687bd2d5e109bb6d9eb96a9b777eb85e9737))
+
+
+### Bug Fixes
+
+* use findUp to find .git folder ([27fbb75](https://github.com/niieani/toolchain/commit/27fbb75c90e71e33286d331eb39a17c9b6aefe3f))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/types bumped to 0.1.2
+    * @condu/workspace-utils bumped to 0.1.3
+
 ## [0.1.1](https://github.com/niieani/toolchain/compare/@condu/core@0.1.0...@condu/core@0.1.1) (2024-07-08)
 
 
