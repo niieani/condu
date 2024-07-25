@@ -287,6 +287,8 @@ export async function prepareAndReleaseDirectoryPackages({
     // publish:
     if (npmTag) {
       // TODO: add support for --provenance https://docs.npmjs.com/generating-provenance-statements
+      // needs to detect if "repository" is set in package.json, and propagate it to other package.jsons
+      // if it is matching github or gitlab, then we can auto-enable it here
       const publishProcess = spawn(
         "npm",
         [

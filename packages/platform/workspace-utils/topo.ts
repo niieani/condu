@@ -12,10 +12,12 @@ import type {
   ITopoOptions,
   ITopoContext,
   IGetManifestPaths,
+  IGetWorkspaceOptions,
+  IWorkspaceContext,
 } from "./interface.js";
 import type {
   IPackageEntry,
-  RepoPackageJson,
+  ConduPackageJson,
   WriteManifestFnOptions,
 } from "@condu/types/configTypes.js";
 import { readProjectManifest } from "@pnpm/read-project-manifest";
@@ -30,12 +32,12 @@ const defaultScopes = [
 ];
 
 export const getPackages = async (
-  options: ITopoOptionsNormalized,
+  options: IGetWorkspaceOptions,
 ): Promise<Record<string, IPackageEntry>> => {
-  const { pkgFilter } = options;
+  const { pkgFilter, cwd } = options;
   const manifestsPaths = await getManifestsPaths(options);
   const entries = await Promise.all<IPackageEntry>(
-    manifestsPaths.map((manifestPath) => getPackage(options.cwd, manifestPath)),
+    manifestsPaths.map((manifestPath) => getPackage(cwd, manifestPath)),
   );
 
   checkDuplicates(entries);
@@ -59,7 +61,7 @@ const checkDuplicates = (named: { name: string }[]): void | never => {
 
 export const getPackage = async (
   workspaceRootDirectory: string,
-  manifestPath: string,
+  manifestPath = join(workspaceRootDirectory, "package.json"),
 ): Promise<IPackageEntry> => {
   const absPath = dirname(manifestPath);
   const relPath = relative(workspaceRootDirectory, absPath) || ".";
@@ -67,7 +69,7 @@ export const getPackage = async (
 
   // readProjectManifest uses pnpm's types for package.json, we need to cast it to our own type
   const pnpmProjectManifestResult = await readProjectManifest(absPath);
-  const manifest = pnpmProjectManifestResult.manifest as RepoPackageJson;
+  const manifest = pnpmProjectManifestResult.manifest as ConduPackageJson;
   const writeProjectManifest =
     pnpmProjectManifestResult.writeProjectManifest as (
       manifest: PackageJson,
@@ -116,22 +118,20 @@ export const topo = (
   };
 };
 
-export const topoFromWorkspace = async (
-  options: ITopoOptions = {},
-): Promise<ITopoContext> => {
+export const getWorkspace = async (
+  options: Partial<IGetWorkspaceOptions>,
+): Promise<IWorkspaceContext> => {
   const {
     cwd = process.cwd(),
     filter = (_) => true,
     pkgFilter = filter,
-    depFilter = (_) => true,
     workspaces,
     workspacesExtra = [],
   } = options;
   const root = await getPackage(cwd, resolve(cwd, "package.json"));
-  const _options: ITopoOptionsNormalized = {
+  const _options: IGetWorkspaceOptions = {
     cwd,
     filter,
-    depFilter,
     pkgFilter,
     workspacesExtra,
     workspaces: [
@@ -140,11 +140,28 @@ export const topoFromWorkspace = async (
     ],
   };
   const packages = await getPackages(_options);
-  const analysis = topo(Object.values(packages), _options);
-
   return {
     packages,
     root,
+    options: _options,
+  };
+};
+
+export const topoFromWorkspace = async (
+  options: Partial<ITopoOptions> = {},
+): Promise<ITopoContext> => {
+  const workspace = await getWorkspace(options);
+  const { pkgFilter = workspace.options.filter, depFilter = (_) => true } =
+    options;
+  const _options: ITopoOptionsNormalized = {
+    ...workspace.options,
+    depFilter,
+    pkgFilter,
+  };
+  const analysis = topo(Object.values(workspace.packages), _options);
+
+  return {
+    ...workspace,
     ...analysis,
   };
 };
@@ -158,7 +175,7 @@ export const extractWorkspaces = async (root: IPackageEntry) =>
   [];
 
 export const getGraph = (
-  manifests: RepoPackageJson[],
+  manifests: ConduPackageJson[],
   depFilter: ITopoOptionsNormalized["depFilter"],
   scopes = defaultScopes,
 ): {
@@ -268,12 +285,12 @@ export const traverseDeps = async ({
 };
 
 export const iterateDeps = (
-  manifest: RepoPackageJson,
+  manifest: ConduPackageJson,
   cb: (ctx: IDepEntry & { deps: IPackageDeps }) => any,
   scopes = defaultScopes,
 ) => {
   for (const scope of scopes) {
-    const deps = manifest[scope as keyof RepoPackageJson] as IPackageDeps;
+    const deps = manifest[scope as keyof ConduPackageJson] as IPackageDeps;
     if (!deps) continue;
 
     for (let [name, version] of Object.entries(deps)) {

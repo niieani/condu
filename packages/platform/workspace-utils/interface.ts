@@ -22,16 +22,23 @@ export interface IGetManifestPaths {
   cwd: string;
 }
 
-export interface ITopoOptionsNormalized extends IGetManifestPaths {
+export interface IGetWorkspaceOptions extends IGetManifestPaths {
   workspacesExtra: string[];
   filter: (entry: IPackageEntry) => boolean;
   pkgFilter: (entry: IPackageEntry) => boolean;
+}
+
+export interface ITopoOptionsNormalized extends IGetWorkspaceOptions {
   depFilter: (entry: IDepEntry) => boolean;
 }
 
-export interface ITopoContext {
+export interface IWorkspaceContext {
   packages: Record<string, IPackageEntry>;
   root: IPackageEntry;
+  options: IGetWorkspaceOptions;
+}
+
+export interface ITopoContext extends IWorkspaceContext {
   nodes: string[];
   edges: [string, string | undefined][];
   queue: string[];

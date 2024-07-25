@@ -4,12 +4,13 @@
   "type": "module",
   "dependencies": {
     "@condu/types": "workspace:^",
+    "@condu/workspace-utils": "workspace:^",
     "async-memoize-one": "^1.1.8",
-    "remeda": "^2.3.0"
+    "remeda": "^2.6.0"
   },
   "devDependencies": {
     "node-fetch": "^3.3.2",
-    "vitest": "^1.6.0"
+    "vitest": "^2.0.4"
   },
   "publishConfig": {
     "access": "public",

@@ -51,11 +51,17 @@
 - [x] support defining dependencies for features w/o importing from @condu/core
   - [x] extract that defineFunction into a separate package and keep it external? put it all in 'condu' along with the types? or does that create a circular dependency? maybe re-export the types from 'condu'
 - [x] better support for making '@condu/core' a peerDependency
-- [ ] pnpm feature
-- [ ] `condu init` command or `npx condu init` to
+- [x] pnpm feature
+- [x] local link/debug mode:
+  - [x] link-other-monorepo feature: 'createOverrides' script to pnpm install 'build' as linked
+- [ ] why is the packageManager not getting set correctly for moon? moon feature seems to try to install yarn
+- [ ] `condu init` command or a command that could be run with `npx condu init` to
   - [ ] add a default config file
-  - [ ] a preset just exports an object, so applying a preset is just merging each of the properties
-  - [ ] optionally create a new folder/git repo
+  - [ ] add a script to package.json "postinstall": "test -f .config/condu.ts && condu apply"
+  - [ ] optionally create a new folder with git repo if `name` positional parameter is provided
+  - [ ] a preset package just exports an object, so applying a preset is just merging each of the properties
+- [ ] detect packageManager from lockfile if not configured
+- [ ] when creating: don't add author, license by default, as they will be inherited from the workspace during publish, unless overwritten (and document this)
 - [ ] non-monorepo/single package mode
 - [ ] what is up with yarnrc auto-changing?
 - [ ] cli to autoremove excess/unused dependencies (see if anything exists like this)
@@ -81,6 +87,9 @@
 
 ## Later:
 
+- [ ] built local link/debug mode:
+  - [ ] TSC compile watch mode? possibly using `chokidar` or `turbowatch`
+  - [ ] compile, but don't change sourcemap references, keep them pointing to the source directory
 - [ ] mark which dependencies are managed by condu, and which are managed by the user (e.g. key in package.json: managedDependencies: { "name": "condu" })
 - [ ] commitlint + husky for linting commit messages
 - [ ] website with a catalog of features
@@ -197,8 +206,11 @@
 - [ ] write a generic TS helper for records/maps that contain arrays, it's a pain to always have to initialize them. or maybe have an initializer getOrSet or push/add() helper that pre-initializes it for you?
 - [ ] add [ts-reset](https://github.com/total-typescript/ts-reset) to typescript
 - [ ] look into https://www.farmfe.org/ and rsbuild
+- [ ] https://twitter.com/mattpocockuk/status/1787893902512443406?t=TFbEEj9exMvHuZLx4ZmaFA&s=19 - post to respond to when condu is ready
+      Other ideas:
 
-Other ideas:
+- what if enabling the features is done by a simple list file (defaults),
+  but if you want to customize, you then create a config file?
 
 - use build-time macros to enable generation of config files from JavaScript, essentially enable templating of scripts within condu configuration files
 

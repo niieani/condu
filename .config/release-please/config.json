@@ -42,6 +42,11 @@
       "component": "@condu-feature/library-bundle",
       "initial-version": "0.0.1"
     },
+    "packages/features/link-other-monorepo": {
+      "release-type": "node",
+      "component": "@condu-feature/link-other-monorepo",
+      "initial-version": "0.0.1"
+    },
     "packages/features/moon": {
       "release-type": "node",
       "component": "@condu-feature/moon",

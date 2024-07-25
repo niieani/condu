@@ -8,6 +8,8 @@ export interface DependencyDef {
   versionOrTag?: string;
   target?: "dependencies" | "devDependencies" | "optionalDependencies";
   skipIfExists?: boolean;
+  /** to what extent should this dependency be managed by condu? */
+  managed?: ManagedDependencyConfig | false;
 }
 
 export interface Task {
@@ -54,23 +56,21 @@ export interface FileDef {
   path: string;
 }
 
-/*
-what if enabling the features is done by a simple list file (defaults),
-but if you want to customize, you then create a config file?
-*/
+export type ManagedDependencyConfig = "presence" | "version";
 
-export interface RepoPackageConfig
+export interface PackageJsonConduSection
   extends Pick<
     PartialProjectConfig,
     "language" | "platform" | "tags" | "type" | "stack"
   > {
   initialDevelopment?: boolean;
+  managedDependencies?: Record<string, ManagedDependencyConfig>;
 }
 
-export interface RepoPackageJson extends PackageJson {
+export interface ConduPackageJson extends PackageJson {
   // name is mandatory
   name: string;
-  condu?: RepoPackageConfig;
+  condu?: PackageJsonConduSection;
 
   bolt?: {
     workspaces?: string[];
@@ -79,7 +79,7 @@ export interface RepoPackageJson extends PackageJson {
 
 export interface CollectedTaskDef extends Task {
   featureName: string;
-  target: RepoPackageJson;
+  target: ConduPackageJson;
 }
 
 export interface CollectedFileDef extends FileDef {
@@ -121,6 +121,7 @@ export interface CollectedState {
   files: CollectedFileDef[];
   /** we'll ensure these dependencies are installed during execution */
   devDependencies: (string | DependencyDef)[];
+  resolutions: Record<string, string>;
   tasks: CollectedTaskDef[];
   hooksByPackage: {
     [packageName: string]: Partial<Hooks>;
@@ -145,6 +146,9 @@ export type Effects = {
 
   /** we'll ensure these dependencies are installed during execution */
   devDependencies?: (string | DependencyDef)[];
+
+  /** we'll ensure these dependency resolutions are applied */
+  resolutions?: Record<string, string>;
 
   /**
    * ts-pattern for package.jsons that the state applies to. Defaults to workspace.
@@ -248,7 +252,7 @@ export interface WriteManifestFnOptions {
 }
 
 export type WriteManifestFn = (
-  manifest: RepoPackageJson | PackageJson,
+  manifest: ConduPackageJson | PackageJson,
   options?: WriteManifestFnOptions,
 ) => Promise<void>;
 
@@ -267,7 +271,7 @@ export interface WorkspaceSubPackage extends WorkspacePackage {
 export interface IPackageEntry {
   /** shortcut to manifest.name */
   name: string;
-  manifest: RepoPackageJson;
+  manifest: ConduPackageJson;
   manifestRelPath: string;
   manifestAbsPath: string;
   /** relative directory of the package from the workspace path */

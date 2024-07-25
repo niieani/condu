@@ -3,7 +3,10 @@ import { getCacheDir } from "@condu/core/utils/dirs.js";
 import { createFetchFromRegistry } from "@pnpm/fetch";
 import { createGetAuthHeaderByURI } from "@pnpm/network.auth-header";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
-import type { DependencyDef } from "@condu/types/configTypes.js";
+import type {
+  DependencyDef,
+  PackageJsonConduSection,
+} from "@condu/types/configTypes.js";
 
 const registry = "https://registry.npmjs.org/";
 const { resolveFromNpm } = createNpmResolver(
@@ -26,6 +29,7 @@ export async function ensureDependency({
   versionOrTag = "latest",
   target = "dependencies",
   skipIfExists = true,
+  managed = "presence",
 }: DependencyDef & {
   manifest: PackageJson;
 }) {
@@ -38,7 +42,7 @@ export async function ensureDependency({
     { registry },
   );
   if (!dependency || !dependency.manifest) {
-    throw new Error(`no ${packageAlias} dependency found in the repository`);
+    throw new Error(`no ${packageAlias} dependency found in the NPM registry`);
   }
 
   const pkgDescriptor = `${
@@ -47,8 +51,33 @@ export async function ensureDependency({
       : ""
   }^${dependency.manifest.version}`;
   if (targetDependencyList[packageAlias] === pkgDescriptor) {
+    // TODO: should we add to managed list
+    // if the expected version is the same as the one already in the manifest?
     return false;
   }
   targetDependencyList[packageAlias] = pkgDescriptor;
+
+  if (managed) {
+    const managedDependencies = ensureManagedDependenciesSection(manifest);
+    managedDependencies[packageAlias] = managed;
+  }
+
   return true;
+}
+
+function ensureManagedDependenciesSection(manifest: PackageJson) {
+  let conduSection = ensureConduSection(manifest);
+  let managedDependencies = conduSection["managedDependencies"];
+  if (typeof managedDependencies !== "object" || !managedDependencies) {
+    managedDependencies = conduSection["managedDependencies"] = {};
+  }
+  return managedDependencies;
+}
+
+function ensureConduSection(manifest: PackageJson): PackageJsonConduSection {
+  let conduSection = manifest["condu"];
+  if (typeof conduSection !== "object" || !conduSection) {
+    conduSection = manifest["condu"] = {};
+  }
+  return conduSection;
 }

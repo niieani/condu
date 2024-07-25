@@ -5,6 +5,10 @@ import {
   CONDU_CONFIG_DIR_NAME,
   CONDU_CONFIG_FILE_NAME,
   CORE_NAME,
+  CONFIG_DIR,
+  DEFAULT_NODE_VERSION,
+  DEFAULT_PACKAGE_MANAGER,
+  DEFAULT_SOURCE_EXTENSIONS,
 } from "@condu/types/constants.js";
 import type {
   ConfiguredRepoConfig,
@@ -17,12 +21,6 @@ import type {
 import { CONFIGURED } from "@condu/types/configure.js";
 import { getProjectDefinitionsFromConventionConfig } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
 import memoizeOne from "async-memoize-one";
-import {
-  CONFIG_DIR,
-  DEFAULT_NODE_VERSION,
-  DEFAULT_PACKAGE_MANAGER,
-  DEFAULT_SOURCE_EXTENSIONS,
-} from "./commands/apply/constants.js";
 import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
 import sortPackageJson from "sort-package-json";
 import { findUp } from "@condu/core/utils/findUp.js";

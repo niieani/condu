@@ -1,0 +1,15 @@
+{
+  "name": "@condu-feature/link-other-monorepo",
+  "version": "0.0.0",
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "publishConfig": {
+    "access": "public",
+    "directory": "../../../build/packages/features/link-other-monorepo"
+  },
+  "dependencies": {
+    "@condu/core": "workspace:^",
+    "condu": "workspace:^"
+  }
+}

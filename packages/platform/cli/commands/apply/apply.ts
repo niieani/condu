@@ -42,6 +42,7 @@ export async function collectState(
     devDependencies: [],
     tasks: [],
     hooksByPackage: {},
+    resolutions: {},
   };
 
   const hooksByPackage: {
@@ -136,6 +137,10 @@ export async function collectState(
         state.devDependencies.push(
           ...featureEffect.devDependencies.filter(nonEmpty),
         );
+      }
+
+      if (featureEffect.resolutions) {
+        Object.assign(state.resolutions, featureEffect.resolutions);
       }
 
       if (featureEffect.hooks) {
@@ -285,6 +290,28 @@ export async function apply(options: LoadConfigOptions = {}) {
       target: "devDependencies",
       ...dependencyDef,
     });
+  }
+
+  const resolutionsEntries = Object.entries(collectedState.resolutions);
+  if (resolutionsEntries.length > 0) {
+    let manifestResolutions: Record<string, string> =
+      manifest.resolutions ?? manifest["pnpm"]?.overrides;
+    if (!manifestResolutions) {
+      if (project.config.node.packageManager.name === "pnpm") {
+        manifest["pnpm"] ??= {};
+        manifest["pnpm"].overrides = collectedState.resolutions;
+      } else {
+        manifest.resolutions = collectedState.resolutions;
+      }
+      didChangeManifest = true;
+    } else {
+      for (const [packageName, version] of resolutionsEntries) {
+        if (manifestResolutions[packageName] !== version) {
+          manifestResolutions[packageName] = version;
+          didChangeManifest = true;
+        }
+      }
+    }
   }
 
   if (didChangeManifest) {

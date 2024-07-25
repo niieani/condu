@@ -111,7 +111,7 @@ export async function createPackage({
 
   if (!existingPackageJson) {
     // run yarn to link the new package
-    // TODO: use correct package manager
+    // TODO: use correct package manager and extract to a function
 
     const yarn = childProcess.spawnSync(`yarn install`, {
       stdio: "inherit",

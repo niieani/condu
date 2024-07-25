@@ -10,12 +10,12 @@
   },
   "dependencies": {
     "@condu/types": "workspace:^",
-    "@pnpm/read-project-manifest": "^6.0.4",
+    "@pnpm/read-project-manifest": "^6.0.5",
     "@pnpm/workspace.read-manifest": "^2.2.0",
     "fast-glob": "^3.3.2",
     "slash": "^5.1.0",
     "sort-package-json": "^2.10.0",
     "toposource": "^1.2.0",
-    "yaml": "^2.4.5"
+    "yaml": "^2.5.0"
   }
 }

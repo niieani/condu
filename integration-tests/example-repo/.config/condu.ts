@@ -1,5 +1,6 @@
 import { gitignore } from "@condu-feature/gitignore/gitignore.js";
 import { typescript } from "@condu-feature/typescript/typescript.js";
+import { linkOtherMonorepo } from "@condu-feature/link-other-monorepo/linkOtherMonorepo.js";
 import { configure } from "condu/configure.js";
 
 export default configure({
@@ -20,6 +21,9 @@ export default configure({
           preserveSymlinks: false,
         },
       },
+    }),
+    linkOtherMonorepo({
+      links: [{ linkedProjectDir: "/Volumes/Projects/Software/toolchain" }],
     }),
     gitignore({ ignore: [".env", ".env.*"] }),
   ],

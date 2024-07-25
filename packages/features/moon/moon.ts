@@ -27,7 +27,7 @@ const defaultToolchain: Toolchain = {
 
     /** The version of the package manager to use. */
     yarn: {
-      version: "4.2.2",
+      version: "4.3.1",
     },
 
     /** Add `node.version` as a constraint in the root `package.json` `engines`. */
@@ -115,7 +115,7 @@ export const moon = ({
                   ...(config.projects && {
                     typescript: {
                       ...defaultToolchain.typescript,
-                      // TODO: implement this in condu, so we don't repend on moon for it:
+                      // TODO: implement this in condu, so we don't depend on moon for it:
                       // syncProjectReferences: true,
                       // syncProjectReferencesToPaths: true,
                       // createMissingConfig: true,
@@ -161,6 +161,7 @@ export const moon = ({
                 } satisfies Workspace,
               },
             ],
+            devDependencies: ["@moonrepo/cli"],
           },
         ],
       };

@@ -1,13 +1,6 @@
 import * as path from "node:path";
 import { findUp } from "@condu/core/utils/findUp.js";
-import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
-import type {
-  RepoPackageJson,
-  WorkspaceRootPackage,
-  WriteManifestFnOptions,
-} from "@condu/types/configTypes.js";
-import type { ProjectManifest } from "@pnpm/types";
-import sortPackageJson from "sort-package-json";
+import type { WorkspaceRootPackage } from "@condu/types/configTypes.js";
 import { topoFromWorkspace } from "@condu/workspace-utils/topo.js";
 import * as fs from "node:fs";
 import {

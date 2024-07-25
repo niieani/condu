@@ -10,6 +10,7 @@ import unicornPlugin from "eslint-plugin-unicorn";
 export default [
   {
     // https://eslint.org/docs/latest/use/configure/configuration-files#globally-ignoring-files-with-ignores
+    // TODO: ignore from config
     ignores: [
       "**/*.{gen,generated}.{js,jsx,ts,tsx,mjs}",
       "build/**",

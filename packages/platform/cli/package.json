@@ -8,29 +8,29 @@
     "@condu/update-specifiers": "workspace:^",
     "@condu/workspace-utils": "workspace:^",
     "@pnpm/catalogs.config": "^0.1.0",
-    "@pnpm/exportable-manifest": "^7.0.0",
-    "@pnpm/fetch": "^8.0.3",
+    "@pnpm/exportable-manifest": "^7.0.1",
+    "@pnpm/fetch": "^8.0.4",
     "@pnpm/logger": "^5.0.0",
     "@pnpm/network.auth-header": "^3.0.1",
-    "@pnpm/npm-resolver": "^21.0.0",
-    "@pnpm/read-project-manifest": "^6.0.4",
-    "@pnpm/types": "^11.0.0",
-    "@pnpm/workspace.find-packages": "^4.0.0",
+    "@pnpm/npm-resolver": "^21.0.2",
+    "@pnpm/read-project-manifest": "^6.0.5",
+    "@pnpm/types": "^11.1.0",
+    "@pnpm/workspace.find-packages": "^4.0.2",
     "@pnpm/workspace.read-manifest": "^2.2.0",
     "@types/which": "^3.0.4",
     "async-memoize-one": "^1.1.8",
     "clipanion": "^4.0.0-rc.3",
     "comment-json": "^4.2.4",
     "print-diff": "^2.0.0",
-    "remeda": "^2.3.0",
+    "remeda": "^2.6.0",
     "sort-package-json": "^2.10.0",
     "spdx-license-list": "^6.9.0",
     "ts-pattern": "^5.2.0",
     "which": "^4.0.0",
-    "yaml": "^2.4.5"
+    "yaml": "^2.5.0"
   },
   "devDependencies": {
-    "vitest": "^1.6.0"
+    "vitest": "^2.0.4"
   },
   "publishConfig": {
     "access": "public",

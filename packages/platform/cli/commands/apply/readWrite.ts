@@ -3,7 +3,7 @@ import path from "node:path";
 import type {
   FileDef,
   GetExistingContentFn,
-  RepoPackageJson,
+  ConduPackageJson,
   WorkspacePackage,
 } from "@condu/types/configTypes.js";
 import yaml from "yaml";
@@ -11,7 +11,7 @@ import commentJson from "comment-json";
 import { P, match } from "ts-pattern";
 import { printUnifiedDiff } from "print-diff";
 import readline from "node:readline/promises";
-import { CONFIG_DIR } from "./constants.js";
+import { CONFIG_DIR } from "@condu/types/constants.js";
 
 export const FILE_STATE_PATH = `${CONFIG_DIR}/.cache/files.json`;
 

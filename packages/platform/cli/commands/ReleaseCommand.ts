@@ -5,7 +5,7 @@ export class ReleaseCommand extends Command {
 
   static override usage = Command.Usage({
     description:
-      "Prepare the packages for release by generating their respective package.json files.",
+      "Prepare the packages for release by generating their respective distributable files.",
   });
 
   ci = Option.Boolean("--ci", {
@@ -15,7 +15,7 @@ export class ReleaseCommand extends Command {
     description: `The tag to use when publishing packages.`,
   });
   dryRun = Option.Boolean("--dry-run", {
-    description: `Do not actually publish anything.`,
+    description: `Do not actually publish anything, only prepare the 'build' directory.`,
   });
   packages = Option.Rest({ name: "packages" });
 

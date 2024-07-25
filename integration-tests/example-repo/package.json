@@ -2,50 +2,58 @@
   "name": "example-repo",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "condu": "condu",
-    "tsc": "tsc",
-    "postinstall": "condu apply"
-  },
   "keywords": [],
-  "author": "",
   "license": "ISC",
-  "pnpm": {
-    "overrides": {
-      "@condu-feature/auto": "file:../../build/packages/features/auto",
-      "@condu-feature/ci-github-actions": "file:../../build/packages/features/ci-github-actions",
-      "@condu-feature/condu-packages": "file:../../build/packages/features/condu-packages",
-      "@condu-feature/eslint": "file:../../build/packages/features/eslint",
-      "@condu-feature/gitignore": "file:../../build/packages/features/gitignore",
-      "@condu-feature/gpt-summarizer": "file:../../build/packages/features/gpt-summarizer",
-      "@condu-feature/lerna": "file:../../build/packages/features/lerna",
-      "@condu-feature/library-bundle": "file:../../build/packages/features/library-bundle",
-      "@condu-feature/moon": "file:../../build/packages/features/moon",
-      "@condu-feature/typescript": "file:../../build/packages/features/typescript",
-      "@condu-feature/vitest": "file:../../build/packages/features/vitest",
-      "@condu-feature/vscode": "file:../../build/packages/features/vscode",
-      "@condu-feature/yarn": "file:../../build/packages/features/yarn",
-      "@condu/auto-plugin-package-structure": "file:../../build/packages/platform/auto-plugin-package-structure",
-      "@condu/cli": "file:../../build/packages/platform/cli",
-      "@condu/core": "file:../../build/packages/platform/core",
-      "@condu/schema-types": "file:../../build/packages/platform/schema-types",
-      "@condu/update-specifiers": "file:../../build/packages/platform/update-specifiers",
-      "@condu/yarn-plugin": "file:../../build/packages/platform/yarn-plugin"
-    }
-  },
-  "dependencies": {
-    "condu": "file:../../build/packages/platform/condu@0.0.2",
-    "@condu/types": "workspace:^"
-  },
-  "devDependencies": {
-    "@condu-feature/gitignore": "file:../../build/packages/features/gitignore@0.0.2",
-    "@condu-feature/typescript": "file:../../build/packages/features/typescript@0.0.2",
-    "@condu/core": "file:../../build/packages/platform/core@0.0.2",
-    "typescript": "^5.4.5"
-  },
+  "author": "",
+  "main": "index.js",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "scripts": {
+    "condu": "condu",
+    "postinstall": "condu apply",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc": "tsc"
+  },
+  "dependencies": {
+    "@condu/types": "workspace:^",
+    "condu": "file:../../packages/platform/condu"
+  },
+  "devDependencies": {
+    "@condu-feature/gitignore": "file:../../packages/features/gitignore",
+    "@condu-feature/link-other-monorepo": "file:../../packages/features/link-other-monorepo",
+    "@condu-feature/typescript": "file:../../packages/features/typescript",
+    "@condu/core": "file:../../packages/platform/core",
+    "typescript": "^5.4.5"
+  },
+  "pnpm": {
+    "overrides": {
+      "@condu-feature/ci-github-actions": "file:../../packages/features/ci-github-actions",
+      "@condu-feature/condu-packages": "file:../../packages/features/condu-packages",
+      "@condu-feature/eslint": "file:../../packages/features/eslint",
+      "@condu-feature/gitignore": "file:../../packages/features/gitignore",
+      "@condu-feature/gpt-summarizer": "file:../../packages/features/gpt-summarizer",
+      "@condu-feature/lerna": "file:../../packages/features/lerna",
+      "@condu-feature/library-bundle": "file:../../packages/features/library-bundle",
+      "@condu-feature/link-other-monorepo": "file:../../packages/features/link-other-monorepo",
+      "@condu-feature/moon": "file:../../packages/features/moon",
+      "@condu-feature/pnpm": "file:../../packages/features/pnpm",
+      "@condu-feature/release-please": "file:../../packages/features/release-please",
+      "@condu-feature/typescript": "file:../../packages/features/typescript",
+      "@condu-feature/vitest": "file:../../packages/features/vitest",
+      "@condu-feature/vscode": "file:../../packages/features/vscode",
+      "@condu-feature/yarn": "file:../../packages/features/yarn",
+      "@condu-test/integration": "file:../../packages/test/integration",
+      "@condu/cli": "file:../../packages/platform/cli",
+      "@condu/core": "file:../../packages/platform/core",
+      "@condu/schema-types": "file:../../packages/platform/schema-types",
+      "@condu/test-dummy": "file:../../packages/test/dummy",
+      "@condu/test-dummy-dep": "file:../../packages/test/dummy-dep",
+      "@condu/types": "file:../../packages/platform/types",
+      "@condu/update-specifiers": "file:../../packages/platform/update-specifiers",
+      "@condu/workspace-utils": "file:../../packages/platform/workspace-utils",
+      "@condu/yarn-plugin": "file:../../packages/platform/yarn-plugin",
+      "condu": "file:../../packages/platform/condu"
+    }
+  }
 }
