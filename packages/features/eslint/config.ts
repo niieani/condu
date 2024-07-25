@@ -35,7 +35,7 @@ export default [
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
-      parser: typescriptParser as Linter.ParserModule,
+      parser: typescriptParser,
       parserOptions: {
         ecmaFeatures: {
           jsx: true,

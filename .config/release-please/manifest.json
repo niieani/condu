@@ -6,6 +6,7 @@
   "packages/features/gpt-summarizer": "0.1.3",
   "packages/features/lerna": "0.1.3",
   "packages/features/library-bundle": "0.1.3",
+  "packages/features/link-other-monorepo": "0.0.0",
   "packages/features/moon": "0.1.3",
   "packages/features/pnpm": "0.0.1",
   "packages/features/release-please": "0.1.3",

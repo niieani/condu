@@ -160,6 +160,9 @@ __metadata:
 "@condu-feature/link-other-monorepo@workspace:packages/features/link-other-monorepo":
   version: 0.0.0-use.local
   resolution: "@condu-feature/link-other-monorepo@workspace:packages/features/link-other-monorepo"
+  dependencies:
+    "@condu/core": "workspace:^"
+    condu: "workspace:^"
   languageName: unknown
   linkType: soft
 
