@@ -2,6 +2,7 @@ import { promises as fs } from "node:fs";
 import * as path from "node:path";
 
 import memoize from "async-memoize-one";
+import { findUp } from "./findUp.js";
 
 export const getDefaultGitBranch_ = async (
   rootDir: string,
@@ -11,15 +12,17 @@ export const getDefaultGitBranch_ = async (
     return GIT_DEFAULT_BRANCH;
   }
   try {
-    const remotes = await fs.readdir(
-      path.join(rootDir, ".git", "refs", "remotes"),
-    );
+    const gitDir = await findUp(".git", { cwd: rootDir, type: "directory" });
+    if (!gitDir) {
+      throw new Error("No git directory found");
+    }
+    const remotes = await fs.readdir(path.join(gitDir, "refs", "remotes"));
     const [remote] = remotes;
     if (!remote) {
       throw new Error("No git remotes found");
     }
     const result = await fs.readFile(
-      path.join(rootDir, ".git", "refs", "remotes", remote, "HEAD"),
+      path.join(gitDir, "refs", "remotes", remote, "HEAD"),
       "utf-8",
     );
     const defaultBranch = result.split(`/${remote}/`).pop()?.trim();
