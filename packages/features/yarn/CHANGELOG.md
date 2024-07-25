@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.4](https://github.com/niieani/toolchain/compare/@condu-feature/yarn@0.1.3...@condu-feature/yarn@0.1.4) (2024-07-25)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/types bumped to 0.1.2
+  * peerDependencies
+    * condu bumped to 0.1.4
+
 ## [0.1.3](https://github.com/niieani/toolchain/compare/@condu-feature/yarn@0.1.2...@condu-feature/yarn@0.1.3) (2024-07-10)
 
 

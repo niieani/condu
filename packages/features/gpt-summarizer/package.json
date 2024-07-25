@@ -1,6 +1,6 @@
 {
   "name": "@condu-feature/gpt-summarizer",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "license": "MIT",
   "type": "module",
   "peerDependencies": {
