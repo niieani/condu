@@ -22,6 +22,7 @@ export const moonCi = ({}: {} = {}) =>
     name: "moonCi",
     order: { priority: "end" },
     actionFn: async (config, state) => {
+      const packageManager = config.node.packageManager.name;
       const ciSetupAction: GithubAction = {
         name: "Moon CI Setup",
         description: "Setup the environment for Moon CI",
@@ -54,7 +55,16 @@ export const moonCi = ({}: {} = {}) =>
             },
             { uses: "oven-sh/setup-bun@v1" },
             {
-              run: `${config.node.packageManager.name} install --immutable`,
+              // for pnpm & bun: install --frozen-lockfile
+              // for yarn: install --immutable
+              // for npm: npm ci
+              run: `${packageManager} ${
+                packageManager === "yarn"
+                  ? "install --immutable"
+                  : packageManager === "npm"
+                    ? "ci"
+                    : "install --frozen-lockfile"
+              }`,
               shell: "bash",
             },
             {

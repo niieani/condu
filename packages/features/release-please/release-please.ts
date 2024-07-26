@@ -21,8 +21,6 @@ export const releasePlease = ({
   defineFeature({
     name: "release-please",
     actionFn: async (config, state) => {
-      const isInternalCondu =
-        config.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME;
       const allWorkspacePackages = await config.project.getWorkspacePackages();
       const packages = allWorkspacePackages.filter(
         (pkg) =>
@@ -144,11 +142,7 @@ export const releasePlease = ({
                         { uses: "./.github/actions/moon-ci-setup" },
                         {
                           name: "Release packages to NPM",
-                          run: `${
-                            isInternalCondu
-                              ? `${config.node.packageManager.name} run `
-                              : ""
-                          }${CORE_NAME} release --ci --npm-tag=latest  ./\${{ join( fromJSON( needs.release-please.outputs.paths_to_release ), ' ./' ) }}`,
+                          run: `${config.node.packageManager.name} run ${CORE_NAME} release --ci --npm-tag=latest ./\${{ join( fromJSON( needs.release-please.outputs.paths_to_release ), ' ./' ) }}`,
                           env: {
                             NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}",
                           },

@@ -40,8 +40,6 @@ export const typescript = ({
     name: "typescript",
     order: { priority: "beginning" },
     actionFn: (config, state) => {
-      const isInternalCondu =
-        config.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME;
       // TODO: explain pros and cons of composite projects
       // cons: slower, more memory, no incremental builds
       // pros: more responsive to changes in other projects, auto-import suggestions from other projects
@@ -57,11 +55,7 @@ export const typescript = ({
                 type: "build",
                 name: "typescript",
                 definition: {
-                  command: `${
-                    isInternalCondu
-                      ? `${config.node.packageManager.name} run `
-                      : ""
-                  }${CORE_NAME} tsc --preset ${
+                  command: `${config.node.packageManager.name} run ${CORE_NAME} tsc --preset ${
                     preset === "esm-first" ? "ts-to-cts" : "ts-to-mts"
                   }`,
                 },

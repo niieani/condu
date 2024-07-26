@@ -6,15 +6,15 @@ import type {
   CollectedState,
   DependencyDef,
   Hooks,
-  RepoConfigWithInferredValues,
-  RepoConfigWithInferredValuesAndProject,
+  ConduConfigWithInferredValues,
+  ConduConfigWithInferredValuesAndProject,
   StateFlags,
   LoadConfigOptions,
   Project,
   WorkspaceSubPackage,
 } from "@condu/types/configTypes.js";
 import { groupBy, isDeepEqual } from "remeda";
-import { loadRepoProject } from "../../loadProject.js";
+import { loadConduProject } from "../../loadProject.js";
 import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
 import { nonEmpty } from "@condu/core/utils/filter.js";
 import { isMatching } from "ts-pattern";
@@ -35,7 +35,7 @@ export const getApplyHook =
   };
 
 export async function collectState(
-  config: RepoConfigWithInferredValuesAndProject,
+  config: ConduConfigWithInferredValuesAndProject,
 ): Promise<CollectedState> {
   const state: CollectedState = {
     files: [],
@@ -188,7 +188,7 @@ export async function collectState(
 export async function apply(options: LoadConfigOptions = {}) {
   // TODO: add a mutex lock to prevent concurrent runs of apply
   const { throwOnManualChanges } = options;
-  const project = await loadRepoProject(options);
+  const project = await loadConduProject(options);
   if (!project) {
     return;
   }
@@ -265,12 +265,15 @@ export async function apply(options: LoadConfigOptions = {}) {
   await writeFiles({
     files: [{ path: FILE_STATE_PATH, content: writtenFiles }],
     targetPackage: project,
-    workspaceDirAbs: workspaceDirAbs,
+    workspaceDirAbs,
     targetPackageDir: ".",
     previouslyWrittenFiles: new Map(),
     throwOnManualChanges,
   });
 
+  const previouslyManagedDependencies = new Set(
+    Object.keys(manifest.condu?.managedDependencies ?? {}),
+  );
   for (const packageNameOrDef of collectedState.devDependencies) {
     let dependencyDef: DependencyDef;
     if (typeof packageNameOrDef === "string") {
@@ -284,6 +287,7 @@ export async function apply(options: LoadConfigOptions = {}) {
     } else {
       dependencyDef = packageNameOrDef;
     }
+    previouslyManagedDependencies.delete(dependencyDef.packageAlias);
     // TODO parallelize?
     didChangeManifest ||= await ensureDependency({
       manifest,
@@ -292,31 +296,46 @@ export async function apply(options: LoadConfigOptions = {}) {
     });
   }
 
-  const resolutionsEntries = Object.entries(collectedState.resolutions);
-  if (resolutionsEntries.length > 0) {
-    let manifestResolutions: Record<string, string> =
-      manifest.resolutions ?? manifest["pnpm"]?.overrides;
-    if (!manifestResolutions) {
-      if (project.config.node.packageManager.name === "pnpm") {
-        manifest["pnpm"] ??= {};
-        manifest["pnpm"].overrides = collectedState.resolutions;
-      } else {
-        manifest.resolutions = collectedState.resolutions;
-      }
+  // remove any managed dependencies that are no longer needed:
+  for (const packageName of previouslyManagedDependencies) {
+    if (manifest.devDependencies?.[packageName]) {
+      delete manifest.devDependencies[packageName];
       didChangeManifest = true;
-    } else {
+    }
+    if (manifest.condu?.managedDependencies?.[packageName]) {
+      delete manifest.condu.managedDependencies[packageName];
+      didChangeManifest = true;
+    }
+  }
+
+  const resolutionsEntries = Object.entries(collectedState.resolutions);
+  const packageManager = project.config.node.packageManager.name;
+  if (resolutionsEntries.length > 0) {
+    const manifestResolutions =
+      manifest.resolutions ?? manifest["pnpm"]?.overrides ?? manifest.overrides;
+    if (manifestResolutions) {
       for (const [packageName, version] of resolutionsEntries) {
         if (manifestResolutions[packageName] !== version) {
           manifestResolutions[packageName] = version;
           didChangeManifest = true;
         }
       }
+    } else {
+      if (packageManager === "pnpm") {
+        manifest["pnpm"] ??= {};
+        manifest["pnpm"].overrides = collectedState.resolutions;
+      } else if (packageManager === "yarn") {
+        manifest.resolutions = collectedState.resolutions;
+      } else {
+        manifest.overrides = collectedState.resolutions;
+      }
+      didChangeManifest = true;
     }
   }
 
   if (didChangeManifest) {
     await writeProjectManifest(manifest);
-    // TODO: run 'yarn install' or whatever the package manager is if manifest changed
+    // TODO: run 'yarn/npm/pnpm install' if manifest changed
   }
 
   await ensurePublishConfigDirectorySetInManifestFiles(project);

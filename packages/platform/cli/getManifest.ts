@@ -30,6 +30,7 @@ export async function getManifest(cwd: string): Promise<WorkspaceRootPackage> {
     CONDU_CONFIG_DIR_NAME,
     CONDU_CONFIG_FILE_NAME,
   );
+  // console.log({ workspaceDir });
 
   // const root = await getPackage();
   const topology = await topoFromWorkspace({ cwd: workspaceDir });

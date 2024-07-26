@@ -27,7 +27,7 @@ const defaultToolchain: Toolchain = {
 
     /** The version of the package manager to use. */
     yarn: {
-      version: "4.3.1",
+      version: "latest",
     },
 
     /** Add `node.version` as a constraint in the root `package.json` `engines`. */
@@ -78,6 +78,8 @@ const defaultToolchain: Toolchain = {
     /** Sync a project's project references as import aliases to the `paths`
      * compiler option in each applicable project. */
     syncProjectReferencesToPaths: false,
+
+    createMissingConfig: false,
   },
 };
 
@@ -115,7 +117,7 @@ export const moon = ({
                   ...(config.projects && {
                     typescript: {
                       ...defaultToolchain.typescript,
-                      // TODO: implement this in condu, so we don't depend on moon for it:
+                      // TODO: implement references sync in condu, so we don't depend on moon for it:
                       // syncProjectReferences: true,
                       // syncProjectReferencesToPaths: true,
                       // createMissingConfig: true,
@@ -149,15 +151,12 @@ export const moon = ({
                     defaultBranch: config.git.defaultBranch,
                     ...workspace?.vcs,
                   },
-                  hasher: {
-                    ignorePatterns: [
-                      `${config.conventions.buildDir}/**`,
-                      ...(workspace?.hasher?.ignorePatterns ?? []),
-                    ],
-                  },
-                  experiments: {
-                    actionPipelineV2: true,
-                  },
+                  // hasher: {
+                  //   ignorePatterns: [
+                  //     `${config.conventions.buildDir}/**`,
+                  //     ...(workspace?.hasher?.ignorePatterns ?? []),
+                  //   ],
+                  // },
                 } satisfies Workspace,
               },
             ],

@@ -12,7 +12,7 @@ import {
 } from "@condu/types/constants.js";
 import type {
   ConfiguredRepoConfig,
-  RepoConfigWithInferredValues,
+  ConduConfigWithInferredValues,
   LoadConfigOptions,
   WorkspaceRootPackage,
   WorkspaceSubPackage,
@@ -29,11 +29,11 @@ import { getManifestsPaths, getPackage } from "@condu/workspace-utils/topo.js";
 
 export interface Project extends WorkspaceRootPackage {
   projectConventions: WorkspaceProjectDefined[];
-  config: RepoConfigWithInferredValues;
+  config: ConduConfigWithInferredValues;
   getWorkspacePackages: () => Promise<readonly WorkspaceSubPackage[]>;
 }
 
-export async function loadRepoProject({
+export async function loadConduProject({
   startDir = process.cwd(),
 }: LoadConfigOptions = {}): Promise<Project | undefined> {
   const configDirPath = await findUp(
@@ -89,13 +89,12 @@ export async function loadRepoProject({
   const defaultBranch: string =
     config.git?.defaultBranch ?? (await getDefaultGitBranch(workspaceDir));
 
-  const { packageManager, engines } = manifest;
-  const [packageManagerName, packageManagerVersion] = packageManager?.split(
-    "@",
-  ) ?? [DEFAULT_PACKAGE_MANAGER];
+  const { packageManager, engines, pnpm } = manifest;
+  const [packageManagerName, packageManagerVersion] =
+    packageManager?.split("@") ?? [];
   const nodeVersion = engines?.node ?? DEFAULT_NODE_VERSION;
 
-  const configWithInferredValues: RepoConfigWithInferredValues = {
+  const configWithInferredValues: ConduConfigWithInferredValues = {
     ...config,
     git: {
       ...config.git,
@@ -113,7 +112,7 @@ export async function loadRepoProject({
           }
         : {
             packageManager: {
-              name: DEFAULT_PACKAGE_MANAGER,
+              name: pnpm ? "pnpm" : DEFAULT_PACKAGE_MANAGER,
             },
           }),
       version: nodeVersion,

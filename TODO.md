@@ -54,17 +54,20 @@
 - [x] pnpm feature
 - [x] local link/debug mode:
   - [x] link-other-monorepo feature: 'createOverrides' script to pnpm install 'build' as linked
-- [ ] why is the packageManager not getting set correctly for moon? moon feature seems to try to install yarn
+- [x] why is the packageManager not getting set correctly for moon? moon feature seems to try to install yarn
+- [x] mark which dependencies are managed by condu, and which are managed by the user (e.g. key in package.json: managedDependencies: { "name": "condu" })
+- [x] when creating: don't add author, license by default, as they will be inherited from the workspace during publish, unless overwritten
+- [x] fix generated license author
+- [x] clean up of devDependencies that should be removed once a feature is removed/disabled
 - [ ] `condu init` command or a command that could be run with `npx condu init` to
   - [ ] add a default config file
   - [ ] add a script to package.json "postinstall": "test -f .config/condu.ts && condu apply"
   - [ ] optionally create a new folder with git repo if `name` positional parameter is provided
   - [ ] a preset package just exports an object, so applying a preset is just merging each of the properties
+  - [ ] can be used to apply changes to an existing project, in which case it will infer certain things from the existing project, like the package manager
 - [ ] detect packageManager from lockfile if not configured
-- [ ] when creating: don't add author, license by default, as they will be inherited from the workspace during publish, unless overwritten (and document this)
 - [ ] non-monorepo/single package mode
-- [ ] what is up with yarnrc auto-changing?
-- [ ] cli to autoremove excess/unused dependencies (see if anything exists like this)
+- [ ] what is up with yarnrc changing on its own?
 - [ ] fix the CLI command displayed (instead of "bun main.bundle.js") + add help
 - [ ] should we collocate per-package build config in the respective packages, or keep them global?
   - [ ] if yes, then how do we do it? `.config` folder per package?
@@ -72,10 +75,12 @@
 - [ ] some basic integration tests that use the built packages
   - what do I actually want to test here? ooh the release process!!!
   - inspiration: [zx-bulk-release](https://github.com/semrel-extra/zx-bulk-release/blob/b2a22a483a810be63e059bcbcb1db08289729809/src/test/js/integration.test.js)
-- [ ] add an 'init' command to create a new repo with config (or update existing one) from scratch
 - [ ] vitest feature
 - [ ] CI build and test using moon
 - [ ] add a mutex lock to prevent concurrent runs of apply, maybe something like [this](https://github.com/szikszail/cross-process-lock/blob/master/src/lock.ts) (auto-expire lock after a few seconds)
+- [ ] preset with my features and feature config pre-applied
+
+  - [ ] how can we still allow configurability/overrides? maybe passthrough all the config objects?
 
 - alpha shippable state -
 
@@ -84,21 +89,26 @@
 
   - [duel](https://github.com/knightedcodemonkey/duel)
   - [specifier updating](https://github.com/knightedcodemonkey/specifier)
+  - [tsup](https://github.com/egoist/tsup)
 
 ## Later:
 
+- [ ] to simplify config, automatically use features that are installed as devDependencies using the default parameters (maybe a flag can turn this off?)
+- [ ] add validation on CI to make sure no uncommitted files are left dangling after `condu apply` / `yarn` on CI
+- [ ] document how author, license aren't added by 'create' by default, as they will be inherited from the workspace during release, unless specified
+- [ ] cli to analyze codebase for never used dependencies/devDependencies and autoremove excess/unused dependencies
+  - integrate [depcheck](https://www.npmjs.com/package/depcheck)
 - [ ] built local link/debug mode:
   - [ ] TSC compile watch mode? possibly using `chokidar` or `turbowatch`
   - [ ] compile, but don't change sourcemap references, keep them pointing to the source directory
-- [ ] mark which dependencies are managed by condu, and which are managed by the user (e.g. key in package.json: managedDependencies: { "name": "condu" })
 - [ ] commitlint + husky for linting commit messages
-- [ ] website with a catalog of features
+- [ ] website with a catalog of features, or maybe even a UI which you can run locally to easily configure your project?
 - [ ] invitation to folks to contribute features
+- [ ] add possibility for folks to offer bounty/cash for features
 - [ ] fix the issue with default git branch not resolving on CI
 - [ ] verified published packages:
   - [ ] https://publint.dev/
   - [ ] https://arethetypeswrong.github.io/
-- [x] fix generated license author
 - [ ] homegrown replacement for release-please / semantic-release / auto?
   - something simple and pluggable, and most of all, really robust. These tools are a joke.
   - use commit messages as the base to build a changelog
@@ -111,7 +121,7 @@
   - everything is a function, exportable. zx-bulk-release does this well.
 - [ ] ensure `packageManager` includes a SHA after the version
 - [ ] jsr.io feature - publish to JSR (sets `isolatedDeclarations: true` in tsconfig)
-- [ ] use the [new configDir in tsconfig](https://devblogs.microsoft.com/typescript/announcing-typescript-5-5-beta/#the-configdir-template-variable-for-configuration-files)
+- [ ] use the [new ${configDir} syntax in tsconfig](https://devblogs.microsoft.com/typescript/announcing-typescript-5-5-beta/#the-configdir-template-variable-for-configuration-files) once eslint typescript resolver [supports it](https://github.com/import-js/eslint-import-resolver-typescript/issues/299)
 - [ ] eventually use TS' [transpileDeclaration API](https://devblogs.microsoft.com/typescript/announcing-typescript-5-5-beta/#the-transpiledeclaration-api) for d.ts, and SWC for compiling
 - [ ] additional eslints:
   - [ ] https://github.com/eslint-community/eslint-plugin-n
@@ -127,12 +137,9 @@
 - [ ] website
   - inspiration: [tailwind](https://tailwindcss.com/) - make configs disappear and appear in a mock vscode/github UI?
 - [ ] easy way to quickly create a new Github repo, already preconfigured, with initial commit, etc.
-- [ ] add validation on CI to make sure no uncommitted files are left dangling after `condu apply` / `yarn` on CI
 - [ ] public library of patches to common dependencies (e.g. [graceful-fs](https://github.com/isaacs/node-graceful-fs/issues/245#issuecomment-2037699522))
 - [ ] add validation for feature dependencies (e.g. "auto" feature depends on "lerna")
-  - maybe not dependencies, but see below - contributed state?
-- [ ] clean up or write to console a list of devDependencies that should be removed once a feature is removed/disabled
-- [ ] command to analyze codebase for never used dependencies/devDependencies and auto-remove them
+  - maybe instead of dependencies, but see below - contributed state?
 - [ ] eslint additions
   - [ ] ban `export let`
 - [ ] support rescript
@@ -151,7 +158,6 @@
   - yarn - important because of the plugin
   - others: typescript, gitignore, etc.
 - [ ] in apply: auto-create package.json when missing, but matches one of the conventions
-- [ ] automatically use features that are installed as devDependencies using the default parameters (maybe a flag can turn this off?)
 - [ ] multi-repo mode
   - best of both worlds - monorepo for development and keeping tools in sync, single-repo management benefits (separate issues, PRs, etc.)
     - see previous art: [meta](https://github.com/mateodelnorte/meta)
@@ -162,13 +168,14 @@
     - [ ] sync Github settings on apply-remote command? or something like that?
     - [ ] for CI: checkout the parent repo to run selected build/release?
     - [ ] option to automatically fetch all non-forked github repositories of a user?
-  - could unify all of my repositories to make sure all of them are kept up-to-date
+  - [ ] unify all of my active non-monorepo repositories to make sure all of them are kept up-to-date
   - when cloning only a single repo, it needs to be able to bootstrap itself
     - maybe a command which will clone the parent repo (or use a global clone based on ENV variable) to make parent repo tooling available and generate config files only for that specific repo?
   - the managing repo doesn't contains submodules or list (for privacy)
   - more basic, but good references: https://manicli.com/project-background
+- [ ] telemetry
 - [ ] error reporting API for features
-- [ ] transpile config files from .config to root (to avoid having to create workarounds loading .ts files)
+- [ ] transpile config files from `.config/raw` to root (to avoid having to create workarounds loading .ts files)
 - [ ] unify/clarify naming around projects/workspaces/packages/workspace-root/etc
 - [ ] allow setting default TypeScript extension: '.ts', '.cts', '.mts', '.js' (for building in TSDoc mode), as well as the default extension in imports: 'source' ('.ts') or 'output' ('.js')
 - [ ] allow using one of the large scaffolds (epic-stack, electronforge, ignite red)
@@ -177,8 +184,8 @@
   - [ ] option to bundle node_modules or not (with exceptions)
   - [ ] automatically remove the bundled modules from the built package.json, and maybe add them to optionalPeerDependencies?
   - [ ] perhaps the bundled package is published separately? e.g. under a package.bundle name? maybe this is overridable?
-  - [ ] consider code-splitting by CLI command, to make the initial load faster?
-- [ ] explain why it's better to ship unbundled - all transpiled files individually - and when bundling actually can make sense (e.g. for applications - CLI, etc.)
+  - [x] consider code-splitting by CLI command, to make the initial load faster?
+- [ ] explain when it's better to ship unbundled (libraries) - all transpiled files individually - and when bundling actually can make sense (e.g. for applications - CLI, etc.)
 - [ ] 2 modes for running TypeScript that you could toggle between - with workspace references, or single-project
   - small projects don't need the overhead/downsides of workspace references
 - [ ] [rollup-plugin-ts](https://github.com/wessberg/rollup-plugin-ts) ?
@@ -190,7 +197,6 @@
 - [ ] will Deno work with the ESM output out of the box?
 - [ ] what if package jsons were also autogenerated? see [bit](https://blog.bitsrc.io/how-to-easily-manage-dependencies-in-a-js-monorepo-6216bd6621ea)
 - [ ] jest
-- [ ] Customizable package source directory (so we can skip src in mono repo), when publishing copy src into the publish directory. Hmm will semantic publishing work if we copy sources?
 - [ ] State file to track changes made to the repo by the tool, and show diff before applying (for upgrading)
 - [ ] Migration tool - should remove files from gitignore from committed files
 - [ ] Docs: Great collection of [CLI websites](https://news.ycombinator.com/item?id=26878936) on HN
@@ -198,7 +204,6 @@
 - [ ] adding arbitrary github action files from config (which means generating them from code is possible)
 - [ ] config file - store local overrides diffing
   - i.e. if you manually change a YAML/JSON config file, we store the diff in .config, and then when we regenerate the config, we apply the diff on top of it
-- [ ] move `@repo/core` dependency listing in features to peerDependencies
 - [ ] create package.json's automatically on apply if they don't exist, then run yarn!
 - [ ] website
 - [ ] Product Hunt release
@@ -206,8 +211,8 @@
 - [ ] write a generic TS helper for records/maps that contain arrays, it's a pain to always have to initialize them. or maybe have an initializer getOrSet or push/add() helper that pre-initializes it for you?
 - [ ] add [ts-reset](https://github.com/total-typescript/ts-reset) to typescript
 - [ ] look into https://www.farmfe.org/ and rsbuild
-- [ ] https://twitter.com/mattpocockuk/status/1787893902512443406?t=TFbEEj9exMvHuZLx4ZmaFA&s=19 - post to respond to when condu is ready
-      Other ideas:
+
+Other ideas:
 
 - what if enabling the features is done by a simple list file (defaults),
   but if you want to customize, you then create a config file?
@@ -217,6 +222,7 @@
 Post-release:
 
 - https://gist.github.com/khalidx/1c670478427cc0691bda00a80208c8cc
+- [ ] https://twitter.com/mattpocockuk/status/1787893902512443406?t=TFbEEj9exMvHuZLx4ZmaFA&s=19 - post to respond to when condu is ready
 
 References:
 

@@ -1,8 +1,9 @@
 import type {
+  Project,
   WorkspaceProjectDefined,
   WorkspaceRootPackage,
 } from "@condu/types/configTypes.js";
-import { loadRepoProject } from "../../loadProject.js";
+import { loadConduProject } from "../../loadProject.js";
 import * as fs from "node:fs/promises";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import sortPackageJson from "sort-package-json";
@@ -25,7 +26,7 @@ export async function createCommand({
   name,
   context,
 }: CreateOptions) {
-  const project = await loadRepoProject();
+  const project = await loadConduProject();
   if (!project) {
     throw new Error(`Unable to load project`);
   }
@@ -65,7 +66,7 @@ export async function createPackage({
   context,
 }: {
   match: Match;
-  project: WorkspaceRootPackage;
+  project: Project;
   description: string | undefined;
   context: CommandContext;
 }) {
@@ -93,10 +94,11 @@ export async function createPackage({
     description,
     version: "0.0.0",
     type: "module",
-    // copy author from workspace package.json
-    author: project.manifest.author,
-    license: project.manifest.license,
-    contributors: project.manifest.contributors,
+    // note: skip author, license, contributors, as these will be applied when running 'release'
+    // the user can override them by specifying them though!
+    // author: project.manifest.author,
+    // license: project.manifest.license,
+    // contributors: project.manifest.contributors,
     ...(isPrivate
       ? { private: isPrivate }
       : { publishConfig: { access: "public" } }),
@@ -113,13 +115,16 @@ export async function createPackage({
     // run yarn to link the new package
     // TODO: use correct package manager and extract to a function
 
-    const yarn = childProcess.spawnSync(`yarn install`, {
+    const installShellCmd = `${project.config.node.packageManager.name} install`;
+    const installProcess = childProcess.spawnSync(installShellCmd, {
       stdio: "inherit",
       shell: true,
       cwd: project.absPath,
     });
-    if (yarn.status !== 0) {
-      context.error(`yarn exited with status code ${yarn.status}`);
+    if (installProcess.status !== 0) {
+      context.error(
+        `${installShellCmd} exited with status code ${installProcess.status}`,
+      );
     }
   }
 

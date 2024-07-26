@@ -1,6 +1,6 @@
 import type { BaseContext } from "clipanion";
 import { createCommandContext } from "../createCommandContext.js";
-import { loadRepoProject } from "../loadProject.js";
+import { loadConduProject } from "../loadProject.js";
 import type { Project } from "@condu/types/configTypes.js";
 import { getSingleMatch } from "../matchPackage.js";
 import { match } from "ts-pattern";
@@ -19,7 +19,7 @@ export async function execCommand(input: {
   args: string[];
   context: BaseContext;
 }) {
-  const project = await loadRepoProject();
+  const project = await loadConduProject();
   if (!project) {
     throw new Error(`Unable to load project`);
   }

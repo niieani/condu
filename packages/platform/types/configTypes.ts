@@ -2,6 +2,7 @@ import type { PartialProjectConfig, PartialTaskConfig } from "@moonrepo/types";
 import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import type { Pattern } from "ts-pattern";
 import type { CONFIGURED } from "./configure.js";
+import type { ProjectManifest } from "@pnpm/types";
 
 export interface DependencyDef {
   packageAlias: string;
@@ -72,9 +73,10 @@ export interface ConduPackageJson extends PackageJson {
   name: string;
   condu?: PackageJsonConduSection;
 
-  bolt?: {
-    workspaces?: string[];
-  };
+  bolt?: { workspaces?: string[] };
+  pnpm?: ProjectManifest["pnpm"];
+  resolutions?: Record<string, string>;
+  overrides?: Record<string, string>;
 }
 
 export interface CollectedTaskDef extends Task {
@@ -163,7 +165,7 @@ export interface FeatureResult {
 }
 
 export type FeatureActionFn = (
-  config: RepoConfigWithInferredValuesAndProject,
+  config: ConduConfigWithInferredValuesAndProject,
   /**
    * TODO: consider lifting 'state' argument to 'content' function of files
    * since the state here is only "collected till now"
@@ -195,7 +197,7 @@ type GitConfig = {
 type NodeConfig = {
   /** @default 'yarn' */
   packageManager?: {
-    name: "yarn" | "npm" | "pnpm";
+    name: "yarn" | "npm" | "pnpm" | "bun";
     version?: string;
   };
   version?: string;
@@ -221,7 +223,7 @@ export interface ConfiguredRepoConfig extends RepoConfig {
   [CONFIGURED]: true;
 }
 
-export interface RepoConfigWithInferredValues extends ConfiguredRepoConfig {
+export interface ConduConfigWithInferredValues extends ConfiguredRepoConfig {
   // TODO: add error / warning functions
   workspaceDir: string;
   configDir: string;
@@ -232,12 +234,12 @@ export interface RepoConfigWithInferredValues extends ConfiguredRepoConfig {
 
 export interface Project extends WorkspaceRootPackage {
   projectConventions: WorkspaceProjectDefined[];
-  config: RepoConfigWithInferredValues;
+  config: ConduConfigWithInferredValues;
   getWorkspacePackages: () => Promise<readonly WorkspaceSubPackage[]>;
 }
 
-export interface RepoConfigWithInferredValuesAndProject
-  extends RepoConfigWithInferredValues {
+export interface ConduConfigWithInferredValuesAndProject
+  extends ConduConfigWithInferredValues {
   project: Project;
 }
 

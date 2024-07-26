@@ -107,7 +107,7 @@ Embrace convention over configuration, but allow for easy configuration override
     - app-react-native (use Ignite? w/ expo)
   - test strategies
     - jest
-    - vitest (?)
+    - vitest
     - benchmarking
     - pure bun
     - pure node test runner?

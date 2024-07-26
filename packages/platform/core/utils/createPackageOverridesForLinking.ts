@@ -18,7 +18,7 @@ export interface LinkingOptions {
 export async function createPackageOverridesForLinking({
   linkedProjectDir,
   targetPackageDir,
-  protocol = "file:",
+  protocol = "link:",
   modifyTargetDir,
 }: LinkingOptions) {
   const project = await getWorkspace({ cwd: linkedProjectDir });

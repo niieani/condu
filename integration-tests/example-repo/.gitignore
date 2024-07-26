@@ -6,6 +6,19 @@ node_modules
 /tsconfig.options.json
 /tsconfig.json
 /packages/*/tsconfig.json
+# pnpm:
+/pnpm-workspace.yaml
+# eslint:
+/eslint.config.js
+# moon:
+/.moon/
+/.moon/cache
+/.moon/docker
+/.moon/toolchain.yml
+/.moon/workspace.yml
+# moonCi:
+/moon.yml
+/.moon/tasks.yml
 # custom ignore patterns:
 .env
 .env.*

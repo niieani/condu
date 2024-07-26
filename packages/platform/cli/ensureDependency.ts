@@ -2,8 +2,8 @@ import { createNpmResolver } from "@pnpm/npm-resolver";
 import { getCacheDir } from "@condu/core/utils/dirs.js";
 import { createFetchFromRegistry } from "@pnpm/fetch";
 import { createGetAuthHeaderByURI } from "@pnpm/network.auth-header";
-import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import type {
+  ConduPackageJson,
   DependencyDef,
   PackageJsonConduSection,
 } from "@condu/types/configTypes.js";
@@ -31,7 +31,7 @@ export async function ensureDependency({
   skipIfExists = true,
   managed = "presence",
 }: DependencyDef & {
-  manifest: PackageJson;
+  manifest: ConduPackageJson;
 }) {
   const targetDependencyList = (manifest[target] ||= {});
   if (skipIfExists && targetDependencyList[packageAlias]) {
@@ -65,19 +65,21 @@ export async function ensureDependency({
   return true;
 }
 
-function ensureManagedDependenciesSection(manifest: PackageJson) {
-  let conduSection = ensureConduSection(manifest);
-  let managedDependencies = conduSection["managedDependencies"];
+export function ensureManagedDependenciesSection(manifest: ConduPackageJson) {
+  const conduSection = ensureConduSection(manifest);
+  let managedDependencies = conduSection.managedDependencies;
   if (typeof managedDependencies !== "object" || !managedDependencies) {
-    managedDependencies = conduSection["managedDependencies"] = {};
+    managedDependencies = conduSection.managedDependencies = {};
   }
   return managedDependencies;
 }
 
-function ensureConduSection(manifest: PackageJson): PackageJsonConduSection {
-  let conduSection = manifest["condu"];
+export function ensureConduSection(
+  manifest: ConduPackageJson,
+): PackageJsonConduSection {
+  let conduSection = manifest.condu;
   if (typeof conduSection !== "object" || !conduSection) {
-    conduSection = manifest["condu"] = {};
+    conduSection = manifest.condu = {};
   }
   return conduSection;
 }
