@@ -71,6 +71,10 @@ export const libraryBundle = ({
                 )}`;
                 rootEntry.bun = rootEntry.import;
                 rootEntry.default = rootEntry.import;
+                rootEntry.types = rootEntry.source?.replace(
+                  /\.[cm]?ts$/,
+                  ".d.ts",
+                );
                 delete rootEntry.require;
                 return {
                   ...entrySources,
