@@ -4,26 +4,27 @@
 // import minimatch from "minimatch";
 // import resolve from "eslint-module-utils/resolve";
 // import moduleVisitor from "eslint-module-utils/moduleVisitor";
-// import importType from "eslint-plugin-import/lib/core/importType";
-// import { getFilePackageName } from "eslint-plugin-import/lib/core/packagePath";
-// import docsUrl from "eslint-plugin-import/lib/docsUrl";
+// import importType from "eslint-plugin-import-x/lib/core/importType";
+// import { getFilePackageName } from "eslint-plugin-import-x/lib/core/packagePath";
+// import docsUrl from "eslint-plugin-import-x/lib/docsUrl";
 const path = require("path");
 const fs = require("fs");
 const pkgUp = require("eslint-module-utils/pkgUp").default;
 const minimatch = require("minimatch");
 const resolve = require("eslint-module-utils/resolve").default;
 const moduleVisitor = require("eslint-module-utils/moduleVisitor").default;
-const importType = require("eslint-plugin-import/lib/core/importType").default;
+const importType =
+  require("eslint-plugin-import-x/lib/core/importType").default;
 const {
   getFilePackageName,
-} = require("eslint-plugin-import/lib/core/packagePath");
-const docsUrl = require("eslint-plugin-import/lib/docsUrl").default;
+} = require("eslint-plugin-import-x/lib/core/packagePath");
+const docsUrl = require("eslint-plugin-import-x/lib/docsUrl").default;
 
 // because autofixes are evaluated eagerly, it's not possible to do this correctly using eslint
 // this is a nasty hack that depends on the fact that eslint's SourceCodeFixer passes the text as is
 // the code hasn't changed for the past 5 years, so it should be safe for the time being
 // there's a call to startsWith(BOM) on the autofix text, which we can use to trigger the autofix
-// see eslint/lib/linter/source-code-fixer.js#L98
+// see https://github.com/eslint/eslint/blob/13d0bd371eb8eb4aa1601c8727212a62ab923d0e/lib/linter/source-code-fixer.js#L98
 
 // TODO: we could try to create a typescript language service plugin that does this,
 // and make it into a TS autofix instead
@@ -394,11 +395,11 @@ function reportIfMissing(
             autoFixVersionOrPrefix === "" || autoFixVersionOrPrefix === "="
               ? resolvedVersion
               : autoFixVersionOrPrefix === "*"
-              ? "*"
-              : allowedSemVerPrefixes.includes(autoFixVersionOrPrefix) &&
-                resolvedVersion !== "*"
-              ? `${autoFixVersionOrPrefix}${resolvedVersion}`
-              : autoFixVersionOrPrefix;
+                ? "*"
+                : allowedSemVerPrefixes.includes(autoFixVersionOrPrefix) &&
+                    resolvedVersion !== "*"
+                  ? `${autoFixVersionOrPrefix}${resolvedVersion}`
+                  : autoFixVersionOrPrefix;
 
           const packageJson = readJSON(sourcePath, false, true);
           if (!packageJson) {

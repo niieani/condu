@@ -1,12 +1,11 @@
 import { defineFeature } from "condu/defineFeature.js";
-import { CONDU_WORKSPACE_PACKAGE_NAME } from "@condu/types/constants.js";
+
+const RUNNING_SOURCE_VERSION = import.meta.url.endsWith(".ts");
 
 export const eslint = ({}: {} = {}) =>
   defineFeature({
     name: "eslint",
     actionFn: (config, state) => {
-      const isInternalCondu =
-        config.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME;
       return {
         effects: [
           {
@@ -14,18 +13,19 @@ export const eslint = ({}: {} = {}) =>
               {
                 path: "eslint.config.js",
                 content: `import config from '@condu-feature/eslint/config.${
-                  isInternalCondu ? "ts" : "js"
+                  RUNNING_SOURCE_VERSION ? "ts" : "js"
                 }';
 export default config;`,
               },
             ],
             devDependencies: [
               "eslint",
-              "eslint-plugin-import@npm:eslint-plugin-i@latest",
+              "eslint-plugin-import-x",
               "eslint-plugin-unicorn",
               "eslint-import-resolver-typescript",
-              "@typescript-eslint/parser",
-              "@typescript-eslint/eslint-plugin",
+              "@typescript-eslint/parser@rc-v8",
+              "@typescript-eslint/eslint-plugin@rc-v8",
+              ...(RUNNING_SOURCE_VERSION ? ["tsx"] : []),
             ],
             tasks: [
               {
@@ -33,7 +33,7 @@ export default config;`,
                 type: "test",
                 definition: {
                   command: "eslint",
-                  ...(isInternalCondu
+                  ...(RUNNING_SOURCE_VERSION
                     ? {
                         env: {
                           NODE_OPTIONS: "--import tsx/esm",

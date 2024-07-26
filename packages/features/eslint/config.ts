@@ -1,5 +1,5 @@
 import type { Linter, ESLint } from "eslint";
-import importPlugin from "eslint-plugin-import";
+import importPlugin from "eslint-plugin-import-x";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import typescriptParser, {
   type ParserOptions,

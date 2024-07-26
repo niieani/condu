@@ -32,7 +32,7 @@
     "bun-types": "^1.1.20",
     "eslint": "^9.7.0",
     "eslint-import-resolver-typescript": "^3.6.1",
-    "eslint-plugin-import": "npm:eslint-plugin-i@^2.29.1",
+    "eslint-plugin-import-x": "^3.1.0",
     "eslint-plugin-unicorn": "^55.0.0",
     "release-please": "npm:release-please-fork@^16.10.4",
     "rollup": "^4.19.0",
@@ -48,5 +48,10 @@
   "packageManager": "yarn@4.3.0",
   "engines": {
     "node": "22.1.0"
+  },
+  "condu": {
+    "managedDependencies": {
+      "eslint-plugin-import-x": "presence"
+    }
   }
 }

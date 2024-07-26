@@ -107,11 +107,11 @@ __metadata:
   dependencies:
     "@condu/types": "workspace:^"
   peerDependencies:
-    "@typescript-eslint/eslint-plugin": ^8.0.0-alpha.39
-    "@typescript-eslint/parser": ^8.0.0-alpha.40
+    "@typescript-eslint/eslint-plugin": ">=8"
+    "@typescript-eslint/parser": ">=8"
     condu: "workspace:^"
-    eslint-plugin-import: "*"
-    eslint-plugin-unicorn: ^54.0.0
+    eslint-plugin-import-x: "*"
+    eslint-plugin-unicorn: "*"
   languageName: unknown
   linkType: soft
 
@@ -4072,7 +4072,6 @@ __metadata:
     bun-types: "npm:^1.1.20"
     eslint: "npm:^9.7.0"
     eslint-import-resolver-typescript: "npm:^3.6.1"
-    eslint-plugin-import: "npm:eslint-plugin-i@^2.29.1"
     eslint-plugin-unicorn: "npm:^55.0.0"
     release-please: "npm:release-please-fork@^16.10.4"
     rollup: "npm:^4.19.0"
@@ -4497,15 +4496,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"doctrine@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "doctrine@npm:3.0.0"
-  dependencies:
-    esutils: "npm:^2.0.2"
-  checksum: 10c0/c96bdccabe9d62ab6fea9399fdff04a66e6563c1d6fb3a3a063e8d53c3bb136ba63e84250bbf63d00086a769ad53aef92d2bd483f03f837fc97b71cbee6b2520
-  languageName: node
-  linkType: hard
-
 "dom-serializer@npm:^2.0.0":
   version: 2.0.0
   resolution: "dom-serializer@npm:2.0.0"
@@ -4891,17 +4881,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-import-resolver-node@npm:^0.3.9":
-  version: 0.3.9
-  resolution: "eslint-import-resolver-node@npm:0.3.9"
-  dependencies:
-    debug: "npm:^3.2.7"
-    is-core-module: "npm:^2.13.0"
-    resolve: "npm:^1.22.4"
-  checksum: 10c0/0ea8a24a72328a51fd95aa8f660dcca74c1429806737cf10261ab90cfcaaf62fd1eff664b76a44270868e0a932711a81b250053942595bcd00a93b1c1575dd61
-  languageName: node
-  linkType: hard
-
 "eslint-import-resolver-typescript@npm:^3.6.1":
   version: 3.6.1
   resolution: "eslint-import-resolver-typescript@npm:3.6.1"
@@ -4920,7 +4899,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-module-utils@npm:^2.7.4, eslint-module-utils@npm:^2.8.0":
+"eslint-module-utils@npm:^2.7.4":
   version: 2.8.0
   resolution: "eslint-module-utils@npm:2.8.0"
   dependencies:
@@ -4929,24 +4908,6 @@ __metadata:
     eslint:
       optional: true
   checksum: 10c0/c7a8d1a58d76ec8217a8fea49271ec8132d1b9390965a75f6a4ecbc9e5983d742195b46d2e4378231d2186801439fe1aa5700714b0bfd4eb17aac6e1b65309df
-  languageName: node
-  linkType: hard
-
-"eslint-plugin-import@npm:eslint-plugin-i@^2.29.1":
-  version: 2.29.1
-  resolution: "eslint-plugin-i@npm:2.29.1"
-  dependencies:
-    debug: "npm:^4.3.4"
-    doctrine: "npm:^3.0.0"
-    eslint-import-resolver-node: "npm:^0.3.9"
-    eslint-module-utils: "npm:^2.8.0"
-    get-tsconfig: "npm:^4.7.2"
-    is-glob: "npm:^4.0.3"
-    minimatch: "npm:^3.1.2"
-    semver: "npm:^7.5.4"
-  peerDependencies:
-    eslint: ^7.2.0 || ^8
-  checksum: 10c0/7bb544b7b2d59de64010b17c19bdcec006620a11d26317fcf92692bfefee686889bf272318fc14499972e2a90041a5dc520b06708716f48a8162416b0cdb410f
   languageName: node
   linkType: hard
 
@@ -5631,7 +5592,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-tsconfig@npm:^4.5.0, get-tsconfig@npm:^4.7.2, get-tsconfig@npm:^4.7.3, get-tsconfig@npm:^4.7.5":
+"get-tsconfig@npm:^4.5.0, get-tsconfig@npm:^4.7.3, get-tsconfig@npm:^4.7.5":
   version: 4.7.5
   resolution: "get-tsconfig@npm:4.7.5"
   dependencies:
@@ -8472,7 +8433,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@npm:^1.10.0, resolve@npm:^1.20.0, resolve@npm:^1.22.4":
+"resolve@npm:^1.10.0, resolve@npm:^1.20.0":
   version: 1.22.8
   resolution: "resolve@npm:1.22.8"
   dependencies:
@@ -8485,7 +8446,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@patch:resolve@npm%3A^1.10.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.20.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.4#optional!builtin<compat/resolve>":
+"resolve@patch:resolve@npm%3A^1.10.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.20.0#optional!builtin<compat/resolve>":
   version: 1.22.8
   resolution: "resolve@patch:resolve@npm%3A1.22.8#optional!builtin<compat/resolve>::version=1.22.8&hash=c3c19d"
   dependencies:

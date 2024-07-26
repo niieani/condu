@@ -3,11 +3,11 @@
   "version": "0.1.4",
   "type": "module",
   "peerDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.0.0-alpha.39",
-    "@typescript-eslint/parser": "^8.0.0-alpha.40",
+    "@typescript-eslint/eslint-plugin": ">=8",
+    "@typescript-eslint/parser": ">=8",
     "condu": "workspace:^",
-    "eslint-plugin-import": "*",
-    "eslint-plugin-unicorn": "^54.0.0"
+    "eslint-plugin-import-x": "*",
+    "eslint-plugin-unicorn": "*"
   },
   "publishConfig": {
     "access": "public",
