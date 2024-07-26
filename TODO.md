@@ -65,6 +65,7 @@
   - [ ] optionally create a new folder with git repo if `name` positional parameter is provided
   - [ ] a preset package just exports an object, so applying a preset is just merging each of the properties
   - [ ] can be used to apply changes to an existing project, in which case it will infer certain things from the existing project, like the package manager
+- [ ] re-evaluate the API for writing features - there's a lot of nesting, can it be simplified a bit?
 - [ ] detect packageManager from lockfile if not configured
 - [ ] non-monorepo/single package mode
 - [ ] what is up with yarnrc changing on its own?
@@ -84,15 +85,17 @@
 
 - alpha shippable state -
 
-- similar tool: https://packemon.dev/
-- alternatives to consider for dual building from TSC (unfortunately uses babel):
-
-  - [duel](https://github.com/knightedcodemonkey/duel)
-  - [specifier updating](https://github.com/knightedcodemonkey/specifier)
-  - [tsup](https://github.com/egoist/tsup)
-
 ## Later:
 
+- [ ] add validation for feature dependencies (e.g. "auto" feature depends on "lerna")
+  - maybe instead of dependencies, but see below - contributed state?
+- [ ] add shared state for features (features can contribute to it and build on top of each other's state)
+  - perhaps features contribute individual settings, like in vscode - providing a required schema - that way we could validate that the dependent state is valid
+- [ ] basic any-config feature:
+  - [ ] bare minimum: just copy files from .config to the root and add them to .gitignore, or
+  - [ ] symlink all non-js files from .config to the root (e.g. for .env)
+  - [ ] create dummy root .cjs files that require or .js/.mjs files that import their equivalent from .config
+- [ ] during 'apply', auto-transpile .ts config files into .js based on extension? (e.g. webpack.config.source.cts -> webpack.config.gen.cjs)
 - [ ] to simplify config, automatically use features that are installed as devDependencies using the default parameters (maybe a flag can turn this off?)
 - [ ] add validation on CI to make sure no uncommitted files are left dangling after `condu apply` / `yarn` on CI
 - [ ] document how author, license aren't added by 'create' by default, as they will be inherited from the workspace during release, unless specified
@@ -138,18 +141,9 @@
   - inspiration: [tailwind](https://tailwindcss.com/) - make configs disappear and appear in a mock vscode/github UI?
 - [ ] easy way to quickly create a new Github repo, already preconfigured, with initial commit, etc.
 - [ ] public library of patches to common dependencies (e.g. [graceful-fs](https://github.com/isaacs/node-graceful-fs/issues/245#issuecomment-2037699522))
-- [ ] add validation for feature dependencies (e.g. "auto" feature depends on "lerna")
-  - maybe instead of dependencies, but see below - contributed state?
 - [ ] eslint additions
   - [ ] ban `export let`
 - [ ] support rescript
-- [ ] add shared state for features (features can contribute to it and build on top of each other's state)
-  - perhaps features contribute individual settings, like in vscode - providing a required schema - that way we could validate that the dependent state is valid
-- [ ] basic any-config feature:
-  - [ ] bare minimum: just copy files from .config to the root and add them to .gitignore, or
-  - [ ] symlink all non-js files from .config to the root (e.g. for .env)
-  - [ ] create dummy root .cjs files that require or .js/.mjs files that import their equivalent from .config
-- [ ] during 'apply', auto-transpile .ts config files into .js based on extension? (e.g. webpack.config.source.cts -> webpack.config.gen.cjs)
 - [ ] usability: how can we ensure that apply has been run before anything else?
   - consider modifying package.json to add "preXYZ" to each script, that auto-runs apply
     - maybe not the best idea, since user might be using pre-scripts already, or using scripts in other scripts (which would cause pre to be apply multiple times)
@@ -227,3 +221,8 @@ Post-release:
 References:
 
 - https://github.com/nodejs/cjs-module-lexer - extract named exports via analysis from CommonJS modules
+- similar tool: https://packemon.dev/
+- alternatives to consider for dual building from TSC (unfortunately uses babel):
+- [duel](https://github.com/knightedcodemonkey/duel)
+- [specifier updating](https://github.com/knightedcodemonkey/specifier)
+- [tsup](https://github.com/egoist/tsup)
