@@ -13,10 +13,10 @@ runs:
     - uses: actions/setup-node@v4
       with:
         node-version-file: package.json
-        cache: yarn
+        cache: pnpm
         registry-url: ${{ inputs.registry-url }}
     - uses: oven-sh/setup-bun@v1
-    - run: yarn install --immutable
+    - run: pnpm install --frozen-lockfile
       shell: bash
     - run: ./node_modules/.bin/moon ci :build
       shell: bash

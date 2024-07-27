@@ -3,8 +3,8 @@
   "version": "0.1.4",
   "type": "module",
   "peerDependencies": {
-    "@typescript-eslint/eslint-plugin": ">=8",
-    "@typescript-eslint/parser": ">=8",
+    "@typescript-eslint/eslint-plugin": "^8.0.0-alpha.54",
+    "@typescript-eslint/parser": "^8.0.0-alpha.54",
     "condu": "workspace:^",
     "eslint-plugin-import-x": "*",
     "eslint-plugin-unicorn": "*"

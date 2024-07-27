@@ -59,6 +59,7 @@
 - [x] when creating: don't add author, license by default, as they will be inherited from the workspace during publish, unless overwritten
 - [x] fix generated license author
 - [x] clean up of devDependencies that should be removed once a feature is removed/disabled
+- [x] move to pnpm
 - [ ] `condu init` command or a command that could be run with `npx condu init` to
   - [ ] add a default config file
   - [ ] add a script to package.json "postinstall": "test -f .config/condu.ts && condu apply"

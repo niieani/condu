@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /// <reference types="vitest" />
-import { defineConfig, type PluginOption } from "vite";
+import { defineConfig } from "vitest/config";
+import type { PluginOption } from "vite";
 import { swc, defineRollupSwcOption } from "rollup-plugin-swc3";
 
 const promock = {

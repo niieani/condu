@@ -4,7 +4,7 @@ import { conduPackages } from "@condu-feature/condu-packages/conduPackages.js";
 import { moon } from "@condu-feature/moon/moon.js";
 import { moonCi } from "@condu-feature/ci-github-actions/moon.js";
 import { eslint } from "@condu-feature/eslint/eslint.js";
-import { yarn } from "@condu-feature/yarn/yarn.js";
+import { pnpm } from "@condu-feature/pnpm/pnpm.js";
 import { vscode } from "@condu-feature/vscode/vscode.js";
 import { libraryBundle } from "@condu-feature/library-bundle/libraryBundle.js";
 import { gptSummarizer } from "@condu-feature/gpt-summarizer/gptSummarizer.js";
@@ -29,11 +29,7 @@ export default configure({
     sourceDir: ".",
   },
   features: [
-    yarn({
-      yarnrc: {
-        plugins: ["./packages/platform/yarn-plugin/index.cjs"],
-      },
-    }),
+    pnpm(),
     typescript({
       tsconfig: {
         compilerOptions: {

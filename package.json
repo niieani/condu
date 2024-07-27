@@ -9,27 +9,69 @@
   ],
   "scripts": {
     "condu": "bun packages/platform/cli/main.ts",
-    "postinstall": "test -f .config/condu.ts && yarn condu apply",
+    "postinstall": "test -f .config/condu.ts && bun condu apply",
     "moon": "moon",
     "start": "bun condu",
     "updateSchemas": "bun packages/platform/schema-types/utils/updateSchemas.ts"
   },
+  "pnpm": {
+    "packageExtensions": {
+      "eslint-import-resolver-typescript": {
+        "peerDependenciesMeta": {
+          "eslint-plugin-import": {
+            "optional": true
+          }
+        },
+        "peerDependencies": {
+          "eslint-plugin-import-x": "*"
+        }
+      },
+      "eslint-plugin-import-x": {
+        "dependencies": {
+          "@typescript-eslint/utils": "^8.0.0-alpha.54"
+        }
+      },
+      "@typescript-eslint/parser": {
+        "peerDependencies": {
+          "eslint": "*"
+        }
+      },
+      "@typescript-eslint/eslint-plugin": {
+        "peerDependencies": {
+          "eslint": "*"
+        }
+      },
+      "@typescript-eslint/utils": {
+        "peerDependencies": {
+          "eslint": "*"
+        }
+      },
+      "@typescript-eslint/type-utils": {
+        "peerDependencies": {
+          "eslint": "*"
+        }
+      }
+    },
+    "ignoredOptionalDependencies": [
+      "eslint-plugin-import"
+    ]
+  },
   "resolutions": {
-    "@pnpm/fetching-types@npm:5.0.0": "patch:@pnpm/fetching-types@npm%3A5.0.0#~/.yarn/patches/@pnpm-fetching-types-npm-5.0.0-d10b510b05.patch",
+    "@pnpm/fetching-types@npm:5.0.0": "patch:@pnpm/fetching-types@npm%3A5.0.0#~/.config/patches/@pnpm-fetching-types-npm-5.0.0-d10b510b05.patch",
     "esbuild": "0.20.2",
-    "graceful-fs": "4.2.11"
+    "graceful-fs": "4.2.11",
+    "@typescript-eslint/utils": "8.0.0-alpha.54"
   },
   "devDependencies": {
     "@moonrepo/cli": "^1.27.3",
     "@moonrepo/types": "^1.19.1",
     "@swc/core": "^1.7.1",
-    "@swc/register": "^0.1.10",
     "@types/eslint": "^9.6.0",
     "@types/node": "^20.14.12",
     "@typescript-eslint/eslint-plugin": "^8.0.0-alpha.54",
     "@typescript-eslint/parser": "^8.0.0-alpha.54",
     "@yarnpkg/types": "^4.0.0",
-    "bun-types": "^1.1.20",
+    "bun-types": "^1.1.21",
     "eslint": "^9.7.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import-x": "^3.1.0",
@@ -40,12 +82,13 @@
     "swc-loader": "^0.2.6",
     "tsx": "^4.16.2",
     "typescript": "^5.5.4",
+    "vite": "^5.3.5",
     "vitest": "^2.0.4",
     "webpack": "^5.93.0",
     "webpack-cli": "^5.1.4",
     "webpack-merge": "^6.0.1"
   },
-  "packageManager": "yarn@4.3.0",
+  "packageManager": "pnpm@9.5.0",
   "engines": {
     "node": "22.1.0"
   },

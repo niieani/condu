@@ -14,7 +14,10 @@ export const lerna = ({}: {} = {}) =>
               content: {
                 $schema: "node_modules/lerna/schemas/lerna-schema.json",
                 version: "independent",
-                npmClient: config.node.packageManager.name,
+                npmClient:
+                  config.node.packageManager.name === "bun"
+                    ? "npm"
+                    : config.node.packageManager.name,
                 command: {
                   version: {
                     conventionalCommits: true,
