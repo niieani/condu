@@ -13,12 +13,11 @@ const pkgUp = require("eslint-module-utils/pkgUp").default;
 const minimatch = require("minimatch");
 const resolve = require("eslint-module-utils/resolve").default;
 const moduleVisitor = require("eslint-module-utils/moduleVisitor").default;
-const importType =
-  require("eslint-plugin-import-x/lib/core/importType").default;
+const { importType } = require("eslint-plugin-import-x/utils/import-type.js");
 const {
   getFilePackageName,
-} = require("eslint-plugin-import-x/lib/core/packagePath");
-const docsUrl = require("eslint-plugin-import-x/lib/docsUrl").default;
+} = require("eslint-plugin-import-x/utils/package-path.js");
+const { docsUrl } = require("eslint-plugin-import-x/utils/docs-url.js");
 
 // because autofixes are evaluated eagerly, it's not possible to do this correctly using eslint
 // this is a nasty hack that depends on the fact that eslint's SourceCodeFixer passes the text as is

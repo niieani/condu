@@ -1,6 +1,6 @@
 /// <reference types="bun-types" />
 
-// eslint-disable-next-line import/no-unresolved
+// eslint-disable-next-line import-x/no-unresolved
 import { beforeAll, describe, test } from "bun:test";
 import { runVerdaccio } from "./verdaccio.js";
 import type { Application } from "express";

@@ -1,4 +1,4 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
+// eslint-disable-next-line import-x/no-extraneous-dependencies
 import { compile, type JSONSchema } from "json-schema-to-typescript";
 import { promises as fs } from "node:fs";
 import path from "node:path";

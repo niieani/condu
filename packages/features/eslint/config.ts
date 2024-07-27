@@ -1,5 +1,6 @@
 import type { Linter, ESLint } from "eslint";
 import importPlugin from "eslint-plugin-import-x";
+import importPluginTypeScript from "eslint-plugin-import-x/config/typescript.js";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import typescriptParser, {
   type ParserOptions,
@@ -16,16 +17,19 @@ export default [
       "build/**",
       ".moon/**",
       ".yarn/**",
+      "integration-tests/**",
     ],
   },
   {
     // TODO: use files from config
     files: ["**/*.{js,jsx,ts,tsx}"],
     plugins: {
-      import: {
+      "import-x": {
         ...importPlugin,
+        ...importPluginTypeScript,
         rules: {
           ...importPlugin.rules,
+          ...(importPluginTypeScript.rules as unknown as ESLint.Plugin["rules"]),
           "no-extraneous-dependencies": noExtraneousDependencies,
         },
       },
@@ -47,14 +51,23 @@ export default [
     },
     rules: {
       // turn on errors for missing imports
-      "import/no-unresolved": "error",
-      "import/no-relative-packages": "error",
-      "import/no-duplicates": ["error", { "prefer-inline": true }],
-      "import/no-extraneous-dependencies": [
+      "import-x/no-unresolved": [
+        "error",
+        {
+          // ignore: ["^bun:"]
+        },
+      ],
+      "import-x/no-relative-packages": "error",
+      "import-x/no-duplicates": ["error", { "prefer-inline": true }],
+      "import-x/no-extraneous-dependencies": [
         "error",
         // TODO: make dynamic based on conventions
         {
-          devDependencies: ["**/*.test.{js,jsx,ts,tsx}", "**/.config/**"],
+          devDependencies: [
+            "**/*.test.{js,jsx,ts,tsx}",
+            "**/.config/**",
+            "*.config.{js,ts}",
+          ],
           autoFixVersionMapping: [
             ["@condu/", "workspace:^"],
             ["@condu-feature/", "workspace:^"],
@@ -105,10 +118,10 @@ export default [
       // TODO: review the rest https://github.com/sindresorhus/eslint-plugin-unicorn/tree/main?tab=readme-ov-file
     },
     settings: {
-      "import/parsers": {
+      "import-x/parsers": {
         "@typescript-eslint/parser": [".ts", ".tsx"],
       },
-      "import/resolver": {
+      "import-x/resolver": {
         typescript: {
           alwaysTryTypes: true, // always try to resolve types under `<root>@types` directory even it doesn't contain any source code, like `@types/unist`
 
