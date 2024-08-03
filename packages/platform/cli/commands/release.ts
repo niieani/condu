@@ -55,8 +55,9 @@ export async function prepareAndReleaseDirectoryPackages({
   npmTag?: string;
   dryRun?: boolean;
 }) {
-  // TODO: ensure we had run build step before this, so that the cache has been populated
-  const configFileCache = await readPreviouslyWrittenFileCache(workspaceDirAbs);
+  // TODO: ensure we had run 'apply' before this, so that the cache has been populated
+  const { cache: configFileCache } =
+    await readPreviouslyWrittenFileCache(workspaceDirAbs);
   const configFileAbsolutePaths = Array.from(configFileCache.keys()).map(
     (filePath) => path.join(workspaceDirAbs, filePath),
   );

@@ -6,7 +6,6 @@ import type {
   CollectedState,
   DependencyDef,
   Hooks,
-  ConduConfigWithInferredValues,
   ConduConfigWithInferredValuesAndProject,
   StateFlags,
   LoadConfigOptions,
@@ -15,7 +14,6 @@ import type {
 } from "@condu/types/configTypes.js";
 import { groupBy, isDeepEqual } from "remeda";
 import { loadConduProject } from "../../loadProject.js";
-import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
 import { nonEmpty } from "@condu/core/utils/filter.js";
 import { isMatching } from "ts-pattern";
 import {
@@ -235,7 +233,7 @@ export async function apply(options: LoadConfigOptions = {}) {
 
   // TODO: provide the manually changed previouslyWrittenFiles to respective features
   // TODO: would need to add feature name to each cache entry
-  const previouslyWrittenFiles =
+  const { cache: previouslyWrittenFiles, rawCacheFile } =
     await readPreviouslyWrittenFileCache(workspaceDirAbs);
 
   const writtenFiles: WrittenFile[] = [];
@@ -257,11 +255,13 @@ export async function apply(options: LoadConfigOptions = {}) {
 
   // anything that's left in 'previouslyWrittenFiles' is no longer being generated, and should be deleted:
   await Promise.all(
-    [...previouslyWrittenFiles.values()].map(async (file) => {
-      if (file.manuallyChanged) return;
-      const fullPath = path.join(workspaceDirAbs, file.path);
+    [...previouslyWrittenFiles.entries()].map(async ([filePath, file]) => {
+      if (file.fsState) return;
+      const fullPath = path.join(workspaceDirAbs, filePath);
       console.log(`Deleting, no longer needed: ${fullPath}`);
-      await fs.rm(fullPath);
+      await fs.rm(fullPath).catch((reason) => {
+        console.error(`Failed to delete ${filePath}: ${reason}`);
+      });
     }),
   );
 
@@ -270,7 +270,11 @@ export async function apply(options: LoadConfigOptions = {}) {
     targetPackage: project,
     workspaceDirAbs,
     targetPackageDir: ".",
-    previouslyWrittenFiles: new Map(),
+    previouslyWrittenFiles: new Map(
+      rawCacheFile
+        ? [[FILE_STATE_PATH, { lastApply: rawCacheFile, fsState: "unchanged" }]]
+        : undefined,
+    ),
     throwOnManualChanges,
   });
 

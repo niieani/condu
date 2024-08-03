@@ -23,16 +23,17 @@ const stringify = (obj: unknown, filePath: string) =>
 export interface WrittenFile {
   path: string;
   content: string;
-  writtenAt: number;
+  modifiedAt: number;
+  size: number;
 }
 
-interface CachedWrittenFile extends WrittenFile {
-  manuallyChanged?:
-    | {
-        at: number;
-        content: string;
-      }
-    | "deleted";
+interface CachedWrittenFile {
+  lastApply: WrittenFile;
+  /**
+   * the current file as is present in the FS
+   * if the file was deleted, this will be "deleted"
+   **/
+  fsState: Omit<WrittenFile, "path"> | "deleted" | "unchanged";
 }
 
 const createGetExistingContentFn =
@@ -90,40 +91,48 @@ const writeFileFromDef = async ({
   if (resolvedContent === undefined) {
     if (previouslyWritten) {
       console.log(`Deleting, no longer needed: ${pathFromWorkspaceDirAbs}`);
-      await fs.rm(targetPath);
+      await fs.rm(targetPath).catch((reason) => {
+        console.error(`Failed to delete ${pathFromWorkspaceDirAbs}: ${reason}`);
+      });
     }
     // nothing to add to cache state:
     return;
   }
 
-  const content =
+  const newContent =
     typeof resolvedContent === "string"
       ? resolvedContent
       : stringify(resolvedContent, file.path);
 
   if (
-    previouslyWritten &&
-    !previouslyWritten.manuallyChanged &&
-    content === previouslyWritten.content
+    previouslyWritten?.fsState === "unchanged" &&
+    newContent === previouslyWritten.lastApply.content
   ) {
     // TODO: if (DEBUG)
     // console.log(`Already fresh: ${pathFromWorkspaceDirAbs}`);
-    return previouslyWritten;
+    return previouslyWritten.lastApply;
   }
 
   // only show diff if we're not "enhancing" a manually editable file,
   // and the file doesn't have the 'alwaysOverwrite' flag
   if (
-    typeof previouslyWritten?.manuallyChanged === "object" &&
+    typeof previouslyWritten?.fsState === "object" &&
     !usedExistingContent &&
     !file.alwaysOverwrite
   ) {
+    if (previouslyWritten.fsState.content === newContent) {
+      return {
+        path: pathFromWorkspaceDirAbs,
+        ...previouslyWritten.fsState,
+      };
+    }
+
     if (throwOnManualChanges) {
       throw new Error(
         `Manual changes present in ${pathFromWorkspaceDirAbs}, cannot continue.`,
       );
     }
-    const manuallyChanged = previouslyWritten.manuallyChanged;
+    const fsContent = previouslyWritten.fsState;
     const isInteractive =
       process.stdout.isTTY &&
       process.stdin.isTTY &&
@@ -131,18 +140,14 @@ const writeFileFromDef = async ({
 
     // this needs to happen sequentially, because we're prompting the user for input:
     return async () => {
-      console.log(`Manual changes present in ${pathFromWorkspaceDirAbs}:`);
-      printUnifiedDiff(manuallyChanged.content, content, process.stdout);
+      console.log(`Manual changes present in ${pathFromWorkspaceDirAbs}`);
+      printUnifiedDiff(fsContent.content, newContent, process.stdout);
       if (!isInteractive) {
         process.exitCode = 1;
         console.log(
           `Please resolve the conflict by running 'condu apply' interactively. Skipping: ${pathFromWorkspaceDirAbs}`,
         );
-        return {
-          path: file.path,
-          writtenAt: previouslyWritten.writtenAt,
-          content: previouslyWritten.content,
-        };
+        return previouslyWritten.lastApply;
       }
 
       const rl = readline.createInterface({
@@ -160,7 +165,7 @@ const writeFileFromDef = async ({
       if (shouldOverwrite) {
         return write({
           targetPath,
-          content,
+          content: newContent,
           pathFromWorkspaceDirAbs,
         });
       } else {
@@ -168,16 +173,12 @@ const writeFileFromDef = async ({
         console.log(
           `Please update your config and re-run 'condu apply' when ready. Skipping: ${pathFromWorkspaceDirAbs}`,
         );
-        return {
-          path: file.path,
-          writtenAt: previouslyWritten.writtenAt,
-          content: previouslyWritten.content,
-        };
+        return previouslyWritten.lastApply;
       }
     };
   }
 
-  return write({ targetPath, content, pathFromWorkspaceDirAbs });
+  return write({ targetPath, content: newContent, pathFromWorkspaceDirAbs });
 };
 
 async function write({
@@ -197,7 +198,8 @@ async function write({
   const result: WrittenFile = {
     path: pathFromWorkspaceDirAbs,
     content,
-    writtenAt: stat.mtimeMs,
+    modifiedAt: stat.mtimeMs,
+    size: stat.size,
   };
   return result;
 }
@@ -227,7 +229,7 @@ export async function writeFiles({
       writeFileFromDef({
         file,
         rootDir,
-        workspaceDirAbs: workspaceDirAbs,
+        workspaceDirAbs,
         ...rest,
       }),
     ),
@@ -245,46 +247,63 @@ export async function writeFiles({
 
 export async function readPreviouslyWrittenFileCache(
   workspaceDir: string,
-): Promise<Map<string, CachedWrittenFile>> {
+): Promise<{
+  rawCacheFile?: WrittenFile;
+  cache: Map<string, CachedWrittenFile>;
+}> {
   try {
-    const file = await fs.readFile(path.join(workspaceDir, FILE_STATE_PATH));
-    const cache = JSON.parse(file.toString()) as WrittenFile[];
-    return new Map(
+    const cachePath = path.join(workspaceDir, FILE_STATE_PATH);
+    const content = await fs.readFile(cachePath, "utf-8");
+    const stat = await fs.stat(cachePath);
+    const previouslyWrittenFiles = JSON.parse(content) as WrittenFile[];
+    const cache = new Map(
       await Promise.all(
-        cache.map(
+        previouslyWrittenFiles.map(
           async (file): Promise<readonly [string, CachedWrittenFile]> => {
-            const fileName = path.basename(file.path);
-            if (fileName === "tsconfig.json") {
-              // TODO: how do we handle tsconfig edited by moon?
-              // ignore changes for now
-              return [file.path, file];
-            }
+            // const fileName = path.basename(file.path);
+            // if (fileName === "tsconfig.json") {
+            //   // TODO: how do we handle tsconfig edited by moon?
+            //   // ignore changes for now
+            //   return [file.path, { lastApply: file, fsState: "unchanged" }];
+            // }
             const fullPath = path.join(workspaceDir, file.path);
             const stat = await fs.stat(fullPath).catch(() => undefined);
             if (!stat) {
-              return [file.path, { ...file, manuallyChanged: "deleted" }];
+              return [file.path, { lastApply: file, fsState: "deleted" }];
             }
-            const newContent = (await fs.readFile(fullPath)).toString();
+            if (stat.mtimeMs === file.modifiedAt && stat.size === file.size) {
+              // presuming no changes, no need to re-read the file
+              return [file.path, { lastApply: file, fsState: "unchanged" }];
+            }
+            const newContent = await fs.readFile(fullPath, "utf-8");
             return [
               file.path,
               {
-                ...file,
-                manuallyChanged: !stat
-                  ? "deleted"
-                  : stat?.atimeMs !== file.writtenAt &&
-                      newContent !== file.content
-                    ? {
-                        at: stat.atimeMs,
+                lastApply: file,
+                fsState:
+                  newContent === file.content
+                    ? "unchanged"
+                    : {
+                        modifiedAt: stat.mtimeMs,
+                        size: stat.size,
                         content: newContent,
-                      }
-                    : undefined,
+                      },
               },
             ] as const;
           },
         ),
       ),
     );
+    return {
+      rawCacheFile: {
+        path: FILE_STATE_PATH,
+        content,
+        modifiedAt: stat.mtimeMs,
+        size: stat.size,
+      },
+      cache,
+    };
   } catch (e) {
-    return new Map();
+    return { cache: new Map() };
   }
 }
