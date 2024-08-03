@@ -171,9 +171,13 @@ function getDependencies(context, packageDir) {
       }
     } else {
       const packageJsonPath = pkgUp({
-        cwd: context.getPhysicalFilename
-          ? context.getPhysicalFilename()
-          : context.getFilename(),
+        cwd:
+          context.physicalFilename ??
+          context.filename ??
+          // deprecated:
+          (context.getPhysicalFilename
+            ? context.getPhysicalFilename()
+            : context.getFilename()),
         normalize: false,
       });
 
