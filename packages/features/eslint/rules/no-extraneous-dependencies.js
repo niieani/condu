@@ -1,23 +1,29 @@
-// import path from "node:path";
-// import fs from "node:fs";
-// import pkgUp from "eslint-module-utils/pkgUp";
-// import minimatch from "minimatch";
-// import resolve from "eslint-module-utils/resolve";
-// import moduleVisitor from "eslint-module-utils/moduleVisitor";
-// import importType from "eslint-plugin-import-x/lib/core/importType";
-// import { getFilePackageName } from "eslint-plugin-import-x/lib/core/packagePath";
-// import docsUrl from "eslint-plugin-import-x/lib/docsUrl";
-const path = require("path");
-const fs = require("fs");
-const pkgUp = require("eslint-module-utils/pkgUp").default;
-const minimatch = require("minimatch");
-const resolve = require("eslint-module-utils/resolve").default;
-const moduleVisitor = require("eslint-module-utils/moduleVisitor").default;
-const { importType } = require("eslint-plugin-import-x/utils/import-type.js");
-const {
-  getFilePackageName,
-} = require("eslint-plugin-import-x/utils/package-path.js");
-const { docsUrl } = require("eslint-plugin-import-x/utils/docs-url.js");
+/* eslint-disable import-x/no-extraneous-dependencies */
+/* eslint-disable unicorn/no-null */
+import path from "node:path";
+import fs from "node:fs";
+import minimatch from "minimatch";
+import pkgUpModule from "eslint-module-utils/pkgUp";
+import resolveModule from "eslint-module-utils/resolve";
+import moduleVisitorModule from "eslint-module-utils/moduleVisitor";
+import { importType } from "eslint-plugin-import-x/utils/import-type.js";
+import { getFilePackageName } from "eslint-plugin-import-x/utils/package-path.js";
+import { docsUrl } from "eslint-plugin-import-x/utils/docs-url.js";
+const { default: moduleVisitor } = moduleVisitorModule;
+const { default: pkgUp } = pkgUpModule;
+const { default: resolve } = resolveModule;
+
+// const path = require("path");
+// const fs = require("fs");
+// const pkgUp = require("eslint-module-utils/pkgUp").default;
+// const minimatch = require("minimatch");
+// const resolve = require("eslint-module-utils/resolve").default;
+// const moduleVisitor = require("eslint-module-utils/moduleVisitor").default;
+// const { importType } = require("eslint-plugin-import-x/utils/import-type.js");
+// const {
+//   getFilePackageName,
+// } = require("eslint-plugin-import-x/utils/package-path.js");
+// const { docsUrl } = require("eslint-plugin-import-x/utils/docs-url.js");
 
 // because autofixes are evaluated eagerly, it's not possible to do this correctly using eslint
 // this is a nasty hack that depends on the fact that eslint's SourceCodeFixer passes the text as is
@@ -60,11 +66,11 @@ const writeJSONLater = (jsonPath, content) => {
     clearTimeout(batchTimeout);
   }
   batchTimeout = setTimeout(() => {
-    batchSaveMap.forEach((content, jsonPath) => {
+    for (const [jsonPath, content] of batchSaveMap.entries()) {
       fs.writeFile(jsonPath, JSON.stringify(content, null, 2) + "\n", () => {
         batchSaveMap.delete(jsonPath);
       });
-    });
+    }
     batchTimeout = null;
   }, 50);
 };
@@ -135,7 +141,7 @@ function getDependencies(context, packageDir) {
 
     if (paths.length > 0) {
       // use rule config to find package.json
-      paths.forEach((dir) => {
+      for (const dir of paths) {
         const packageJsonPath = path.join(dir, "package.json");
         const _packageContent = getPackageDepFields(packageJsonPath, true);
         Object.assign(
@@ -158,7 +164,7 @@ function getDependencies(context, packageDir) {
           ..._packageContent.bundledDependencies,
         );
         sourcePath = packageJsonPath;
-      });
+      }
       if (paths.length > 1) {
         // multiple package.json found, reset sourcePath to null
         sourcePath = null;
@@ -233,12 +239,12 @@ function checkDependencyDeclaration(deps, packageName, declarationStatus) {
   // check the dependencies on all hierarchy
   const packageHierarchy = [];
   const packageNameParts = packageName ? packageName.split("/") : [];
-  packageNameParts.forEach((namePart, index) => {
+  for (const [index, namePart] of packageNameParts.entries()) {
     if (!namePart.startsWith("@")) {
       const ancestor = packageNameParts.slice(0, index + 1).join("/");
       packageHierarchy.push(ancestor);
     }
-  });
+  }
 
   return packageHierarchy.reduce(
     (result, ancestorName) => ({
@@ -349,10 +355,7 @@ function reportIfMissing(
   const pkgName = realPackageName || importPackageName;
   const [, autoFixVersionOrPrefix] = depsOptions.autoFixVersionMapping?.find(
     ([nameOrScope]) => {
-      return (
-        pkgName === nameOrScope ||
-        (nameOrScope.endsWith("/") && pkgName.startsWith(nameOrScope))
-      );
+      return pkgName === nameOrScope || matchWildcard(nameOrScope, pkgName);
     },
   ) ?? [, depsOptions.autoFixFallback];
 
@@ -420,7 +423,7 @@ function reportIfMissing(
 
 function testConfig(config, filename) {
   // Simplest configuration first, either a boolean or nothing.
-  if (typeof config === "boolean" || typeof config === "undefined") {
+  if (typeof config === "boolean" || config === undefined) {
     return config;
   }
   // Array of globs.
@@ -431,7 +434,7 @@ function testConfig(config, filename) {
   );
 }
 
-module.exports = {
+export default {
   meta: {
     type: "problem",
     docs: {
@@ -502,3 +505,17 @@ module.exports = {
     dependencyJsonCache.clear();
   },
 };
+
+// TODO: import { matchWildcard } from "@condu/core/utils/matchWildcard.js";
+function matchWildcard(pattern, str) {
+  // Escape special characters in pattern and replace '*' with '.*' for regex
+  const regexPattern = pattern
+    .replace(/[$()*+.?[\\\]^{|}]/g, "\\$&")
+    .replace(/\*/g, ".*");
+
+  // Create a regular expression from the pattern
+  const regex = new RegExp(`^${regexPattern}$`);
+
+  // Test if the string matches the regular expression
+  return regex.test(str);
+}

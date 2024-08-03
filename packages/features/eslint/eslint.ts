@@ -1,4 +1,5 @@
 import { defineFeature } from "condu/defineFeature.js";
+import { pick } from "remeda";
 
 const RUNNING_SOURCE_VERSION = import.meta.url.endsWith(".ts");
 
@@ -12,10 +13,12 @@ export const eslint = ({}: {} = {}) =>
             files: [
               {
                 path: "eslint.config.js",
-                content: `import config from '@condu-feature/eslint/config.${
-                  RUNNING_SOURCE_VERSION ? "ts" : "js"
-                }';
-export default config;`,
+                content:
+                  () => `import { getConfigs } from "@condu-feature/eslint/config.${
+                    RUNNING_SOURCE_VERSION ? "ts" : "js"
+                  }";
+const configs = getConfigs(${JSON.stringify(pick(config, ["conventions", "projects"]))});
+export default configs;`,
               },
             ],
             devDependencies: [
@@ -23,8 +26,8 @@ export default config;`,
               "eslint-plugin-import-x",
               "eslint-plugin-unicorn",
               "eslint-import-resolver-typescript",
-              "@typescript-eslint/parser@rc-v8",
-              "@typescript-eslint/eslint-plugin@rc-v8",
+              "@typescript-eslint/parser",
+              "@typescript-eslint/eslint-plugin",
               ...(RUNNING_SOURCE_VERSION ? ["tsx"] : []),
             ],
             tasks: [
