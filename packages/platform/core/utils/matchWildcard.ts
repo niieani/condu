@@ -1,4 +1,4 @@
-export function matchWildcard(pattern, str) {
+export function matchWildcard(pattern: string, str: string) {
   // Escape special characters in pattern and replace '*' with '.*' for regex
   const regexPattern = pattern
     .replace(/[$()*+.?[\\\]^{|}]/g, "\\$&")

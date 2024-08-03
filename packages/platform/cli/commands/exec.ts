@@ -1,16 +1,16 @@
 import type { BaseContext } from "clipanion";
 import { createCommandContext } from "../createCommandContext.js";
 import { loadConduProject } from "../loadProject.js";
-import type { Project } from "@condu/types/configTypes.js";
+import type { IPackageEntry, Project } from "@condu/types/configTypes.js";
 import { getSingleMatch } from "../matchPackage.js";
 import { match } from "ts-pattern";
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
-import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
 import { filter, find } from "remeda";
 import { safeFn } from "@condu/core/utils/safeFn.js";
 import { spawn } from "node:child_process";
 import which from "which";
+import { getPackage } from "@condu/workspace-utils/topo.js";
 
 export async function execCommand(input: {
   cwd?: string;
@@ -34,11 +34,7 @@ export async function execCommand(input: {
         partialPackage: packageNamePart,
         project,
       })
-    : {
-        relPath: project.relPath,
-        absPath: project.absPath,
-        manifest: project.manifest,
-      };
+    : project;
 
   const executableTryPaths = async function* () {
     if (pkg) {
@@ -95,57 +91,53 @@ export async function findExistingPackage({
 }: {
   partialPackage: string;
   project: Project;
-}) {
-  const { projectConventions, manifest, absPath: workspaceDirAbs } = project;
-  const matchBox = safeFn(getSingleMatch)({
-    projectConventions,
-    partialPath: partialPackage,
-  });
-  let matched = await match(matchBox)
-    .with({ status: "rejected" }, () => undefined)
-    .otherwise(async ({ value: matched }) => {
-      const modulePath = path.join(workspaceDirAbs, matched.path);
-      const packageJsonPath = path.join(modulePath, "package.json");
-      const existingPackageJson = await fs
-        .readFile(packageJsonPath)
-        .then((buffer): PackageJson => JSON.parse(buffer.toString()))
-        .catch(() => undefined);
-      return (
-        existingPackageJson && {
-          absPath: modulePath,
-          relPath: path.relative(workspaceDirAbs, modulePath),
-          manifest: existingPackageJson,
-        }
-      );
-    });
+}): Promise<IPackageEntry> {
+  const { projectConventions, absPath: workspaceDirAbs } = project;
 
-  if (!matched) {
-    const packages = [project, ...(await project.getWorkspacePackages())];
-    matched = find(
-      packages,
-      ({ manifest }) => manifest.name === partialPackage,
-    );
-    if (!matched) {
-      const matches = filter(
-        packages,
-        ({ relPath, manifest }) =>
-          manifest.name?.includes(partialPackage) ||
-          relPath.includes(partialPackage),
-      );
-      if (matches.length > 1) {
-        throw new Error(
-          `Ambiguous matches found for ${partialPackage}:\n- ${matches
-            .map(({ manifest }) => manifest.name)
-            .join("\n- ")}`,
+  if (projectConventions) {
+    const matchBox = safeFn(getSingleMatch)({
+      projectConventions,
+      partialPath: partialPackage,
+    });
+    const matched = await match(matchBox)
+      .with({ status: "rejected" }, () => undefined)
+      .otherwise(async ({ value: matched }) => {
+        const modulePath = path.join(workspaceDirAbs, matched.path);
+        const packageJsonPath = path.join(modulePath, "package.json");
+        const pkg = await getPackage(workspaceDirAbs, packageJsonPath).catch(
+          () => undefined,
         );
-      }
-      matched = matches[0];
+        return pkg;
+      });
+    if (matched) {
+      return matched;
     }
   }
 
-  if (!matched) {
-    throw new Error(`Unable to find a package by "${partialPackage}"`);
+  const packages = [project, ...(await project.getWorkspacePackages())];
+  const matched = find(
+    packages,
+    ({ manifest }) => manifest.name === partialPackage,
+  );
+  if (matched) {
+    return matched;
+  }
+  const matches = filter(
+    packages,
+    ({ relPath, manifest }) =>
+      manifest.name?.includes(partialPackage) ||
+      relPath.includes(partialPackage),
+  );
+  if (matches.length > 1) {
+    throw new Error(
+      `Ambiguous matches found for ${partialPackage}:\n- ${matches
+        .map(({ manifest }) => manifest.name)
+        .join("\n- ")}`,
+    );
+  }
+  if (matches[0]) {
+    return matches[0];
   }
 
-  return matched;
+  throw new Error(`Unable to find a package by "${partialPackage}"`);
 }
