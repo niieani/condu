@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.1.3](https://github.com/niieani/condu/compare/@condu/core@0.1.2...@condu/core@0.1.3) (2024-08-03)
+
+
+### Features
+
+* initial support for single-repo configuration ([08402b2](https://github.com/niieani/condu/commit/08402b263ca671c05a0d3085a4801baa172910d0))
+
+
+### Bug Fixes
+
+* improve exec internals ([0eaaf64](https://github.com/niieani/condu/commit/0eaaf64d2b4bae69bd78d47a08cee1525bdc40e2))
+* improve support for various package managers ([acfe5d1](https://github.com/niieani/condu/commit/acfe5d1469145e27084a75dbb01ac3c9c053c4dc))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/types bumped to 0.1.3
+    * @condu/workspace-utils bumped to 0.1.4
+
 ## [0.1.2](https://github.com/niieani/toolchain/compare/@condu/core@0.1.1...@condu/core@0.1.2) (2024-07-25)
 
 

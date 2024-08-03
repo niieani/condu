@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.5](https://github.com/niieani/condu/compare/@condu-feature/library-bundle@0.1.4...@condu-feature/library-bundle@0.1.5) (2024-08-03)
+
+
+### Bug Fixes
+
+* add types to libraryBundle output ([d9bc3e0](https://github.com/niieani/condu/commit/d9bc3e02270e6a9b2ee9026eef2b7a1edd714aea))
+* improve support for various package managers ([acfe5d1](https://github.com/niieani/condu/commit/acfe5d1469145e27084a75dbb01ac3c9c053c4dc))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/types bumped to 0.1.3
+  * peerDependencies
+    * condu bumped to 0.1.5
+
 ## [0.1.4](https://github.com/niieani/toolchain/compare/@condu-feature/library-bundle@0.1.3...@condu-feature/library-bundle@0.1.4) (2024-07-25)
 
 

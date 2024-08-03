@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.5](https://github.com/niieani/condu/compare/@condu-feature/typescript@0.1.4...@condu-feature/typescript@0.1.5) (2024-08-03)
+
+
+### Bug Fixes
+
+* fix rootDir when isComposite is false ([e65ab23](https://github.com/niieani/condu/commit/e65ab23683d912e821e8d827fa861c87fb805250))
+* improve support for various package managers ([acfe5d1](https://github.com/niieani/condu/commit/acfe5d1469145e27084a75dbb01ac3c9c053c4dc))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/types bumped to 0.1.3
+  * peerDependencies
+    * condu bumped to 0.1.5
+
 ## [0.1.4](https://github.com/niieani/toolchain/compare/@condu-feature/typescript@0.1.3...@condu-feature/typescript@0.1.4) (2024-07-25)
 
 

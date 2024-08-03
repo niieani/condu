@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3](https://github.com/niieani/condu/compare/@condu/schema-types@0.0.2...@condu/schema-types@0.0.3) (2024-08-03)
+
+
+### Bug Fixes
+
+* correct eslint config after upgrade to import-x ([99155d8](https://github.com/niieani/condu/commit/99155d88cc6e856f236f98054309d25c7125a6ac))
+
 ## [0.0.2](https://github.com/niieani/toolchain/compare/@condu/schema-types@0.0.1...@condu/schema-types@0.0.2) (2024-07-25)
 
 

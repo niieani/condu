@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.5](https://github.com/niieani/condu/compare/@condu-feature/vscode@0.1.4...@condu-feature/vscode@0.1.5) (2024-08-03)
+
+
+### Features
+
+* initial support for single-repo configuration ([08402b2](https://github.com/niieani/condu/commit/08402b263ca671c05a0d3085a4801baa172910d0))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/types bumped to 0.1.3
+  * peerDependencies
+    * condu bumped to 0.1.5
+
 ## [0.1.4](https://github.com/niieani/toolchain/compare/@condu-feature/vscode@0.1.3...@condu-feature/vscode@0.1.4) (2024-07-25)
 
 

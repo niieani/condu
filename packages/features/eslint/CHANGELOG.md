@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.1.5](https://github.com/niieani/condu/compare/@condu-feature/eslint@0.1.4...@condu-feature/eslint@0.1.5) (2024-08-03)
+
+
+### Features
+
+* improvements to eslint feature ([d16ee77](https://github.com/niieani/condu/commit/d16ee770dfba815f9a695b31032125f736482bd1))
+
+
+### Bug Fixes
+
+* correct eslint config after upgrade to import-x ([99155d8](https://github.com/niieani/condu/commit/99155d88cc6e856f236f98054309d25c7125a6ac))
+* use eslint-plugin-import-x ([f3ee2d7](https://github.com/niieani/condu/commit/f3ee2d71f4e9359755ca151c013b3ff61538ff1d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/types bumped to 0.1.3
+  * peerDependencies
+    * condu bumped to 0.1.5
+
 ## [0.1.4](https://github.com/niieani/toolchain/compare/@condu-feature/eslint@0.1.3...@condu-feature/eslint@0.1.4) (2024-07-25)
 
 
