@@ -124,11 +124,27 @@ const writeFileFromDef = async ({
       );
     }
     const manuallyChanged = previouslyWritten.manuallyChanged;
-    const isInteractive = process.stdin.isTTY;
+    const isInteractive =
+      process.stdout.isTTY &&
+      process.stdin.isTTY &&
+      process.env["npm_lifecycle_event"] !== "postinstall";
+
     // this needs to happen sequentially, because we're prompting the user for input:
     return async () => {
       console.log(`Manual changes present in ${pathFromWorkspaceDirAbs}:`);
       printUnifiedDiff(manuallyChanged.content, content, process.stdout);
+      if (!isInteractive) {
+        process.exitCode = 1;
+        console.log(
+          `Please resolve the conflict by running 'condu apply' interactively. Skipping: ${pathFromWorkspaceDirAbs}`,
+        );
+        return {
+          path: file.path,
+          writtenAt: previouslyWritten.writtenAt,
+          content: previouslyWritten.content,
+        };
+      }
+
       const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
@@ -137,21 +153,21 @@ const writeFileFromDef = async ({
         "Do you want to overwrite the file? (y/n)",
       );
       rl.close();
-      const shouldOverwrite =
-        isInteractive &&
-        match(rawAnswer)
-          .with(P.union("y", "Y", P.string.regex(/yes/i)), () => true)
-          .otherwise(() => false);
+      const shouldOverwrite = match(rawAnswer)
+        .with(P.union("y", "Y", P.string.regex(/yes/i)), () => true)
+        .otherwise(() => false);
 
       if (shouldOverwrite) {
         return write({
           targetPath,
           content,
-          pathFromWorkspaceDirAbs: pathFromWorkspaceDirAbs,
+          pathFromWorkspaceDirAbs,
         });
       } else {
         process.exitCode = 1;
-        console.log(`Skipping: ${pathFromWorkspaceDirAbs}`);
+        console.log(
+          `Please update your config and re-run 'condu apply' when ready. Skipping: ${pathFromWorkspaceDirAbs}`,
+        );
         return {
           path: file.path,
           writtenAt: previouslyWritten.writtenAt,
