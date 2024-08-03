@@ -1,0 +1,5 @@
+packages:
+  - packages/features/*
+  - packages/platform/*
+  - packages/presets/*
+  - packages/test/*

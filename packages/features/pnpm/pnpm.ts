@@ -12,6 +12,7 @@ export const pnpm = ({
           files: [
             {
               path: "pnpm-workspace.yaml",
+              type: "committed",
               content: {
                 packages: (config.project.projectConventions ?? [])
                   .map(({ glob }) => glob)

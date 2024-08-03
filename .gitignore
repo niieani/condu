@@ -2,8 +2,6 @@
 node_modules
 /.config/.cache/
 /build/
-# pnpm:
-/pnpm-workspace.yaml
 # typescript:
 /tsconfig.json
 # library-bundle:cli:
