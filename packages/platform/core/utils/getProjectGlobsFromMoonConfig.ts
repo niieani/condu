@@ -9,9 +9,9 @@ import type {
 
 export const getProjectDefinitionsFromConventionConfig = (
   projects?: WorkspaceProjectsConvention[],
-): WorkspaceProjectDefined[] => {
+): WorkspaceProjectDefined[] | undefined => {
   if (!projects) {
-    return [];
+    return undefined;
   }
   return projects.map((project) => {
     if (typeof project === "object") {

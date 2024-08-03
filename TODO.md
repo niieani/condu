@@ -60,34 +60,37 @@
 - [x] fix generated license author
 - [x] clean up of devDependencies that should be removed once a feature is removed/disabled
 - [x] move to pnpm
-- [ ] `condu init` command or a command that could be run with `npx condu init` to
-  - [ ] add a default config file
-  - [ ] add a script to package.json "postinstall": "test -f .config/condu.ts && condu apply"
-  - [ ] optionally create a new folder with git repo if `name` positional parameter is provided
-  - [ ] a preset package just exports an object, so applying a preset is just merging each of the properties
+- [x] `condu init` command or a command that could be run with `npx condu init` to
+  - [x] add a default config file
+  - [x] add a script to package.json "postinstall": "test -f .config/condu.ts && condu apply"
+  - [x] optionally create a new folder with git repo if `name` positional parameter is provided
+  - [x] a preset package just exports an object, so applying a preset is just merging each of the properties
   - [ ] can be used to apply changes to an existing project, in which case it will infer certain things from the existing project, like the package manager
+- [ ] ensure `sourceDir` works with publishing
+- [ ] "exports" should be updated in apply to route paths to the sourceDir and support importing from the package name (ideally we should discourage imports from root package? but it's an industry practice though)
 - [ ] re-evaluate the API for writing features - there's a lot of nesting, can it be simplified a bit?
-- [ ] detect packageManager from lockfile if not configured
 - [ ] non-monorepo/single package mode
-- [ ] what is up with yarnrc changing on its own?
-- [ ] fix the CLI command displayed (instead of "bun main.bundle.js") + add help
-- [ ] should we collocate per-package build config in the respective packages, or keep them global?
-  - [ ] if yes, then how do we do it? `.config` folder per package?
-  - [ ] make decision: where do we keep local config files? are they centrally managed? do we use config identifiers in folders names to nest configs?
-- [ ] some basic integration tests that use the built packages
-  - what do I actually want to test here? ooh the release process!!!
-  - inspiration: [zx-bulk-release](https://github.com/semrel-extra/zx-bulk-release/blob/b2a22a483a810be63e059bcbcb1db08289729809/src/test/js/integration.test.js)
 - [ ] vitest feature
 - [ ] CI build and test using moon
-- [ ] add a mutex lock to prevent concurrent runs of apply, maybe something like [this](https://github.com/szikszail/cross-process-lock/blob/master/src/lock.ts) (auto-expire lock after a few seconds)
 - [ ] preset with my features and feature config pre-applied
 
   - [ ] how can we still allow configurability/overrides? maybe passthrough all the config objects?
 
-- alpha shippable state -
+- alpha shippable 1.0 state -
 
 ## Later:
 
+- [ ] EffectTS
+- [ ] add condu to `mockify` and publish the packages
+- [ ] should we collocate per-package build config in the respective packages, or keep them global?
+  - [ ] if yes, then how do we do it? `.config` folder per package?
+  - [ ] make decision: where do we keep local config files? are they centrally managed? do we use config identifiers in folders names to nest configs?
+- [ ] fix the CLI command displayed (instead of "bun main.bundle.js") + add help
+- [ ] some basic integration tests that use the linked/built packages
+- [ ] add a mutex lock to prevent concurrent runs of apply, maybe something like [this](https://github.com/szikszail/cross-process-lock/blob/master/src/lock.ts) (auto-expire lock after a few seconds)
+- [ ] integration test the release process - inspiration: [zx-bulk-release](https://github.com/semrel-extra/zx-bulk-release/blob/b2a22a483a810be63e059bcbcb1db08289729809/src/test/js/integration.test.js)
+- [ ] detect packageManager from lockfile if not configured
+- [ ] what is up with yarnrc changing on its own?
 - [ ] add validation for feature dependencies (e.g. "auto" feature depends on "lerna")
   - maybe instead of dependencies, but see below - contributed state?
 - [ ] add shared state for features (features can contribute to it and build on top of each other's state)

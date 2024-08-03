@@ -9,14 +9,16 @@ import {
   DEFAULT_NODE_VERSION,
   DEFAULT_PACKAGE_MANAGER,
   DEFAULT_SOURCE_EXTENSIONS,
+  DEFAULT_GENERATED_SOURCE_FILE_NAME_SUFFIXES,
 } from "@condu/types/constants.js";
 import type {
-  ConfiguredRepoConfig,
+  ConfiguredConduConfig,
   ConduConfigWithInferredValues,
   LoadConfigOptions,
   WorkspaceRootPackage,
   WorkspaceSubPackage,
   WorkspaceProjectDefined,
+  ConduConfigDefaultExport,
 } from "@condu/types/configTypes.js";
 import { CONFIGURED } from "@condu/types/configure.js";
 import { getProjectDefinitionsFromConventionConfig } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
@@ -28,7 +30,7 @@ import * as fs from "node:fs";
 import { getManifestsPaths, getPackage } from "@condu/workspace-utils/topo.js";
 
 export interface Project extends WorkspaceRootPackage {
-  projectConventions: WorkspaceProjectDefined[];
+  projectConventions?: WorkspaceProjectDefined[];
   config: ConduConfigWithInferredValues;
   getWorkspacePackages: () => Promise<readonly WorkspaceSubPackage[]>;
 }
@@ -57,6 +59,10 @@ export async function loadConduProject({
     CONDU_CONFIG_DIR_NAME,
     CONDU_CONFIG_FILE_NAME,
   );
+  const workspacePackage = await getPackage(
+    workspaceDir,
+    path.resolve(workspaceDir, "package.json"),
+  );
 
   const importedConfigFile = await import(
     /* webpackIgnore: true */
@@ -67,11 +73,21 @@ export async function loadConduProject({
     );
   });
 
-  const config: ConfiguredRepoConfig | undefined = importedConfigFile?.default;
+  const configFn: ConduConfigDefaultExport | undefined =
+    importedConfigFile?.default;
 
-  if (!config || typeof config !== "object" || !(CONFIGURED in config)) {
+  if (!configFn || typeof configFn !== "function") {
     console.error(
-      `Invalid configuration file. Make sure to use the configure option`,
+      `Invalid configuration file. Make sure to use the configure function to export your configuration.`,
+    );
+    return;
+  }
+
+  const config = await configFn(workspacePackage);
+
+  if (!config || !config[CONFIGURED]) {
+    console.error(
+      `Invalid configuration file. Make sure to use the configure function to export your configuration.`,
     );
     return;
   }
@@ -80,15 +96,10 @@ export async function loadConduProject({
     config.projects,
   );
 
-  const workspacePackage = await getPackage(
-    workspaceDir,
-    path.resolve(workspaceDir, "package.json"),
-  );
-  const { manifest } = workspacePackage;
-
   const defaultBranch: string =
     config.git?.defaultBranch ?? (await getDefaultGitBranch(workspaceDir));
 
+  const { manifest } = workspacePackage;
   const { packageManager, engines, pnpm } = manifest;
   const [packageManagerName, packageManagerVersion] =
     packageManager?.split("@") ?? [];
@@ -96,6 +107,7 @@ export async function loadConduProject({
 
   const configWithInferredValues: ConduConfigWithInferredValues = {
     ...config,
+    engine: "bun",
     git: {
       ...config.git,
       defaultBranch,
@@ -119,10 +131,14 @@ export async function loadConduProject({
     },
     conventions: {
       ...config.conventions,
-      sourceDir: config.conventions?.sourceDir ?? "src",
+      sourceDir: config.conventions?.sourceDir ?? ".",
       buildDir: config.conventions?.buildDir ?? "build",
       sourceExtensions:
         config.conventions?.sourceExtensions ?? DEFAULT_SOURCE_EXTENSIONS,
+      generatedSourceFileNameSuffixes:
+        config.conventions?.generatedSourceFileNameSuffixes ??
+        DEFAULT_GENERATED_SOURCE_FILE_NAME_SUFFIXES,
+      projectConventions,
     },
     workspaceDir: workspacePackage.absPath,
     configDir: path.join(workspacePackage.absPath, CONFIG_DIR),
@@ -142,6 +158,7 @@ export async function loadConduProject({
 export const getWorkspacePackages = async (
   project: Pick<Project, "projectConventions" | "absPath">,
 ): Promise<WorkspaceSubPackage[]> => {
+  if (!project.projectConventions) return [];
   // note: could use 'moon query projects --json' instead
   // though that would lock us into 'moon'
   const packageJsonPaths = await getManifestsPaths({

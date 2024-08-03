@@ -13,7 +13,7 @@ export const pnpm = ({
             {
               path: "pnpm-workspace.yaml",
               content: {
-                packages: config.project.projectConventions
+                packages: (config.project.projectConventions ?? [])
                   .map(({ glob }) => glob)
                   .sort(),
                 ...workspace,

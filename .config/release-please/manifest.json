@@ -22,6 +22,7 @@
   "packages/platform/update-specifiers": "0.1.2",
   "packages/platform/workspace-utils": "0.1.3",
   "packages/platform/yarn-plugin": "0.1.3",
+  "packages/presets/monorepo": "0.0.0",
   "packages/test/dummy-dep": "1.0.3",
   "packages/test/dummy": "1.0.3"
 }

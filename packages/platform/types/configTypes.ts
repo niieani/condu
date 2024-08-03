@@ -66,6 +66,7 @@ export interface PackageJsonConduSection
   > {
   initialDevelopment?: boolean;
   managedDependencies?: Record<string, ManagedDependencyConfig>;
+  defaultScope?: string;
 }
 
 export interface ConduPackageJson extends PackageJson {
@@ -183,10 +184,17 @@ export interface FeatureDefinition {
 }
 
 export interface Conventions {
-  /** @default 'src' */
+  /** @default '.' */
   sourceDir?: string;
   sourceExtensions?: string[];
   buildDir?: string;
+  /** @default ['.gen', '.generated'] */
+  generatedSourceFileNameSuffixes?: string[];
+}
+
+export interface ResolvedConventionsWithWorkspace
+  extends Required<Conventions> {
+  projectConventions?: WorkspaceProjectDefined[];
 }
 
 type GitConfig = {
@@ -203,9 +211,11 @@ type NodeConfig = {
   version?: string;
 };
 
-export interface RepoConfig {
+type Engine = "node" | "bun";
+
+export interface ConduConfig {
   /** primary engine used to run the tool */
-  engine: "node" | "bun";
+  engine?: Engine;
   // node: PartialNodeConfig;
   node?: NodeConfig;
   publish?: {
@@ -219,21 +229,36 @@ export interface RepoConfig {
   conventions?: Conventions;
 }
 
-export interface ConfiguredRepoConfig extends RepoConfig {
+export interface ConfiguredConduConfig extends ConduConfig {
   [CONFIGURED]: true;
 }
 
-export interface ConduConfigWithInferredValues extends ConfiguredRepoConfig {
+export type GetConduConfigPromise = (
+  pkg: IPackageEntry,
+) => Promise<ConfiguredConduConfig>;
+
+export type ConduConfigInput =
+  | ConduConfig
+  | ((pkg: IPackageEntry) => ConduConfig)
+  | ((pkg: IPackageEntry) => Promise<ConduConfig>);
+
+export type ConduConfigDefaultExport =
+  | ConfiguredConduConfig
+  | ((pkg: IPackageEntry) => ConfiguredConduConfig)
+  | ((pkg: IPackageEntry) => Promise<ConfiguredConduConfig>);
+
+export interface ConduConfigWithInferredValues extends ConfiguredConduConfig {
   // TODO: add error / warning functions
   workspaceDir: string;
   configDir: string;
-  conventions: Required<Conventions>;
+  conventions: ResolvedConventionsWithWorkspace;
   git: Required<GitConfig>;
   node: Required<NodeConfig>;
+  engine: Engine;
 }
 
 export interface Project extends WorkspaceRootPackage {
-  projectConventions: WorkspaceProjectDefined[];
+  projectConventions?: WorkspaceProjectDefined[];
   config: ConduConfigWithInferredValues;
   getWorkspacePackages: () => Promise<readonly WorkspaceSubPackage[]>;
 }
@@ -273,6 +298,8 @@ export interface WorkspaceSubPackage extends WorkspacePackage {
 export interface IPackageEntry {
   /** shortcut to manifest.name */
   name: string;
+  scope?: string;
+  scopedName?: string;
   manifest: ConduPackageJson;
   manifestRelPath: string;
   manifestAbsPath: string;
@@ -282,6 +309,7 @@ export interface IPackageEntry {
   absPath: string;
   writeProjectManifest: WriteManifestFn;
 }
+
 export interface ProjectConventionConfig {
   private?: boolean;
 }

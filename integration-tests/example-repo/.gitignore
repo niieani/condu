@@ -19,6 +19,8 @@ node_modules
 # moonCi:
 /moon.yml
 /.moon/tasks.yml
+# vscode:
+/.vscode/settings.json
 # custom ignore patterns:
 .env
 .env.*

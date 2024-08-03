@@ -23,6 +23,11 @@ export async function execCommand(input: {
   if (!project) {
     throw new Error(`Unable to load project`);
   }
+  if (!project.projectConventions) {
+    throw new Error(
+      `Project not configured as a monorepo. Specify 'projects' in .config/condu.ts first.`,
+    );
+  }
   const { package: packageNamePart, exec, args, cwd } = input;
   const pkg = packageNamePart
     ? await findExistingPackage({

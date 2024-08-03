@@ -100,14 +100,14 @@ export async function collectState(
               ? ([
                   ...matches,
                   // this one is used by the gitignore-like features, as it doesn't contain 'content'
-                  ...project.projectConventions.map((convention) => ({
+                  ...(project.projectConventions?.map((convention) => ({
                     path: file.path,
                     publish: file.publish,
                     type: file.type,
                     featureName: feature.name,
                     targetDir: convention.glob,
                     targetPackage: project,
-                  })),
+                  })) ?? []),
                 ] satisfies CollectedFileDef[])
               : matches;
           },
@@ -201,8 +201,6 @@ export async function apply(options: LoadConfigOptions = {}) {
     projectConventions,
   } = project;
 
-  const projectGlobs = projectConventions.map((project) => project.glob).sort();
-
   // TODO: migrate to https://github.com/Effect-TS/schema
   // const config = t.decodeOrThrow(
   //   RepoConfigValidator,
@@ -212,12 +210,17 @@ export async function apply(options: LoadConfigOptions = {}) {
 
   let didChangeManifest = false;
 
+  const projectGlobs = projectConventions
+    ?.map((project) => project.glob)
+    .sort();
+
   // sync defined workspaces to package.json
+  // TODO: maybe this could live in pnpm/yarn feature instead?
   if (
-    !Array.isArray(manifest.workspaces) ||
-    !isDeepEqual((manifest.workspaces ?? []).sort(), projectGlobs)
+    projectGlobs &&
+    (!Array.isArray(manifest.workspaces) ||
+      !isDeepEqual((manifest.workspaces ?? []).sort(), projectGlobs))
   ) {
-    // TODO: support pnpm workspaces
     manifest.workspaces = projectGlobs;
     didChangeManifest = true;
   }

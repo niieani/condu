@@ -5,6 +5,7 @@
   "keywords": [],
   "license": "ISC",
   "author": "",
+  "type": "module",
   "main": "index.js",
   "workspaces": [
     "packages/*"
@@ -26,14 +27,16 @@
     "@condu-feature/typescript": "*",
     "@condu/core": "*",
     "@condu/types": "*",
-    "@moonrepo/cli": "^1.27.3",
-    "@typescript-eslint/eslint-plugin": "^8.0.0-alpha.54",
-    "@typescript-eslint/parser": "^8.0.0-alpha.54",
+    "@moonrepo/cli": "^1.27.5",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
     "condu": "*",
-    "eslint": "^9.7.0",
+    "eslint": "^9.8.0",
     "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import-x": "^3.1.0",
     "eslint-plugin-unicorn": "^55.0.0",
-    "typescript": "^5.4.5"
+    "tsx": "^4.16.5",
+    "typescript": "^5.5.4"
   },
   "pnpm": {
     "overrides": {
@@ -52,6 +55,7 @@
       "@condu-feature/vitest": "link:../../packages/features/vitest",
       "@condu-feature/vscode": "link:../../packages/features/vscode",
       "@condu-feature/yarn": "link:../../packages/features/yarn",
+      "@condu-preset/monorepo": "link:../../packages/presets/monorepo",
       "@condu-test/integration": "link:../../packages/test/integration",
       "@condu/cli": "link:../../packages/platform/cli",
       "@condu/core": "link:../../packages/platform/core",
@@ -73,7 +77,11 @@
       "eslint-import-resolver-typescript": "presence",
       "@typescript-eslint/parser": "presence",
       "@typescript-eslint/eslint-plugin": "presence",
-      "@moonrepo/cli": "presence"
+      "@moonrepo/cli": "presence",
+      "tsx": "presence"
     }
+  },
+  "engines": {
+    "node": "latest"
   }
 }

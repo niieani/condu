@@ -11,10 +11,11 @@ import { gptSummarizer } from "@condu-feature/gpt-summarizer/gptSummarizer.js";
 import { releasePlease } from "@condu-feature/release-please/release-please.js";
 import { configure } from "condu/configure.js";
 
-export default configure({
+export default configure((pkg) => ({
   engine: "bun",
   projects: [
     { parentPath: "packages/features", nameConvention: "@condu-feature/*" },
+    { parentPath: "packages/presets", nameConvention: "@condu-preset/*" },
     { parentPath: "packages/platform", nameConvention: "@condu/*" },
     {
       parentPath: "packages/test",
@@ -25,9 +26,9 @@ export default configure({
   publish: {
     // registry: "http://localhost:4000/",
   },
-  conventions: {
-    sourceDir: ".",
-  },
+  // conventions: {
+  //   sourceDir: ".",
+  // },
   features: [
     pnpm(),
     typescript({
@@ -55,14 +56,6 @@ export default configure({
     vscode({
       hideGeneratedFiles: false,
       suggestedConfig: {
-        "eslint.ignoreUntitled": true,
-        "eslint.useESLintClass": true,
-        "eslint.execArgv": [
-          "--import",
-          // @ts-expect-error weird error
-          import.meta.resolve("tsx/esm").slice("file://".length),
-        ],
-
         "explorer.fileNesting.enabled": true,
         "explorer.fileNesting.expand": false,
         "explorer.fileNesting.patterns": {
@@ -83,4 +76,4 @@ export default configure({
     }),
     gitignore({ ignore: [".swc/", ".idea/", ".env", ".env.*", "/brand/"] }),
   ],
-});
+}));

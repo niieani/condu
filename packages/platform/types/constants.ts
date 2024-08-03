@@ -15,5 +15,9 @@ export const DEFAULT_SOURCE_EXTENSIONS = [
   "cjs",
   "json",
 ];
+export const DEFAULT_GENERATED_SOURCE_FILE_NAME_SUFFIXES = [
+  ".generated",
+  ".gen",
+];
 
 export const CONFIG_DIR = ".config";

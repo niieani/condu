@@ -32,6 +32,12 @@ export async function createCommand({
   }
   const { projectConventions } = project;
 
+  if (!projectConventions) {
+    throw new Error(
+      `Project not configured as a monorepo. Specify 'projects' in .config/condu.ts first.`,
+    );
+  }
+
   const match = getSingleMatch({
     projectConventions,
     partialPath,

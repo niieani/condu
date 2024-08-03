@@ -122,6 +122,11 @@
       "component": "@condu/yarn-plugin",
       "initial-version": "0.0.1"
     },
+    "packages/presets/monorepo": {
+      "release-type": "node",
+      "component": "@condu-preset/monorepo",
+      "initial-version": "0.0.1"
+    },
     "packages/test/dummy-dep": {
       "release-type": "node",
       "component": "@condu/test-dummy-dep",

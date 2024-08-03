@@ -76,8 +76,14 @@ export const getPackage = async (
       force?: boolean,
     ) => Promise<void>;
 
+  const name = manifest.name ?? basename(absPath);
+  const [scope, scopedName] = manifest.name.includes("/")
+    ? manifest.name.split("/")
+    : [undefined, name];
   return {
-    name: manifest.name ?? basename(absPath),
+    name,
+    scope,
+    scopedName,
     manifestRelPath,
     manifestAbsPath: manifestPath,
     manifest,

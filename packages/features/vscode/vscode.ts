@@ -3,10 +3,33 @@ import { assign } from "comment-json";
 import type VscodeSettingsWorkspace from "@condu/schema-types/schemas/vscodeSettingsWorkspace.gen.js";
 import * as path from "node:path";
 
+const RUNNING_SOURCE_VERSION = import.meta.url.endsWith(".ts");
+
+const defaultSuggestedConfig: VscodeSettingsWorkspace = {
+  // TODO: only add these eslint settings if the eslint feature is enabled
+  "eslint.lintTask.enable": true,
+  "eslint.useESLintClass": true,
+  // forces vscode to run eslint with the node version installed in the system,
+  // instead of the one bundled with vscode
+  "eslint.runtime": "node",
+  // "eslint.runtime": process.argv0,
+  ...(RUNNING_SOURCE_VERSION
+    ? {
+        "eslint.execArgv": [
+          "--import",
+          import.meta.resolve("tsx/esm").slice("file://".length),
+          "--preserve-symlinks",
+        ],
+      }
+    : {}),
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+};
+
 export const vscode = ({
   suggestedConfig = {},
   enforcedConfig = {},
-  hideGeneratedFiles = true,
+  hideGeneratedFiles = false,
 }: {
   hideGeneratedFiles?: boolean;
   /** these settings will be added by default, but can be manually overwritten */
@@ -73,7 +96,14 @@ export const vscode = ({
                         [config.conventions.buildDir]: true,
                       },
                     } satisfies VscodeSettingsWorkspace);
-                    return assign(suggestedConfig, withEnforcedConfig);
+                    const suggestedConfigWithDefaults = {
+                      ...defaultSuggestedConfig,
+                      ...suggestedConfig,
+                    };
+                    return assign(
+                      suggestedConfigWithDefaults,
+                      withEnforcedConfig,
+                    );
                   },
               },
             ],
