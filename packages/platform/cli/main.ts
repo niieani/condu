@@ -7,6 +7,7 @@ import { BuildTypeScriptCommand } from "./commands/BuildTypeScriptCommand.js";
 import { ReleaseCommand } from "./commands/ReleaseCommand.js";
 import * as path from "node:path";
 import { CORE_NAME } from "@condu/types/constants.js";
+import { InitCommand } from "./commands/init.js";
 
 // export { apply } from "./commands/apply/apply.js";
 
@@ -31,6 +32,7 @@ if (!globalThis.__yarnPlugin__) {
   cli.register(ExecCommand);
   cli.register(BuildTypeScriptCommand);
   cli.register(ReleaseCommand);
+  cli.register(InitCommand);
   cli.register(Builtins.VersionCommand);
   cli.register(Builtins.HelpCommand);
   cli.runExit(args);

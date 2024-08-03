@@ -5,6 +5,7 @@ import * as path from "node:path";
 import * as childProcess from "node:child_process";
 import { createCommandContext } from "../createCommandContext.js";
 import { ensureDependency } from "../ensureDependency.js";
+import type { ConduPackageJson } from "@condu/types/configTypes.js";
 
 export class InitCommand extends Command {
   static override paths = [["init"]];
@@ -35,11 +36,20 @@ export class InitCommand extends Command {
       ? path.join(process.cwd(), this.projectName)
       : process.cwd();
 
+    const projectName = path
+      .basename(targetDirectory)
+      .toLowerCase()
+      .replace(/\s+/g, "-");
+    let createdNewFolder = false;
+
     // Create the target directory if it doesn't exist
     try {
       await fs.access(targetDirectory);
     } catch {
-      await fs.mkdir(targetDirectory, { recursive: true });
+      const createdDir = await fs.mkdir(targetDirectory, { recursive: true });
+      if (createdDir) {
+        createdNewFolder = true;
+      }
     }
 
     // Change to the target directory
@@ -55,39 +65,48 @@ export class InitCommand extends Command {
     const configFilePath = path.join(configDirectory, CONDU_CONFIG_FILE_NAME);
     await fs.writeFile(
       configFilePath,
-      `import { configure } from 'condu';
+      `import { configure } from "condu";
+import { monorepo } from "@condu-preset/monorepo";
 
-export default configure({
-  engine: 'node',
-  features: [
-    gitignore(),
-    typescript(),
-  ],
-});
+export default configure((pkg) => ({
+  ...monorepo({ pkg }),
+}));
 `,
     );
 
     // Read the package.json file
     const packageJsonPath = path.join(targetDirectory, "package.json");
-    let packageJson: any;
+    let packageJson: ConduPackageJson;
     try {
       const packageJsonContent = await fs.readFile(packageJsonPath, "utf-8");
       packageJson = JSON.parse(packageJsonContent);
     } catch {
       // If package.json doesn't exist, create a new one
-      packageJson = {};
+      packageJson = { name: projectName };
     }
 
     // Add the postinstall script
     packageJson.scripts ||= {};
+    // TODO: preserve postinstall script if it already exists?
     packageJson.scripts.postinstall = "test -f .config/condu.ts && condu apply";
+    packageJson["sideEffects"] = false;
+    packageJson.type = "module";
 
     // Add the yarn plugin dependency
-    await ensureDependency({
-      packageAlias: "condu",
-      manifest: packageJson,
-      target: "devDependencies",
-    });
+    await Promise.all([
+      ensureDependency({
+        packageAlias: "condu",
+        manifest: packageJson,
+        target: "devDependencies",
+        managed: false,
+      }),
+      ensureDependency({
+        packageAlias: "@condu-preset/monorepo",
+        manifest: packageJson,
+        target: "devDependencies",
+        managed: false,
+      }),
+    ]);
 
     // Write the updated package.json file
     await fs.writeFile(
@@ -95,14 +114,20 @@ export default configure({
       JSON.stringify(packageJson, undefined, 2),
     );
 
+    const hasGitFolder = await fs.exists(path.join(targetDirectory, ".git"));
+
     // Initialize git repository if project name is provided
-    if (this.projectName) {
-      const git = childProcess.spawnSync("git", ["init"], { stdio: "inherit" });
+    if (!hasGitFolder) {
+      const git = childProcess.spawnSync("git", ["init"], {
+        stdio: "inherit",
+        cwd: targetDirectory,
+      });
       if (git.status !== 0) {
         context.error(`git init failed with status code ${git.status}`);
       }
     }
 
-    context.log("condu project initialized!");
+    // TODO: run `pnpm install`
+    context.log(`condu project '${projectName}' initialized!`);
   }
 }
