@@ -46,6 +46,8 @@ export const typescript = ({
       const isComposite =
         config.projects && tsconfig?.compilerOptions?.composite !== false;
       const selectedPreset = presets[preset];
+      const includeDir =
+        config.projects && !isComposite ? "." : config.conventions.sourceDir;
       return {
         effects: [
           {
@@ -82,7 +84,7 @@ export const typescript = ({
                     // noUnusedLocals: true,
                     // noUnusedParameters: true,
                     resolveJsonModule: true,
-                    rootDir: config.conventions.sourceDir,
+                    rootDir: includeDir,
                     outDir: config.conventions.buildDir,
                     // mapRoot is overridden because the directory that we publish
                     // is not the same as the directory that we compile to
@@ -129,9 +131,8 @@ export const typescript = ({
                   ...(isComposite
                     ? {}
                     : {
-                        include: tsconfig?.include ?? [
-                          config.conventions.sourceDir,
-                        ],
+                        include: tsconfig?.include ?? [includeDir],
+                        exclude: [config.conventions.buildDir],
                         // these are the defaults, so we don't need to specify them explicitly:
                         // exclude: tsconfig?.exclude ?? [
                         //   "node_modules",
