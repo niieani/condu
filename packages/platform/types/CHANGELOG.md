@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.1.3](https://github.com/niieani/condu/compare/@condu/types@0.1.2...@condu/types@0.1.3) (2024-08-03)
+
+
+### Features
+
+* initial support for single-repo configuration ([08402b2](https://github.com/niieani/condu/commit/08402b263ca671c05a0d3085a4801baa172910d0))
+
+
+### Bug Fixes
+
+* improve support for various package managers ([acfe5d1](https://github.com/niieani/condu/commit/acfe5d1469145e27084a75dbb01ac3c9c053c4dc))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/schema-types bumped to 0.0.3
+
 ## [0.1.2](https://github.com/niieani/toolchain/compare/@condu/types@0.1.1...@condu/types@0.1.2) (2024-07-25)
 
 

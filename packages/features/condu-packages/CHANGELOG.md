@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.5](https://github.com/niieani/condu/compare/@condu-feature/condu-packages@0.1.4...@condu-feature/condu-packages@0.1.5) (2024-08-03)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/types bumped to 0.1.3
+  * peerDependencies
+    * condu bumped to 0.1.5
+
 ## [0.1.4](https://github.com/niieani/toolchain/compare/@condu-feature/condu-packages@0.1.3...@condu-feature/condu-packages@0.1.4) (2024-07-25)
 
 

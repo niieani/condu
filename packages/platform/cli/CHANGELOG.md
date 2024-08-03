@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.1.4](https://github.com/niieani/condu/compare/@condu/cli@0.1.3...@condu/cli@0.1.4) (2024-08-03)
+
+
+### Features
+
+* initial support for single-repo configuration ([08402b2](https://github.com/niieani/condu/commit/08402b263ca671c05a0d3085a4801baa172910d0))
+* initial version of init command ([ba7ae41](https://github.com/niieani/condu/commit/ba7ae415a13618fd3fdd92b276c8bd3928b88b6f))
+
+
+### Bug Fixes
+
+* do not halt when in non-interactive TTY ([bd67353](https://github.com/niieani/condu/commit/bd6735371579e361369f27f1cd1130da0fc65a27))
+* improve exec internals ([0eaaf64](https://github.com/niieani/condu/commit/0eaaf64d2b4bae69bd78d47a08cee1525bdc40e2))
+* improve support for various package managers ([acfe5d1](https://github.com/niieani/condu/commit/acfe5d1469145e27084a75dbb01ac3c9c053c4dc))
+
+
+### Performance Improvements
+
+* do not write cache file if no changes were done ([d13b4b9](https://github.com/niieani/condu/commit/d13b4b923109ac49db7a093aaf13a0e4b697f155))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 0.1.3
+    * @condu/types bumped to 0.1.3
+    * @condu/update-specifiers bumped to 0.1.3
+    * @condu/workspace-utils bumped to 0.1.4
+
 ## [0.1.3](https://github.com/niieani/toolchain/compare/@condu/cli@0.1.2...@condu/cli@0.1.3) (2024-07-25)
 
 

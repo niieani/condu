@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.1.5](https://github.com/niieani/condu/compare/@condu-feature/moon@0.1.4...@condu-feature/moon@0.1.5) (2024-08-03)
+
+
+### Bug Fixes
+
+* improve support for various package managers ([acfe5d1](https://github.com/niieani/condu/commit/acfe5d1469145e27084a75dbb01ac3c9c053c4dc))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 0.1.3
+    * @condu/schema-types bumped to 0.0.3
+    * @condu/types bumped to 0.1.3
+  * peerDependencies
+    * condu bumped to 0.1.5
+
 ## [0.1.4](https://github.com/niieani/toolchain/compare/@condu-feature/moon@0.1.3...@condu-feature/moon@0.1.4) (2024-07-25)
 
 
