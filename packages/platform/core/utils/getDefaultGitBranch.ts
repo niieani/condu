@@ -17,7 +17,7 @@ export const getDefaultGitBranch_ = async (
       throw new Error("No git directory found");
     }
     const remotes = await fs.readdir(path.join(gitDir, "refs", "remotes"));
-    const [remote] = remotes;
+    const remote = remotes.find((remote) => remote === "origin") || remotes[0];
     if (!remote) {
       throw new Error("No git remotes found");
     }
