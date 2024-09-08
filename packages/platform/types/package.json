@@ -4,13 +4,12 @@
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/platform/types"
-  },
   "dependencies": {
     "@condu/schema-types": "workspace:^",
     "@moonrepo/types": "^1.19.1",
     "ts-pattern": "^5.2.0"
+  },
+  "devDependencies": {
+    "@pnpm/types": "^11.1.0"
   }
 }

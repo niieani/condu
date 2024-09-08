@@ -2,14 +2,10 @@
   "name": "@condu-feature/lerna",
   "version": "0.1.5",
   "type": "module",
-  "peerDependencies": {
-    "condu": "workspace:^"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/features/lerna"
-  },
   "dependencies": {
     "@condu/types": "workspace:^"
+  },
+  "peerDependencies": {
+    "condu": "workspace:^"
   }
 }

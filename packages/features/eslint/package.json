@@ -2,19 +2,19 @@
   "name": "@condu-feature/eslint",
   "version": "0.1.5",
   "type": "module",
+  "dependencies": {
+    "@condu/types": "workspace:^",
+    "remeda": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/eslint": "^9.6.1",
+    "@types/eslint__js": "^8.42.3"
+  },
   "peerDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "condu": "workspace:^",
     "eslint-plugin-import-x": "*",
     "eslint-plugin-unicorn": "*"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/features/eslint"
-  },
-  "dependencies": {
-    "@condu/types": "workspace:^",
-    "remeda": "^2.6.0"
   }
 }

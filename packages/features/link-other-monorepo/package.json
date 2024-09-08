@@ -4,10 +4,6 @@
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/features/link-other-monorepo"
-  },
   "dependencies": {
     "@condu/core": "workspace:^",
     "condu": "workspace:^"

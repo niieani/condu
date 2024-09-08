@@ -11,9 +11,5 @@
   "devDependencies": {
     "node-fetch": "^3.3.2",
     "vitest": "^2.0.4"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/platform/core"
   }
 }

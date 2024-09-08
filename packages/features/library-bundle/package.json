@@ -3,17 +3,13 @@
   "version": "0.1.5",
   "license": "MIT",
   "type": "module",
+  "dependencies": {
+    "@condu/types": "workspace:^"
+  },
   "devDependencies": {
     "webpack": "^5.93.0"
   },
   "peerDependencies": {
     "condu": "workspace:^"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/features/library-bundle"
-  },
-  "dependencies": {
-    "@condu/types": "workspace:^"
   }
 }

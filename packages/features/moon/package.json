@@ -10,9 +10,5 @@
   },
   "peerDependencies": {
     "condu": "workspace:^"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/features/moon"
   }
 }

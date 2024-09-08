@@ -31,9 +31,5 @@
   },
   "devDependencies": {
     "vitest": "^2.0.4"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/platform/cli"
   }
 }

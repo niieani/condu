@@ -67,6 +67,7 @@
   - [x] a preset package just exports an object, so applying a preset is just merging each of the properties
   - [ ] can be used to apply changes to an existing project, in which case it will infer certain things from the existing project, like the package manager
 - [x] ensure `sourceDir` works with publishing
+- [ ] something is up with resolving
 - [ ] "exports" should be updated in apply to route paths to the sourceDir and support importing from the package name (ideally we should discourage imports from root package? but it's an industry practice though)
 - [ ] cache file needs to include condu version + all versions of active features for invalidation
 - [ ] re-evaluate the API for writing features - there's a lot of nesting, can it be simplified a bit?

@@ -1,10 +1,6 @@
 {
   "name": "@condu/test-dummy-dep",
+  "version": "1.0.3",
   "license": "MIT",
-  "type": "module",
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/test/dummy-dep"
-  },
-  "version": "1.0.3"
+  "type": "module"
 }

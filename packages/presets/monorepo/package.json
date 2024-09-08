@@ -2,9 +2,5 @@
   "name": "@condu-preset/monorepo",
   "version": "0.0.1",
   "sideEffects": false,
-  "type": "module",
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/presets/monorepo"
-  }
+  "type": "module"
 }
