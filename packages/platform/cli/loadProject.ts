@@ -78,7 +78,7 @@ export async function loadConduProject({
 
   if (!configFn || typeof configFn !== "function") {
     console.error(
-      `Invalid configuration file. Make sure to use the configure function to export your configuration.`,
+      `Invalid configuration file. Make sure to use the configure function to export your configuration. Right now it is ${typeof configFn}`,
     );
     return;
   }

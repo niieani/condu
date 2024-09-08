@@ -7,9 +7,5 @@
     "@condu/schema-types": "workspace:^",
     "@condu/types": "workspace:^",
     "condu": "workspace:^"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/features/release-please"
   }
 }

@@ -5,14 +5,7 @@ import * as path from "node:path";
 
 const RUNNING_SOURCE_VERSION = import.meta.url.endsWith(".ts");
 
-const defaultSuggestedConfig: VscodeSettingsWorkspace = {
-  // TODO: only add these eslint settings if the eslint feature is enabled
-  "eslint.lintTask.enable": true,
-  "eslint.useESLintClass": true,
-  // forces vscode to run eslint with the node version installed in the system,
-  // instead of the one bundled with vscode
-  "eslint.runtime": "node",
-  // "eslint.runtime": process.argv0,
+const defaultEnforcedConfig: VscodeSettingsWorkspace = {
   ...(RUNNING_SOURCE_VERSION
     ? {
         "eslint.execArgv": [
@@ -22,6 +15,16 @@ const defaultSuggestedConfig: VscodeSettingsWorkspace = {
         ],
       }
     : {}),
+};
+
+const defaultSuggestedConfig: VscodeSettingsWorkspace = {
+  // TODO: only add these eslint settings if the eslint feature is enabled
+  "eslint.lintTask.enable": true,
+  "eslint.useESLintClass": true,
+  // forces vscode to run eslint with the node version installed in the system,
+  // instead of the one bundled with vscode
+  "eslint.runtime": "node",
+  // "eslint.runtime": process.argv0,
   "typescript.tsserver.experimental.enableProjectDiagnostics": true,
   "typescript.tsdk": "node_modules/typescript/lib",
 };
@@ -78,6 +81,7 @@ export const vscode = ({
                         )
                       : {};
                     const withEnforcedConfig = assign(existingContent, {
+                      ...defaultEnforcedConfig,
                       ...enforcedConfig,
                       "files.exclude": {
                         // ...existingContent?.["files.exclude"],

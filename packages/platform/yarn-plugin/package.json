@@ -9,9 +9,5 @@
   "devDependencies": {
     "@yarnpkg/core": "^4.1.1",
     "@yarnpkg/fslib": "^3.1.0"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/platform/yarn-plugin"
   }
 }

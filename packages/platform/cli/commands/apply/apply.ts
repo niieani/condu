@@ -345,7 +345,7 @@ export async function apply(options: LoadConfigOptions = {}) {
     // TODO: run 'yarn/npm/pnpm install' if manifest changed
   }
 
-  await ensurePublishConfigDirectorySetInManifestFiles(project);
+  // await ensurePublishConfigDirectorySetInManifestFiles(project);
 
   return {
     project,
@@ -382,6 +382,10 @@ async function ensurePublishConfigDirectorySetInManifestFiles(
     // ensure there's a publishConfig.directory set for each package
     const relativePath = getRelativePublishConfigDirectory(project, pkg);
     const publishableDirectory = pkg.manifest.publishConfig?.["directory"];
+    // if (publishableDirectory) {
+    //   delete pkg.manifest.publishConfig;
+    //   await pkg.writeProjectManifest(pkg.manifest);
+    // }
     if (publishableDirectory !== relativePath) {
       pkg.manifest.publishConfig ??= {};
       pkg.manifest.publishConfig["directory"] = relativePath;

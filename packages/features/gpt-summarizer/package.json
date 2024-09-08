@@ -3,14 +3,10 @@
   "version": "0.1.5",
   "license": "MIT",
   "type": "module",
-  "peerDependencies": {
-    "condu": "workspace:^"
-  },
   "dependencies": {
     "@condu/core": "workspace:^"
   },
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/features/gpt-summarizer"
+  "peerDependencies": {
+    "condu": "workspace:^"
   }
 }

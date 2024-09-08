@@ -1,6 +1,7 @@
 import type { Linter, ESLint } from "eslint";
+import js from "@eslint/js";
 import importPlugin from "eslint-plugin-import-x";
-import importPluginTypeScript from "eslint-plugin-import-x/config/typescript.js";
+// import importPluginTypeScript from "eslint-plugin-import-x/config/flat/typescript.js";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import typescriptParser, {
   type ParserOptions,
@@ -37,23 +38,26 @@ export const getConfigs = ({
     "integration-tests/**",
   ];
 
-  const x = 123;
-
   return [
     {
       // https://eslint.org/docs/latest/use/configure/configuration-files#globally-ignoring-files-with-ignores
       ignores,
     },
+    js.configs.recommended,
     {
+      ...importPlugin.flatConfigs.recommended,
+      ...importPlugin.flatConfigs.typescript,
       // TODO: use files from config
       files: [`**/*.{${executableExtensionsList}}`],
       plugins: {
         "import-x": {
-          ...importPlugin,
-          ...importPluginTypeScript,
+          ...importPlugin.flatConfigs.recommended.plugins?.["import-x"],
+          // ...importPluginTypeScript,
           rules: {
-            ...importPlugin.rules,
-            ...(importPluginTypeScript.rules as unknown as ESLint.Plugin["rules"]),
+            ...importPlugin.flatConfigs.recommended.plugins?.["import-x"]?.rules,
+            // importPluginTypeScript,
+            // ...(importPluginTypeScript.rules as unknown as ESLint.Plugin["rules"]),
+            // override the no-extraneous-dependencies rule with our custom version:
             "no-extraneous-dependencies": noExtraneousDependencies,
           },
         },
@@ -75,6 +79,9 @@ export const getConfigs = ({
         // },
       },
       rules: {
+        "no-unused-vars": "off",
+        ...importPlugin.flatConfigs.recommended.rules,
+        ...importPlugin.flatConfigs.typescript.rules,
         // turn on errors for missing imports
         "import-x/no-unresolved": [
           "error",
@@ -148,6 +155,8 @@ export const getConfigs = ({
         // TODO: review the rest https://github.com/sindresorhus/eslint-plugin-unicorn/tree/main?tab=readme-ov-file
       },
       settings: {
+        ...importPlugin.flatConfigs.recommended.settings,
+        ...importPlugin.flatConfigs.typescript.settings,
         // "import-x/parsers": {
         //   "@typescript-eslint/parser": [".ts", ".tsx"],
         // },

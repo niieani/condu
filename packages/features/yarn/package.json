@@ -2,14 +2,10 @@
   "name": "@condu-feature/yarn",
   "version": "0.1.5",
   "type": "module",
-  "peerDependencies": {
-    "condu": "workspace:^"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/features/yarn"
-  },
   "dependencies": {
     "@condu/types": "workspace:^"
+  },
+  "peerDependencies": {
+    "condu": "workspace:^"
   }
 }

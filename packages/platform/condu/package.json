@@ -2,15 +2,8 @@
   "name": "condu",
   "version": "0.1.5",
   "license": "MIT",
-  "type": "module",
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/platform/condu"
-  },
   "sideEffects": true,
-  "condu": {
-    "initialDevelopment": true
-  },
+  "type": "module",
   "bin": "main.ts",
   "//dependencies": "these need to inherit/include all dependencies from @condu/cli",
   "dependencies": {
@@ -32,6 +25,9 @@
   },
   "devDependencies": {
     "@types/which": "^3.0.4"
+  },
+  "condu": {
+    "initialDevelopment": true
   },
   "publishDependencies": [
     "@pnpm",

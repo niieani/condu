@@ -1,13 +1,9 @@
 {
   "name": "@condu/test-dummy",
+  "version": "1.0.3",
   "license": "MIT",
   "type": "module",
   "dependencies": {
     "@condu/test-dummy-dep": "workspace:^"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "../../../build/packages/test/dummy"
-  },
-  "version": "1.0.3"
+  }
 }
