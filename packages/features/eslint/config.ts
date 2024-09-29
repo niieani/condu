@@ -1,10 +1,12 @@
 import type { Linter, ESLint } from "eslint";
 import js from "@eslint/js";
 import importPlugin from "eslint-plugin-import-x";
+import globals from "globals";
 // import importPluginTypeScript from "eslint-plugin-import-x/config/flat/typescript.js";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import * as typescriptParser  from "@typescript-eslint/parser";
-import { type ParserOptions } from "@typescript-eslint/parser";
+import type { FlatConfig } from "@typescript-eslint/utils/ts-eslint";
+import * as typescriptParser from "@typescript-eslint/parser";
+import type { ParserOptions } from "@typescript-eslint/parser";
 import noExtraneousDependencies from "./rules/no-extraneous-dependencies.js";
 import unicornPlugin from "eslint-plugin-unicorn";
 import type { ConduConfigWithInferredValuesAndProject } from "@condu/types/configTypes.js";
@@ -15,7 +17,7 @@ export const getConfigs = ({
 }: Pick<
   ConduConfigWithInferredValuesAndProject,
   "conventions" | "projects"
->): Linter.Config[] => {
+>): FlatConfig.ConfigArray => {
   const { generatedSourceFileNameSuffixes, sourceExtensions, buildDir } =
     conventions;
   const packageNameConventions = projects.filter(
@@ -37,6 +39,9 @@ export const getConfigs = ({
     "integration-tests/**",
   ];
 
+  const importXPlugin = importPlugin.flatConfigs.recommended.plugins?.[
+    "import-x"
+  ] as ESLint.Plugin;
   return [
     {
       // https://eslint.org/docs/latest/use/configure/configuration-files#globally-ignoring-files-with-ignores
@@ -50,10 +55,9 @@ export const getConfigs = ({
       files: [`**/*.{${executableExtensionsList}}`],
       plugins: {
         "import-x": {
-          ...importPlugin.flatConfigs.recommended.plugins?.["import-x"],
-          // ...importPluginTypeScript,
+          ...importXPlugin,
           rules: {
-            ...importPlugin.flatConfigs.recommended.plugins?.["import-x"]?.rules,
+            ...importXPlugin.rules,
             // importPluginTypeScript,
             // ...(importPluginTypeScript.rules as unknown as ESLint.Plugin["rules"]),
             // override the no-extraneous-dependencies rule with our custom version:
@@ -73,9 +77,11 @@ export const getConfigs = ({
             jsx: true,
           },
         } satisfies ParserOptions,
-        // globals: {
-        //   ...globals.browser,
-        // },
+        // TODO: globals should be configurable
+        globals: {
+          ...globals.es2025,
+          ...globals.node,
+        },
       },
       rules: {
         "no-unused-vars": "off",

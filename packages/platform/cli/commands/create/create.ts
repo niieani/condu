@@ -5,8 +5,8 @@ import type {
 } from "@condu/types/configTypes.js";
 import { loadConduProject } from "../../loadProject.js";
 import * as fs from "node:fs/promises";
-import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
-import sortPackageJson from "sort-package-json";
+import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
+import { sortPackageJson } from "sort-package-json";
 import * as path from "node:path";
 import { getSingleMatch, type MatchOptions } from "../../matchPackage.js";
 import type { CommandContext } from "./CreateCommand.js";

@@ -5,12 +5,12 @@ import type {
   WorkspaceSubPackage,
 } from "@condu/types/configTypes.js";
 import * as fs from "node:fs/promises";
-import sortPackageJson from "sort-package-json";
+import { sortPackageJson } from "sort-package-json";
 import * as path from "node:path";
 import { copyFiles } from "@condu/core/utils/copy.js";
 import { readPreviouslyWrittenFileCache } from "./apply/readWrite.js";
 import spdxLicenseList from "spdx-license-list/full.js";
-import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
+import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
 import { createExportableManifest } from "@pnpm/exportable-manifest";
 import { readWorkspaceManifest } from "@pnpm/workspace.read-manifest";
 import { getCatalogsFromWorkspaceManifest } from "@pnpm/catalogs.config";

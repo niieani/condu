@@ -24,7 +24,6 @@ import { CONFIGURED } from "@condu/types/configure.js";
 import { getProjectDefinitionsFromConventionConfig } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
 import memoizeOne from "async-memoize-one";
 import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
-import sortPackageJson from "sort-package-json";
 import { findUp } from "@condu/core/utils/findUp.js";
 import * as fs from "node:fs";
 import { getManifestsPaths, getPackage } from "@condu/workspace-utils/topo.js";

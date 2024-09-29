@@ -3,7 +3,7 @@ import * as path from "node:path";
 
 // https://github.com/pnpm/pnpm/blob/96e165c7ff89ba47f0ff03c7eca459f58ce3ff2a/config/config/src/dirs.ts
 export function getCacheDir(opts: {
-  env: NodeJS.ProcessEnv;
+  env: Record<string, string | undefined>;
   platform: string;
 }) {
   if (opts.env["XDG_CACHE_HOME"]) {

@@ -1,4 +1,3 @@
-/* eslint-disable import-x/no-extraneous-dependencies */
 /* eslint-disable unicorn/no-null */
 import path from "node:path";
 import fs from "node:fs";
@@ -361,7 +360,7 @@ function reportIfMissing(
     ([nameOrScope]) => {
       return pkgName === nameOrScope || matchWildcard(nameOrScope, pkgName);
     },
-  ) ?? [, depsOptions.autoFixFallback];
+  ) ?? [undefined, depsOptions.autoFixFallback];
 
   // TODO: add support for @types - should check both the type and the real package
   const canAutofix =

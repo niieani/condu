@@ -67,11 +67,13 @@
   - [x] a preset package just exports an object, so applying a preset is just merging each of the properties
   - [ ] can be used to apply changes to an existing project, in which case it will infer certain things from the existing project, like the package manager
 - [x] ensure `sourceDir` works with publishing
-- [ ] something is up with resolving
+- [x] something is up with resolving
+- [ ] non-monorepo/single package mode
+- [ ] eslint customization / extension
+  - allow loading .config/eslint.ts (or specify custom filename?)
 - [ ] "exports" should be updated in apply to route paths to the sourceDir and support importing from the package name (ideally we should discourage imports from root package? but it's an industry practice though)
 - [ ] cache file needs to include condu version + all versions of active features for invalidation
 - [ ] re-evaluate the API for writing features - there's a lot of nesting, can it be simplified a bit?
-- [ ] non-monorepo/single package mode
 - [ ] vitest feature
 - [ ] CI build and test using moon
 - [ ] preset with my features and feature config pre-applied
@@ -83,6 +85,9 @@
 ## Later:
 
 - [ ] EffectTS
+- [ ] support TS's `rewriteRelativeImportExtensions` and use .ts extensions as default (use eslint to enforce .ts extensions)
+  - this also solves Deno compatibility
+- [ ] eslint - targeting package and allow multiple configs
 - [ ] add condu to `mockify` and publish the packages
 - [ ] should we collocate per-package build config in the respective packages, or keep them global?
   - [ ] if yes, then how do we do it? `.config` folder per package?
@@ -95,6 +100,7 @@
 - [ ] what is up with yarnrc changing on its own?
 - [ ] add validation for feature dependencies (e.g. "auto" feature depends on "lerna")
   - maybe instead of dependencies, but see below - contributed state?
+  - https://github.com/newdash/graphlib ?
 - [ ] add shared state for features (features can contribute to it and build on top of each other's state)
   - perhaps features contribute individual settings, like in vscode - providing a required schema - that way we could validate that the dependent state is valid
 - [ ] basic any-config feature:
@@ -223,6 +229,7 @@ Post-release:
 
 - https://gist.github.com/khalidx/1c670478427cc0691bda00a80208c8cc
 - [ ] https://twitter.com/mattpocockuk/status/1787893902512443406?t=TFbEEj9exMvHuZLx4ZmaFA&s=19 - post to respond to when condu is ready
+- [ ] https://github.com/microsoft/TypeScript/issues/25376
 
 References:
 

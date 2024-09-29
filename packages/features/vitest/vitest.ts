@@ -1,6 +1,6 @@
 import { defineFeature } from "condu/defineFeature.js";
 
-export const vitest = ({}: {} = {}) =>
+export const vitest = (opts: {} = {}) =>
   defineFeature({
     name: "vitest",
     actionFn: (config, state) => ({
