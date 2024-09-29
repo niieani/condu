@@ -1,6 +1,6 @@
 import type { DependencyDef, FileDef } from "@condu/types/configTypes.js";
 import { defineFeature } from "condu/defineFeature.js";
-import type Yarnrc from "@condu/schema-types/schemas/yarnrc.gen.js";
+import type { Yarnrc } from "@condu/schema-types/schemas/yarnrc.gen.js";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 

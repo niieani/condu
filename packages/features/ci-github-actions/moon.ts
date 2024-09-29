@@ -1,5 +1,5 @@
 import { defineFeature } from "condu/defineFeature.js";
-import type GithubWorkflow from "@condu/schema-types/schemas/githubWorkflow.gen.js";
+import type { GithubWorkflow } from "@condu/schema-types/schemas/githubWorkflow.gen.js";
 import type {
   PartialTaskConfig,
   PartialInheritedTasksConfig as Tasks,
@@ -8,7 +8,7 @@ import type {
 import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
 import { mapValues } from "remeda";
 import type { Effects, Task, Conventions } from "@condu/types/configTypes.js";
-import type GithubAction from "@condu/schema-types/schemas/githubAction.gen.js";
+import type { GithubAction } from "@condu/schema-types/schemas/githubAction.gen.js";
 
 type TasksByType = Record<
   Task["type"],
@@ -17,7 +17,7 @@ type TasksByType = Record<
 
 // TODO: the way this should actually work is it should be a moonCi feature that contributes "ci" commands to state
 // then the Github Actions CI pulls those commands in
-export const moonCi = ({}: {} = {}) =>
+export const moonCi = (opts: {} = {}) =>
   defineFeature({
     name: "moonCi",
     order: { priority: "end" },

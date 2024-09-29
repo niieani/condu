@@ -1,5 +1,5 @@
 import type { PartialProjectConfig, PartialTaskConfig } from "@moonrepo/types";
-import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
+import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
 import type { Pattern } from "ts-pattern";
 import type { CONFIGURED } from "./configure.js";
 import type { ProjectManifest } from "@pnpm/types";

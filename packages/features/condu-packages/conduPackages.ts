@@ -4,7 +4,7 @@ import {
   CORE_NAME,
 } from "@condu/types/constants.js";
 
-export const conduPackages = ({}: {} = {}) =>
+export const conduPackages = (opts: {} = {}) =>
   defineFeature({
     name: "condu",
     actionFn: (config, state) => {

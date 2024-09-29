@@ -3,7 +3,7 @@ import { pick } from "remeda";
 
 const RUNNING_SOURCE_VERSION = import.meta.url.endsWith(".ts");
 
-export const eslint = ({}: {} = {}) =>
+export const eslint = (opts: {} = {}) =>
   defineFeature({
     name: "eslint",
     actionFn: (config, state) => {
@@ -39,9 +39,7 @@ export default configs;`,
                   command: "eslint",
                   ...(RUNNING_SOURCE_VERSION
                     ? {
-                        env: {
-                          NODE_OPTIONS: "--import tsx/esm",
-                        },
+                        env: { NODE_OPTIONS: "--import tsx/esm" },
                       }
                     : {}),
                 },

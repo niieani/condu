@@ -3,11 +3,13 @@ import path from "node:path";
 import type {
   FileDef,
   GetExistingContentFn,
-  ConduPackageJson,
   WorkspacePackage,
 } from "@condu/types/configTypes.js";
-import yaml from "yaml";
-import commentJson from "comment-json";
+import { stringify as yamlStringify, parse as yamlParse } from "yaml";
+import {
+  stringify as commentJsonStringify,
+  parse as commentJsonParse,
+} from "comment-json";
 import { P, match } from "ts-pattern";
 import { printUnifiedDiff } from "print-diff";
 import readline from "node:readline/promises";
@@ -17,8 +19,8 @@ export const FILE_STATE_PATH = `${CONFIG_DIR}/.cache/files.json`;
 
 const stringify = (obj: unknown, filePath: string) =>
   /\.ya?ml$/i.test(filePath)
-    ? yaml.stringify(obj)
-    : commentJson.stringify(obj, undefined, 2);
+    ? yamlStringify(obj)
+    : commentJsonStringify(obj, undefined, 2);
 
 export interface WrittenFile {
   path: string;
@@ -44,8 +46,8 @@ const createGetExistingContentFn =
     try {
       const file = (await fs.readFile(targetPath)).toString();
       return match(extension)
-        .with(P.string.regex(/\.ya?ml$/i), () => yaml.parse(file))
-        .with(P.string.regex(/\.json5?$/i), () => commentJson.parse(file))
+        .with(P.string.regex(/\.ya?ml$/i), () => yamlParse(file))
+        .with(P.string.regex(/\.json5?$/i), () => commentJsonParse(file))
         .otherwise(() => file);
     } catch {
       return defaultFallback;

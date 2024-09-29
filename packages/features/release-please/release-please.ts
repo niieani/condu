@@ -8,7 +8,7 @@ import type {
   ReleaserConfigOptions,
   default as ReleasePleaseConfig,
 } from "@condu/schema-types/schemas/releasePleaseConfig.gen.js";
-import type GithubWorkflow from "@condu/schema-types/schemas/githubWorkflow.gen.js";
+import type { GithubWorkflow } from "@condu/schema-types/schemas/githubWorkflow.gen.js";
 import type { WorkspacePackage } from "@condu/types/configTypes.js";
 
 export const releasePlease = ({

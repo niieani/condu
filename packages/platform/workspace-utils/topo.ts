@@ -1,5 +1,5 @@
 import { basename, dirname, join, relative, resolve } from "node:path";
-import glob from "fast-glob";
+import { glob } from "fast-glob";
 import { analyze, type TTopoResult } from "toposource";
 import slash from "slash";
 import { readWorkspaceManifest } from "@pnpm/workspace.read-manifest";
@@ -21,8 +21,8 @@ import type {
   WriteManifestFnOptions,
 } from "@condu/types/configTypes.js";
 import { readProjectManifest } from "@pnpm/read-project-manifest";
-import sortPackageJson from "sort-package-json";
-import type PackageJson from "@condu/schema-types/schemas/packageJson.gen.js";
+import { sortPackageJson } from "sort-package-json";
+import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
 
 const defaultScopes = [
   "dependencies",

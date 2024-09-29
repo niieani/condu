@@ -1,6 +1,6 @@
 import { defineFeature } from "condu/defineFeature.js";
 import { assign } from "comment-json";
-import type VscodeSettingsWorkspace from "@condu/schema-types/schemas/vscodeSettingsWorkspace.gen.js";
+import type { VscodeSettingsWorkspace } from "@condu/schema-types/schemas/vscodeSettingsWorkspace.gen.js";
 import * as path from "node:path";
 
 const RUNNING_SOURCE_VERSION = import.meta.url.endsWith(".ts");
