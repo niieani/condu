@@ -3,9 +3,8 @@ import js from "@eslint/js";
 import importPlugin from "eslint-plugin-import-x";
 // import importPluginTypeScript from "eslint-plugin-import-x/config/flat/typescript.js";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import typescriptParser, {
-  type ParserOptions,
-} from "@typescript-eslint/parser";
+import * as typescriptParser  from "@typescript-eslint/parser";
+import { type ParserOptions } from "@typescript-eslint/parser";
 import noExtraneousDependencies from "./rules/no-extraneous-dependencies.js";
 import unicornPlugin from "eslint-plugin-unicorn";
 import type { ConduConfigWithInferredValuesAndProject } from "@condu/types/configTypes.js";
@@ -16,7 +15,7 @@ export const getConfigs = ({
 }: Pick<
   ConduConfigWithInferredValuesAndProject,
   "conventions" | "projects"
->) => {
+>): Linter.Config[] => {
   const { generatedSourceFileNameSuffixes, sourceExtensions, buildDir } =
     conventions;
   const packageNameConventions = projects.filter(

@@ -104,6 +104,9 @@ importers:
       swc-loader:
         specifier: ^0.2.6
         version: 0.2.6(@swc/core@1.7.23)(webpack@5.94.0(@swc/core@1.7.23)(webpack-cli@5.1.4))
+      tslib:
+        specifier: ^2.7.0
+        version: 2.7.0
       tsx:
         specifier: ^4.19.0
         version: 4.19.0
@@ -161,15 +164,24 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.0.0
         version: 8.4.0(eslint@9.10.0)(typescript@5.6.0-beta)
+      brace-expansion:
+        specifier: ^1.1.7
+        version: 1.1.11
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
+      eslint-module-utils:
+        specifier: ^2.11.0
+        version: 2.11.0(@typescript-eslint/parser@8.4.0(eslint@9.10.0)(typescript@5.6.0-beta))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.4.0(eslint@9.10.0)(typescript@5.6.0-beta))(eslint-plugin-import-x@4.2.1(eslint@9.10.0)(typescript@5.6.0-beta))(eslint@9.10.0))(eslint@9.10.0)
       eslint-plugin-import-x:
         specifier: '*'
         version: 4.2.1(eslint@9.10.0)(typescript@5.6.0-beta)
       eslint-plugin-unicorn:
         specifier: '*'
         version: 55.0.0(eslint@9.10.0)
+      minimatch:
+        specifier: ^10.0.1
+        version: 10.0.1
       remeda:
         specifier: ^2.6.0
         version: 2.12.0
@@ -3314,6 +3326,10 @@ packages:
   min-indent@1.0.1:
     resolution: {integrity: sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==}
     engines: {node: '>=4'}
+
+  minimatch@10.0.1:
+    resolution: {integrity: sha512-ethXTt3SGGR+95gudmqJ1eNhRO7eGEGIgYA9vnPatK4/etz2MEVDno5GMCibdMTuBMyElzIlgxMna3K94XDIDQ==}
+    engines: {node: 20 || >=22}
 
   minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
@@ -7694,6 +7710,10 @@ snapshots:
   mimic-response@3.1.0: {}
 
   min-indent@1.0.1: {}
+
+  minimatch@10.0.1:
+    dependencies:
+      brace-expansion: 2.0.1
 
   minimatch@3.1.2:
     dependencies:
