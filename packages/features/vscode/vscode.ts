@@ -11,7 +11,6 @@ const defaultEnforcedConfig: VscodeSettingsWorkspace = {
         "eslint.execArgv": [
           "--import",
           import.meta.resolve("tsx/esm").slice("file://".length),
-          "--preserve-symlinks",
         ],
       }
     : {}),

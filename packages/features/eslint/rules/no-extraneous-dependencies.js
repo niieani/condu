@@ -2,7 +2,7 @@
 /* eslint-disable unicorn/no-null */
 import path from "node:path";
 import fs from "node:fs";
-import minimatch from "minimatch";
+import { minimatch } from "minimatch";
 import pkgUpModule from "eslint-module-utils/pkgUp";
 import resolveModule from "eslint-module-utils/resolve";
 import moduleVisitorModule from "eslint-module-utils/moduleVisitor";
