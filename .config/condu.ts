@@ -30,7 +30,11 @@ export default configure((pkg) => ({
   //   sourceDir: ".",
   // },
   features: [
-    pnpm(),
+    pnpm({
+      npmrc: {
+        "shared-workspace-lockfile": true,
+      },
+    }),
     typescript({
       tsconfig: {
         compilerOptions: {

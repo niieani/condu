@@ -69,7 +69,10 @@
     "packageExtensions": {},
     "ignoredOptionalDependencies": [
       "eslint-plugin-import"
-    ]
+    ],
+    "patchedDependencies": {
+      "@verdaccio/types@13.0.0-next-8.1": ".config/patches/@verdaccio__types@13.0.0-next-8.1.patch"
+    }
   },
   "condu": {
     "managedDependencies": {
