@@ -9,5 +9,10 @@
   },
   "peerDependencies": {
     "condu": "workspace:^"
+  },
+  "dependencies": {
+    "@pnpm/config": "^21.8.3",
+    "@types/ini": "^4.1.1",
+    "ini": "^5.0.0"
   }
 }
