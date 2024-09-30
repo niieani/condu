@@ -1,0 +1,62 @@
+diff --git a/package.json b/package.json
+index 58f5603f288944addc973ec7c07769620f619745..8667ebaa08ba28b742788dfa9d02acdb7d8a71a6 100644
+--- a/package.json
++++ b/package.json
+@@ -30,6 +30,7 @@
+   "publishConfig": {
+     "access": "public"
+   },
++  "type": "module",
+   "main": "src/types.ts",
+   "types": "src/types.ts",
+   "devDependencies": {
+diff --git a/src/configuration.ts b/src/configuration.ts
+index 3f303e521c5df537c11692624b52f74c9415c22b..0cb463e652fa6d4fd421ee7017c3473232bc86d3 100644
+--- a/src/configuration.ts
++++ b/src/configuration.ts
+@@ -1,4 +1,4 @@
+-import { PackageAccess, PackageList } from '@verdaccio/types/src/manifest';
++import type { PackageAccess, PackageList } from './manifest.js';
+ 
+ export type TypeToken = 'Bearer' | 'Basic';
+ 
+diff --git a/src/plugins/index.ts b/src/plugins/index.ts
+index d92f1edb8b5e2ac88bdca98ae0f6adc9b8000008..d71dfc6bf050c60d15153457fbbca5809fc38190 100644
+--- a/src/plugins/index.ts
++++ b/src/plugins/index.ts
+@@ -1 +1 @@
+-export * from '@verdaccio/types/src/plugins/storage';
++export type * from './storage.js';
+diff --git a/src/plugins/storage.ts b/src/plugins/storage.ts
+index 41304a35011fe533451a5f6759bf8c9d224bf6fc..58fe4bb96db14feee49c0e7bb45e89a7bb14237a 100644
+--- a/src/plugins/storage.ts
++++ b/src/plugins/storage.ts
+@@ -1,5 +1,5 @@
+-import { Callback, CallbackAction } from '@verdaccio/types/src/commons';
+-import { Manifest, Token } from '@verdaccio/types/src/manifest';
++import type { Callback, CallbackAction } from '../commons.js';
++import type { Manifest, Token } from '../manifest.js';
+ 
+ export type StorageList = string[];
+ 
+diff --git a/src/types.ts b/src/types.ts
+index eeca08a40d06d7cf2d0ce83e01a60676fd2b3f84..dea86eac6f18f1317366e02393fdee2227a02b6c 100644
+--- a/src/types.ts
++++ b/src/types.ts
+@@ -1,5 +1,5 @@
+-export * from '@verdaccio/types/src/plugins';
+-export * from '@verdaccio/types/src/manifest';
+-export * from '@verdaccio/types/src/search';
+-export * from '@verdaccio/types/src/commons';
+-export * from '@verdaccio/types/src/configuration';
++export type * from './plugins/index.js';
++export type * from './manifest.js';
++export type * from './search.js';
++export type * from './commons.js';
++export type * from './configuration.js';
+diff --git a/tsconfig.build.json b/tsconfig.build.json
+deleted file mode 100644
+index f836f8edc73b9b4111d0350d1f64a6b91a318063..0000000000000000000000000000000000000000
+diff --git a/tsconfig.json b/tsconfig.json
+deleted file mode 100644
+index 09c54ae59d9c1d2ca49a1a79fa9d231970140850..0000000000000000000000000000000000000000

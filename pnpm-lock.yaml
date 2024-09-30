@@ -10,6 +10,11 @@ overrides:
   esbuild: 0.23.1
   graceful-fs: 4.2.11
 
+patchedDependencies:
+  '@verdaccio/types@13.0.0-next-8.1':
+    hash: 2cqnzirpx2eywv4ojbtyslw74u
+    path: .config/patches/@verdaccio__types@13.0.0-next-8.1.patch
+
 importers:
 
   .:
@@ -169,7 +174,7 @@ importers:
         version: 8.7.0(eslint@9.11.1)(typescript@5.6.2)
       brace-expansion:
         specifier: ^1.1.7
-        version: 4.0.0
+        version: 1.1.11
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
@@ -271,9 +276,18 @@ importers:
 
   packages/features/pnpm:
     dependencies:
+      '@pnpm/config':
+        specifier: ^21.8.3
+        version: 21.8.3(@pnpm/logger@5.2.0)
+      '@types/ini':
+        specifier: ^4.1.1
+        version: 4.1.1
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
+      ini:
+        specifier: ^5.0.0
+        version: 5.0.0
     devDependencies:
       '@pnpm/workspace.read-manifest':
         specifier: ^2.2.0
@@ -363,7 +377,7 @@ importers:
         specifier: ^6.0.5
         version: 6.0.8
       '@pnpm/types':
-        specifier: ^11.1.0
+        specifier: ^12.2.0
         version: 12.2.0
       '@pnpm/workspace.find-packages':
         specifier: ^4.0.2
@@ -445,7 +459,7 @@ importers:
         specifier: ^6.0.5
         version: 6.0.8
       '@pnpm/types':
-        specifier: ^11.1.0
+        specifier: ^12.2.0
         version: 12.2.0
       '@pnpm/workspace.find-packages':
         specifier: ^4.0.2
@@ -505,7 +519,7 @@ importers:
         version: 5.4.0
     devDependencies:
       '@pnpm/types':
-        specifier: ^11.1.0
+        specifier: ^12.2.0
         version: 12.2.0
 
   packages/platform/update-specifiers:
@@ -573,14 +587,14 @@ importers:
   packages/test/integration:
     dependencies:
       '@verdaccio/types':
-        specifier: patch:@verdaccio/types@npm%3A12.0.0-next-7.3#~/.config/patches/@verdaccio-types-npm-12.0.0-next-7.3-88649149df.patch
-        version: link:patch:@verdaccio/types@npm%3A12.0.0-next-7.3#~/.config/patches/@verdaccio-types-npm-12.0.0-next-7.3-88649149df.patch
+        specifier: 13.0.0-next-8.1
+        version: 13.0.0-next-8.1(patch_hash=2cqnzirpx2eywv4ojbtyslw74u)
       verdaccio:
-        specifier: ^6.0.0-beta.2
+        specifier: ^6.0.0
         version: 6.0.0(typanion@3.14.0)
     devDependencies:
       '@types/express':
-        specifier: ^4.17.21
+        specifier: ^5.0.0
         version: 5.0.0
 
 packages:
@@ -1414,6 +1428,9 @@ packages:
   '@types/http-errors@2.0.4':
     resolution: {integrity: sha512-D0CFMMtydbJAegzOyHjtiKPLlvnm3iTZyZRSZoLq2mRhDdmLfIWOCYPfQJ4cu2erKghU++QvjcUjp/5h7hESpA==}
 
+  '@types/ini@4.1.1':
+    resolution: {integrity: sha512-MIyNUZipBTbyUNnhvuXJTY7B6qNI78meck9Jbv3wk0OgNwRyOOVEKDutAkOs1snB/tx0FafyR6/SN4Ps0hZPeg==}
+
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
@@ -1441,8 +1458,8 @@ packages:
   '@types/npm-package-arg@6.1.4':
     resolution: {integrity: sha512-vDgdbMy2QXHnAruzlv68pUtXCjmqUk3WrBAsRboRovsOmxbfn/WiYCjmecyKjGztnMps5dWp4Uq2prp+Ilo17Q==}
 
-  '@types/qs@6.9.15':
-    resolution: {integrity: sha512-uXHQKES6DQKKCLh441Xv/dwxOq1TVS3JPUMlEqoEglvlhR6Mxnlew/Xq/LRVHpLyk7iK3zODe1qYHIMltO7XGg==}
+  '@types/qs@6.9.16':
+    resolution: {integrity: sha512-7i+zxXdPD0T4cKDuxCUXJ4wHcsJLwENa6Z3dCu8cfCK743OGy5Nu1RmAGqDPsoTDINVEcdXKRvR/zre+P2Ku1A==}
 
   '@types/range-parser@1.2.7':
     resolution: {integrity: sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==}
@@ -1621,6 +1638,10 @@ packages:
   '@verdaccio/tarball@13.0.0-next-8.1':
     resolution: {integrity: sha512-58uimU2Bqt9+s+9ixy7wK/nPCqbOXhhhr/MQjl+otIlsUhSeATndhFzEctz/W+4MhUDg0tUnE9HC2yeNHHAo1Q==}
     engines: {node: '>=14'}
+
+  '@verdaccio/types@13.0.0-next-8.1':
+    resolution: {integrity: sha512-rPfuYgbLhDOOK1pHUN00iIRvwda0xQavFVHCXJD1bBGp2tVbjoeRKFYMLLUMbQHi4cuLR71JnWBQYIYY2Tt4ig==}
+    engines: {node: '>=18'}
 
   '@verdaccio/ui-theme@8.0.0-next-8.1':
     resolution: {integrity: sha512-9PxV8+jE2Tr+iy9DQW/bzny4YqOlW0mCZ9ct6jhcUW4GdfzU//gY2fBN/DDtQVmfbTy8smuj4Enyv5f0wCsnYg==}
@@ -1942,10 +1963,6 @@ packages:
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
-  balanced-match@3.0.1:
-    resolution: {integrity: sha512-vjtV3hiLqYDNRoiAv0zC4QaGAMPomEoq83PRmYIofPswwZurCeWR5LByXm7SyoL0Zh5+2z0+HC7jG8gSZJUh0w==}
-    engines: {node: '>= 16'}
-
   bare-events@2.5.0:
     resolution: {integrity: sha512-/E8dDe9dsbLyh2qrZ64PEPadOQ0F4gbl1sUJOrmph7xOiIxfY8vwab/4bFLh4Y88/Hk/ujKcrQKc+ps0mv873A==}
 
@@ -1984,10 +2001,6 @@ packages:
 
   brace-expansion@2.0.1:
     resolution: {integrity: sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==}
-
-  brace-expansion@4.0.0:
-    resolution: {integrity: sha512-l/mOwLWs7BQIgOKrL46dIAbyCKvPV7YJPDspkuc88rHsZRlg3hptUGdU7Trv0VFP4d3xnSGBQrKu5ZvGB7UeIw==}
-    engines: {node: '>= 18'}
 
   braces@3.0.3:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
@@ -3038,6 +3051,10 @@ packages:
   ini@3.0.1:
     resolution: {integrity: sha512-it4HyVAUTKBc6m8e1iXWvXSTdndF7HbdN713+kvLrymxTaU4AUBWrJ4vEooP+V7fexnVD3LKcBshjGGPefSMUQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+
+  ini@5.0.0:
+    resolution: {integrity: sha512-+N0ngpO3e7cRUWOJAS7qw0IZIVc6XPrW4MlFBdD066F2L4k1L6ker3hLqSq7iXxU5tgS4WGkIUElWn5vogAEnw==}
+    engines: {node: ^18.17.0 || >=20.5.0}
 
   interpret@3.1.1:
     resolution: {integrity: sha512-6xwYfHbajpoF0xLW+iwLkhwgvLoZDfjYfoFNu8ftMoXINzwuymNLd9u/KmwtdT2GbR+/Cz66otEGEVVUHX9QLQ==}
@@ -5665,7 +5682,7 @@ snapshots:
   '@types/express-serve-static-core@5.0.0':
     dependencies:
       '@types/node': 22.7.4
-      '@types/qs': 6.9.15
+      '@types/qs': 6.9.16
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.4
 
@@ -5673,12 +5690,14 @@ snapshots:
     dependencies:
       '@types/body-parser': 1.19.5
       '@types/express-serve-static-core': 5.0.0
-      '@types/qs': 6.9.15
+      '@types/qs': 6.9.16
       '@types/serve-static': 1.15.7
 
   '@types/http-cache-semantics@4.0.4': {}
 
   '@types/http-errors@2.0.4': {}
+
+  '@types/ini@4.1.1': {}
 
   '@types/json-schema@7.0.15': {}
 
@@ -5704,7 +5723,7 @@ snapshots:
 
   '@types/npm-package-arg@6.1.4': {}
 
-  '@types/qs@6.9.15': {}
+  '@types/qs@6.9.16': {}
 
   '@types/range-parser@1.2.7': {}
 
@@ -5982,6 +6001,8 @@ snapshots:
       tar-stream: 3.1.7
     transitivePeerDependencies:
       - supports-color
+
+  '@verdaccio/types@13.0.0-next-8.1(patch_hash=2cqnzirpx2eywv4ojbtyslw74u)': {}
 
   '@verdaccio/ui-theme@8.0.0-next-8.1': {}
 
@@ -6356,8 +6377,6 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
-  balanced-match@3.0.1: {}
-
   bare-events@2.5.0:
     optional: true
 
@@ -6418,10 +6437,6 @@ snapshots:
   brace-expansion@2.0.1:
     dependencies:
       balanced-match: 1.0.2
-
-  brace-expansion@4.0.0:
-    dependencies:
-      balanced-match: 3.0.1
 
   braces@3.0.3:
     dependencies:
@@ -7534,6 +7549,8 @@ snapshots:
   ini@1.3.8: {}
 
   ini@3.0.1: {}
+
+  ini@5.0.0: {}
 
   interpret@3.1.1: {}
 

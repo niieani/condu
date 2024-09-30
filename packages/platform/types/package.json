@@ -10,6 +10,6 @@
     "ts-pattern": "^5.2.0"
   },
   "devDependencies": {
-    "@pnpm/types": "^11.1.0"
+    "@pnpm/types": "^12.2.0"
   }
 }
