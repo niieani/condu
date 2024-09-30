@@ -62,6 +62,9 @@ export async function prepareAndReleaseDirectoryPackages({
     (filePath) => path.join(workspaceDirAbs, filePath),
   );
 
+  const pnpmWorkspaceManifest = await readWorkspaceManifest(project.absPath);
+  const catalogs = getCatalogsFromWorkspaceManifest(pnpmWorkspaceManifest);
+
   const { queue } = topo(packagesToPrepare);
   const packagesToPrepareObj = Object.fromEntries(
     packagesToPrepare.map((pkg) => [pkg.name, pkg]),
@@ -231,7 +234,6 @@ export async function prepareAndReleaseDirectoryPackages({
       (await hooks?.modifyPublishPackageJson?.(newPackageJson)) ??
       newPackageJson;
 
-    const pnpmWorkspaceManifest = await readWorkspaceManifest(project.absPath);
     // should we just use the whole pack pipeline from pnpm?
     // see https://github.com/pnpm/pnpm/blob/07a7ac4a93505fc75fa397cd4a3965295d76a689/releasing/plugin-commands-publishing/src/pack.ts#L61
     const exportablePackageJson = await createExportableManifest(
@@ -239,13 +241,13 @@ export async function prepareAndReleaseDirectoryPackages({
       transformedPackageJson as any,
       {
         // support pnpm catalogs
-        catalogs: getCatalogsFromWorkspaceManifest(pnpmWorkspaceManifest),
+        catalogs,
         // modulesDir is used to resolve 'workspace:' protocol
-        modulesDir: path.join(workspaceDirAbs, "node_modules"),
+        // TODO: in non-pnpm we might need to use the root 'node_modules' directory instead, i.e. (workspaceDirAbs, "node_modules")
+        modulesDir: path.join(pkg.absPath, "node_modules"),
         readmeFile: existingReadmeNames[0],
       },
     );
-
     // save new package.json:
     await fs.writeFile(
       path.join(packageBuildDir, "package.json"),
