@@ -11,6 +11,7 @@ import * as path from "node:path";
 import { getSingleMatch, type MatchOptions } from "../../matchPackage.js";
 import type { CommandContext } from "./CreateCommand.js";
 import childProcess from "node:child_process";
+import { copyFiles } from "@condu/core/utils/copy.js";
 
 // const gitUser = (await $`git config user.name`).stdout.trim();
 // const gitEmail = (await $`git config user.email`).stdout.trim();
@@ -78,22 +79,49 @@ export async function createPackage({
 }) {
   const modulePath = path.normalize(path.join(project.absPath, match.path));
   const packageJsonPath = path.join(modulePath, "package.json");
+  const convention = "convention" in match ? match.convention : undefined;
+  const isPrivate = convention?.private;
+  const templatePath =
+    convention?.templatePath && path.isAbsolute(convention.templatePath)
+      ? path.join(project.absPath, convention.templatePath)
+      : path.join(
+          project.absPath,
+          modulePath,
+          convention?.templatePath ?? "@template",
+        );
+  const templateExists = await fs
+    .access(templatePath, fs.constants.R_OK)
+    .then(() => true)
+    .catch(() => false);
+
+  const preexistingPackage = await fs
+    .access(packageJsonPath, fs.constants.R_OK)
+    .then(() => true)
+    .catch(() => false);
+
+  if (preexistingPackage) {
+    context.log(
+      `Package ${match.name} already exists. Adding missing fields/template files only.`,
+    );
+  }
+
+  if (templateExists) {
+    await copyFiles({
+      sourceDir: templatePath,
+      targetDir: modulePath,
+      overwrite: false,
+    });
+  }
+
   const existingPackageJson = await fs
     .readFile(packageJsonPath)
     .then((buffer): PackageJson => JSON.parse(buffer.toString()))
     .catch(() => false as const);
 
-  if (existingPackageJson) {
-    context.log(
-      `Package ${match.name} already exists. Filling in missing fields only.`,
-    );
-  } else {
+  if (!existingPackageJson && !templateExists) {
     // might need to create the directory
     await fs.mkdir(modulePath, { recursive: true });
   }
-
-  const convention = "convention" in match ? match.convention : undefined;
-  const isPrivate = convention?.private;
 
   const packageJson: PackageJson = sortPackageJson({
     name: match.name,
@@ -118,9 +146,6 @@ export async function createPackage({
   );
 
   if (!existingPackageJson) {
-    // run yarn to link the new package
-    // TODO: use correct package manager and extract to a function
-
     const installShellCmd = `${project.config.node.packageManager.name} install`;
     const installProcess = childProcess.spawnSync(installShellCmd, {
       stdio: "inherit",
