@@ -13,9 +13,9 @@ import {
 import { P, match } from "ts-pattern";
 import { printUnifiedDiff } from "print-diff";
 import readline from "node:readline/promises";
-import { CONFIG_DIR } from "@condu/types/constants.js";
+import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
 
-export const FILE_STATE_PATH = `${CONFIG_DIR}/.cache/files.json`;
+export const FILE_STATE_PATH = `${CONDU_CONFIG_DIR_NAME}/.cache/files.json`;
 
 const stringify = (obj: unknown, filePath: string) =>
   /\.ya?ml$/i.test(filePath)

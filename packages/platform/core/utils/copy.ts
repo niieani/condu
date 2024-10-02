@@ -18,10 +18,12 @@ export const copyFiles = async ({
   sourceDir,
   targetDir,
   filter,
+  overwrite = false,
 }: {
   sourceDir: string;
   targetDir: string;
   filter?: FilterFn;
+  overwrite?: boolean;
 }): Promise<CopyResult[]> => {
   const work: Promise<CopyResult>[] = [];
   const createdDirectories = new Set<string>();
@@ -48,7 +50,9 @@ export const copyFiles = async ({
           sourceFilePath,
           targetFilePath,
           // use copy-on-write strategy for performance if supported
-          fs.constants.COPYFILE_FICLONE,
+          fs.constants.COPYFILE_FICLONE |
+            // and overwrite only if specified
+            (overwrite ? 0 : fs.constants.COPYFILE_EXCL),
         );
         // TODO: if debug
         // console.log(`Copied ${targetFilePath}`);

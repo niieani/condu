@@ -1,6 +1,7 @@
 import { defineFeature } from "condu/defineFeature.js";
 import type { LibraryBundleConfig } from "./types.js";
 import * as path from "node:path";
+import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
 
 export const libraryBundle = ({
   id,
@@ -49,8 +50,8 @@ export const libraryBundle = ({
       );
 
       // TODO: consider using an esm transpiled webpack config with WEBPACK_CLI_FORCE_LOAD_ESM_CONFIG
-      const configPathRelativeToPackage = `./.config/generated/webpack.config.cjs`;
-      const userConfigPathRelativeToPackage = `./.config/webpack.config.cjs`;
+      const configPathRelativeToPackage = `./${CONDU_CONFIG_DIR_NAME}/generated/webpack.config.cjs`;
+      const userConfigPathRelativeToPackage = `./${CONDU_CONFIG_DIR_NAME}/webpack.config.cjs`;
       // const configPathRelativeToPackage = path.relative(
       //   matchingPackage.dir,
       //   path.join(config.project.dir, configPath),

@@ -45,6 +45,7 @@ export const summarize = async ({
       !ignore.includes(entry.name) &&
       entry.name !== "node_modules" &&
       !entry.name.startsWith(".") &&
+      // TODO: replace with CONDU_CONFIG_DIR_NAME (?)
       !/\.config\./.test(entry.name) &&
       !/\.gen\./.test(entry.name) &&
       !entry.name.endsWith(".d.ts") &&

@@ -5,7 +5,7 @@ import {
   CONDU_CONFIG_DIR_NAME,
   CONDU_CONFIG_FILE_NAME,
   CORE_NAME,
-  CONFIG_DIR,
+  CONDU_CONFIG_DIR_NAME,
   DEFAULT_NODE_VERSION,
   DEFAULT_PACKAGE_MANAGER,
   DEFAULT_SOURCE_EXTENSIONS,
@@ -140,7 +140,7 @@ export async function loadConduProject({
       projectConventions,
     },
     workspaceDir: workspacePackage.absPath,
-    configDir: path.join(workspacePackage.absPath, CONFIG_DIR),
+    configDir: path.join(workspacePackage.absPath, CONDU_CONFIG_DIR_NAME),
   } as const;
 
   const project: Project = {

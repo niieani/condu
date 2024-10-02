@@ -1,3 +1,4 @@
+import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
 import { defineFeature } from "condu/defineFeature.js";
 import * as path from "node:path";
 import { groupBy } from "remeda";
@@ -36,7 +37,7 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
                 return [
                   ".DS_Store",
                   "node_modules",
-                  "/.config/.cache/",
+                  `/${CONDU_CONFIG_DIR_NAME}/.cache/`,
                   `/${config.conventions.buildDir}/`,
                   // ignore all generated files:
                   ...entriesFromFeatures,
