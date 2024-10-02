@@ -2,7 +2,6 @@ import { defineFeature } from "condu/defineFeature.js";
 import type { GithubWorkflow } from "@condu/schema-types/schemas/githubWorkflow.gen.js";
 import type {
   PartialTaskConfig,
-  PartialInheritedTasksConfig as Tasks,
   PartialProjectConfig as Project,
 } from "@moonrepo/types";
 import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
@@ -164,9 +163,6 @@ export const moonCi = (opts: {} = {}) =>
         } as const;
       });
 
-      const sourceExtensionsConcatenated =
-        config.conventions.sourceExtensions.join(",");
-
       return {
         effects: [
           ...projectStates,
@@ -181,20 +177,6 @@ export const moonCi = (opts: {} = {}) =>
                 path: ".github/workflows/moon-ci.yml",
                 type: "committed",
                 content: ciWorkflow,
-              },
-              {
-                path: ".moon/tasks.yml",
-                content: {
-                  $schema: schemas.tasks,
-                  fileGroups: {
-                    sources: [
-                      `${config.conventions.sourceDir}/**/*.{${sourceExtensionsConcatenated}}`,
-                    ],
-                    tests: [
-                      `${config.conventions.sourceDir}/**/*.test.{${sourceExtensionsConcatenated}}`,
-                    ],
-                  },
-                } satisfies Tasks,
               },
             ],
           },

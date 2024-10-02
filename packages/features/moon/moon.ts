@@ -3,12 +3,17 @@ import type {
   PartialVcsConfig,
   PartialToolchainConfig as Toolchain,
   PartialWorkspaceConfig as Workspace,
+  PartialInheritedTasksConfig as Tasks,
 } from "@moonrepo/types";
 
 // import type Toolchain from "./schemas/toolchain.js";
 // import type Workspace from "./schemas/workspace.js";
 import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
 import { getMoonWorkspaceProjectsFromConventionConfig } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
+import {
+  CONDU_CONFIG_DIR_NAME,
+  CONDU_CONFIG_FILE_NAME,
+} from "@condu/types/constants.js";
 
 // TODO: add opinionated defaults for toolchain and workspace
 // TODO: use a shared config property for typescript, etc.
@@ -55,7 +60,7 @@ const defaultToolchain: Toolchain = {
   typescript: {
     /** When `syncProjectReferences` is enabled and a dependent project reference
      * *does not* have a `tsconfig.json`, automatically create one. */
-    // createMissingConfig: false,
+    createMissingConfig: false,
 
     /** Name of `tsconfig.json` file in each project root. */
     // projectConfigFileName: 'tsconfig.json',
@@ -78,8 +83,6 @@ const defaultToolchain: Toolchain = {
     /** Sync a project's project references as import aliases to the `paths`
      * compiler option in each applicable project. */
     syncProjectReferencesToPaths: false,
-
-    createMissingConfig: false,
   },
 };
 
@@ -100,6 +103,9 @@ export const moon = ({
     actionFn: async (config, state) => {
       const moonWorkspaceProjects =
         getMoonWorkspaceProjectsFromConventionConfig(config.projects);
+
+      const sourceExtensionsConcatenated =
+        config.conventions.sourceExtensions.join(",");
 
       return {
         effects: [
@@ -144,7 +150,7 @@ export const moon = ({
                     ...moonWorkspaceProjects,
                     sources: {
                       ...moonWorkspaceProjects.sources,
-                      [config.project.manifest.name ?? "root"]: ".",
+                      [config.project.manifest.name]: ".",
                     },
                   },
                   vcs: {
@@ -158,6 +164,24 @@ export const moon = ({
                   //   ],
                   // },
                 } satisfies Workspace,
+              },
+              {
+                path: ".moon/tasks.yml",
+                content: {
+                  $schema: schemas.tasks,
+                  fileGroups: {
+                    sources: [
+                      `${config.conventions.sourceDir}/**/*.{${sourceExtensionsConcatenated}}`,
+                    ],
+                    tests: [
+                      `${config.conventions.sourceDir}/**/*.test.{${sourceExtensionsConcatenated}}`,
+                    ],
+                  },
+                  implicitInputs: [
+                    // workspace relative config changes should invalidate all caches
+                    `/${CONDU_CONFIG_DIR_NAME}/${CONDU_CONFIG_FILE_NAME}`,
+                  ],
+                } satisfies Tasks,
               },
             ],
             devDependencies: ["@moonrepo/cli"],
