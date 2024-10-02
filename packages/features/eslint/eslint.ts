@@ -37,8 +37,10 @@ export default configs;`,
                 type: "test",
                 definition: {
                   command: "eslint",
+                  inputs: ["@group(sources)"],
                   ...(RUNNING_SOURCE_VERSION
                     ? {
+                        // TODO: consider always running via tsx to support typescript configuration files?
                         env: { NODE_OPTIONS: "--import tsx/esm" },
                       }
                     : {}),
