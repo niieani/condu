@@ -149,6 +149,8 @@ export async function prepareAndReleaseDirectoryPackages({
       },
     }));
 
+    console.log(`Preparing ${manifest.name} for release`);
+
     const generatedEntrySources = Object.fromEntries(
       [...preferredDirectoryEntries].map(([dir, entry]) => {
         const pathToDir = path.relative(packageSourceDir, dir);
@@ -186,10 +188,11 @@ export async function prepareAndReleaseDirectoryPackages({
       ...dependencyManifestOverride,
       version: manifest.version ?? "0.0.0",
       publishConfig: {
-        // access: "public",
+        // TODO: consider whether to make the assumption that it's public by default
+        access: "public",
         registry: project.config.publish?.registry,
         ...publishConfig,
-        directory: getRelativePublishConfigDirectory(project, pkg),
+        // directory: getRelativePublishConfigDirectory(project, pkg),
       },
       exports: {
         ...entrySources,

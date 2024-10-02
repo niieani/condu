@@ -10,6 +10,7 @@ import type { ParserOptions } from "@typescript-eslint/parser";
 import noExtraneousDependencies from "./rules/no-extraneous-dependencies.js";
 import unicornPlugin from "eslint-plugin-unicorn";
 import type { ConduConfigWithInferredValuesAndProject } from "@condu/types/configTypes.js";
+import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
 
 export const getConfigs = ({
   conventions,
@@ -33,7 +34,7 @@ export const getConfigs = ({
   const ignores = [
     `**/*{${generatedSourceFileNameSuffixes.join(",")}}.{${sourceExtensions.join(",")}}`,
     `${buildDir}/**`,
-    `**/.config/**`,
+    `**/${CONDU_CONFIG_DIR_NAME}/**`,
     ".moon/**",
     ".yarn/**",
     "integration-tests/**",

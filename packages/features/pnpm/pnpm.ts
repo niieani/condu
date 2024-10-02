@@ -2,6 +2,7 @@ import { defineFeature } from "condu/defineFeature.js";
 import type { WorkspaceManifest } from "@pnpm/workspace.read-manifest";
 import type { PnpmConfig } from "./npmrcType.js";
 import { parse, stringify } from "ini";
+import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
 
 export const pnpm = ({
   workspace,
@@ -16,7 +17,7 @@ export const pnpm = ({
       effects: [
         {
           files: [
-            {
+            (config.project.projectConventions || workspace) && {
               path: "pnpm-workspace.yaml",
               type: "committed",
               content: {
@@ -36,7 +37,7 @@ export const pnpm = ({
                 const parsed = ini ? parse(ini, { bracketedArray: true }) : {};
                 const updated: PnpmConfig = {
                   // apply some defaults
-                  "patches-dir": ".config/patches",
+                  "patches-dir": `${CONDU_CONFIG_DIR_NAME}/patches`,
                   ...parsed,
                   ...npmrc,
                 };

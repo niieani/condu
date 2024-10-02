@@ -2,6 +2,7 @@ import { defineFeature } from "condu/defineFeature.js";
 import {
   CORE_NAME,
   CONDU_WORKSPACE_PACKAGE_NAME,
+  CONDU_CONFIG_DIR_NAME,
 } from "@condu/types/constants.js";
 import { schemas } from "@condu/schema-types/utils/schemas.js";
 import type {
@@ -47,7 +48,7 @@ export const releasePlease = ({
           {
             files: [
               {
-                path: ".config/release-please/config.json",
+                path: `${CONDU_CONFIG_DIR_NAME}/release-please/config.json`,
                 type: "committed",
                 content: {
                   $schema: schemas.releasePleaseConfig,
@@ -67,7 +68,7 @@ export const releasePlease = ({
                 } satisfies ReleasePleaseConfig,
               },
               {
-                path: ".config/release-please/manifest.json",
+                path: `${CONDU_CONFIG_DIR_NAME}/release-please/manifest.json`,
                 type: "committed",
                 // ensure the file exists
                 content: async (f) => ({

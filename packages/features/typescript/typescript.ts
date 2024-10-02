@@ -57,7 +57,7 @@ export const typescript = ({
                 type: "build",
                 name: "typescript",
                 definition: {
-                  command: `${config.node.packageManager.name} run ${CORE_NAME} tsc --preset ${
+                  command: `${config.node.packageManager.name} ${config.node.packageManager.name === "pnpm" ? "exec" : "run"} ${CORE_NAME} tsc --preset ${
                     preset === "esm-first" ? "ts-to-cts" : "ts-to-mts"
                   }`,
                 },
