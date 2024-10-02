@@ -312,6 +312,14 @@ export interface IPackageEntry {
 
 export interface ProjectConventionConfig {
   private?: boolean;
+
+  /**
+   * path to the template folder that will be used
+   * to bootstrap packages created using the convention
+   *
+   * @default `../@template`
+   **/
+  templatePath?: string;
 }
 
 export interface ParentDirectoryProjectConvention
