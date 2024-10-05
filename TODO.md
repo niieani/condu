@@ -60,6 +60,7 @@
 - [x] fix generated license author
 - [x] clean up of devDependencies that should be removed once a feature is removed/disabled
 - [x] move to pnpm
+- [x] in presets allow configurability/overrides? maybe passthrough all the config objects?
 - [x] `condu init` command or a command that could be run with `npx condu init` to
   - [x] add a default config file
   - [x] add a script to package.json "postinstall": "test -f .config/condu.ts && condu apply"
@@ -68,17 +69,18 @@
   - [ ] can be used to apply changes to an existing project, in which case it will infer certain things from the existing project, like the package manager
 - [x] ensure `sourceDir` works with publishing
 - [x] something is up with resolving
-- [ ] non-monorepo/single package mode
-- [ ] eslint customization / extension
-  - allow loading .config/eslint.ts (or specify custom filename?)
-- [ ] "exports" should be updated in apply to route paths to the sourceDir and support importing from the package name (ideally we should discourage imports from root package? but it's an industry practice though)
+- [x] non-monorepo/single package mode
+- [x] prettier
+- [x] editorconfig
+- [x] eslint customization / extension
+  - [x] allow loading .config/eslint.ts (or specify custom filename?)
+- [ ] add `inputs` / `implicitInputs`
+- [ ] "exports" should be updated in apply to route paths to the sourceDir and support importing from the package name (should we discourage imports from root package? but it's an industry practice though)
 - [ ] cache file needs to include condu version + all versions of active features for invalidation
 - [ ] re-evaluate the API for writing features - there's a lot of nesting, can it be simplified a bit?
 - [ ] vitest feature
 - [ ] CI build and test using moon
 - [ ] preset with my features and feature config pre-applied
-
-  - [ ] how can we still allow configurability/overrides? maybe passthrough all the config objects?
 
 - alpha shippable 1.0 state -
 

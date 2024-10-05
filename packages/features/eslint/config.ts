@@ -9,16 +9,32 @@ import * as typescriptParser from "@typescript-eslint/parser";
 import type { ParserOptions } from "@typescript-eslint/parser";
 import noExtraneousDependencies from "./rules/no-extraneous-dependencies.js";
 import unicornPlugin from "eslint-plugin-unicorn";
-import type { ConduConfigWithInferredValuesAndProject } from "@condu/types/configTypes.js";
 import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
+import type { ContextProvidedToEslintConfig } from "./types.js";
 
-export const getConfigs = ({
-  conventions,
-  projects = [],
-}: Pick<
-  ConduConfigWithInferredValuesAndProject,
-  "conventions" | "projects"
->): FlatConfig.ConfigArray => {
+export const getConfigs = (
+  {
+    conventions,
+    projects = [],
+    ignores = [],
+    defaultRules,
+    ...rest
+  }: ContextProvidedToEslintConfig,
+  additionalConfigsInput?:
+    | Linter.Config[]
+    | ((context: ContextProvidedToEslintConfig) => Linter.Config[]),
+): FlatConfig.ConfigArray => {
+  const additionalConfigs = Array.isArray(additionalConfigsInput)
+    ? additionalConfigsInput
+    : typeof additionalConfigsInput === "function"
+      ? additionalConfigsInput({
+          conventions,
+          projects,
+          ignores,
+          defaultRules,
+          ...rest,
+        })
+      : [];
   const { generatedSourceFileNameSuffixes, sourceExtensions, buildDir } =
     conventions;
   const packageNameConventions = projects.filter(
@@ -31,13 +47,14 @@ export const getConfigs = ({
     .filter((ext) => ext !== "json")
     .join(",");
 
-  const ignores = [
+  const globalIgnores = [
     `**/*{${generatedSourceFileNameSuffixes.join(",")}}.{${sourceExtensions.join(",")}}`,
     `${buildDir}/**`,
     `**/${CONDU_CONFIG_DIR_NAME}/**`,
     ".moon/**",
     ".yarn/**",
     "integration-tests/**",
+    ...ignores,
   ];
 
   const importXPlugin = importPlugin.flatConfigs.recommended.plugins?.[
@@ -46,7 +63,7 @@ export const getConfigs = ({
   return [
     {
       // https://eslint.org/docs/latest/use/configure/configuration-files#globally-ignoring-files-with-ignores
-      ignores,
+      ignores: globalIgnores,
     },
     js.configs.recommended,
     {
@@ -136,29 +153,7 @@ export const getConfigs = ({
         "unicorn/custom-error-definition": "error",
         "unicorn/escape-case": "error",
 
-        // TODO: opinionated rules (these should not be defaults)
-        "unicorn/no-null": "error",
-        "unicorn/no-typeof-undefined": "error",
-        "unicorn/filename-case": [
-          "error",
-          {
-            cases: {
-              camelCase: true,
-              pascalCase: true,
-              kebabCase: true,
-            },
-            ignore: [`\\.d\\.ts$`],
-          },
-        ],
-        "unicorn/no-abusive-eslint-disable": "error",
-        "unicorn/no-array-for-each": "error",
-        "unicorn/no-array-method-this-argument": "error",
-        "unicorn/no-document-cookie": "error",
-        "unicorn/no-for-loop": "error",
-        "unicorn/no-hex-escape": "error",
-        "unicorn/no-instanceof-array": "error",
-        "unicorn/no-invalid-remove-event-listener": "error",
-        // TODO: review the rest https://github.com/sindresorhus/eslint-plugin-unicorn/tree/main?tab=readme-ov-file
+        ...defaultRules,
       },
       settings: {
         ...importPlugin.flatConfigs.recommended.settings,
@@ -195,5 +190,6 @@ export const getConfigs = ({
         },
       },
     },
+    ...additionalConfigs,
   ] satisfies Linter.Config[];
 };

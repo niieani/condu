@@ -5,14 +5,12 @@ import {
   CONDU_CONFIG_DIR_NAME,
   CONDU_CONFIG_FILE_NAME,
   CORE_NAME,
-  CONDU_CONFIG_DIR_NAME,
   DEFAULT_NODE_VERSION,
   DEFAULT_PACKAGE_MANAGER,
   DEFAULT_SOURCE_EXTENSIONS,
   DEFAULT_GENERATED_SOURCE_FILE_NAME_SUFFIXES,
 } from "@condu/types/constants.js";
 import type {
-  ConfiguredConduConfig,
   ConduConfigWithInferredValues,
   LoadConfigOptions,
   WorkspaceRootPackage,

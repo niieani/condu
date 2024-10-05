@@ -16,6 +16,7 @@ export interface DependencyDef {
 export interface Task {
   // TODO: allow matching which package the task belongs to, like with Files (matchPackage)
   name: string;
+  // format is any transformation in-place
   type: "test" | "build" | "publish" | "format" | "start";
   definition: PartialTaskConfig;
 }
