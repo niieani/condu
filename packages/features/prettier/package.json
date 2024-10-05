@@ -1,0 +1,12 @@
+{
+  "name": "@condu-feature/prettier",
+  "version": "0.0.0",
+  "sideEffects": false,
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
+  }
+}

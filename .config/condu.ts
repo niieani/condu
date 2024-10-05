@@ -8,6 +8,7 @@ import { pnpm } from "@condu-feature/pnpm/pnpm.js";
 import { vscode } from "@condu-feature/vscode/vscode.js";
 import { libraryBundle } from "@condu-feature/library-bundle/libraryBundle.js";
 import { editorconfig } from "@condu-feature/editorconfig/editorconfig.js";
+import { prettier } from "@condu-feature/prettier/prettier.js";
 import { gptSummarizer } from "@condu-feature/gpt-summarizer/gptSummarizer.js";
 import { releasePlease } from "@condu-feature/release-please/release-please.js";
 import { configure } from "condu/configure.js";
@@ -84,6 +85,7 @@ export default configure((pkg) => ({
         // TODO: review the rest https://github.com/sindresorhus/eslint-plugin-unicorn/tree/main?tab=readme-ov-file
       },
     }),
+    prettier(),
     moon(),
     moonCi(),
     releasePlease({
