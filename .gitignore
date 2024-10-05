@@ -4,22 +4,26 @@ node_modules
 /build/
 # pnpm:
 /.npmrc
+# editorconfig:
+/.editorconfig
 # typescript:
 /tsconfig.json
 # library-bundle:cli:
 /packages/platform/condu/.config/generated/webpack.config.cjs
 # eslint:
 /eslint.config.js
+# prettier:
+/.prettierignore
 # moon:
 /.moon/
 /.moon/cache
 /.moon/docker
 /.moon/toolchain.yml
 /.moon/workspace.yml
+/.moon/tasks.yml
 # moonCi:
 /packages/platform/condu/moon.yml
 /moon.yml
-/.moon/tasks.yml
 # vscode:
 /.vscode/settings.json
 # gpt-summarizer:
