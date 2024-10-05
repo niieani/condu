@@ -6,11 +6,11 @@ interface FileData {
   entry: Dirent;
   directoryPath: string;
 }
-export type FilterFn = (entry: FileData) => boolean;
+export type KeepFn = (entry: FileData) => boolean;
 
 export async function* walkDirectoryRecursively(
   directoryPath: string,
-  filter?: FilterFn,
+  keep?: KeepFn,
 ): AsyncIterableIterator<FileData> {
   // const files = await fs.readdir(directoryPath, { withFileTypes: true });
   // we're not using the recursive option,
@@ -21,12 +21,12 @@ export async function* walkDirectoryRecursively(
       // TODO: support recursing into directory symlinks?
       if (file.isDirectory()) {
         const thisDirPath = path.join(directoryPath, file.name);
-        if (!filter || filter({ directoryPath: thisDirPath, entry: file })) {
-          yield* walkDirectoryRecursively(thisDirPath, filter);
+        if (!keep || keep({ directoryPath: thisDirPath, entry: file })) {
+          yield* walkDirectoryRecursively(thisDirPath, keep);
         }
       } else {
         const fileData = { directoryPath, entry: file };
-        if (!filter || filter(fileData)) {
+        if (!keep || keep(fileData)) {
           yield fileData;
         }
       }
