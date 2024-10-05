@@ -1,6 +1,7 @@
 {
   "packages/features/ci-github-actions": "0.1.5",
   "packages/features/condu-packages": "0.1.5",
+  "packages/features/editorconfig": "0.0.0",
   "packages/features/eslint": "0.1.5",
   "packages/features/gitignore": "0.1.5",
   "packages/features/gpt-summarizer": "0.1.5",
@@ -9,6 +10,7 @@
   "packages/features/link-other-monorepo": "0.0.2",
   "packages/features/moon": "0.1.5",
   "packages/features/pnpm": "0.0.3",
+  "packages/features/prettier": "0.0.0",
   "packages/features/release-please": "0.1.5",
   "packages/features/typescript": "0.1.5",
   "packages/features/vitest": "0.1.5",

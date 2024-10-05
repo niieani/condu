@@ -25,6 +25,9 @@ importers:
       '@condu-feature/condu-packages':
         specifier: workspace:*
         version: link:packages/features/condu-packages
+      '@condu-feature/editorconfig':
+        specifier: workspace:*
+        version: link:packages/features/editorconfig
       '@condu-feature/eslint':
         specifier: workspace:*
         version: link:packages/features/eslint
@@ -43,6 +46,9 @@ importers:
       '@condu-feature/pnpm':
         specifier: workspace:*
         version: link:packages/features/pnpm
+      '@condu-feature/prettier':
+        specifier: workspace:*
+        version: link:packages/features/prettier
       '@condu-feature/release-please':
         specifier: workspace:*
         version: link:packages/features/release-please
@@ -97,6 +103,9 @@ importers:
       eslint-plugin-unicorn:
         specifier: ^55.0.0
         version: 55.0.0(eslint@9.11.1)
+      prettier:
+        specifier: ^3.3.3
+        version: 3.3.3
       release-please:
         specifier: npm:release-please-fork@^16.10.5
         version: release-please-fork@16.10.5
@@ -157,6 +166,8 @@ importers:
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
+
+  packages/features/editorconfig: {}
 
   packages/features/eslint:
     dependencies:
@@ -292,6 +303,12 @@ importers:
       '@pnpm/workspace.read-manifest':
         specifier: ^2.2.0
         version: 2.2.0
+
+  packages/features/prettier:
+    devDependencies:
+      prettier:
+        specifier: ^3.3.3
+        version: 3.3.3
 
   packages/features/release-please:
     dependencies:
