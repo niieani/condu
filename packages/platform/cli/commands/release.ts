@@ -86,7 +86,7 @@ export async function prepareAndReleaseDirectoryPackages({
     void (await copyFiles({
       sourceDir: packageSourceDir,
       targetDir: packageBuildDir,
-      filter: ({ entry, directoryPath }) => {
+      keep: ({ entry, directoryPath }) => {
         const isDotFile = entry.name.startsWith(".");
         if (entry.isDirectory()) {
           const isNodeModules = entry.name === "node_modules";

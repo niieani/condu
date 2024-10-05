@@ -84,13 +84,9 @@ export async function createPackage({
   const templatePath =
     convention?.templatePath && path.isAbsolute(convention.templatePath)
       ? path.join(project.absPath, convention.templatePath)
-      : path.join(
-          project.absPath,
-          modulePath,
-          convention?.templatePath ?? "@template",
-        );
+      : path.join(modulePath, convention?.templatePath ?? "@template");
   const templateExists = await fs
-    .access(templatePath, fs.constants.R_OK)
+    .access(templatePath, fs.constants.F_OK | fs.constants.R_OK)
     .then(() => true)
     .catch(() => false);
 
@@ -110,6 +106,11 @@ export async function createPackage({
       sourceDir: templatePath,
       targetDir: modulePath,
       overwrite: false,
+      keep: ({ entry }) =>
+        (entry.isDirectory() && entry.name !== "node_modules") ||
+        (entry.isFile() &&
+          entry.name !== "package.json" &&
+          entry.name !== "CHANGELOG.md"),
     });
   }
 

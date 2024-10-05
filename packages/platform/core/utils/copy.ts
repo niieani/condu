@@ -5,7 +5,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import {
-  type FilterFn,
+  type KeepFn,
   walkDirectoryRecursively,
 } from "./walkDirectoryRecursively.js";
 
@@ -17,12 +17,12 @@ interface CopyResult {
 export const copyFiles = async ({
   sourceDir,
   targetDir,
-  filter,
+  keep,
   overwrite = false,
 }: {
   sourceDir: string;
   targetDir: string;
-  filter?: FilterFn;
+  keep?: KeepFn;
   overwrite?: boolean;
 }): Promise<CopyResult[]> => {
   const work: Promise<CopyResult>[] = [];
@@ -33,7 +33,7 @@ export const copyFiles = async ({
   for await (const {
     directoryPath,
     entry: { name: fileName },
-  } of walkDirectoryRecursively(sourceDir, filter)) {
+  } of walkDirectoryRecursively(sourceDir, keep)) {
     const relativePathToDir = path.relative(sourceDir, directoryPath);
     const thisTargetDir = path.join(targetDir, relativePathToDir);
     const targetFilePath = path.join(thisTargetDir, fileName);
