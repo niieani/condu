@@ -24,12 +24,14 @@
   "devDependencies": {
     "@condu-feature/ci-github-actions": "workspace:*",
     "@condu-feature/condu-packages": "workspace:*",
+    "@condu-feature/editorconfig": "workspace:*",
     "@condu-feature/eslint": "workspace:*",
     "@condu-feature/gitignore": "workspace:*",
     "@condu-feature/gpt-summarizer": "workspace:*",
     "@condu-feature/library-bundle": "workspace:*",
     "@condu-feature/moon": "workspace:*",
     "@condu-feature/pnpm": "workspace:*",
+    "@condu-feature/prettier": "workspace:*",
     "@condu-feature/release-please": "workspace:*",
     "@condu-feature/typescript": "workspace:*",
     "@condu-feature/vscode": "workspace:*",
@@ -48,6 +50,7 @@
     "eslint-import-resolver-typescript": "^3.6.3",
     "eslint-plugin-import-x": "^4.3.1",
     "eslint-plugin-unicorn": "^55.0.0",
+    "prettier": "^3.3.3",
     "release-please": "npm:release-please-fork@^16.10.5",
     "rollup": "^4.22.5",
     "rollup-plugin-swc3": "^0.11.2",
@@ -77,7 +80,8 @@
   "condu": {
     "managedDependencies": {
       "eslint-plugin-import-x": "presence",
-      "@eslint/js": "presence"
+      "@eslint/js": "presence",
+      "prettier": "presence"
     }
   }
 }

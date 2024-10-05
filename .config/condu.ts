@@ -41,6 +41,7 @@ export default configure((pkg) => ({
         "shared-workspace-lockfile": true,
       },
     }),
+    editorconfig(),
     typescript({
       tsconfig: {
         compilerOptions: {
