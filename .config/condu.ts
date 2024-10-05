@@ -7,6 +7,7 @@ import { eslint } from "@condu-feature/eslint/eslint.js";
 import { pnpm } from "@condu-feature/pnpm/pnpm.js";
 import { vscode } from "@condu-feature/vscode/vscode.js";
 import { libraryBundle } from "@condu-feature/library-bundle/libraryBundle.js";
+import { editorconfig } from "@condu-feature/editorconfig/editorconfig.js";
 import { gptSummarizer } from "@condu-feature/gpt-summarizer/gptSummarizer.js";
 import { releasePlease } from "@condu-feature/release-please/release-please.js";
 import { configure } from "condu/configure.js";
@@ -14,7 +15,11 @@ import { configure } from "condu/configure.js";
 export default configure((pkg) => ({
   engine: "bun",
   projects: [
-    { parentPath: "packages/features", nameConvention: "@condu-feature/*" },
+    {
+      parentPath: "packages/features",
+      nameConvention: "@condu-feature/*",
+      templatePath: "../gitignore",
+    },
     { parentPath: "packages/presets", nameConvention: "@condu-preset/*" },
     { parentPath: "packages/platform", nameConvention: "@condu/*" },
     {
@@ -51,7 +56,34 @@ export default configure((pkg) => ({
       moduleTarget: "esm",
       binName: "condu",
     }),
-    eslint(),
+    eslint({
+      importAdditionalConfigFrom: "./eslint.ts",
+      defaultRules: {
+        // TODO: opinionated rules (these should not be defaults)
+        "unicorn/no-null": "error",
+        "unicorn/no-typeof-undefined": "error",
+        "unicorn/filename-case": [
+          "error",
+          {
+            cases: {
+              camelCase: true,
+              pascalCase: true,
+              kebabCase: true,
+            },
+            ignore: [`\\.d\\.ts$`],
+          },
+        ],
+        "unicorn/no-abusive-eslint-disable": "error",
+        "unicorn/no-array-for-each": "error",
+        "unicorn/no-array-method-this-argument": "error",
+        "unicorn/no-document-cookie": "error",
+        "unicorn/no-for-loop": "error",
+        "unicorn/no-hex-escape": "error",
+        "unicorn/no-instanceof-array": "error",
+        "unicorn/no-invalid-remove-event-listener": "error",
+        // TODO: review the rest https://github.com/sindresorhus/eslint-plugin-unicorn/tree/main?tab=readme-ov-file
+      },
+    }),
     moon(),
     moonCi(),
     releasePlease({
