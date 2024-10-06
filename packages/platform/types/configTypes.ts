@@ -144,6 +144,7 @@ export interface CollectedState {
   hooksByPackage: {
     [packageName: string]: Partial<Hooks>;
   };
+  autolinkIgnore: string[];
 }
 
 export interface StateFlags {
@@ -178,6 +179,11 @@ export type Effects = {
 export interface FeatureResult {
   effects?: (Effects | null | undefined | false)[];
   flags?: ReadonlyArray<keyof StateFlags>;
+  /**
+   * a list of filenames that should not be autolinked,
+   * as they are handled directly by the feature
+   **/
+  autolinkIgnore?: string[];
 }
 
 export type FeatureActionFn = (
