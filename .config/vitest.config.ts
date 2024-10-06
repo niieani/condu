@@ -1,4 +1,4 @@
-/// <reference types="vitest" />
+/// <reference types="vitest/config" />
 import { defineConfig } from "vitest/config";
 import type { PluginOption } from "vite";
 import { swc, defineRollupSwcOption } from "rollup-plugin-swc3";

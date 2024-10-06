@@ -12,9 +12,8 @@ export async function* walkDirectoryRecursively(
   directoryPath: string,
   keep?: KeepFn,
 ): AsyncIterableIterator<FileData> {
-  // const files = await fs.readdir(directoryPath, { withFileTypes: true });
   // we're not using the recursive option,
-  // because we want to be able to filter out directories and not recurse into them
+  // because we want to be able to filter out directories and selectively visit/recurse
   const dirHandle = await fs.opendir(directoryPath);
   try {
     for await (const file of dirHandle) {
