@@ -1,0 +1,12 @@
+{
+  "name": "@condu-feature/autolink",
+  "version": "0.0.0",
+  "sideEffects": false,
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "ts-pattern": "^5.4.0"
+  }
+}

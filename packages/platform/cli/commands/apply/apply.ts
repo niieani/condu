@@ -22,6 +22,7 @@ import {
   writeFiles,
   type WrittenFile,
 } from "./readWrite.js";
+import { autolink } from "@condu-feature/autolink/autolink.js";
 
 export const getApplyHook =
   <TOut>(...fns: ((arg: TOut) => TOut | Promise<TOut>)[]) =>
@@ -223,7 +224,18 @@ export async function apply(options: LoadConfigOptions = {}) {
     didChangeManifest = true;
   }
 
-  const collectedState = await collectState({ ...config, project });
+  // add autolink built-in feature if not disabled
+  const features =
+    config.autolink || !("autolink" in config)
+      ? [
+          autolink(
+            typeof config.autolink === "object" ? config.autolink : undefined,
+          ),
+          ...config.features,
+        ]
+      : config.features;
+
+  const collectedState = await collectState({ ...config, features, project });
 
   const writableFiles = collectedState.files.filter(
     ({ targetDir, content, type }) =>

@@ -1,9 +1,11 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import type {
-  FileDef,
-  GetExistingContentFn,
-  WorkspacePackage,
+import {
+  SymlinkTarget,
+  type FileContent,
+  type FileDef,
+  type GetExistingContentFn,
+  type WorkspacePackage,
 } from "@condu/types/configTypes.js";
 import { stringify as yamlStringify, parse as yamlParse } from "yaml";
 import {
@@ -31,7 +33,7 @@ export interface FilesJsonCacheFileVersion1 {
 
 export interface WrittenFile {
   path: string;
-  content: string;
+  content: string | SymlinkTarget;
   modifiedAt: number;
   size: number;
 }
@@ -86,7 +88,7 @@ const writeFileFromDef = async ({
   let usedExistingContent = false;
   const resolvedContent =
     typeof file.content === "function"
-      ? ((await file.content({
+      ? await file.content({
           pkg: targetPackage,
           getExistingContentAndMarkAsUserEditable: createGetExistingContentFn(
             targetPath,
@@ -94,7 +96,7 @@ const writeFileFromDef = async ({
               usedExistingContent = true;
             },
           ),
-        })) as string | object | undefined)
+        })
       : file.content;
 
   if (resolvedContent === undefined) {
@@ -109,30 +111,35 @@ const writeFileFromDef = async ({
   }
 
   const newContent =
-    typeof resolvedContent === "string"
+    typeof resolvedContent === "string" ||
+    resolvedContent instanceof SymlinkTarget
       ? resolvedContent
       : stringify(resolvedContent, file.path);
 
   if (
     previouslyWritten?.fsState === "unchanged" &&
-    newContent === previouslyWritten.lastApply.content
+    newContent.toString() === previouslyWritten.lastApply.content.toString()
   ) {
     // TODO: if (DEBUG)
     // console.log(`Already fresh: ${pathFromWorkspaceDirAbs}`);
     return previouslyWritten.lastApply;
   }
+  const fsContent = previouslyWritten?.fsState;
 
   // only show diff if we're not "enhancing" a manually editable file,
   // and the file doesn't have the 'alwaysOverwrite' flag
   if (
-    typeof previouslyWritten?.fsState === "object" &&
+    previouslyWritten &&
+    typeof fsContent === "object" &&
     !usedExistingContent &&
-    !file.alwaysOverwrite
+    !file.alwaysOverwrite &&
+    !(newContent instanceof SymlinkTarget) &&
+    !(fsContent.content instanceof SymlinkTarget)
   ) {
-    if (previouslyWritten.fsState.content === newContent) {
+    if (fsContent.content === newContent) {
       return {
         path: pathFromWorkspaceDirAbs,
-        ...previouslyWritten.fsState,
+        ...fsContent,
       };
     }
 
@@ -141,7 +148,6 @@ const writeFileFromDef = async ({
         `Manual changes present in ${pathFromWorkspaceDirAbs}, cannot continue.`,
       );
     }
-    const fsContent = previouslyWritten.fsState;
     const isInteractive =
       process.stdout.isTTY &&
       process.stdin.isTTY &&
@@ -150,7 +156,11 @@ const writeFileFromDef = async ({
     // this needs to happen sequentially, because we're prompting the user for input:
     return async () => {
       console.log(`Manual changes present in ${pathFromWorkspaceDirAbs}`);
-      printUnifiedDiff(fsContent.content, newContent, process.stdout);
+      printUnifiedDiff(
+        fsContent.content.toString(),
+        newContent,
+        process.stdout,
+      );
       if (!isInteractive) {
         process.exitCode = 1;
         console.log(
@@ -196,13 +206,17 @@ async function write({
   pathFromWorkspaceDirAbs,
 }: {
   targetPath: string;
-  content: string;
+  content: string | SymlinkTarget;
   pathFromWorkspaceDirAbs: string;
 }): Promise<WrittenFile> {
   console.log(`Writing: ${targetPath}`);
   const parentDir = path.dirname(targetPath);
   await fs.mkdir(parentDir, { recursive: true });
-  await fs.writeFile(targetPath, content);
+  if (typeof content === "string") {
+    await fs.writeFile(targetPath, content);
+  } else {
+    await fs.symlink(content.target, targetPath);
+  }
   const stat = await fs.stat(targetPath);
   const result: WrittenFile = {
     path: pathFromWorkspaceDirAbs,
@@ -295,19 +309,31 @@ export async function readPreviouslyWrittenFileCache(
               // presuming no changes, no need to re-read the file
               return [file.path, { lastApply: file, fsState: "unchanged" }];
             }
-            const newContent = await fs.readFile(fullPath, "utf-8");
+
+            const wasSymlink =
+              typeof file.content !== "string" && file.content.target
+                ? new SymlinkTarget(file.content.target)
+                : undefined;
+            const newSymlinkTo = await fs
+              .readlink(fullPath)
+              .catch(() => undefined);
+            const newContent = newSymlinkTo
+              ? new SymlinkTarget(newSymlinkTo)
+              : await fs.readFile(fullPath, "utf-8").catch(() => undefined);
             return [
               file.path,
               {
                 lastApply: file,
                 fsState:
-                  newContent === file.content
-                    ? "unchanged"
-                    : {
-                        modifiedAt: stat.mtimeMs,
-                        size: stat.size,
-                        content: newContent,
-                      },
+                  newContent === undefined
+                    ? "deleted"
+                    : newContent === file.content
+                      ? "unchanged"
+                      : {
+                          modifiedAt: stat.mtimeMs,
+                          size: stat.size,
+                          content: newContent,
+                        },
               },
             ] as const;
           },
