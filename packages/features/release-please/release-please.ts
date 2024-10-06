@@ -106,7 +106,7 @@ export const releasePlease = ({
                           id: "release-please",
                           name: "Release Please: list candidate releases",
                           // uses: 'googleapis/release-please-action@v4',
-                          uses: "niieani/release-please-action@use-fork",
+                          uses: "niieani/release-please-action@condu",
                           with: {
                             "config-file": ".config/release-please/config.json",
                             "manifest-file":
@@ -119,7 +119,7 @@ export const releasePlease = ({
                           id: "release-please-prs",
                           name: "Release Please: update PRs",
                           // uses: 'googleapis/release-please-action@v4',
-                          uses: "niieani/release-please-action@use-fork",
+                          uses: "niieani/release-please-action@condu",
                           with: {
                             "config-file": ".config/release-please/config.json",
                             "manifest-file":
@@ -165,7 +165,7 @@ export const releasePlease = ({
                           name: "Create Github Releases",
                           id: "release-please",
                           // uses: 'googleapis/release-please-action@v4',
-                          uses: "niieani/release-please-action@use-fork",
+                          uses: "niieani/release-please-action@condu",
                           with: {
                             "config-file": ".config/release-please/config.json",
                             "manifest-file":
