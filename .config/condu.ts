@@ -35,6 +35,11 @@ export default configure((pkg) => ({
   // conventions: {
   //   sourceDir: ".",
   // },
+  autolink: {
+    mapping: {
+      "vitest.ts": "vitest.config.ts",
+    },
+  },
   features: [
     pnpm({
       npmrc: {

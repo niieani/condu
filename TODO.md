@@ -77,7 +77,8 @@
 - [ ] add `inputs` / `implicitInputs`
 - [x] update release-please to use google version and update fork with https://github.com/googleapis/release-please-action/pull/1041
 - [x] cache file needs to include condu version
-- [ ] vitest feature
+- [x] vitest feature
+- [ ] a way to ensure that certain dependencies/devDependencies/peerDependencies are set, or at least copy them over from template
 - [ ] re-evaluate the API for writing features - there's a lot of nesting, can it be simplified a bit?
   - also need a way to hook into each others features (i.e. modify behavior if other features are enabled)
 - [ ] CI build and test using moon
