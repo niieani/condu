@@ -28,6 +28,9 @@ node_modules
 /.vscode/settings.json
 # gpt-summarizer:
 /about-the-projects-and-its-source-code.md
+# autolink:
+/.env
+/vitest.config.ts
 # custom ignore patterns:
 .swc/
 .idea/

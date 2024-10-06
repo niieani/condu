@@ -4,6 +4,7 @@ import type {
   ContextProvidedToEslintConfig,
   EslintFeatureInput,
 } from "./types.js";
+import path from "node:path";
 
 const RUNNING_SOURCE_VERSION = import.meta.url.endsWith(".ts");
 
@@ -18,6 +19,9 @@ export const eslint = ({
       const needsTypeScript =
         RUNNING_SOURCE_VERSION || importAdditionalConfigFrom?.endsWith(".ts");
       return {
+        autolinkIgnore: importAdditionalConfigFrom
+          ? [importAdditionalConfigFrom]
+          : [],
         effects: [
           {
             files: [
@@ -27,10 +31,10 @@ export const eslint = ({
                   const eslintContext: ContextProvidedToEslintConfig = {
                     ...pick(config, ["conventions", "projects"]),
                     ignores: [
-                      ...state.files.map(({ path, targetDir }) =>
+                      ...state.files.map(({ path: p, targetDir }) =>
                         targetDir === "."
-                          ? `${path}`
-                          : `${targetDir}/${path.startsWith("./") ? path.slice(2) : path}`,
+                          ? `${p}`
+                          : `${targetDir}/${path.normalize(p)}`,
                       ),
                       ...ignores,
                     ],
@@ -42,9 +46,9 @@ export const eslint = ({
 import { getConfigs } from "@condu-feature/eslint/config.${
                     needsTypeScript ? "ts" : "js"
                   }";
-${importAdditionalConfigFrom ? `import additionalConfigs from "./.config/${importAdditionalConfigFrom}";` : ""}
+${importAdditionalConfigFrom ? `import additionalConfigs from "./.config/${path.normalize(importAdditionalConfigFrom)}";` : ""}
 const configs = getConfigs(${JSON.stringify(eslintContext, undefined, 2)}${importAdditionalConfigFrom ? ", additionalConfigs" : ""});
-export default configs;`;
+export default configs;\n`;
                 },
               },
             ],

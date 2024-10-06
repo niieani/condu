@@ -2,7 +2,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import {
   SymlinkTarget,
-  type FileContent,
   type FileDef,
   type GetExistingContentFn,
   type WorkspacePackage,
@@ -36,6 +35,7 @@ export interface WrittenFile {
   content: string | SymlinkTarget;
   modifiedAt: number;
   size: number;
+  ignoreCache?: boolean;
 }
 
 interface CachedWrittenFile {
@@ -132,15 +132,24 @@ const writeFileFromDef = async ({
     previouslyWritten &&
     typeof fsContent === "object" &&
     !usedExistingContent &&
-    !file.alwaysOverwrite &&
-    !(newContent instanceof SymlinkTarget) &&
-    !(fsContent.content instanceof SymlinkTarget)
+    !file.alwaysOverwrite
   ) {
-    if (fsContent.content === newContent) {
+    if (fsContent.content.toString() === newContent.toString()) {
       return {
         path: pathFromWorkspaceDirAbs,
         ...fsContent,
       };
+    } else if (newContent instanceof SymlinkTarget) {
+      if (fsContent.content instanceof SymlinkTarget) {
+        // linked content mismatch, unlink the existing file
+        console.log(`Unlinking: ${pathFromWorkspaceDirAbs}`);
+        await fs.unlink(targetPath);
+      }
+      return write({
+        targetPath,
+        content: newContent,
+        pathFromWorkspaceDirAbs,
+      });
     }
 
     if (throwOnManualChanges) {
@@ -197,32 +206,41 @@ const writeFileFromDef = async ({
     };
   }
 
-  return write({ targetPath, content: newContent, pathFromWorkspaceDirAbs });
+  return write({
+    targetPath,
+    content: newContent,
+    pathFromWorkspaceDirAbs,
+    ignoreCache: file.alwaysOverwrite,
+  });
 };
 
 async function write({
   targetPath,
   content,
   pathFromWorkspaceDirAbs,
+  ignoreCache,
 }: {
   targetPath: string;
   content: string | SymlinkTarget;
   pathFromWorkspaceDirAbs: string;
+  ignoreCache?: boolean;
 }): Promise<WrittenFile> {
-  console.log(`Writing: ${targetPath}`);
   const parentDir = path.dirname(targetPath);
   await fs.mkdir(parentDir, { recursive: true });
   if (typeof content === "string") {
+    console.log(`Writing: ${targetPath}`);
     await fs.writeFile(targetPath, content);
   } else {
+    console.log(`Creating symlink: ${targetPath} => ${content.target}`);
     await fs.symlink(content.target, targetPath);
   }
-  const stat = await fs.stat(targetPath);
+  const stat = await fs.lstat(targetPath);
   const result: WrittenFile = {
     path: pathFromWorkspaceDirAbs,
     content,
     modifiedAt: stat.mtimeMs,
     size: stat.size,
+    ignoreCache,
   };
   return result;
 }
@@ -254,16 +272,37 @@ export async function writeFiles({
         rootDir,
         workspaceDirAbs,
         ...rest,
-      }),
+      }).catch((e) => ({
+        status: "error",
+        error: e,
+        pathAbs: path.join(rootDir, file.path),
+      })),
     ),
   );
   const writtenFiles: WrittenFile[] = [];
   // this needs to happen sequentially, because we're prompting the user for input
   for (const fileOrFn of filesOrFns) {
     if (!fileOrFn) continue;
-    writtenFiles.push(
-      typeof fileOrFn === "function" ? await fileOrFn() : fileOrFn,
-    );
+    if (typeof fileOrFn === "object" && "error" in fileOrFn) {
+      console.error(
+        `Failed to write ${fileOrFn.pathAbs}: ${fileOrFn.error.message}`,
+      );
+      continue;
+    }
+    const result =
+      typeof fileOrFn === "function"
+        ? await fileOrFn().catch((e) => ({
+            status: "error",
+            error: e,
+          }))
+        : fileOrFn;
+    if (typeof result === "object" && "error" in result) {
+      // TODO: better error
+      console.error(`Failed to write: ${result.error.message}`);
+      continue;
+    }
+
+    writtenFiles.push(result);
   }
   return writtenFiles;
 }
@@ -277,7 +316,7 @@ export async function readPreviouslyWrittenFileCache(
   try {
     const cachePath = path.join(workspaceDir, FILE_STATE_PATH);
     const content = await fs.readFile(cachePath, "utf-8");
-    const stat = await fs.stat(cachePath);
+    const stat = await fs.lstat(cachePath);
     const cacheContentJson = JSON.parse(content) as object;
     let previouslyWrittenFiles: FilesJsonCacheFileVersion1["files"] = [];
     if (
@@ -294,44 +333,51 @@ export async function readPreviouslyWrittenFileCache(
       await Promise.all(
         previouslyWrittenFiles.map(
           async (file): Promise<readonly [string, CachedWrittenFile]> => {
-            // const fileName = path.basename(file.path);
-            // if (fileName === "tsconfig.json") {
-            //   // TODO: how do we handle tsconfig edited by moon?
-            //   // ignore changes for now
-            //   return [file.path, { lastApply: file, fsState: "unchanged" }];
-            // }
             const fullPath = path.join(workspaceDir, file.path);
-            const stat = await fs.stat(fullPath).catch(() => undefined);
-            if (!stat) {
-              return [file.path, { lastApply: file, fsState: "deleted" }];
-            }
-            if (stat.mtimeMs === file.modifiedAt && stat.size === file.size) {
-              // presuming no changes, no need to re-read the file
-              return [file.path, { lastApply: file, fsState: "unchanged" }];
-            }
+            const stat = await fs.lstat(fullPath).catch(() => undefined);
 
             const wasSymlink =
               typeof file.content !== "string" && file.content.target
                 ? new SymlinkTarget(file.content.target)
                 : undefined;
-            const newSymlinkTo = await fs
-              .readlink(fullPath)
-              .catch(() => undefined);
+            const lastApply = { ...file, content: wasSymlink ?? file.content };
+
+            if (!stat) {
+              return [file.path, { lastApply, fsState: "deleted" }];
+            }
+
+            const modifiedAt = stat.mtimeMs;
+            const size = stat.size;
+
+            if (
+              modifiedAt === file.modifiedAt &&
+              size === file.size &&
+              !stat.isSymbolicLink() &&
+              !wasSymlink
+            ) {
+              // presuming no changes, no need to re-read the file
+              return [file.path, { lastApply, fsState: "unchanged" }];
+            }
+
+            const newSymlinkTo = stat.isSymbolicLink()
+              ? await fs.readlink(fullPath).catch(() => undefined)
+              : undefined;
             const newContent = newSymlinkTo
               ? new SymlinkTarget(newSymlinkTo)
               : await fs.readFile(fullPath, "utf-8").catch(() => undefined);
+
             return [
               file.path,
               {
-                lastApply: file,
+                lastApply,
                 fsState:
                   newContent === undefined
                     ? "deleted"
                     : newContent === file.content
                       ? "unchanged"
                       : {
-                          modifiedAt: stat.mtimeMs,
-                          size: stat.size,
+                          modifiedAt,
+                          size,
                           content: newContent,
                         },
               },

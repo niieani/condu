@@ -17,14 +17,14 @@ jobs:
     steps:
       - id: release-please
         name: "Release Please: list candidate releases"
-        uses: niieani/release-please-action@use-fork
+        uses: niieani/release-please-action@condu
         with:
           config-file: .config/release-please/config.json
           manifest-file: .config/release-please/manifest.json
           only: list-candidate-releases
       - id: release-please-prs
         name: "Release Please: update PRs"
-        uses: niieani/release-please-action@use-fork
+        uses: niieani/release-please-action@condu
         with:
           config-file: .config/release-please/config.json
           manifest-file: .config/release-please/manifest.json
@@ -46,7 +46,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Create Github Releases
         id: release-please
-        uses: niieani/release-please-action@use-fork
+        uses: niieani/release-please-action@condu
         with:
           config-file: .config/release-please/config.json
           manifest-file: .config/release-please/manifest.json

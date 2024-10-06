@@ -20,6 +20,7 @@ import {
   FILE_STATE_PATH,
   readPreviouslyWrittenFileCache,
   writeFiles,
+  type FilesJsonCacheFileVersion1,
   type WrittenFile,
 } from "./readWrite.js";
 import { autolink } from "@condu-feature/autolink/autolink.js";
@@ -35,15 +36,15 @@ export const getApplyHook =
 
 export async function collectState(
   config: ConduConfigWithInferredValuesAndProject,
-): Promise<CollectedState> {
-  const state: CollectedState = {
+  state: CollectedState = {
     files: [],
     devDependencies: [],
     tasks: [],
     hooksByPackage: {},
     resolutions: {},
-  };
-
+    autolinkIgnore: [],
+  },
+): Promise<CollectedState> {
   const hooksByPackage: {
     [packageName: string]: {
       [P in keyof Hooks]?: Hooks[P][];
@@ -174,6 +175,10 @@ export async function collectState(
         flags[key] ||= feature.name;
       }
     }
+
+    if (featureConfig.autolinkIgnore) {
+      state.autolinkIgnore.push(...featureConfig.autolinkIgnore);
+    }
   }
 
   // TODO: store file list, tasks and dependencies in a git-committed file, so that any removals/upgrades can be flagged as changes during diffing
@@ -228,10 +233,10 @@ export async function apply(options: LoadConfigOptions = {}) {
   const features =
     config.autolink || !("autolink" in config)
       ? [
+          ...config.features,
           autolink(
             typeof config.autolink === "object" ? config.autolink : undefined,
           ),
-          ...config.features,
         ]
       : config.features;
 
@@ -279,7 +284,15 @@ export async function apply(options: LoadConfigOptions = {}) {
 
   // write the cache file:
   await writeFiles({
-    files: [{ path: FILE_STATE_PATH, content: writtenFiles }],
+    files: [
+      {
+        path: FILE_STATE_PATH,
+        content: {
+          cacheVersion: 1,
+          files: writtenFiles.filter((f) => !f.ignoreCache),
+        } satisfies FilesJsonCacheFileVersion1,
+      },
+    ],
     targetPackage: project,
     workspaceDirAbs,
     targetPackageDir: ".",
