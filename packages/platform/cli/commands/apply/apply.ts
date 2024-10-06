@@ -265,6 +265,7 @@ export async function apply(options: LoadConfigOptions = {}) {
     }),
   );
 
+  // write the cache file:
   await writeFiles({
     files: [{ path: FILE_STATE_PATH, content: writtenFiles }],
     targetPackage: project,

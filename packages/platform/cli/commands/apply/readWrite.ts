@@ -22,6 +22,13 @@ const stringify = (obj: unknown, filePath: string) =>
     ? yamlStringify(obj)
     : commentJsonStringify(obj, undefined, 2);
 
+const CURRENT_CACHE_VERSION = 1;
+
+export interface FilesJsonCacheFileVersion1 {
+  cacheVersion: typeof CURRENT_CACHE_VERSION;
+  files: WrittenFile[];
+}
+
 export interface WrittenFile {
   path: string;
   content: string;
@@ -257,7 +264,18 @@ export async function readPreviouslyWrittenFileCache(
     const cachePath = path.join(workspaceDir, FILE_STATE_PATH);
     const content = await fs.readFile(cachePath, "utf-8");
     const stat = await fs.stat(cachePath);
-    const previouslyWrittenFiles = JSON.parse(content) as WrittenFile[];
+    const cacheContentJson = JSON.parse(content) as object;
+    let previouslyWrittenFiles: FilesJsonCacheFileVersion1["files"] = [];
+    if (
+      "cacheVersion" in cacheContentJson &&
+      cacheContentJson.cacheVersion === CURRENT_CACHE_VERSION
+    ) {
+      const cacheContent = cacheContentJson as FilesJsonCacheFileVersion1;
+      if (Array.isArray(cacheContent.files)) {
+        previouslyWrittenFiles = cacheContent.files;
+      }
+    }
+
     const cache = new Map(
       await Promise.all(
         previouslyWrittenFiles.map(
