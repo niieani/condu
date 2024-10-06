@@ -7,6 +7,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@condu/types": "workspace:^",
     "ts-pattern": "^5.4.0"
   }
 }
