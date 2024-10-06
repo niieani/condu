@@ -75,10 +75,11 @@
 - [x] eslint customization / extension
   - [x] allow loading .config/eslint.ts (or specify custom filename?)
 - [ ] add `inputs` / `implicitInputs`
-- [ ] "exports" should be updated in apply to route paths to the sourceDir and support importing from the package name (should we discourage imports from root package? but it's an industry practice though)
-- [ ] cache file needs to include condu version + all versions of active features for invalidation
-- [ ] re-evaluate the API for writing features - there's a lot of nesting, can it be simplified a bit?
+- [x] update release-please to use google version and update fork with https://github.com/googleapis/release-please-action/pull/1041
+- [x] cache file needs to include condu version
 - [ ] vitest feature
+- [ ] re-evaluate the API for writing features - there's a lot of nesting, can it be simplified a bit?
+  - also need a way to hook into each others features (i.e. modify behavior if other features are enabled)
 - [ ] CI build and test using moon
 - [ ] preset with my features and feature config pre-applied
 
@@ -86,6 +87,7 @@
 
 ## Later:
 
+- [ ] should this be a feature? package.json "exports" should be updated in apply to route paths to the sourceDir and support importing from the package name (should we discourage imports from root package? but it's an industry practice though)
 - [ ] EffectTS
 - [ ] support TS's `rewriteRelativeImportExtensions` and use .ts extensions as default (use eslint to enforce .ts extensions)
   - this also solves Deno compatibility
@@ -94,6 +96,8 @@
 - [ ] should we collocate per-package build config in the respective packages, or keep them global?
   - [ ] if yes, then how do we do it? `.config` folder per package?
   - [ ] make decision: where do we keep local config files? are they centrally managed? do we use config identifiers in folders names to nest configs?
+- [ ] consider snake_case (the only truly universally compatible convention) https://typescript-eslint.io/rules/naming-convention/
+  - although the sad reality is that most of the JS world [uses camelCase](https://news.ycombinator.com/item?id=6777600)
 - [ ] fix the CLI command displayed (instead of "bun main.bundle.js") + add help
 - [ ] some basic integration tests that use the linked/built packages
 - [ ] add a mutex lock to prevent concurrent runs of apply, maybe something like [this](https://github.com/szikszail/cross-process-lock/blob/master/src/lock.ts) (auto-expire lock after a few seconds)
