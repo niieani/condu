@@ -42,7 +42,6 @@ export const prettier = ({
                   "**/package-lock.json",
                   "**/bun.lockb",
                   "**/bun.lock",
-                  "**/.*",
                   "**/CHANGELOG.md",
                   ...(ignore.length > 0 ? ["# custom ignore patterns:"] : []),
                   ...ignore,

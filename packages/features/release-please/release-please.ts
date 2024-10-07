@@ -89,8 +89,12 @@ export const releasePlease = ({
                       "${{ github.event.repository.default_branch }}",
                   },
                   permissions: {
+                    // allows release creation:
                     contents: "write",
+                    // allows PR creation/modification:
                     "pull-requests": "write",
+                    // allows NPM release with attestations:
+                    attestations: "write",
                   },
                   jobs: {
                     "release-please": {
@@ -136,11 +140,15 @@ export const releasePlease = ({
                       if: "${{ needs.release-please.outputs.releases_pending == 'true' }}",
                       steps: [
                         {
+                          name: "Git Checkout",
                           uses: "actions/checkout@v4",
                           with: { "fetch-depth": 0 },
                         },
                         // TODO: always use the version from main, not the checked out one
-                        { uses: "./.github/actions/moon-ci-setup" },
+                        {
+                          name: "Repository setup",
+                          uses: "./.github/actions/moon-ci-setup",
+                        },
                         {
                           name: "Release packages to NPM",
                           run: `${config.node.packageManager.name} run ${CORE_NAME} release --ci --npm-tag=latest ./\${{ join( fromJSON( needs.release-please.outputs.paths_to_release ), ' ./' ) }}`,
@@ -183,7 +191,6 @@ export const releasePlease = ({
                 } satisfies GithubWorkflow,
               },
             ],
-            devDependencies: ["release-please"],
           },
         ],
       };

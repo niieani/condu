@@ -55,11 +55,20 @@ export const typescript = ({
             tasks: [
               {
                 type: "build",
-                name: "typescript",
+                name: "build-typescript",
                 definition: {
+                  inputs: ["@group(sources)"],
                   command: `${config.node.packageManager.name} ${config.node.packageManager.name === "pnpm" ? "exec" : "run"} ${CORE_NAME} tsc --preset ${
                     preset === "esm-first" ? "ts-to-cts" : "ts-to-mts"
                   }`,
+                },
+              },
+              {
+                type: "test",
+                name: "typecheck-typescript",
+                definition: {
+                  inputs: ["@group(sources)"],
+                  command: `${config.node.packageManager.name} ${config.node.packageManager.name === "pnpm" ? "exec" : "run"} tsc --noEmit`,
                 },
               },
             ],
@@ -132,7 +141,10 @@ export const typescript = ({
                     ? {}
                     : {
                         include: tsconfig?.include ?? [includeDir],
-                        exclude: [config.conventions.buildDir],
+                        exclude: [
+                          config.conventions.buildDir,
+                          ...(tsconfig?.exclude ?? []),
+                        ],
                         // these are the defaults, so we don't need to specify them explicitly:
                         // exclude: tsconfig?.exclude ?? [
                         //   "node_modules",

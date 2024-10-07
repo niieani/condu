@@ -53,6 +53,7 @@ export default configure((pkg) => ({
           skipLibCheck: true,
           composite: false,
         },
+        exclude: ["integration-tests"],
       },
     }),
     conduPackages(),
@@ -91,7 +92,9 @@ export default configure((pkg) => ({
         // TODO: review the rest https://github.com/sindresorhus/eslint-plugin-unicorn/tree/main?tab=readme-ov-file
       },
     }),
-    prettier(),
+    prettier({
+      ignore: ["**/.*.json"],
+    }),
     moon(),
     moonCi(),
     releasePlease({
