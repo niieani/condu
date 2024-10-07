@@ -62,6 +62,10 @@ export interface Lerna {
  */
 $schema?: string
 /**
+ * A shareable configuration preset that will be used as the base for this configuration
+ */
+extends?: string
+/**
  * The version of the repository, or "independent" for a repository with independently versioned packages.
  */
 version?: string

@@ -7,8 +7,7 @@
 /**
  * Schema for defining manifest config file
  */
-export type ReleasePleaseConfig = (ReleasePleaseConfig1 & ReleasePleaseConfig2)
-export type ReleasePleaseConfig1 = (ReleaserConfigOptions & {
+export type ReleasePleaseConfig = (ReleaserConfigOptions & {
 /**
  * Path to the release-please manifest config schema
  */
@@ -114,6 +113,10 @@ type?: string
 [k: string]: unknown | undefined
 })[]
 /**
+ * Text to be used as Signed-off-by in the commit.
+ */
+signoff?: string
+/**
  * When grouping multiple release pull requests use this pattern for the title.
  */
 "group-pull-request-title-pattern"?: string
@@ -137,7 +140,52 @@ label?: string
  * Comma-separated list of labels to add to a pull request that has been released/tagged
  */
 "release-label"?: string
+/**
+ * release-please automatically adds ` ` (space) in front of parsed ${component}. This option indicates whether that behaviour should be disabled. Defaults to `false`
+ */
+"component-no-space"?: boolean
 [k: string]: unknown | undefined
+} & {
+$schema?: unknown
+packages?: unknown
+"bootstrap-sha"?: unknown
+"last-release-sha"?: unknown
+"always-link-local"?: unknown
+plugins?: unknown
+signoff?: unknown
+"group-pull-request-title-pattern"?: unknown
+"release-search-depth"?: unknown
+"commit-search-depth"?: unknown
+"sequential-calls"?: unknown
+"release-type"?: unknown
+"bump-minor-pre-major"?: unknown
+"bump-patch-for-minor-pre-major"?: unknown
+versioning?: unknown
+"changelog-sections"?: unknown
+"release-as"?: unknown
+"skip-github-release"?: unknown
+draft?: unknown
+prerelease?: unknown
+"draft-pull-request"?: unknown
+label?: unknown
+"release-label"?: unknown
+"extra-label"?: unknown
+"include-component-in-tag"?: unknown
+"include-v-in-tag"?: unknown
+"changelog-type"?: unknown
+"changelog-host"?: unknown
+"changelog-path"?: unknown
+"pull-request-title-pattern"?: unknown
+"pull-request-header"?: unknown
+"pull-request-footer"?: unknown
+"separate-pull-requests"?: unknown
+"tag-separator"?: unknown
+"extra-files"?: unknown
+"version-file"?: unknown
+"snapshot-label"?: unknown
+"initial-version"?: unknown
+"exclude-paths"?: unknown
+"component-no-space"?: never
 })
 
 export interface ReleaserConfigOptions {
@@ -296,6 +344,20 @@ path: string
  */
 glob?: boolean
 [k: string]: unknown | undefined
+} | {
+/**
+ * The file format type.
+ */
+type: "generic"
+/**
+ * The path to the file.
+ */
+path: string
+/**
+ * Whether to treat the path as a glob. Defaults to `false`.
+ */
+glob?: boolean
+[k: string]: unknown | undefined
 })[]
 /**
  * Path of commits to be excluded from parsing. If all files from commit belong to one of the paths it will be skipped
@@ -317,47 +379,11 @@ glob?: boolean
  * Releases the initial library with a specified version
  */
 "initial-version"?: string
+/**
+ * release-please automatically adds ` ` (space) in front of parsed ${component}. This option indicates whether that behaviour should be disabled. Defaults to `false`
+ */
+"component-no-space"?: boolean
 [k: string]: unknown | undefined
-}
-export interface ReleasePleaseConfig2 {
-$schema?: unknown
-packages?: unknown
-"bootstrap-sha"?: unknown
-"last-release-sha"?: unknown
-"always-link-local"?: unknown
-plugins?: unknown
-"group-pull-request-title-pattern"?: unknown
-"release-search-depth"?: unknown
-"commit-search-depth"?: unknown
-"sequential-calls"?: unknown
-"release-type"?: unknown
-"bump-minor-pre-major"?: unknown
-"bump-patch-for-minor-pre-major"?: unknown
-versioning?: unknown
-"changelog-sections"?: unknown
-"release-as"?: unknown
-"skip-github-release"?: unknown
-draft?: unknown
-prerelease?: unknown
-"draft-pull-request"?: unknown
-label?: unknown
-"release-label"?: unknown
-"extra-label"?: unknown
-"include-component-in-tag"?: unknown
-"include-v-in-tag"?: unknown
-"changelog-type"?: unknown
-"changelog-host"?: unknown
-"changelog-path"?: unknown
-"pull-request-title-pattern"?: unknown
-"pull-request-header"?: unknown
-"pull-request-footer"?: unknown
-"separate-pull-requests"?: unknown
-"tag-separator"?: unknown
-"extra-files"?: unknown
-"version-file"?: unknown
-"snapshot-label"?: unknown
-"initial-version"?: unknown
-"exclude-paths"?: unknown
 }
 
 export type { ReleasePleaseConfig as default };

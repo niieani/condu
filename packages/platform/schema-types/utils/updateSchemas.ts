@@ -74,6 +74,11 @@ async function updateSchemas() {
 }`,
         `rules?: TokenStyling18
 } | undefined`,
+      )
+      .replace(
+        // there's a bug in tsconfig schema, correct it:
+        `(FilesDefinition | ExcludeDefinition | IncludeDefinition | ReferencesDefinition)`,
+        `(FilesDefinition & ExcludeDefinition & IncludeDefinition & ReferencesDefinition)`,
       );
 
     ts += `\nexport type { ${topLevelSchemaNameSource} as default };\n`;

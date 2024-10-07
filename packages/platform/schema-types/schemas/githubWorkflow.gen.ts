@@ -236,7 +236,7 @@ types?: Types13
  * 
  * @minItems 1
  */
-export type Types13 = [("assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "milestoned" | "demilestoned" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"), ...(("assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "milestoned" | "demilestoned" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"))[]]
+export type Types13 = [("assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "milestoned" | "demilestoned" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled" | "enqueued" | "dequeued"), ...(("assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "milestoned" | "demilestoned" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled" | "enqueued" | "dequeued"))[]]
 /**
  * Runs your workflow anytime the pull_request_review event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/pulls/reviews.
  * Note: Workflows do not run on private base repositories when you open a pull request from a forked repository.

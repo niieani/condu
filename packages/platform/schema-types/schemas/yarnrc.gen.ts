@@ -228,9 +228,7 @@ export type DefineHowToCopyFilesToTheirTargetDestination = ("classic" | "hardlin
  * - If `pnpm`, a `node-modules` will be created using symlinks and hardlinks to a global content-addressable store.
  * - If `node-modules`, a regular `node_modules` folder just like in Yarn Classic or npm will be created.
  */
-export type DefineHowNodePackagesShouldBeInstalled = (DefineHowNodePackagesShouldBeInstalled1 & DefineHowNodePackagesShouldBeInstalled2)
-export type DefineHowNodePackagesShouldBeInstalled1 = (string | ("pnp" | "pnpm" | "node-modules"))
-export type DefineHowNodePackagesShouldBeInstalled2 = string
+export type DefineHowNodePackagesShouldBeInstalled = ((string | ("pnp" | "pnpm" | "node-modules")) & string)
 /**
  * Possible values are:
  * 
@@ -260,7 +258,7 @@ export type DefineTheAuthenticationTokenToUseByDefaultWhenAccessingYourRegistrie
  * Valid values are `public` and `restricted`, but `restricted` usually requires to register for a paid plan (this is up to the registry you use). Can be overridden on a per-package basis using the `publishConfig.access` field.
  */
 export type DefineTheDefaultAccessToUseWhenPublishingPackagesToTheNpmRegistry = ("public" | "restricted")
-export type ArrayOfAdvisoryIDGlobPatternsOfPackagesToExcludeFromYarnNpmAudit = string[]
+export type ArrayOfPackageNameGlobPatternsToExcludeFromYarnNpmAudit = string[]
 export type ArrayOfAdvisoryIDGlobPatternsToIgnoreFromYarnNpmAuditResults = string[]
 /**
  * If not explicitly set, the value of `npmRegistryServer` will be used. Overridden by `publishConfig.registry`.
@@ -335,9 +333,7 @@ export type TheListOfStandardCLibrariesToCover = string[]
 /**
  * We default to the platform parallelism, but for some CI, `os.cpus` may not report accurate values and may overwhelm their containers.
  */
-export type MaximalAmountOfConcurrentHeavyTaskProcessing = (MaximalAmountOfConcurrentHeavyTaskProcessing1 & MaximalAmountOfConcurrentHeavyTaskProcessing2)
-export type MaximalAmountOfConcurrentHeavyTaskProcessing1 = number
-export type MaximalAmountOfConcurrentHeavyTaskProcessing2 = string
+export type MaximalAmountOfConcurrentHeavyTaskProcessing = (number & string)
 /**
  * By default will use workers when performing heavy tasks, such as converting tgz files to zip. This setting can be used to disable workers and use a regular in-thread async processing.
  */
@@ -439,7 +435,7 @@ npmAuditRegistry?: DefineTheRegistryToUseWhenAuditingDependencies
 npmAuthIdent?: DefineTheAuthenticationCredentialsToUseByDefaultWhenAccessingYourRegistries
 npmAuthToken?: DefineTheAuthenticationTokenToUseByDefaultWhenAccessingYourRegistries
 npmPublishAccess?: DefineTheDefaultAccessToUseWhenPublishingPackagesToTheNpmRegistry
-npmAuditExcludePackages?: ArrayOfAdvisoryIDGlobPatternsOfPackagesToExcludeFromYarnNpmAudit
+npmAuditExcludePackages?: ArrayOfPackageNameGlobPatternsToExcludeFromYarnNpmAudit
 npmAuditIgnoreAdvisories?: ArrayOfAdvisoryIDGlobPatternsToIgnoreFromYarnNpmAuditResults
 npmPublishRegistry?: DefineTheRegistryToUseWhenPushingPackages
 npmRegistries?: PerRegistryConfigurations
@@ -461,7 +457,7 @@ preferTruncatedLines?: DefineWhetherToTruncateLinesThatWouldGoBeyondTheSizeOfThe
 progressBarStyle?: StyleOfProgressBarToUse
 supportedArchitectures?: SystemsForWhichYarnShouldInstallPackages
 taskPoolConcurrency?: MaximalAmountOfConcurrentHeavyTaskProcessing
-workerPoolMode?: ExecutionStrategyForHeavyTasks
+taskPoolMode?: ExecutionStrategyForHeavyTasks
 telemetryInterval?: DefineTheMinimalAmountOfTimeBetweenTwoTelemetryEventsInDays
 telemetryUserId?: UserDefinedUniqueIDToSendAlongWithTelemetryEvents
 tsEnableAutoTypes?: DefineWhetherToAutomaticallyInstallTypesDependencies
