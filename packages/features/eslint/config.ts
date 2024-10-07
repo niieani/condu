@@ -2,12 +2,13 @@ import type { Linter, ESLint } from "eslint";
 import js from "@eslint/js";
 import importPlugin from "eslint-plugin-import-x";
 import globals from "globals";
-// import importPluginTypeScript from "eslint-plugin-import-x/config/flat/typescript.js";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import type { FlatConfig } from "@typescript-eslint/utils/ts-eslint";
 import * as typescriptParser from "@typescript-eslint/parser";
 import type { ParserOptions } from "@typescript-eslint/parser";
-import noExtraneousDependencies from "./rules/no-extraneous-dependencies.js";
+import noExtraneousDependencies, {
+  type AutoFixSpec,
+  type Options,
+} from "./rules/no-extraneous-dependencies.js";
 import unicornPlugin from "eslint-plugin-unicorn";
 import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
 import type { ContextProvidedToEslintConfig } from "./types.js";
@@ -23,7 +24,7 @@ export const getConfigs = (
   additionalConfigsInput?:
     | Linter.Config[]
     | ((context: ContextProvidedToEslintConfig) => Linter.Config[]),
-): FlatConfig.ConfigArray => {
+): Linter.Config[] => {
   const additionalConfigs = Array.isArray(additionalConfigsInput)
     ? additionalConfigsInput
     : typeof additionalConfigsInput === "function"
@@ -60,6 +61,14 @@ export const getConfigs = (
   const importXPlugin = importPlugin.flatConfigs.recommended.plugins?.[
     "import-x"
   ] as ESLint.Plugin;
+
+  const autoFixVersionMapping: AutoFixSpec = [
+    ...packageNameConventions.map(
+      ({ nameConvention }) => [nameConvention, "workspace:^"] as const,
+    ),
+    // ["vitest", "^", "devDependencies"],
+  ];
+
   return [
     {
       // https://eslint.org/docs/latest/use/configure/configuration-files#globally-ignoring-files-with-ignores
@@ -123,18 +132,10 @@ export const getConfigs = (
               "**/.config/**",
               `**/*.config.{${executableExtensionsList}}`,
             ],
-            autoFixVersionMapping: packageNameConventions.map(
-              ({ nameConvention }) => [nameConvention, "workspace:^"],
-            ),
-            // ...packageNameConventions.map(({ nameConvention }) => [
-            //   nameConvention,
-            //   "workspace:^",
-            // ]),
-            // ["@condu/", "workspace:^"],
-            // ["@condu-feature/", "workspace:^"],
-            // ["condu", "workspace:^"],
+            autoFixVersionMapping,
+            whitelist: ["vitest"],
             autoFixFallback: "^",
-          },
+          } satisfies Options,
         ],
         "@typescript-eslint/consistent-type-imports": [
           "error",
