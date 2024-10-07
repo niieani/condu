@@ -10,7 +10,8 @@ export class CreateCommand extends Command {
   static override paths = [["create"]];
 
   static override usage = Command.Usage({
-    description: "Create new packages using the conventions defined in the project configuration.",
+    description:
+      "Create new packages using the conventions defined in the project configuration.",
   });
 
   partialPath = Option.String({ required: true });

@@ -13,7 +13,8 @@ const plugin = {
       hooks: {
         afterAllInstalled: async (project, options) => {
           const workspace = project.getWorkspaceByCwd(project.cwd);
-          const isInternalCondu = workspace.manifest.name?.name === "condu-workspace";
+          const isInternalCondu =
+            workspace.manifest.name?.name === "condu-workspace";
           // bun packages/platform/cli/main.ts
           // TODO: should this use ts-node/tsx? or is shebang enough?
           const cmd = isInternalCondu ? "bun" : "condu";

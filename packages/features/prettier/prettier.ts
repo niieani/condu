@@ -37,6 +37,13 @@ export const prettier = ({
                   ...conduConfig.conventions.generatedSourceFileNameSuffixes.map(
                     (suffix) => `**/*${suffix}.*`,
                   ),
+                  "**/pnpm-lock.yaml",
+                  "**/yarn.lock",
+                  "**/package-lock.json",
+                  "**/bun.lockb",
+                  "**/bun.lock",
+                  "**/.*",
+                  "**/CHANGELOG.md",
                   ...(ignore.length > 0 ? ["# custom ignore patterns:"] : []),
                   ...ignore,
                 ].join("\n"),
@@ -45,7 +52,7 @@ export const prettier = ({
           devDependencies: ["prettier"],
           tasks: [
             {
-              name: "prettier",
+              name: "test-prettier",
               type: "test",
               definition: {
                 command: "prettier",
@@ -54,7 +61,7 @@ export const prettier = ({
               },
             },
             {
-              name: "prettier",
+              name: "format-prettier",
               type: "format",
               definition: {
                 command: "prettier",
