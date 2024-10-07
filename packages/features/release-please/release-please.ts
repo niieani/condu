@@ -83,6 +83,15 @@ export const releasePlease = ({
                   name: "Release Please",
                   on: {
                     push: { branches: [config.git.defaultBranch] },
+                    workflow_dispatch: {
+                      inputs: {
+                        skipNpmRelease: {
+                          description: "Skip NPM release",
+                          required: false,
+                          default: false,
+                        },
+                      },
+                    },
                   },
                   env: {
                     GIT_DEFAULT_BRANCH:
@@ -98,6 +107,7 @@ export const releasePlease = ({
                   },
                   jobs: {
                     "release-please": {
+                      name: "Get packages to release & update release-please PRs",
                       "runs-on": "ubuntu-latest",
                       outputs: {
                         releases_pending:
@@ -135,6 +145,7 @@ export const releasePlease = ({
                     },
                     // TODO: the next steps should be NPM publishing with lerna
                     release: {
+                      name: "Release packages to NPM",
                       "runs-on": "ubuntu-latest",
                       needs: ["release-please"],
                       if: "${{ needs.release-please.outputs.releases_pending == 'true' }}",
@@ -151,6 +162,7 @@ export const releasePlease = ({
                         },
                         {
                           name: "Release packages to NPM",
+                          if: "${{ !inputs.skipNpmRelease }}",
                           run: `${config.node.packageManager.name} run ${CORE_NAME} release --ci --npm-tag=latest ./\${{ join( fromJSON( needs.release-please.outputs.paths_to_release ), ' ./' ) }}`,
                           env: {
                             NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}",
