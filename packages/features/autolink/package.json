@@ -9,5 +9,8 @@
   "dependencies": {
     "@condu/types": "workspace:^",
     "ts-pattern": "^5.4.0"
+  },
+  "peerDependencies": {
+    "condu": "workspace:^"
   }
 }
