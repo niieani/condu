@@ -1,16 +1,16 @@
-/// <reference types="bun-types" />
-
-import { beforeAll, describe, test } from "bun:test";
+import { afterAll, beforeAll, describe, test } from "vitest";
 import { runVerdaccio } from "./verdaccio.js";
-import type { Application } from "express";
 
 describe("integration", () => {
-  let server: Application;
+  let verdaccio: Awaited<ReturnType<typeof runVerdaccio>>;
   beforeAll(async () => {
-    server = await runVerdaccio();
+    verdaccio = await runVerdaccio();
+  });
+  afterAll(async () => {
+    await verdaccio.close();
   });
 
   test("should work", async () => {
-    //
+    const res = await fetch("http://localhost:4000");
   });
 });

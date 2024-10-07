@@ -2,6 +2,7 @@ import { runServer as _runServer } from "verdaccio";
 import type { AuthHtpasswd, Config } from "@verdaccio/types";
 import type { Application } from "express";
 import path from "node:path";
+import type { IncomingMessage, Server, ServerResponse } from "node:http";
 
 const runServer = _runServer as any as (
   config: Omit<Config, "security" | "secret" | "server_id">,
@@ -10,7 +11,7 @@ const __dirname = new URL(".", import.meta.url).pathname;
 const selfPath = path.join(__dirname, ".cache");
 
 export const runVerdaccio = async () => {
-  return runServer({
+  const app = await runServer({
     self_path: selfPath,
     storage: "./storage",
     web: {
@@ -49,10 +50,27 @@ export const runVerdaccio = async () => {
     server_id: "verdaccio",
     secret: "test",
   });
+
+  const server = await new Promise<
+    Server<typeof IncomingMessage, typeof ServerResponse>
+  >((resolve) => {
+    const srv = app.listen(4000, () => {
+      resolve(srv);
+    });
+  });
+
+  return {
+    app,
+    server,
+    close: () =>
+      new Promise<void>((resolve, reject) => {
+        server.close((err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      }),
+  };
 };
-
-const app = await runVerdaccio();
-
-app.listen(4000, () => {
-  // do something
-});
