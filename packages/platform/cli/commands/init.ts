@@ -117,7 +117,10 @@ export default configure((pkg) => ({
       JSON.stringify(packageJson, undefined, 2),
     );
 
-    const hasGitFolder = await fs.exists(path.join(targetDirectory, ".git"));
+    const hasGitFolder = await fs
+      .access(path.join(targetDirectory, ".git"), fs.constants.F_OK)
+      .then(() => true)
+      .catch(() => false);
 
     // Initialize git repository if project name is provided
     if (!hasGitFolder) {

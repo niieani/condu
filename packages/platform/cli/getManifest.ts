@@ -2,7 +2,7 @@ import * as path from "node:path";
 import { findUp } from "@condu/core/utils/findUp.js";
 import type { WorkspaceRootPackage } from "@condu/types/configTypes.js";
 import { topoFromWorkspace } from "@condu/workspace-utils/topo.js";
-import * as fs from "node:fs";
+import * as fs from "node:fs/promises";
 import {
   CONDU_CONFIG_DIR_NAME,
   CONDU_CONFIG_FILE_NAME,
@@ -12,13 +12,17 @@ export async function getManifest(cwd: string): Promise<WorkspaceRootPackage> {
   const configDirPath = await findUp(
     async (file) => {
       if (file.name === CONDU_CONFIG_DIR_NAME) {
-        return fs.promises.exists(
-          path.join(
-            file.parentPath,
-            CONDU_CONFIG_DIR_NAME,
-            CONDU_CONFIG_FILE_NAME,
-          ),
-        );
+        return fs
+          .access(
+            path.join(
+              file.parentPath,
+              CONDU_CONFIG_DIR_NAME,
+              CONDU_CONFIG_FILE_NAME,
+            ),
+            fs.constants.R_OK,
+          )
+          .then(() => true)
+          .catch(() => false);
       }
       return false;
     },

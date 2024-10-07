@@ -23,7 +23,7 @@ import { getProjectDefinitionsFromConventionConfig } from "@condu/core/utils/get
 import memoizeOne from "async-memoize-one";
 import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
 import { findUp } from "@condu/core/utils/findUp.js";
-import * as fs from "node:fs";
+import * as fs from "node:fs/promises";
 import { getManifestsPaths, getPackage } from "@condu/workspace-utils/topo.js";
 
 export interface Project extends WorkspaceRootPackage {
@@ -38,13 +38,17 @@ export async function loadConduProject({
   const configDirPath = await findUp(
     async (file) => {
       if (file.name === CONDU_CONFIG_DIR_NAME) {
-        return fs.promises.exists(
-          path.join(
-            file.parentPath,
-            CONDU_CONFIG_DIR_NAME,
-            CONDU_CONFIG_FILE_NAME,
-          ),
-        );
+        return fs
+          .access(
+            path.join(
+              file.parentPath,
+              CONDU_CONFIG_DIR_NAME,
+              CONDU_CONFIG_FILE_NAME,
+            ),
+            fs.constants.R_OK,
+          )
+          .then(() => true)
+          .catch(() => false);
       }
       return false;
     },
