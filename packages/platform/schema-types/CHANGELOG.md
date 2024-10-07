@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.0.4](https://github.com/niieani/condu/compare/@condu/schema-types@0.0.3...@condu/schema-types@0.0.4) (2024-10-07)
+
+
+### Features
+
+* enable linking other monorepos ([e707687](https://github.com/niieani/condu/commit/e707687bd2d5e109bb6d9eb96a9b777eb85e9737))
+
+
+### Bug Fixes
+
+* correct eslint config after upgrade to import-x ([99155d8](https://github.com/niieani/condu/commit/99155d88cc6e856f236f98054309d25c7125a6ac))
+* update schemas ([67f6c57](https://github.com/niieani/condu/commit/67f6c577b63ddc91024a40101fef4bfc8df10e5d))
+
 ## [0.0.3](https://github.com/niieani/condu/compare/@condu/schema-types@0.0.2...@condu/schema-types@0.0.3) (2024-08-03)
 
 

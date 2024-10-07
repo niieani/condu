@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.1.6](https://github.com/niieani/condu/compare/@condu-feature/release-please@0.1.5...@condu-feature/release-please@0.1.6) (2024-10-07)
+
+
+### Features
+
+* add release-please publish actions ([a96c313](https://github.com/niieani/condu/commit/a96c313d600bf17caad0be7261e54018af9ab4e1))
+* allow running release please workflow manually ([ce05c78](https://github.com/niieani/condu/commit/ce05c78bb32566d667252a4b163c59c14eb9164e))
+* correctly resolve package versions before publishing ([ac37454](https://github.com/niieani/condu/commit/ac374544ecb35ad3c3f27a830f24276928168306))
+* refactor package loading ([4c736a8](https://github.com/niieani/condu/commit/4c736a83077e0294a7854c8a2b9c95a5878149f3))
+* support release to NPM ([4401bfe](https://github.com/niieani/condu/commit/4401bfe7a457ea3fb516d0165b89652aa3ef5200))
+* use all packages in release-please ([e766768](https://github.com/niieani/condu/commit/e76676892ac2ffc4f7253179fed6ee2a2fe0ded9))
+
+
+### Bug Fixes
+
+* add missing dependencies ([fbb18db](https://github.com/niieani/condu/commit/fbb18db9a0e49843d60ed297df3af928a9577880))
+* add package list to manifest ([ca51a28](https://github.com/niieani/condu/commit/ca51a28d9a1f4bda1ca1dd929a7d22bdae09d5f3))
+* call before-release in CI ([3cb3e1a](https://github.com/niieani/condu/commit/3cb3e1ad28a3c127bfe0f47f9372706310acef97))
+* define git user in action ([38a3c79](https://github.com/niieani/condu/commit/38a3c79c22778f9374d808d94bec934c8f9b4838))
+* extract core functionality to 'condu' package ([e2a5e53](https://github.com/niieani/condu/commit/e2a5e539f7aeaadedd3359d8bf80591f3e4ee258))
+* improve support for various package managers ([acfe5d1](https://github.com/niieani/condu/commit/acfe5d1469145e27084a75dbb01ac3c9c053c4dc))
+* invalid workspace reference ([37f6029](https://github.com/niieani/condu/commit/37f6029848a43f06627f0ee2f7fcef4e535a7d07))
+* package updates and eslint fixes ([0ed7c63](https://github.com/niieani/condu/commit/0ed7c63c75992a8952c84d6d79280f3ca3bf4225))
+* remove dry-run ([84622df](https://github.com/niieani/condu/commit/84622dfe6af8a30627694f179cb68f5499f552fd))
+* rename workspace name to allow for 'condu' package creation ([5b4dbfe](https://github.com/niieani/condu/commit/5b4dbfe0912ad8d64a227b875d34c39ae5d50959))
+* satisfy lerna requirements ([a369f11](https://github.com/niieani/condu/commit/a369f1166b12328d7cd184ddd1d9a41ed94204f9))
+* use correct title-pattern ([a8973b0](https://github.com/niieani/condu/commit/a8973b07d099941a4007216902d360e3e2f372fe))
+* use new version of release-please-action ([371f246](https://github.com/niieani/condu/commit/371f246ed61c5b8d059cf62f1ae639cf453e1434))
+* various small fixes ([40ad15a](https://github.com/niieani/condu/commit/40ad15a5a9eac419a1bc1d100bd86e25b9c44eca))
+* various small fixes ([c8fbadf](https://github.com/niieani/condu/commit/c8fbadf0f538086dca5d8d4093c274128c793743))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/schema-types bumped to 0.0.4
+    * @condu/types bumped to 0.1.4
+    * condu bumped to 0.1.6
+
 ## [0.1.5](https://github.com/niieani/condu/compare/@condu-feature/release-please@0.1.4...@condu-feature/release-please@0.1.5) (2024-08-03)
 
 
