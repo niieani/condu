@@ -1,0 +1,24 @@
+name: Moon CI Setup
+description: Setup the environment for Moon CI
+inputs:
+  registry-url:
+    description: The NPM registry URL
+    required: false
+    default: https://registry.npmjs.org/
+runs:
+  using: composite
+  steps:
+    - run: corepack enable
+      shell: bash
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: package.json
+        cache: pnpm
+        registry-url: ${{ inputs.registry-url }}
+    - uses: oven-sh/setup-bun@v1
+    - run: pnpm install --frozen-lockfile
+      shell: bash
+    - run: ./node_modules/.bin/moon ci :build
+      shell: bash
+      env:
+        MOON_TOOLCHAIN_FORCE_GLOBALS: "true"

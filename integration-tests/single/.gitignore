@@ -4,8 +4,6 @@ node_modules
 /build/
 # typescript:
 /tsconfig.json
-# pnpm:
-/pnpm-workspace.yaml
 # eslint:
 /eslint.config.js
 # moon:
@@ -14,9 +12,9 @@ node_modules
 /.moon/docker
 /.moon/toolchain.yml
 /.moon/workspace.yml
+/.moon/tasks.yml
 # moonCi:
 /moon.yml
-/.moon/tasks.yml
 # vscode:
 /.vscode/settings.json
 # custom ignore patterns:

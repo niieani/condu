@@ -11,35 +11,20 @@ import { vscode } from "@condu-feature/vscode/vscode.js";
 
 export default configure({
   engine: "bun",
-  projects: [{ parentPath: "packages", nameConvention: "@test/*" }],
   conventions: {
     sourceDir: "src",
   },
   features: [
-    typescript({
-      tsconfig: {
-        compilerOptions: {
-          preserveSymlinks: false,
-          composite: false,
-        },
-      },
-    }),
+    typescript(),
     linkOtherMonorepo({
       links: [{ linkedProjectDir: "/Volumes/Projects/Software/toolchain" }],
     }),
     conduPackages(),
     pnpm(),
-    // libraryBundle({
-    //   id: "cli",
-    //   package: "condu",
-    //   entry: "main.ts",
-    //   moduleTarget: "esm",
-    //   binName: "condu",
-    // }),
     eslint(),
     moon(),
     moonCi(),
-    vscode(),
+    vscode({ hideGeneratedFiles: false }),
     gitignore({ ignore: [".env", ".env.*"] }),
   ],
 });

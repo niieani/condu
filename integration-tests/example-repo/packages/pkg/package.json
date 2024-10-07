@@ -1,5 +1,5 @@
 {
-  "name": "@test/test",
+  "name": "@test/pkg",
   "version": "0.0.0",
   "license": "ISC",
   "author": "",
@@ -7,6 +7,6 @@
   "type": "module",
   "publishConfig": {
     "access": "public",
-    "directory": "../../build/packages/test"
+    "directory": "../../build/packages/pkg"
   }
 }

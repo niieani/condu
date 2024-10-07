@@ -1,0 +1,78 @@
+{
+  "name": "single",
+  "sideEffects": false,
+  "type": "module",
+  "scripts": {
+    "postinstall": "test -f .config/condu.ts && condu apply"
+  },
+  "devDependencies": {
+    "@condu-feature/ci-github-actions": "link:../../packages/features/ci-github-actions",
+    "@condu-feature/condu-packages": "link:../../packages/features/condu-packages",
+    "@condu-feature/eslint": "link:../../packages/features/eslint",
+    "@condu-feature/gitignore": "link:../../packages/features/gitignore",
+    "@condu-feature/link-other-monorepo": "link:../../packages/features/link-other-monorepo",
+    "@condu-feature/moon": "link:../../packages/features/moon",
+    "@condu-feature/pnpm": "link:../../packages/features/pnpm",
+    "@condu-feature/typescript": "link:../../packages/features/typescript",
+    "@condu/core": "link:../../packages/platform/core",
+    "@condu/types": "link:../../packages/platform/types",
+    "@eslint/js": "^9.11.1",
+    "@moonrepo/cli": "^1.28.3",
+    "@typescript-eslint/eslint-plugin": "^8.8.0",
+    "@typescript-eslint/parser": "^8.8.0",
+    "condu": "link:../../packages/platform/condu",
+    "eslint": "^9.11.1",
+    "eslint-import-resolver-typescript": "^3.6.3",
+    "eslint-plugin-import-x": "^4.3.1",
+    "eslint-plugin-unicorn": "^55.0.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2"
+  },
+  "engines": {
+    "node": "latest"
+  },
+  "pnpm": {
+    "overrides": {
+      "@condu-feature/ci-github-actions": "link:../../packages/features/ci-github-actions",
+      "@condu-feature/condu-packages": "link:../../packages/features/condu-packages",
+      "@condu-feature/eslint": "link:../../packages/features/eslint",
+      "@condu-feature/gitignore": "link:../../packages/features/gitignore",
+      "@condu-feature/gpt-summarizer": "link:../../packages/features/gpt-summarizer",
+      "@condu-feature/lerna": "link:../../packages/features/lerna",
+      "@condu-feature/library-bundle": "link:../../packages/features/library-bundle",
+      "@condu-feature/link-other-monorepo": "link:../../packages/features/link-other-monorepo",
+      "@condu-feature/moon": "link:../../packages/features/moon",
+      "@condu-feature/pnpm": "link:../../packages/features/pnpm",
+      "@condu-feature/release-please": "link:../../packages/features/release-please",
+      "@condu-feature/typescript": "link:../../packages/features/typescript",
+      "@condu-feature/vitest": "link:../../packages/features/vitest",
+      "@condu-feature/vscode": "link:../../packages/features/vscode",
+      "@condu-feature/yarn": "link:../../packages/features/yarn",
+      "@condu-preset/monorepo": "link:../../packages/presets/monorepo",
+      "@condu-test/integration": "link:../../packages/test/integration",
+      "@condu/cli": "link:../../packages/platform/cli",
+      "@condu/core": "link:../../packages/platform/core",
+      "@condu/schema-types": "link:../../packages/platform/schema-types",
+      "@condu/test-dummy": "link:../../packages/test/dummy",
+      "@condu/test-dummy-dep": "link:../../packages/test/dummy-dep",
+      "@condu/types": "link:../../packages/platform/types",
+      "@condu/update-specifiers": "link:../../packages/platform/update-specifiers",
+      "@condu/workspace-utils": "link:../../packages/platform/workspace-utils",
+      "@condu/yarn-plugin": "link:../../packages/platform/yarn-plugin",
+      "condu": "link:../../packages/platform/condu"
+    }
+  },
+  "condu": {
+    "managedDependencies": {
+      "eslint": "presence",
+      "eslint-plugin-import-x": "presence",
+      "eslint-plugin-unicorn": "presence",
+      "eslint-import-resolver-typescript": "presence",
+      "@typescript-eslint/parser": "presence",
+      "@typescript-eslint/eslint-plugin": "presence",
+      "@moonrepo/cli": "presence",
+      "tsx": "presence",
+      "@eslint/js": "presence"
+    }
+  }
+}
