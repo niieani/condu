@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.1.5](https://github.com/niieani/condu/compare/@condu/yarn-plugin@0.1.4...@condu/yarn-plugin@0.1.5) (2024-10-07)
+
+
+### Features
+
+* correctly resolve package versions before publishing ([ac37454](https://github.com/niieani/condu/commit/ac374544ecb35ad3c3f27a830f24276928168306))
+* package cli as 'condu' npm package ([0c1860b](https://github.com/niieani/condu/commit/0c1860bc4ccc11d89fce8c938f9d5e70d88a9c98))
+
+
+### Bug Fixes
+
+* correct prettier config ([9989094](https://github.com/niieani/condu/commit/99890941f5cd389caaa7f2ca65ae866ac81750cf))
+* invalid workspace reference ([37f6029](https://github.com/niieani/condu/commit/37f6029848a43f06627f0ee2f7fcef4e535a7d07))
+* rename workspace name to allow for 'condu' package creation ([5b4dbfe](https://github.com/niieani/condu/commit/5b4dbfe0912ad8d64a227b875d34c39ae5d50959))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/cli bumped to 0.1.5
+
 ## [0.1.4](https://github.com/niieani/condu/compare/@condu/yarn-plugin@0.1.3...@condu/yarn-plugin@0.1.4) (2024-08-03)
 
 

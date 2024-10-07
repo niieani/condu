@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.1.6](https://github.com/niieani/condu/compare/@condu-feature/ci-github-actions@0.1.5...@condu-feature/ci-github-actions@0.1.6) (2024-10-07)
+
+
+### Features
+
+* add implicitInputs ([5d11991](https://github.com/niieani/condu/commit/5d11991e04b5d680f4cf43f844e102385885a0c1))
+* add release-please publish actions ([a96c313](https://github.com/niieani/condu/commit/a96c313d600bf17caad0be7261e54018af9ab4e1))
+* correctly resolve package versions before publishing ([ac37454](https://github.com/niieani/condu/commit/ac374544ecb35ad3c3f27a830f24276928168306))
+* enable linking other monorepos ([e707687](https://github.com/niieani/condu/commit/e707687bd2d5e109bb6d9eb96a9b777eb85e9737))
+* package cli as 'condu' npm package ([0c1860b](https://github.com/niieani/condu/commit/0c1860bc4ccc11d89fce8c938f9d5e70d88a9c98))
+* refactor package loading ([4c736a8](https://github.com/niieani/condu/commit/4c736a83077e0294a7854c8a2b9c95a5878149f3))
+* support release to NPM ([4401bfe](https://github.com/niieani/condu/commit/4401bfe7a457ea3fb516d0165b89652aa3ef5200))
+* update dependencies ([08ecbdf](https://github.com/niieani/condu/commit/08ecbdf5ac4555fa9367d0b19ca0a22d5cc9cec9))
+
+
+### Bug Fixes
+
+* extract core functionality to 'condu' package ([e2a5e53](https://github.com/niieani/condu/commit/e2a5e539f7aeaadedd3359d8bf80591f3e4ee258))
+* improve support for various package managers ([acfe5d1](https://github.com/niieani/condu/commit/acfe5d1469145e27084a75dbb01ac3c9c053c4dc))
+* install bun ([7875a3d](https://github.com/niieani/condu/commit/7875a3d57fee07323f23892a5309cb53b5209993))
+* invalid workspace reference ([37f6029](https://github.com/niieani/condu/commit/37f6029848a43f06627f0ee2f7fcef4e535a7d07))
+* package updates and eslint fixes ([0ed7c63](https://github.com/niieani/condu/commit/0ed7c63c75992a8952c84d6d79280f3ca3bf4225))
+* use default registry ([5bcf8ed](https://github.com/niieani/condu/commit/5bcf8ed1d325b60b50d4c7998bf8dd5264d35ebd))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/schema-types bumped to 0.0.4
+    * @condu/types bumped to 0.1.4
+  * peerDependencies
+    * condu bumped to 0.1.6
+
 ## [0.1.5](https://github.com/niieani/condu/compare/@condu-feature/ci-github-actions@0.1.4...@condu-feature/ci-github-actions@0.1.5) (2024-08-03)
 
 

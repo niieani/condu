@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.1.6](https://github.com/niieani/condu/compare/@condu-feature/moon@0.1.5...@condu-feature/moon@0.1.6) (2024-10-07)
+
+
+### Features
+
+* add implicitInputs ([5d11991](https://github.com/niieani/condu/commit/5d11991e04b5d680f4cf43f844e102385885a0c1))
+* correctly resolve package versions before publishing ([ac37454](https://github.com/niieani/condu/commit/ac374544ecb35ad3c3f27a830f24276928168306))
+* enable linking other monorepos ([e707687](https://github.com/niieani/condu/commit/e707687bd2d5e109bb6d9eb96a9b777eb85e9737))
+* support release to NPM ([4401bfe](https://github.com/niieani/condu/commit/4401bfe7a457ea3fb516d0165b89652aa3ef5200))
+
+
+### Bug Fixes
+
+* add "access: public" ([a15f582](https://github.com/niieani/condu/commit/a15f5827715367a3cdd2d39edbb7c63af7b2f9a8))
+* call before-release in CI ([3cb3e1a](https://github.com/niieani/condu/commit/3cb3e1ad28a3c127bfe0f47f9372706310acef97))
+* extract core functionality to 'condu' package ([e2a5e53](https://github.com/niieani/condu/commit/e2a5e539f7aeaadedd3359d8bf80591f3e4ee258))
+* improve support for various package managers ([acfe5d1](https://github.com/niieani/condu/commit/acfe5d1469145e27084a75dbb01ac3c9c053c4dc))
+* invalid workspace reference ([37f6029](https://github.com/niieani/condu/commit/37f6029848a43f06627f0ee2f7fcef4e535a7d07))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 0.1.4
+    * @condu/schema-types bumped to 0.0.4
+    * @condu/types bumped to 0.1.4
+  * peerDependencies
+    * condu bumped to 0.1.6
+
 ## [0.1.5](https://github.com/niieani/condu/compare/@condu-feature/moon@0.1.4...@condu-feature/moon@0.1.5) (2024-08-03)
 
 

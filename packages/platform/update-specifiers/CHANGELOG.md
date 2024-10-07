@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.1.4](https://github.com/niieani/condu/compare/@condu/update-specifiers@0.1.3...@condu/update-specifiers@0.1.4) (2024-10-07)
+
+
+### Features
+
+* correctly resolve package versions before publishing ([ac37454](https://github.com/niieani/condu/commit/ac374544ecb35ad3c3f27a830f24276928168306))
+* refactor package loading ([4c736a8](https://github.com/niieani/condu/commit/4c736a83077e0294a7854c8a2b9c95a5878149f3))
+
+
+### Bug Fixes
+
+* extract core functionality to 'condu' package ([e2a5e53](https://github.com/niieani/condu/commit/e2a5e539f7aeaadedd3359d8bf80591f3e4ee258))
+* invalid workspace reference ([37f6029](https://github.com/niieani/condu/commit/37f6029848a43f06627f0ee2f7fcef4e535a7d07))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 0.1.4
+
 ## [0.1.3](https://github.com/niieani/condu/compare/@condu/update-specifiers@0.1.2...@condu/update-specifiers@0.1.3) (2024-08-03)
 
 

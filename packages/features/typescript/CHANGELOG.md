@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.1.6](https://github.com/niieani/condu/compare/@condu-feature/typescript@0.1.5...@condu-feature/typescript@0.1.6) (2024-10-07)
+
+
+### Features
+
+* correctly resolve package versions before publishing ([ac37454](https://github.com/niieani/condu/commit/ac374544ecb35ad3c3f27a830f24276928168306))
+* refactor package loading ([4c736a8](https://github.com/niieani/condu/commit/4c736a83077e0294a7854c8a2b9c95a5878149f3))
+* support release to NPM ([4401bfe](https://github.com/niieani/condu/commit/4401bfe7a457ea3fb516d0165b89652aa3ef5200))
+
+
+### Bug Fixes
+
+* add "access: public" ([a15f582](https://github.com/niieani/condu/commit/a15f5827715367a3cdd2d39edbb7c63af7b2f9a8))
+* correctly build typescript ([f4fe049](https://github.com/niieani/condu/commit/f4fe04933e439a27e1f82e58dfcfc983720a259f))
+* extract core functionality to 'condu' package ([e2a5e53](https://github.com/niieani/condu/commit/e2a5e539f7aeaadedd3359d8bf80591f3e4ee258))
+* fix rootDir when isComposite is false ([e65ab23](https://github.com/niieani/condu/commit/e65ab23683d912e821e8d827fa861c87fb805250))
+* improve support for various package managers ([acfe5d1](https://github.com/niieani/condu/commit/acfe5d1469145e27084a75dbb01ac3c9c053c4dc))
+* invalid workspace reference ([37f6029](https://github.com/niieani/condu/commit/37f6029848a43f06627f0ee2f7fcef4e535a7d07))
+* rename workspace name to allow for 'condu' package creation ([5b4dbfe](https://github.com/niieani/condu/commit/5b4dbfe0912ad8d64a227b875d34c39ae5d50959))
+* various small fixes ([40ad15a](https://github.com/niieani/condu/commit/40ad15a5a9eac419a1bc1d100bd86e25b9c44eca))
+* various small fixes ([c8fbadf](https://github.com/niieani/condu/commit/c8fbadf0f538086dca5d8d4093c274128c793743))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/types bumped to 0.1.4
+  * peerDependencies
+    * condu bumped to 0.1.6
+
 ## [0.1.5](https://github.com/niieani/condu/compare/@condu-feature/typescript@0.1.4...@condu-feature/typescript@0.1.5) (2024-08-03)
 
 

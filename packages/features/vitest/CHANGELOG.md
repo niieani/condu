@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.1.6](https://github.com/niieani/condu/compare/@condu-feature/vitest@0.1.5...@condu-feature/vitest@0.1.6) (2024-10-07)
+
+
+### Features
+
+* correctly resolve package versions before publishing ([ac37454](https://github.com/niieani/condu/commit/ac374544ecb35ad3c3f27a830f24276928168306))
+
+
+### Bug Fixes
+
+* extract core functionality to 'condu' package ([e2a5e53](https://github.com/niieani/condu/commit/e2a5e539f7aeaadedd3359d8bf80591f3e4ee258))
+* invalid workspace reference ([37f6029](https://github.com/niieani/condu/commit/37f6029848a43f06627f0ee2f7fcef4e535a7d07))
+* package updates and eslint fixes ([0ed7c63](https://github.com/niieani/condu/commit/0ed7c63c75992a8952c84d6d79280f3ca3bf4225))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * peerDependencies
+    * condu bumped to 0.1.6
+
 ## [0.1.5](https://github.com/niieani/condu/compare/@condu-feature/vitest@0.1.4...@condu-feature/vitest@0.1.5) (2024-08-03)
 
 
