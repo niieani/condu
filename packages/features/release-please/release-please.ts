@@ -87,6 +87,7 @@ export const releasePlease = ({
                       inputs: {
                         skipNpmRelease: {
                           description: "Skip NPM release",
+                          type: "boolean",
                           required: false,
                           default: false,
                         },
