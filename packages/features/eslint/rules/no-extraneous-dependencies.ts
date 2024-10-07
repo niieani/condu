@@ -1,3 +1,5 @@
+// based on https://github.com/un-ts/eslint-plugin-import-x/blob/0bac033b5ff15f46cfb98760be24b3f33436e4a7/src/rules/no-extraneous-dependencies.ts
+// with the addition of autofixing
 import fs from "node:fs";
 import path from "node:path";
 
@@ -13,7 +15,17 @@ import {
   importType,
   getFilePackageName,
 } from "eslint-plugin-import-x/utils/index.js";
+import {
+  makeLazyAutofix,
+  dependencyJsonCache,
+  writeJSONLater,
+  batchSaveMap,
+  allowedSemVerPrefixes,
+  matchWildcard,
+  type SemVerPrefix,
+} from "./utils.js";
 import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
+import type { Rule } from "eslint";
 
 type PackageDeps = ReturnType<typeof extractDepFields>;
 
@@ -29,7 +41,13 @@ function arrayOrKeys(arrayOrObject: object | string[]) {
     : Object.keys(arrayOrObject);
 }
 
-function readJSON<T>(jsonPath: string, throwException: boolean) {
+function readJSON<T>(
+  jsonPath: string,
+  throwException: boolean,
+  useCache: boolean = false,
+) {
+  if (useCache && batchSaveMap.has(jsonPath))
+    return batchSaveMap.get(jsonPath) as T;
   try {
     return JSON.parse(fs.readFileSync(jsonPath, "utf8")) as T;
   } catch (error) {
@@ -37,6 +55,7 @@ function readJSON<T>(jsonPath: string, throwException: boolean) {
       throw error;
     }
   }
+  return undefined;
 }
 
 function extractDepFields(pkg: PackageJson) {
@@ -70,6 +89,7 @@ function getPackageDepFields(packageJsonPath: string, throwAtRead: boolean) {
 
 function getDependencies(context: RuleContext, packageDir?: string | string[]) {
   let paths: string[] = [];
+  let sourcePath: string | undefined = undefined;
 
   try {
     let packageContent: PackageDeps = {
@@ -100,6 +120,9 @@ function getDependencies(context: RuleContext, packageDir?: string | string[]) {
             Object.assign(packageContent[key], packageContent_[key]);
           }
         }
+        if (paths.length === 1) {
+          sourcePath = packageJsonPath;
+        }
       }
     } else {
       // use closest package.json
@@ -112,6 +135,8 @@ function getDependencies(context: RuleContext, packageDir?: string | string[]) {
       if (packageContent_) {
         packageContent = packageContent_;
       }
+
+      sourcePath = packageJsonPath;
     }
 
     if (
@@ -123,10 +148,10 @@ function getDependencies(context: RuleContext, packageDir?: string | string[]) {
         packageContent.bundledDependencies,
       ].some(hasKeys)
     ) {
-      return;
+      return { packageContent: extractDepFields({}), sourcePath };
     }
 
-    return packageContent;
+    return { packageContent, sourcePath };
   } catch (error_) {
     const error = error_ as Error & { code: string };
 
@@ -144,6 +169,7 @@ function getDependencies(context: RuleContext, packageDir?: string | string[]) {
       });
     }
   }
+  return { packageContent: extractDepFields({}), sourcePath };
 }
 
 function getModuleOriginalName(name: string) {
@@ -211,11 +237,16 @@ type DepsOptions = {
   allowBundledDeps: boolean;
   verifyInternalDeps: boolean;
   verifyTypeImports: boolean;
+  autoFixVersionMapping?: AutoFixSpec;
+  autoFixFallback?: (typeof allowedSemVerPrefixes)[number];
 };
 
 function reportIfMissing(
   context: RuleContext<MessageId>,
-  deps: PackageDeps,
+  {
+    packageContent: deps,
+    sourcePath,
+  }: { packageContent: PackageDeps; sourcePath: string | undefined },
   depsOptions: DepsOptions,
   node: TSESTree.Node,
   name: string,
@@ -326,12 +357,76 @@ function reportIfMissing(
     return;
   }
 
+  const pkgName = realPackageName || importPackageName;
+  const [, autoFixVersionOrPrefix, target = "dependencies"] =
+    depsOptions.autoFixVersionMapping?.find(([nameOrScope]) => {
+      return pkgName === nameOrScope || matchWildcard(nameOrScope, pkgName);
+    }) ?? [undefined, depsOptions.autoFixFallback];
+
+  // TODO: add support for @types - should check both the type and the real package
+  const canAutofix =
+    autoFixVersionOrPrefix &&
+    (!realPackageName || realPackageName === importPackageName) &&
+    sourcePath;
+
   context.report({
     node,
     messageId: "missing",
     data: {
       packageName,
     },
+    fix: canAutofix
+      ? makeLazyAutofix(() => {
+          const importedPackageJsonPath = pkgUp({
+            cwd: path.dirname(resolved),
+          });
+          if (!importedPackageJsonPath) {
+            return;
+          }
+          const importedPackageContent =
+            dependencyJsonCache.get(importedPackageJsonPath) ??
+            readJSON(importedPackageJsonPath, false);
+
+          if (importedPackageContent) {
+            dependencyJsonCache.set(
+              importedPackageJsonPath,
+              importedPackageContent,
+            );
+          } else if (
+            !importedPackageContent.name ||
+            importedPackageContent.name !== pkgName
+          ) {
+            // cannot autofix, we likely resolved to a @types definition or an aliased package
+            return;
+          }
+
+          // guard against the case the package.json does not have a version specified:
+          const resolvedVersion = importedPackageContent.version ?? "*";
+          const version =
+            autoFixVersionOrPrefix === "" || autoFixVersionOrPrefix === "="
+              ? resolvedVersion
+              : autoFixVersionOrPrefix === "*"
+                ? "*"
+                : allowedSemVerPrefixes.includes(autoFixVersionOrPrefix) &&
+                    resolvedVersion !== "*"
+                  ? `${autoFixVersionOrPrefix}${resolvedVersion}`
+                  : autoFixVersionOrPrefix;
+
+          const packageJson = readJSON<PackageJson>(sourcePath, false, true);
+          if (!packageJson) {
+            return;
+          }
+
+          packageJson[target] ||= {};
+          packageJson[target][pkgName] = version;
+
+          // this is crucial, as eslint will re-run the rule after autofixing, causing a loop
+          // we can short-circuit this by updating the cache:
+          depFieldCache.set(sourcePath, extractDepFields(packageJson));
+
+          writeJSONLater(sourcePath, packageJson);
+        })
+      : undefined,
   });
 }
 
@@ -346,15 +441,23 @@ function testConfig(config: string[] | boolean | undefined, filename: string) {
   );
 }
 
-type Options = {
+export type AutoFixSpec = readonly (readonly [
+  packageOrPrefix: string,
+  autoFixVersionOrPrefix: string,
+  target?: "dependencies" | "devDependencies" | "peerDependencies",
+])[];
+
+export type Options = {
   packageDir?: string | string[];
-  devDependencies?: boolean;
-  optionalDependencies?: boolean;
-  peerDependencies?: boolean;
-  bundledDependencies?: boolean;
+  devDependencies?: boolean | string[];
+  optionalDependencies?: boolean | string[];
+  peerDependencies?: boolean | string[];
+  bundledDependencies?: boolean | string[];
   includeInternal?: boolean;
   includeTypes?: boolean;
   whitelist?: string[];
+  autoFixVersionMapping?: AutoFixSpec;
+  autoFixFallback?: SemVerPrefix;
 };
 
 type MessageId =
@@ -364,7 +467,7 @@ type MessageId =
   | "optDep"
   | "missing";
 
-export default createRule<[Options?], MessageId>({
+const rule = createRule<[Options?], MessageId>({
   name: "no-extraneous-dependencies",
   meta: {
     type: "problem",
@@ -372,6 +475,7 @@ export default createRule<[Options?], MessageId>({
       category: "Helpful warnings",
       description: "Forbid the use of extraneous packages.",
     },
+    fixable: "code",
     schema: [
       {
         type: "object",
@@ -384,6 +488,24 @@ export default createRule<[Options?], MessageId>({
           includeInternal: { type: ["boolean"] },
           includeTypes: { type: ["boolean"] },
           whitelist: { type: ["array"] },
+          autoFixVersionMapping: {
+            type: "array",
+            items: {
+              type: "array",
+              items: [
+                { type: "string" },
+                { type: "string" },
+                {
+                  type: ["string"],
+                  enum: ["dependencies", "devDependencies", "peerDependencies"],
+                },
+              ],
+              additionalItems: false,
+              maxItems: 3,
+              minItems: 2,
+            },
+          },
+          autoFixFallback: { enum: allowedSemVerPrefixes, type: ["string"] },
         },
         additionalProperties: false,
       },
@@ -405,8 +527,7 @@ export default createRule<[Options?], MessageId>({
 
     const filename = context.physicalFilename;
 
-    const deps =
-      getDependencies(context, options.packageDir) || extractDepFields({});
+    const depContext = getDependencies(context, options.packageDir);
 
     const depsOptions = {
       allowDevDeps: testConfig(options.devDependencies, filename) !== false,
@@ -417,6 +538,8 @@ export default createRule<[Options?], MessageId>({
         testConfig(options.bundledDependencies, filename) !== false,
       verifyInternalDeps: !!options.includeInternal,
       verifyTypeImports: !!options.includeTypes,
+      autoFixVersionMapping: options.autoFixVersionMapping,
+      autoFixFallback: options.autoFixFallback,
     };
 
     return {
@@ -424,7 +547,7 @@ export default createRule<[Options?], MessageId>({
         (source, node) => {
           reportIfMissing(
             context,
-            deps,
+            depContext,
             depsOptions,
             node,
             source.value,
@@ -435,7 +558,11 @@ export default createRule<[Options?], MessageId>({
       ),
       "Program:exit"() {
         depFieldCache.clear();
+        dependencyJsonCache.clear();
       },
     };
   },
 });
+
+// @ts-expect-error types from ESLint are for ESLint 9 vs @typescript-eslint/utils is for ESLint 8
+export default rule as Rule.RuleModule;
