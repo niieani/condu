@@ -8,74 +8,16 @@ import moduleVisitorModule from "eslint-module-utils/moduleVisitor";
 import { importType } from "eslint-plugin-import-x/utils/import-type.js";
 import { getFilePackageName } from "eslint-plugin-import-x/utils/package-path.js";
 import { docsUrl } from "eslint-plugin-import-x/utils/docs-url.js";
+import {
+  makeLazyAutofix,
+  dependencyJsonCache,
+  writeJSONLater,
+  batchSaveMap,
+  allowedSemVerPrefixes,
+} from "./utils.js";
 const { default: moduleVisitor } = moduleVisitorModule;
 const { default: pkgUp } = pkgUpModule;
 const { default: resolve } = resolveModule;
-
-// const path = require("path");
-// const fs = require("fs");
-// const pkgUp = require("eslint-module-utils/pkgUp").default;
-// const minimatch = require("minimatch");
-// const resolve = require("eslint-module-utils/resolve").default;
-// const moduleVisitor = require("eslint-module-utils/moduleVisitor").default;
-// const { importType } = require("eslint-plugin-import-x/utils/import-type.js");
-// const {
-//   getFilePackageName,
-// } = require("eslint-plugin-import-x/utils/package-path.js");
-// const { docsUrl } = require("eslint-plugin-import-x/utils/docs-url.js");
-
-// because autofixes are evaluated eagerly, it's not possible to do this correctly using eslint
-// this is a nasty hack that depends on the fact that eslint's SourceCodeFixer passes the text as is
-// the code hasn't changed for the past 5 years, so it should be safe for the time being
-// there's a call to startsWith(BOM) on the autofix text, which we can use to trigger the autofix
-// see https://github.com/eslint/eslint/blob/13d0bd371eb8eb4aa1601c8727212a62ab923d0e/lib/linter/source-code-fixer.js#L98
-
-// TODO: we could try to create a typescript language service plugin that does this,
-// and make it into a TS autofix instead
-
-class LazyAutofix extends String {
-  applied = false;
-  constructor(autofixFn, fixer) {
-    super("");
-    this.autofixFn = autofixFn;
-    this.fixer = fixer;
-  }
-  startsWith() {
-    if (!this.applied) {
-      this.autofixFn(this.fixer);
-      this.applied = true;
-    }
-    return false;
-  }
-  valueOf() {
-    return "";
-  }
-}
-
-const makeLazyAutofix = (autofixFn) => (fixer) => ({
-  range: [0, 0],
-  text: new LazyAutofix(autofixFn, fixer),
-});
-
-const batchSaveMap = new Map();
-let batchTimeout = null;
-const writeJSONLater = (jsonPath, content) => {
-  batchSaveMap.set(jsonPath, content);
-  if (batchTimeout) {
-    clearTimeout(batchTimeout);
-  }
-  batchTimeout = setTimeout(() => {
-    for (const [jsonPath, content] of batchSaveMap.entries()) {
-      fs.writeFile(jsonPath, JSON.stringify(content, null, 2) + "\n", () => {
-        batchSaveMap.delete(jsonPath);
-      });
-    }
-    batchTimeout = null;
-  }, 50);
-};
-
-const allowedSemVerPrefixes = ["", "=", "^", "~", ">=", "<=", "*"];
-const dependencyJsonCache = new Map();
 const depFieldCache = new Map();
 
 function arrayOrKeys(arrayOrObject) {
