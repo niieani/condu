@@ -66,7 +66,7 @@ export const getConfigs = (
     ...packageNameConventions.map(
       ({ nameConvention }) => [nameConvention, "workspace:^"] as const,
     ),
-    // ["vitest", "^", "devDependencies"],
+    ["condu", "workspace:^", "peerDependencies"],
   ];
 
   return [
