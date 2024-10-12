@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.7](https://github.com/niieani/condu/compare/@condu-feature/release-please@0.1.6...@condu-feature/release-please@0.1.7) (2024-10-12)
+
+
+### Bug Fixes
+
+* update release-please action ([0915450](https://github.com/niieani/condu/commit/0915450f2938b08dad8726ab04065d0537d813e3))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/types bumped to 0.1.5
+    * condu bumped to 0.1.7
+
 ## [0.1.6](https://github.com/niieani/condu/compare/@condu-feature/release-please@0.1.5...@condu-feature/release-please@0.1.6) (2024-10-07)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/niieani/condu/compare/@condu/types@0.1.4...@condu/types@0.1.5) (2024-10-12)
+
+
+### Bug Fixes
+
+* run tests in CI ([2150f65](https://github.com/niieani/condu/commit/2150f65fd7345bc2cfea74fa3e2717debb752c38))
+
 ## [0.1.4](https://github.com/niieani/condu/compare/@condu/types@0.1.3...@condu/types@0.1.4) (2024-10-07)
 
 
