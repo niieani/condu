@@ -11,7 +11,6 @@
     "@condu/types": "workspace:^",
     "@condu/update-specifiers": "workspace:^",
     "@condu/workspace-utils": "workspace:^",
-    "@condu-feature/autolink": "workspace:^",
     "@pnpm/catalogs.config": "^0.1.0",
     "@pnpm/exportable-manifest": "^7.0.1",
     "@pnpm/fetch": "^8.0.4",

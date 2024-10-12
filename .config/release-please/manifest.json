@@ -1,5 +1,4 @@
 {
-  "packages/features/autolink": "0.0.1",
   "packages/features/ci-github-actions": "0.1.6",
   "packages/features/condu-packages": "0.1.6",
   "packages/features/editorconfig": "0.0.1",
@@ -27,5 +26,6 @@
   "packages/platform/yarn-plugin": "0.1.5",
   "packages/presets/monorepo": "0.0.2",
   "packages/test/dummy-dep": "1.0.3",
-  "packages/test/dummy": "1.0.3"
+  "packages/test/dummy": "1.0.3",
+  "packages/features/autolink": "0.0.1"
 }

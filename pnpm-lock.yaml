@@ -143,15 +143,6 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1
 
-  packages/features/autolink:
-    dependencies:
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../../platform/types
-      ts-pattern:
-        specifier: ^5.4.0
-        version: 5.4.0
-
   packages/features/ci-github-actions:
     dependencies:
       '@condu/schema-types':
@@ -382,9 +373,6 @@ importers:
 
   packages/platform/cli:
     dependencies:
-      '@condu-feature/autolink':
-        specifier: workspace:^
-        version: link:../../features/autolink
       '@condu/core':
         specifier: workspace:^
         version: link:../core
@@ -467,9 +455,6 @@ importers:
 
   packages/platform/condu:
     dependencies:
-      '@condu-feature/autolink':
-        specifier: workspace:^
-        version: link:../../features/autolink
       '@condu/cli':
         specifier: workspace:^
         version: link:../cli

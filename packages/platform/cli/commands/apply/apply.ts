@@ -23,7 +23,7 @@ import {
   type FilesJsonCacheFileVersion1,
   type WrittenFile,
 } from "./readWrite.js";
-import { autolink } from "@condu-feature/autolink/autolink.js";
+import { autolink } from "../../builtin-features/autolink.js";
 
 export const getApplyHook =
   <TOut>(...fns: ((arg: TOut) => TOut | Promise<TOut>)[]) =>

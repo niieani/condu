@@ -6,7 +6,7 @@ import {
   CONDU_CONFIG_FILE_NAME,
   CONDU_CONFIG_DIR_NAME,
 } from "@condu/types/constants.js";
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "@condu/types/defineFeature.js";
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
 import { match, P } from "ts-pattern";

@@ -7,11 +7,6 @@
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
   "packages": {
-    "packages/features/autolink": {
-      "release-type": "node",
-      "component": "@condu-feature/autolink",
-      "initial-version": "0.0.1"
-    },
     "packages/features/ci-github-actions": {
       "release-type": "node",
       "component": "@condu-feature/ci-github-actions",
