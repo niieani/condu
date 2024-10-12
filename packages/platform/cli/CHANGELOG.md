@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.1.6](https://github.com/niieani/condu/compare/@condu/cli@0.1.5...@condu/cli@0.1.6) (2024-10-12)
+
+
+### Bug Fixes
+
+* break circular dependency (move autolink to platform) ([f5abb07](https://github.com/niieani/condu/commit/f5abb074253a1630535331ce08a78442c3e6e3b2))
+* update deprecated node API ([e665bb4](https://github.com/niieani/condu/commit/e665bb412884223d59c51f90ef69589ee96ec30c))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 0.1.5
+    * @condu/types bumped to 0.1.5
+    * @condu/update-specifiers bumped to 0.1.5
+    * @condu/workspace-utils bumped to 0.1.6
+
 ## [0.1.5](https://github.com/niieani/condu/compare/@condu/cli@0.1.4...@condu/cli@0.1.5) (2024-10-07)
 
 

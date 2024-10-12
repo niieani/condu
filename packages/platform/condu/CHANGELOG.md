@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.7](https://github.com/niieani/condu/compare/condu@0.1.6...condu@0.1.7) (2024-10-12)
+
+
+### Bug Fixes
+
+* break circular dependency (move autolink to platform) ([f5abb07](https://github.com/niieani/condu/commit/f5abb074253a1630535331ce08a78442c3e6e3b2))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/cli bumped to 0.1.6
+    * @condu/types bumped to 0.1.5
+    * @condu/update-specifiers bumped to 0.1.5
+    * @condu/workspace-utils bumped to 0.1.6
+
 ## [0.1.6](https://github.com/niieani/condu/compare/condu@0.1.5...condu@0.1.6) (2024-10-07)
 
 

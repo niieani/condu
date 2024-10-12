@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.0.5](https://github.com/niieani/condu/compare/@condu-feature/pnpm@0.0.4...@condu-feature/pnpm@0.0.5) (2024-10-12)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/types bumped to 0.1.5
+  * peerDependencies
+    * condu bumped to 0.1.7
+
 ## [0.0.4](https://github.com/niieani/condu/compare/@condu-feature/pnpm@0.0.3...@condu-feature/pnpm@0.0.4) (2024-10-07)
 
 

@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.1.7](https://github.com/niieani/condu/compare/@condu-feature/eslint@0.1.6...@condu-feature/eslint@0.1.7) (2024-10-12)
+
+
+### Features
+
+* add autofixing capability to no-extraneous-dependencies ([e9431f8](https://github.com/niieani/condu/commit/e9431f8be4e85a9ccc58d88e6bece4b860d04be1))
+
+
+### Bug Fixes
+
+* correctly autofix using provided autoFixVersionMapping ([50b8b22](https://github.com/niieani/condu/commit/50b8b22e17d8dead484bf3c77b106e4c7d11aee5))
+* force 'condu' autofix to peerDependency ([b3e2e61](https://github.com/niieani/condu/commit/b3e2e61cd337d0096bd125836c78eb41fd9d99d0))
+* update eslint config ([c8d83e4](https://github.com/niieani/condu/commit/c8d83e433b13214161ccb8039484b299d4593042))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/types bumped to 0.1.5
+  * peerDependencies
+    * condu bumped to 0.1.7
+
 ## [0.1.6](https://github.com/niieani/condu/compare/@condu-feature/eslint@0.1.5...@condu-feature/eslint@0.1.6) (2024-10-07)
 
 

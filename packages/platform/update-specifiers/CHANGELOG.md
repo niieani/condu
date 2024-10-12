@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.5](https://github.com/niieani/condu/compare/@condu/update-specifiers@0.1.4...@condu/update-specifiers@0.1.5) (2024-10-12)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 0.1.5
+
 ## [0.1.4](https://github.com/niieani/condu/compare/@condu/update-specifiers@0.1.3...@condu/update-specifiers@0.1.4) (2024-10-07)
 
 

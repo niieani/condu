@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.7](https://github.com/niieani/condu/compare/@condu-feature/ci-github-actions@0.1.6...@condu-feature/ci-github-actions@0.1.7) (2024-10-12)
+
+
+### Bug Fixes
+
+* run tests in CI ([2150f65](https://github.com/niieani/condu/commit/2150f65fd7345bc2cfea74fa3e2717debb752c38))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/types bumped to 0.1.5
+  * peerDependencies
+    * condu bumped to 0.1.7
+
 ## [0.1.6](https://github.com/niieani/condu/compare/@condu-feature/ci-github-actions@0.1.5...@condu-feature/ci-github-actions@0.1.6) (2024-10-07)
 
 
