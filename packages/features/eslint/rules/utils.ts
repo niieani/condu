@@ -66,16 +66,24 @@ const semVerPrefixes = ["", "=", "^", "~", ">=", "<=", "*"] as const;
 export type SemVerPrefix = (typeof semVerPrefixes)[number];
 export const allowedSemVerPrefixes: Array<string> = [...semVerPrefixes];
 
-// TODO: import { matchWildcard } from "@condu/core/utils/matchWildcard.js";
-export function matchWildcard(pattern: string, str: string): boolean {
-  // Escape special characters in pattern and replace '*' with '.*' for regex
-  const regexPattern = pattern
-    .replace(/[$()*+.?[\\\]^{|}]/g, "\\$&")
-    .replace(/\*/g, ".*");
+/**
+ * Escapes special regex characters in a string except for '*'
+ * @param str - The string to escape
+ * @returns The escaped string
+ */
+function escapeRegex(str: string): string {
+  return str.replace(/[$()*+.?[\\\]^{|}]/g, "\\$&");
+}
 
-  // Create a regular expression from the pattern
-  const regex = new RegExp(`^${regexPattern}$`);
-
-  // Test if the string matches the regular expression
-  return regex.test(str);
+/**
+ * Converts a wildcard pattern to a RegExp object
+ * @param pattern - The wildcard pattern
+ * @returns The RegExp object
+ */
+export function wildcardToRegExp(pattern: string): RegExp {
+  // Escape all special regex characters
+  const escaped = escapeRegex(pattern);
+  // Replace '\*' with '.*'
+  const regexString = `^${escaped.replace(/\\\*/g, ".*")}$`;
+  return new RegExp(regexString);
 }

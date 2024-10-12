@@ -2,5 +2,16 @@
   "name": "@condu-preset/monorepo",
   "version": "0.0.2",
   "sideEffects": false,
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@condu-feature/ci-github-actions": "workspace:^",
+    "@condu-feature/condu-packages": "workspace:^",
+    "@condu-feature/eslint": "workspace:^",
+    "@condu-feature/gitignore": "workspace:^",
+    "@condu-feature/moon": "workspace:^",
+    "@condu-feature/pnpm": "workspace:^",
+    "@condu-feature/release-please": "workspace:^",
+    "@condu-feature/typescript": "workspace:^",
+    "@condu-feature/vscode": "workspace:^"
+  }
 }

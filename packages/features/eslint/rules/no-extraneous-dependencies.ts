@@ -16,13 +16,13 @@ import {
   getFilePackageName,
 } from "eslint-plugin-import-x/utils/index.js";
 import {
+  type SemVerPrefix,
   makeLazyAutofix,
   dependencyJsonCache,
   writeJSONLater,
   batchSaveMap,
   allowedSemVerPrefixes,
-  matchWildcard,
-  type SemVerPrefix,
+  wildcardToRegExp,
 } from "./utils.js";
 import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
 import type { Rule } from "eslint";
@@ -237,7 +237,7 @@ type DepsOptions = {
   allowBundledDeps: boolean;
   verifyInternalDeps: boolean;
   verifyTypeImports: boolean;
-  autoFixVersionMapping?: AutoFixSpec;
+  autoFixVersionMapping?: AutoFixSpecTransformed;
   autoFixFallback?: (typeof allowedSemVerPrefixes)[number];
 };
 
@@ -359,9 +359,11 @@ function reportIfMissing(
 
   const pkgName = realPackageName || importPackageName;
   const [, autoFixVersionOrPrefix, target = "dependencies"] =
-    depsOptions.autoFixVersionMapping?.find(([nameOrScope]) => {
-      return pkgName === nameOrScope || matchWildcard(nameOrScope, pkgName);
-    }) ?? [undefined, depsOptions.autoFixFallback];
+    depsOptions.autoFixVersionMapping?.find(([nameOrScope]) =>
+      nameOrScope instanceof RegExp
+        ? nameOrScope.test(pkgName)
+        : pkgName === nameOrScope,
+    ) ?? [undefined, depsOptions.autoFixFallback];
 
   // TODO: add support for @types - should check both the type and the real package
   const canAutofix =
@@ -441,8 +443,14 @@ function testConfig(config: string[] | boolean | undefined, filename: string) {
   );
 }
 
+export type AutoFixSpecTransformed = readonly (readonly [
+  packageOrWildcard: string | RegExp,
+  autoFixVersionOrPrefix: string,
+  target?: "dependencies" | "devDependencies" | "peerDependencies",
+])[];
+
 export type AutoFixSpec = readonly (readonly [
-  packageOrPrefix: string,
+  packageOrWildcard: string,
   autoFixVersionOrPrefix: string,
   target?: "dependencies" | "devDependencies" | "peerDependencies",
 ])[];
@@ -529,7 +537,7 @@ const rule = createRule<[Options?], MessageId>({
 
     const depContext = getDependencies(context, options.packageDir);
 
-    const depsOptions = {
+    const depsOptions: DepsOptions = {
       allowDevDeps: testConfig(options.devDependencies, filename) !== false,
       allowOptDeps:
         testConfig(options.optionalDependencies, filename) !== false,
@@ -538,7 +546,14 @@ const rule = createRule<[Options?], MessageId>({
         testConfig(options.bundledDependencies, filename) !== false,
       verifyInternalDeps: !!options.includeInternal,
       verifyTypeImports: !!options.includeTypes,
-      autoFixVersionMapping: options.autoFixVersionMapping,
+      autoFixVersionMapping: options.autoFixVersionMapping?.map(
+        ([packageOrWildcard, ...tuple]) => [
+          packageOrWildcard.length > 1 && packageOrWildcard.includes("*")
+            ? wildcardToRegExp(packageOrWildcard)
+            : packageOrWildcard,
+          ...tuple,
+        ],
+      ),
       autoFixFallback: options.autoFixFallback,
     };
 
