@@ -6,7 +6,7 @@
   "type": "module",
   "dependencies": {
     "@condu/schema-types": "workspace:^",
-    "@moonrepo/types": "^1.19.1",
+    "@moonrepo/types": "^1.21.0",
     "ts-pattern": "^5.2.0"
   },
   "devDependencies": {
