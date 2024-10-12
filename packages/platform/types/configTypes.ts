@@ -211,6 +211,8 @@ export interface Conventions {
   buildDir?: string;
   /** @default ['.gen', '.generated'] */
   generatedSourceFileNameSuffixes?: string[];
+
+  // TODO: add a convention for test files
 }
 
 export interface ResolvedConventionsWithWorkspace

@@ -69,9 +69,7 @@ export const moonCi = (opts: {} = {}) =>
             {
               run: `./node_modules/.bin/moon ci :build`,
               shell: "bash",
-              env: {
-                MOON_TOOLCHAIN_FORCE_GLOBALS: "true",
-              },
+              env: { MOON_TOOLCHAIN_FORCE_GLOBALS: "true" },
             },
           ],
         },
@@ -89,6 +87,7 @@ export const moonCi = (opts: {} = {}) =>
           ci: {
             name: "Moon CI",
             "runs-on": "ubuntu-latest",
+            env: { MOON_TOOLCHAIN_FORCE_GLOBALS: "true" },
             steps: [
               {
                 uses: "actions/checkout@v4",
@@ -97,8 +96,13 @@ export const moonCi = (opts: {} = {}) =>
               },
               // TODO: always use the version from main, not the checked out one
               {
-                name: "Moon CI",
+                name: "Moon CI Setup",
                 uses: "./.github/actions/moon-ci-setup",
+              },
+              {
+                name: "Test",
+                run: `./node_modules/.bin/moon ci :test`,
+                shell: "bash",
               },
             ],
           },
