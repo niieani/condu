@@ -1,7 +1,6 @@
 import type {
   Project,
   WorkspaceProjectDefined,
-  WorkspaceRootPackage,
 } from "@condu/types/configTypes.js";
 import { loadConduProject } from "../../loadProject.js";
 import * as fs from "node:fs/promises";
@@ -12,6 +11,7 @@ import { getSingleMatch, type MatchOptions } from "../../matchPackage.js";
 import type { CommandContext } from "./CreateCommand.js";
 import childProcess from "node:child_process";
 import { copyFiles } from "@condu/core/utils/copy.js";
+import { pick } from "remeda";
 
 // const gitUser = (await $`git config user.name`).stdout.trim();
 // const gitEmail = (await $`git config user.email`).stdout.trim();
@@ -19,6 +19,7 @@ import { copyFiles } from "@condu/core/utils/copy.js";
 export interface CreateOptions extends MatchOptions {
   description?: string;
   context: CommandContext;
+  private?: boolean;
 }
 
 export async function createCommand({
@@ -26,6 +27,7 @@ export async function createCommand({
   description,
   name,
   context,
+  ...rest
 }: CreateOptions) {
   const project = await loadConduProject();
   if (!project) {
@@ -50,7 +52,7 @@ export async function createCommand({
   // TODO: do I want to add prompts for description with inquirer package?
   // maybe not, since the workflow should be as simple as possible
   // and the user can always edit the package.json after creation
-  await createPackage({ match, project, description, context });
+  await createPackage({ match, project, description, context, ...rest });
 }
 
 export interface ConventionMatch {
@@ -71,16 +73,18 @@ export async function createPackage({
   project,
   description,
   context,
+  private: privatePackage,
 }: {
   match: Match;
   project: Project;
   description: string | undefined;
+  private?: boolean;
   context: CommandContext;
 }) {
   const modulePath = path.normalize(path.join(project.absPath, match.path));
   const packageJsonPath = path.join(modulePath, "package.json");
   const convention = "convention" in match ? match.convention : undefined;
-  const isPrivate = convention?.private;
+  const isPrivate = privatePackage || convention?.private;
   const templatePath =
     convention?.templatePath && path.isAbsolute(convention.templatePath)
       ? path.join(project.absPath, convention.templatePath)
@@ -119,6 +123,14 @@ export async function createPackage({
     .then((buffer): PackageJson => JSON.parse(buffer.toString()))
     .catch(() => false as const);
 
+  const templatePackageJsonPath = path.join(templatePath, "package.json");
+  const templatePackageJson =
+    templateExists &&
+    (await fs
+      .readFile(templatePackageJsonPath)
+      .then((buffer): PackageJson => JSON.parse(buffer.toString()))
+      .catch(() => false as const));
+
   if (!existingPackageJson && !templateExists) {
     // might need to create the directory
     await fs.mkdir(modulePath, { recursive: true });
@@ -138,6 +150,14 @@ export async function createPackage({
       ? { private: isPrivate }
       : { publishConfig: { access: "public" } }),
     sideEffects: false,
+    ...(templatePackageJson
+      ? pick(templatePackageJson, [
+          "dependencies",
+          "devDependencies",
+          "peerDependencies",
+          "peerDependenciesMeta",
+        ])
+      : {}),
     ...existingPackageJson,
   });
 
