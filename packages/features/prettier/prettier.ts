@@ -64,7 +64,7 @@ export const prettier = ({
               type: "format",
               definition: {
                 command: "prettier",
-                options: { cache: false },
+                options: { cache: false, runInCI: false },
                 args: [".", "--write"],
               },
             },

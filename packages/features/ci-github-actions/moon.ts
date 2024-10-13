@@ -210,6 +210,7 @@ function getWorkspaceTasks({
         ),
         inputs: [],
         ...(type === "publish" && { options: { runDepsInParallel: false } }),
+        ...(type === "format" && { options: { runInCI: false } }),
       }),
   );
 
