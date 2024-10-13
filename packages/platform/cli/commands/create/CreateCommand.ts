@@ -16,6 +16,12 @@ export class CreateCommand extends Command {
 
   partialPath = Option.String({ required: true });
   name = Option.String("--as");
+  description = Option.String("--description", {
+    description: "Description for the package",
+  });
+  private = Option.Boolean("--private", {
+    description: "Create a private package",
+  });
 
   async execute() {
     const { createCommand } = await import("./create.js");
@@ -23,6 +29,8 @@ export class CreateCommand extends Command {
     return await createCommand({
       partialPath: this.partialPath,
       name: this.name,
+      description: this.description,
+      private: this.private,
       context: createCommandContext(this.context),
     });
   }
