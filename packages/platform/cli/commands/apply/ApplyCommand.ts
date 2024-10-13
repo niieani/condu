@@ -1,4 +1,4 @@
-import { Command, Option } from "clipanion";
+import { Command } from "clipanion";
 
 export class ApplyCommand extends Command {
   static override paths = [["apply"]];

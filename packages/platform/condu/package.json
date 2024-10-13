@@ -4,7 +4,9 @@
   "license": "MIT",
   "sideEffects": true,
   "type": "module",
-  "bin": "main.ts",
+  "bin": {
+    "condu": "cli.ts"
+  },
   "//dependencies": "these need to inherit/include all dependencies from @condu/cli",
   "dependencies": {
     "@condu/cli": "workspace:^",

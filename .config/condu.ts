@@ -60,7 +60,7 @@ export default configure((pkg) => ({
     libraryBundle({
       id: "cli",
       package: "condu",
-      entry: "main.ts",
+      entry: "cli.ts",
       moduleTarget: "esm",
       binName: "condu",
     }),

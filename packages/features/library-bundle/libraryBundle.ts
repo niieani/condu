@@ -66,18 +66,23 @@ export const libraryBundle = ({
             hooks: {
               modifyEntrySourcesForRelease(entrySources) {
                 const rootEntry = { ...entrySources["."]! };
-                rootEntry.import = `./${path.join(
-                  packageRelativePathToEntry,
-                  builtEntryName,
-                )}`;
-                rootEntry.bun = rootEntry.import;
-                rootEntry.default = rootEntry.import;
-                rootEntry.types = rootEntry.source?.replace(
-                  /\.[cm]?ts$/,
-                  ".d.ts",
-                );
-                delete rootEntry.require;
+                const relativeToPath = `./${path.join(packageRelativePathToEntry, builtEntryName)}`;
+                const types = `./${entry.replace(/\.[cm]?ts$/, ".d.ts")}`;
+                if (rootEntry.source === `./${entry}`) {
+                  // we're overriding the root entry with the built version
+                  rootEntry.import = relativeToPath;
+                  rootEntry.bun = relativeToPath;
+                  rootEntry.default = relativeToPath;
+                  rootEntry.types = types;
+                  delete rootEntry.require;
+                }
                 return {
+                  [relativeToPath]: {
+                    import: relativeToPath,
+                    bun: relativeToPath,
+                    default: relativeToPath,
+                    types: types,
+                  },
                   ...entrySources,
                   ".": rootEntry,
                 };
