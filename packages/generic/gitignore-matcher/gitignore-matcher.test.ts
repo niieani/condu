@@ -18,7 +18,7 @@ describe("GitIgnore Parser and Tester", () => {
       ["app.LOG", true], // Case-sensitive match
       ["doc/readme.TXT", true],
     ])('should correctly accept or deny "%s"', (path, expected) => {
-      expect(gitignore.accepts(path)).toBe(expected);
+      expect(gitignore.isAccepted(path)).toBe(expected);
     });
   });
 
@@ -39,7 +39,7 @@ logs/
     ])(
       'should correctly accept or deny "%s" with negation',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
   });
@@ -64,7 +64,7 @@ file\\ name.txt
     ])(
       'should correctly handle escaped characters for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
   });
@@ -91,7 +91,7 @@ temp/
     ])(
       'should correctly accept or deny directory-specific patterns for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
   });
@@ -128,7 +128,7 @@ foo/**/rec**on
     ])(
       'should correctly handle multiple wildcards for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
   });
@@ -154,7 +154,7 @@ image[a-c].png
     ])(
       'should correctly handle character ranges for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
   });
@@ -183,7 +183,7 @@ image[a-c].png
     ])(
       'should correctly handle complex sequence for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
   });
@@ -212,7 +212,7 @@ docs/
     ])(
       'should correctly handle leading/trailing slashes for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
   });
@@ -233,7 +233,7 @@ docs/
       ])(
         'should correctly handle prefix "**" patterns for "%s"',
         (path, expected) => {
-          expect(gitignore.accepts(path)).toBe(expected);
+          expect(gitignore.isAccepted(path)).toBe(expected);
         },
       );
     });
@@ -256,30 +256,9 @@ logs/**
       ])(
         'should correctly handle suffix "**" patterns for "%s"',
         (path, expected) => {
-          expect(gitignore.accepts(path)).toBe(expected);
+          expect(gitignore.isAccepted(path)).toBe(expected);
         },
       );
-    });
-  });
-
-  describe("WasFiltered API", () => {
-    const gitignoreContent = `
-*.log
-!important.log
-/build/
-`;
-    const gitignore = new GitIgnore(gitignoreContent);
-
-    test.each([
-      ["error.log", true],
-      ["important.log", true],
-      ["build/app.js", true],
-      ["src/app.js", false],
-      ["build/", true],
-      ["important.log", true],
-      ["nested/build/app.js", false],
-    ])('should correctly report wasFiltered for "%s"', (path, expected) => {
-      expect(gitignore.explain(path)).toBe(expected);
     });
   });
 
@@ -301,7 +280,7 @@ src/*.js
       ["test/app.js", false],
       ["src/lib/deep/utils.js", false], // Not matched by '!src/lib/*.js'
     ])('should correctly handle mixed patterns for "%s"', (path, expected) => {
-      expect(gitignore.accepts(path)).toBe(expected);
+      expect(gitignore.isAccepted(path)).toBe(expected);
     });
   });
 
@@ -325,7 +304,7 @@ data\\ \\[backup\\].csv
     ])(
       'should correctly handle spaces and special characters for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
   });
@@ -352,7 +331,7 @@ data\\ \\[backup\\].csv
     ])(
       'should correctly handle Git manpage edge cases for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
 
@@ -368,7 +347,7 @@ data\\ \\[backup\\].csv
       ["src/app.js", true],
       ["#notsecret.txt", true],
     ])('should correctly handle escaped # for "%s"', (path, expected) => {
-      expect(gitignore2.accepts(path)).toBe(expected);
+      expect(gitignore2.isAccepted(path)).toBe(expected);
     });
   });
 
@@ -392,7 +371,7 @@ data\\ \\[backup\\].csv
     ])(
       'should correctly ignore comments and empty lines for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
   });
@@ -413,7 +392,7 @@ data\\ \\[backup\\].csv
     ])(
       'should correctly handle case sensitivity for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
   });
@@ -440,7 +419,7 @@ data\\ \\[backup\\].csv
       ])(
         'should correctly handle root pattern `/build` for "%s"',
         (path, expected) => {
-          expect(gitignore.accepts(path)).toBe(expected);
+          expect(gitignore.isAccepted(path)).toBe(expected);
         },
       );
     });
@@ -466,7 +445,7 @@ build/
       ])(
         'should correctly handle subdirectory pattern `build/` for "%s"',
         (path, expected) => {
-          expect(gitignore.accepts(path)).toBe(expected);
+          expect(gitignore.isAccepted(path)).toBe(expected);
         },
       );
     });
@@ -492,7 +471,7 @@ src/build/
       ])(
         'should correctly handle subdirectory pattern `src/build/` for "%s"',
         (path, expected) => {
-          expect(gitignore.accepts(path)).toBe(expected);
+          expect(gitignore.isAccepted(path)).toBe(expected);
         },
       );
     });
@@ -509,7 +488,7 @@ src/build/
       ["readme.md", true],
       ["debug.log ", true], // Gitignore only specifies *.log (ignoring trailing space), so this one is accepted
     ])('should correctly handle trailing spaces for "%s"', (path, expected) => {
-      expect(gitignore.accepts(path)).toBe(expected);
+      expect(gitignore.isAccepted(path)).toBe(expected);
     });
   });
 
@@ -528,7 +507,7 @@ src/build/
       ["src/.hidden/file.txt", false],
       ["regular.file", true],
     ])('should correctly handle hidden files for "%s"', (path, expected) => {
-      expect(gitignore.accepts(path)).toBe(expected);
+      expect(gitignore.isAccepted(path)).toBe(expected);
     });
   });
 
@@ -549,7 +528,7 @@ src/build/
     ])(
       'should correctly handle trailing whitespace and escaped spaces for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
   });
@@ -567,7 +546,7 @@ src/build/
     ])(
       'should correctly handle patterns starting with "!" for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
   });
@@ -583,7 +562,7 @@ src/build/
     ])(
       'should correctly handle patterns with CRLF for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
   });
@@ -604,26 +583,80 @@ docs/**/build/
     ])(
       'should correctly handle recursive directory patterns for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
   });
 
-  describe.todo("Character Class Negation", () => {
+  describe("Explain API", () => {
+    const gitignoreContent = `
+*.log
+!important.log
+/build/
+`;
+    const gitignore = new GitIgnore(gitignoreContent);
+
+    test.each([
+      [
+        "error.log",
+        {
+          outcome: "ignored",
+          reason: expect.objectContaining({ line: "*.log" }),
+        },
+      ],
+      [
+        "important.log",
+        {
+          outcome: "accepted",
+          reason: expect.objectContaining({ line: "!important.log" }),
+        },
+      ],
+      [
+        "build/app.js",
+        {
+          outcome: "ignored",
+          reason: expect.objectContaining({ line: "/build/" }),
+        },
+      ],
+      [
+        "src/app.js",
+        {
+          outcome: "accepted",
+        },
+      ],
+      [
+        "build/",
+        {
+          outcome: "ignored",
+          reason: expect.objectContaining({ line: "/build/" }),
+        },
+      ],
+      [
+        "nested/build/app.js",
+        {
+          outcome: "accepted",
+        },
+      ],
+    ])('should correctly explain the reason for "%s"', (path, expected) => {
+      expect(gitignore.explain(path)).toEqual(expected);
+    });
+  });
+
+  describe("Character Class Negation", () => {
     const gitignoreContent = `
 file[!0-9].txt
 `;
     const gitignore = new GitIgnore(gitignoreContent);
 
     test.each([
-      ["filea.txt", false],
-      ["file9.txt", true],
-      ["file0.txt", true],
-      ["file$.txt", false],
+      ["filea.txt", true],
+      ["file9.txt", false],
+      ["file0.txt", false],
+      ["file$.txt", true],
     ])(
       'should correctly handle character class negation for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isIgnored(path)).toBe(expected);
       },
     );
   });
@@ -642,7 +675,7 @@ file[!0-9].txt
     ])(
       'should correctly handle gitignore in subdirectories for "%s"',
       (path, expected) => {
-        expect(gitignore.accepts(path)).toBe(expected);
+        expect(gitignore.isAccepted(path)).toBe(expected);
       },
     );
   });
