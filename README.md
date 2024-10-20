@@ -29,6 +29,16 @@ Override only the parts you need to in your given project, and keep the rest up 
 Scaffolding seems great at first, but isn't good enough, because it's not maintainable.
 The ecosystem moves too fast, and there are no configuration management tools in the JavaScript ecosystem.
 
+---
+
+Another problem is that often when you want to install a new tool, you have to update configuration files of all the tools you're using.
+You need to know how to make the tools work together, and you need to know how to configure them.
+This is challenging, because the tools are often not designed to work together, and they have different configuration formats.
+It's unlikely you are an expert in all of them, and might be missing out on the best practices.
+`condu` solves this by helping features contribute to other feature's context, or directly extend others' configuration files.
+
+---
+
 `condu` fixes [this](https://twitter.com/WarrenInTheBuff/status/1672839156647575552) long list of files in your root of repo:
 
 - tsconfig.json

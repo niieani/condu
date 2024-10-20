@@ -80,8 +80,10 @@
 - [x] vitest feature
 - [x] CI build and test using moon
 - [x] a way to ensure that certain dependencies/devDependencies/peerDependencies are set, or at least copy them over from template
+- [ ] add `repository`, `homepage` (fallback to repo) and `author`, `license` and `contributors` info to published package.json based on the root package.json
 - [ ] re-evaluate the API for writing features - there's a lot of nesting, can it be simplified a bit?
   - also need a way to hook into each others features (i.e. modify behavior if other features are enabled)
+  - maybe simply hooking into the outputted files (if they exist?), creating kind of a pipeline of file transformations?
 - [ ] preset with my features and feature config pre-applied
 - [ ] test it out in an existing project
   - [ ] add condu to `mockify` and publish the packages
@@ -89,12 +91,22 @@
   - [ ] support converting a single-repo to a monorepo
   - [ ] auto-create the initial packages/ directory
   - [ ] maybe you can specify which preset to use and there are additional steps taken?
-- [ ]
+  - [ ] by default 'tsx' is missing from eslint apply, since bun always uses 'source' version its always needed
+- [ ] use non-composite projects by default (composite support might need more work - adding references based on dependencies)
+- [ ] 'apply' command:
+  - [ ] when applying is done for the first time, and files exist, make sure to prompt for overwrite and remove these files from git using git rm --cached
+- [ ] something is still broken with figuring out default branch
+- [ ] if we had a wrapper on the tool (pnpm/yarn/bun), could maybe symlink the workspace (and even lock) files? although maybe best not to move the lockfile in case it's used by other tools that do static analysis (like Snyk) and depend on it being in the root
+- [ ] add a command to update/set the package manager and node version in the root package.json
+- [ ] a way to add custom test / deploy scripts? maybe if one is present in any package.json, we could auto-add it to CI process?
+- [ ] bump versions to 1.0
 
 - alpha shippable 1.0 state -
 
 ## Later:
 
+- [ ] global install with brew + creating github repos via CLI through API
+- [ ] ability to publish multiple npm utility packages from a single folder (one per file)
 - [ ] should this be a feature? package.json "exports" should be updated in apply to route paths to the sourceDir and support importing from the package name (should we discourage imports from root package? but it's an industry practice though)
 - [ ] adopt EffectTS
 - [ ] support TS's `rewriteRelativeImportExtensions` and use .ts extensions as default (use eslint to enforce .ts extensions)
@@ -109,6 +121,10 @@
 - [ ] some basic integration tests that use the linked/built packages
 - [ ] add a mutex lock to prevent concurrent runs of apply, maybe something like [this](https://github.com/szikszail/cross-process-lock/blob/master/src/lock.ts) (auto-expire lock after a few seconds)
 - [ ] integration test the release process - inspiration: [zx-bulk-release](https://github.com/semrel-extra/zx-bulk-release/blob/b2a22a483a810be63e059bcbcb1db08289729809/src/test/js/integration.test.js)
+- [ ] store file list, tasks and dependencies in a git-committed file, so that any removals/upgrades can be flagged as changes during diffing
+  - e.g. .config/condu/.files
+  - e.g. .config/condu/.dependencies // automatically updated when doing 'yarn add' so that it's compatible with dep. auto-updaters
+- [ ] also store version of each feature, so that we can detect if a feature has been upgraded
 - [ ] detect packageManager from lockfile if not configured
 - [ ] what is up with yarnrc changing on its own?
 - [ ] add validation for feature dependencies (e.g. "auto" feature depends on "lerna")
