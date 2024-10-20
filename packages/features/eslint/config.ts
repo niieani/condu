@@ -148,7 +148,7 @@ export const getConfigs = (
 
         // others:
         "unicorn/prefer-regexp-test": "error",
-        "unicorn/better-regex": "error",
+        "unicorn/better-regex": ["error", { sortCharacterClasses: false }],
         "unicorn/new-for-builtins": "error",
         "unicorn/consistent-function-scoping": "error",
         "unicorn/custom-error-definition": "error",

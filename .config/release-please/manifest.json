@@ -16,6 +16,7 @@
   "packages/features/vitest": "0.1.7",
   "packages/features/vscode": "0.1.7",
   "packages/features/yarn": "0.1.7",
+  "packages/generic/gitignore-matcher": "0.0.0",
   "packages/platform/cli": "0.1.6",
   "packages/platform/condu": "0.1.7",
   "packages/platform/core": "0.1.5",

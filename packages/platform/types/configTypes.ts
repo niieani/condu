@@ -346,8 +346,8 @@ export interface ProjectConventionConfig {
   private?: boolean;
 
   /**
-   * path to the template folder that will be used
-   * to bootstrap packages created using the convention
+   * path to the template folder, relative to the path of the new would-be package
+   * it will be used to bootstrap packages created using the convention
    *
    * @default `../@template`
    **/

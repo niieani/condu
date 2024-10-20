@@ -110,6 +110,7 @@ export const vscode = ({
                   },
               },
             ],
+            devDependencies: RUNNING_SOURCE_VERSION ? ["tsx"] : [],
           },
         ],
       };

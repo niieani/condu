@@ -9,8 +9,6 @@ import type {
   ConduConfigWithInferredValuesAndProject,
   StateFlags,
   LoadConfigOptions,
-  Project,
-  WorkspaceSubPackage,
 } from "@condu/types/configTypes.js";
 import { groupBy, isDeepEqual } from "remeda";
 import { loadConduProject } from "../../loadProject.js";
@@ -181,16 +179,11 @@ export async function collectState(
     }
   }
 
-  // TODO: store file list, tasks and dependencies in a git-committed file, so that any removals/upgrades can be flagged as changes during diffing
-  // e.g. .config/condu/.files
-  // e.g. .config/condu/.dependencies // automatically updated when doing 'yarn add' so that it's compatible with dep. auto-updaters
-  // TODO: also store version of each feature, so that we can detect if a feature has been upgraded
-
   return state;
 }
 
 export async function apply(options: LoadConfigOptions = {}) {
-  // TODO: add a mutex lock to prevent concurrent runs of apply
+  // TODO: add a mutex file lock to prevent concurrent runs of apply
   const { throwOnManualChanges } = options;
   const project = await loadConduProject(options);
   if (!project) {
@@ -204,13 +197,6 @@ export async function apply(options: LoadConfigOptions = {}) {
     config,
     projectConventions,
   } = project;
-
-  // TODO: migrate to https://github.com/Effect-TS/schema
-  // const config = t.decodeOrThrow(
-  //   RepoConfigValidator,
-  //   importedConfigFile.default,
-  //   `Errors in config file`,
-  // );
 
   let didChangeManifest = false;
 
@@ -377,45 +363,4 @@ export async function apply(options: LoadConfigOptions = {}) {
     project,
     collectedState,
   };
-}
-
-export function getPublishablePackageDirectory(
-  project: Project,
-  pkg: Pick<WorkspaceSubPackage, "relPath" | "manifest">,
-): string {
-  return path.join(
-    project.absPath,
-    project.config.conventions.buildDir,
-    pkg.relPath,
-  );
-}
-
-export function getRelativePublishConfigDirectory(
-  project: Project,
-  pkg: Pick<WorkspaceSubPackage, "relPath" | "manifest">,
-): string {
-  // see https://pnpm.io/package_json#publishconfigdirectory
-  const originalPackageDir = path.join(project.absPath, pkg.relPath);
-  const publishablePackageDir = getPublishablePackageDirectory(project, pkg);
-  const relativePath = path.relative(originalPackageDir, publishablePackageDir);
-  return relativePath;
-}
-
-async function ensurePublishConfigDirectorySetInManifestFiles(
-  project: Project,
-) {
-  for (const pkg of await project.getWorkspacePackages()) {
-    // ensure there's a publishConfig.directory set for each package
-    const relativePath = getRelativePublishConfigDirectory(project, pkg);
-    const publishableDirectory = pkg.manifest.publishConfig?.["directory"];
-    // if (publishableDirectory) {
-    //   delete pkg.manifest.publishConfig;
-    //   await pkg.writeProjectManifest(pkg.manifest);
-    // }
-    if (publishableDirectory !== relativePath) {
-      pkg.manifest.publishConfig ??= {};
-      pkg.manifest.publishConfig["directory"] = relativePath;
-      await pkg.writeProjectManifest(pkg.manifest);
-    }
-  }
 }

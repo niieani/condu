@@ -2,8 +2,22 @@
   "name": "condu-workspace",
   "license": "MIT",
   "type": "module",
+  "author": {
+    "name": "Bazyli Brzóska",
+    "email": "npm@invent.life",
+    "url": "https://invent.life"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/niieani/condu"
+  },
+  "bugs": {
+    "url": "https://github.com/niieani/condu/issues"
+  },
+  "homepage": "https://github.com/niieani/condu#readme",
   "workspaces": [
     "packages/features/*",
+    "packages/generic/*",
     "packages/platform/*",
     "packages/presets/*",
     "packages/test/*"

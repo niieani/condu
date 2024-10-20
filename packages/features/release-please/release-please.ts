@@ -1,9 +1,5 @@
 import { defineFeature } from "condu/defineFeature.js";
-import {
-  CORE_NAME,
-  CONDU_WORKSPACE_PACKAGE_NAME,
-  CONDU_CONFIG_DIR_NAME,
-} from "@condu/types/constants.js";
+import { CORE_NAME, CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
 import { schemas } from "@condu/schema-types/utils/schemas.js";
 import type {
   ReleaserConfigOptions,
@@ -15,9 +11,11 @@ import type { WorkspacePackage } from "@condu/types/configTypes.js";
 export const releasePlease = ({
   selectPackages,
   initialVersion,
+  configOverrides,
 }: {
   selectPackages?: (pkg: WorkspacePackage) => boolean;
   initialVersion?: string;
+  configOverrides?: Partial<ReleasePleaseConfig>;
 } = {}) =>
   defineFeature({
     name: "release-please",
@@ -54,7 +52,6 @@ export const releasePlease = ({
                   $schema: schemas.releasePleaseConfig,
                   "tag-separator": "@",
                   "include-v-in-tag": false,
-                  "bootstrap-sha": "487dfcb00e029d0c8f483f41d0de82a992885f3d",
                   "group-pull-request-title-pattern": `chore: release ${config.project.manifest.name} (\${branch} branch)`,
                   "bump-minor-pre-major": true,
                   "bump-patch-for-minor-pre-major": true,
@@ -65,6 +62,7 @@ export const releasePlease = ({
                       updatePeerDependencies: true,
                     },
                   ],
+                  ...configOverrides,
                 } satisfies ReleasePleaseConfig,
               },
               {

@@ -28,6 +28,7 @@ export default configure((pkg) => ({
       nameConvention: "@condu-test/*",
       private: true,
     },
+    { parentPath: "packages/generic", nameConvention: "*" },
   ],
   publish: {
     // registry: "http://localhost:4000/",
@@ -99,6 +100,9 @@ export default configure((pkg) => ({
     moonCi(),
     releasePlease({
       initialVersion: "0.0.1",
+      configOverrides: {
+        "bootstrap-sha": "487dfcb00e029d0c8f483f41d0de82a992885f3d",
+      },
     }),
     vscode({
       hideGeneratedFiles: false,

@@ -2,7 +2,6 @@
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "tag-separator": "@",
   "include-v-in-tag": false,
-  "bootstrap-sha": "487dfcb00e029d0c8f483f41d0de82a992885f3d",
   "group-pull-request-title-pattern": "chore: release condu-workspace (${branch} branch)",
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
@@ -92,6 +91,11 @@
       "component": "@condu-feature/yarn",
       "initial-version": "0.0.1"
     },
+    "packages/generic/gitignore-matcher": {
+      "release-type": "node",
+      "component": "gitignore-matcher",
+      "initial-version": "0.0.1"
+    },
     "packages/platform/cli": {
       "release-type": "node",
       "component": "@condu/cli",
@@ -153,5 +157,6 @@
       "type": "node-workspace",
       "updatePeerDependencies": true
     }
-  ]
+  ],
+  "bootstrap-sha": "487dfcb00e029d0c8f483f41d0de82a992885f3d"
 }
