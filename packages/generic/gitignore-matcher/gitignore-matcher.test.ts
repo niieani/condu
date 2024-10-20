@@ -665,7 +665,7 @@ file[!0-9].txt
     const gitignoreContent = `
   subdir/*.txt
   `;
-    const gitignore = new GitIgnore(gitignoreContent, "subdir");
+    const gitignore = new GitIgnore(gitignoreContent);
 
     test.each([
       ["file.txt", true],

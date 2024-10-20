@@ -1,14 +1,22 @@
-// gitignore-matcher.ts
-
+/**
+ * Escapes special characters in a string to be used in a regular expression.
+ *
+ * @param str - The string to escape.
+ * @returns The escaped string.
+ */
 function escapeRegex(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function patternToRegex(
-  pattern: string,
-  isDirectoryPattern: boolean,
-  basePath: string,
-): RegExp {
+/**
+ * Converts a gitignore pattern to a corresponding regular expression.
+ *
+ * @param pattern - The gitignore pattern to convert.
+ * @param isDirectoryPattern - Indicates if the pattern is meant to match directories only.
+ * @param basePath - The base path to which the pattern is anchored.
+ * @returns A RegExp object representing the pattern.
+ */
+function patternToRegex(pattern: string, isDirectoryPattern: boolean): RegExp {
   const regexTokens: string[] = [];
   let i = 0;
 
@@ -62,13 +70,39 @@ function patternToRegex(
         regexTokens.push("[^/]");
       } else if (char === "[") {
         // Character class
-        const endIndex = pattern.indexOf("]", i);
-        if (endIndex > -1) {
-          const classContent = pattern.slice(i, endIndex + 1);
-          regexTokens.push(classContent);
-          i = endIndex;
+        let classContent = "";
+        i++; // Move past '['
+        let closed = false;
+        let firstChar = true;
+        while (i < pattern.length) {
+          let c = pattern[i];
+          if (firstChar && c === "!") {
+            classContent += "^";
+          } else if (c === "\\") {
+            // Escape next character
+            i++;
+            if (i < pattern.length) {
+              c = pattern[i];
+              classContent += "\\" + c;
+            } else {
+              // Pattern ends with a backslash, treat it as literal '\'
+              classContent += "\\\\";
+              break;
+            }
+          } else if (c === "]") {
+            closed = true;
+            break;
+          } else {
+            // Append character as is
+            classContent += c;
+          }
+          firstChar = false;
+          i++;
+        }
+        if (closed) {
+          regexTokens.push(`[${classContent}]`);
         } else {
-          // Invalid pattern, treat '[' as literal
+          // Unclosed '[', treat '[' as literal
           regexTokens.push("\\[");
         }
       } else if (char === "/") {
@@ -86,7 +120,7 @@ function patternToRegex(
 
   if (anchored) {
     // Pattern starts with '/', match from basePath
-    regexStr = "^" + escapeRegex(basePath) + regexStr;
+    regexStr = "^" + regexStr;
   } else {
     // Pattern does not start with '/', may match at any level
     if (hasMiddleSlash) {
@@ -107,15 +141,36 @@ function patternToRegex(
   return new RegExp(regexStr);
 }
 
+/**
+ * Represents a single gitignore pattern.
+ */
 export class GitIgnorePattern {
+  /** The regular expression derived from the gitignore pattern. */
   regex: RegExp;
+
+  /** Indicates if the pattern is negated (i.e., starts with '!'). */
   isNegated: boolean;
+
+  /** The gitignore pattern string (after processing). */
   pattern: string;
+
+  /** Indicates if the pattern is meant to match directories only. */
   isDirectoryPattern: boolean;
+
+  /** The line number in the gitignore file where this pattern is defined. */
   lineNumber: number;
+
+  /** The line content from the gitignore file (trimmed from whitespace). */
   line: string;
 
-  constructor(trimmedLine: string, lineNumber: number, basePath: string) {
+  /**
+   * Creates an instance of GitIgnorePattern.
+   *
+   * @param trimmedLine - The line from the gitignore file, trimmed of leading whitespace.
+   * @param lineNumber - The line number in the gitignore file.
+   * @param basePath - The base path to which the pattern is anchored.
+   */
+  constructor(trimmedLine: string, lineNumber: number) {
     // Handle trailing spaces that are not escaped
     let pattern = trimmedLine.replace(/(?<!\\)\s+$/, "");
 
@@ -134,7 +189,7 @@ export class GitIgnorePattern {
     }
 
     // Convert the pattern to a regular expression
-    const regex = patternToRegex(pattern, isDirectoryPattern, basePath);
+    const regex = patternToRegex(pattern, isDirectoryPattern);
 
     this.pattern = pattern;
     this.isNegated = isNegated;
@@ -144,11 +199,24 @@ export class GitIgnorePattern {
     this.line = trimmedLine;
   }
 
+  /**
+   * Tests if a given path matches this gitignore pattern.
+   *
+   * @param path - The file or directory path to test.
+   * @returns `true` if the path matches the pattern, otherwise `false`.
+   */
   matches(path: string): boolean {
     return this.regex.test(path);
   }
 }
 
+/**
+ * Checks if any parent directory of the given path segments is excluded by a pattern.
+ *
+ * @param pathSegments - An array of path segments representing the file path.
+ * @param excludedDirectories - A map of excluded directory paths to their corresponding patterns.
+ * @returns The `GitIgnorePattern` that excludes a parent directory, or `false` if none are excluded.
+ */
 function isParentDirectoryExcluded(
   pathSegments: string[],
   excludedDirectories: Map<string, GitIgnorePattern>,
@@ -163,20 +231,31 @@ function isParentDirectoryExcluded(
   return false;
 }
 
+/**
+ * Represents the outcome of evaluating a path against gitignore patterns.
+ */
 export interface Explanation {
+  /** The final outcome indicating whether the path is ignored or accepted. */
   outcome: "ignored" | "accepted";
+
+  /** The `GitIgnorePattern` that caused the outcome, if applicable. */
   reason?: GitIgnorePattern;
 }
 
+/**
+ * Parses and evaluates gitignore patterns to determine if paths are ignored or accepted.
+ */
 export class GitIgnore {
+  /** An array of parsed gitignore patterns. */
   private patterns: GitIgnorePattern[] = [];
-  private basePath: string;
 
-  constructor(gitignoreContent: string, basePath: string = "") {
-    this.basePath = basePath.replace(/\\/g, "/");
-    if (this.basePath && !this.basePath.endsWith("/")) {
-      this.basePath += "/";
-    }
+  /**
+   * Creates an instance of GitIgnore.
+   *
+   * @param gitignoreContent - The content of a .gitignore file.
+   * @param basePath - If provided, any match will be relative to this path (i.e. as if you changed directories to this subdirectory).
+   */
+  constructor(gitignoreContent: string) {
     const lines = gitignoreContent.split(/\r?\n/);
     let lineNumber = 0;
     for (const line of lines) {
@@ -188,6 +267,13 @@ export class GitIgnore {
     }
   }
 
+  /**
+   * Parses a single line from the gitignore content into a `GitIgnorePattern`.
+   *
+   * @param line - The line from the gitignore file.
+   * @param lineNumber - The line number in the gitignore file.
+   * @returns A `GitIgnorePattern` object if the line contains a valid pattern, otherwise `undefined`.
+   */
   private parseLine(
     line: string,
     lineNumber: number,
@@ -200,17 +286,35 @@ export class GitIgnore {
       return undefined;
     }
 
-    return new GitIgnorePattern(trimmedLine, lineNumber, this.basePath);
+    return new GitIgnorePattern(trimmedLine, lineNumber);
   }
 
+  /**
+   * Determines if a given path is accepted (not ignored) by the gitignore patterns.
+   *
+   * @param path - The file or directory path to check.
+   * @returns `true` if the path is accepted, otherwise `false`.
+   */
   isAccepted(path: string): boolean {
     return this.explain(path).outcome === "accepted";
   }
 
+  /**
+   * Determines if a given path is ignored by the gitignore patterns.
+   *
+   * @param path - The file or directory path to check.
+   * @returns `true` if the path is ignored, otherwise `false`.
+   */
   isIgnored(path: string): boolean {
     return this.explain(path).outcome === "ignored";
   }
 
+  /**
+   * Provides an explanation for whether a path is ignored or accepted based on the gitignore patterns.
+   *
+   * @param path - The file or directory path to evaluate.
+   * @returns An `Explanation` object detailing the outcome and the responsible pattern, if any.
+   */
   explain(path: string): Explanation {
     path = path.startsWith("/") ? path.slice(1) : path;
 
