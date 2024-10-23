@@ -7,6 +7,8 @@ Configuration as code. Think about condu as terraform for your repository config
 The un-template / un-boilerplate / un-scaffold / un-generator.
 Keep ALL of your project configuration up to date, and easily override it, using a single language.
 
+Setup your repository configuration declaratively, and keep up with best practices.
+
 > WORK IN PROGRESS - NOT YET FUNCTIONAL
 
 ---

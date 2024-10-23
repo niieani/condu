@@ -1,12 +1,13 @@
 ```ts
 import { FileMapping, PeerContext } from "condu";
 
-// merge in the interface
+// merge interface declarations
 interface FileMapping {
   ".gitignore": string;
 }
 
-// define what kind of peer context can be extended
+// merge interface declarations to extend the global PeerContext
+// define the kind of peer context for this feature, which can be extended by other features
 interface PeerContext {
   gitignore: {
     ignore: string[];
@@ -17,11 +18,15 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
   defineFeature({
     name: "gitignore",
     initialPeerContext: { ignore },
-    // version: auto-set from package.json? does it matter?
 
     // 'after' can be used to define dependencies of this feature to determine the optimal order of execution,
     // or define "*" if you want to run execute the feature after all other non "*"-depending features have executed
     after: "*",
+
+    // or maybe this?
+    applyStage2AfterPeerContext: (peerContext) => {
+      // ...
+    },
     // for every feature defined, we execute 'apply' to collect the merged peer context first,
     // and any files that are created, modified, dependencies added, etc. that don't require the peer context
     // finally we run the return function of apply with the peer context
@@ -102,6 +107,7 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
           abc: "1.0.0",
         });
 
+        // example usage of `mergePackageJson`
         condu.root.mergePackageJson((pkg) => ({
           scripts: {
             ...pkg.scripts,
@@ -109,21 +115,15 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
           },
         }));
 
-        // or maybe immutability-helper style?
-        condu.root.mergePackageJson({
-          scripts: $merge({
+        // only update the release-prepared version of the package.json only:
+        condu.with({ kind: "package" }).mergeReleasePackageJson((pkg) => ({
+          scripts: {
+            ...pkg.scripts,
             test: "jest",
-          }),
-          someField: $unset,
-        });
+          },
+        }));
 
-        // update the release-prepared version of the package.json only:
-        condu.with({ kind: "package" }).mergeReleasePackageJson({
-          scripts: $merge({
-            test: "jest",
-          }),
-          someField: $unset,
-        });
+        // etc. other features and methods are available under the `condu` namespace
       };
     },
   });
@@ -141,11 +141,20 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
 // this can be useful for things like vscode settings, where we want individual end users to still be able to either override certain settings or add their own custom settings on top of the ones suggested by the repository configuration
 ```
 
-```
+```ts
+// maybe immutability-helper style?
+condu.root.mergePackageJson({
+  scripts: $merge({
+    test: "jest",
+  }),
+  someField: $unset,
+});
+
+// version: auto-set from package.json? does it matter?
+
 // condu.state?
 
 // how can we ensure that this is not called asynchronously, or how do we allow async `apply`? force `apply` to be synchronous? or make it return another function
 // from another feature. Alternative is to `await condu.getPeerContext()` and then throw if `mergePeerContext` is called with an error saying that `mergePeerContext` can only be called before `getPeerContext()`
 // or we could yield? nah just returning a function (or undefined) is fine
-
 ```

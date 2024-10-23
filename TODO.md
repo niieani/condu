@@ -105,6 +105,7 @@
 
 ## Later:
 
+- [ ] automatically remove dependencies that were added declaratively by removing a feature
 - [ ] global install with brew + creating github repos via CLI through API
 - [ ] ability to publish multiple npm utility packages from a single folder (one per file)
 - [ ] should this be a feature? package.json "exports" should be updated in apply to route paths to the sourceDir and support importing from the package name (should we discourage imports from root package? but it's an industry practice though)
@@ -252,6 +253,7 @@ Other ideas:
 
 - what if enabling the features is done by a simple list file (defaults),
   but if you want to customize, you then create a config file?
+- would we want to allow installing some vendor packages by copying them into the project via git URL + sha? they're immutable unless you manually update them. might be used for using non-transpiled version of a package
 
 - use build-time macros to enable generation of config files from JavaScript, essentially enable templating of scripts within condu configuration files
 
