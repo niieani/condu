@@ -107,6 +107,14 @@
 
 - [ ] automatically remove dependencies that were added declaratively by removing a feature
 - [ ] global install with brew + creating github repos via CLI through API
+- [ ] should features be able to contribute CLI command functionality via defineFeature?
+- [ ] take inspiration for features from various starter kits:
+  - [ ] monorepo starter kit: https://github.com/ixahmedxi/orbitkit
+  - [ ] wdcstarterkit.com
+  - [ ] epic-stack
+  - [ ] create-t3-app
+  - [ ] create-typescript-app (steps could be converted to features)
+- [ ] add [knip](https://github.com/webpro-nl/knip)
 - [ ] ability to publish multiple npm utility packages from a single folder (one per file)
 - [ ] should this be a feature? package.json "exports" should be updated in apply to route paths to the sourceDir and support importing from the package name (should we discourage imports from root package? but it's an industry practice though)
 - [ ] adopt EffectTS
@@ -177,7 +185,6 @@
 - [ ] document Dual Package Hazard: https://www.npmjs.com/package/tshy
   - potentially offer not publishing dual-package, but instead having CJS require and re-export ESM for Node >=22
 - [ ] prettier plugins: https://github.com/un-ts/prettier
-- [ ] inspiration from monorepo starter kit: https://github.com/ixahmedxi/orbitkit
 - [ ] "recommended" preset of features that always opts you in to the latest and greatest of the JS ecosystem
 - [ ] website
   - inspiration: [tailwind](https://tailwindcss.com/) - make configs disappear and appear in a mock vscode/github UI?

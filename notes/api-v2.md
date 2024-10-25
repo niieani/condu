@@ -1,5 +1,5 @@
 ```ts
-import { FileMapping, PeerContext } from "condu";
+import { type FileMapping, type PeerContext, defineFeature } from "condu";
 
 // merge interface declarations
 interface FileMapping {
@@ -23,123 +23,105 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
     // or define "*" if you want to run execute the feature after all other non "*"-depending features have executed
     after: "*",
 
-    // or maybe this?
-    applyStage2AfterPeerContext: (peerContext) => {
-      // ...
-    },
-    // for every feature defined, we execute 'apply' to collect the merged peer context first,
-    // and any files that are created, modified, dependencies added, etc. that don't require the peer context
-    // finally we run the return function of apply with the peer context
-    // and continue collecting the files, dependencies, etc. that do require the peer context
-    // but at this point peer context it is not possible to extend the peer context anymore
-    apply: (condu) => {
+    // for every configured feature, we execute 'mergePeerContext' to collect
+    // and "reduce" the final peer context first (in topological order, as per "after" dependencies)
+    // note that peer context contributions might be asynchronous
+    // most features won't even to use this (it's an optional property of the feature definition API)
+    mergePeerContext: async (config) => ({
+      // each feature can define its own peer context
+      // and it can be extended by other features
+      // e.g. another feature could add a 'gitignore' key to the peer context
+      // which is then available in the 'apply' function
+      gitignore: (gitIgnorePeerContext) => ({
+        ignore: [...gitIgnorePeerContext.ignore, "something"],
+      }),
+    }),
+
+    // after we have peer context, we we execute 'apply' for every configured feature (in topological order)
+    // and any files that are created, modified, their dependencies added,
+    // but by this point peer context cannot be extended anymore
+    apply: (condu, peerContext) => {
       // condu.config is available here
 
-      // from another feature, you might call `condu.mergePeerContext`
-      // note that peer context contributions might be asynchronous, that's why we need the two-stage `apply`. but most features won't even need to use peer context, in which case they can just return undefined instead of a 2nd stage apply function
-      condu.mergePeerContext(
-        "gitignore",
-        (peerContext) => ({
-          ignore: [...peerContext.ignore, "something"],
-        }),
-        // optionally change order for peer context merging?
-        { after: ["someOtherFeature"] },
-      );
+      // subsequent calls overwrite the previous ones
+      // and output a warning
+      condu.root.createManagedFile(".gitignore", {
+        content: (pkg) => `...` + peerContext.ignore.join("\n"),
+        // stringify: (content) => content,
+      });
 
-      // alternative:
-      condu.mergePeerContext(
-        {
-          gitignore: (peerContext) => ({
-            ignore: [...peerContext.ignore, "something"],
-          }),
+      // modifies a file that was created by another feature
+      // modifications are run only after all createManagedFile calls, in the same order as features
+      // if the file wasn't created in another feature, it errors
+      // think of it like middleware for the file creation
+      condu.root.modifyManagedFile(".gitignore", {
+        content: (content, pkg) => {
+          return content + `...`;
         },
-        // optionally change order for peer context merging?
-        { after: ["someOtherFeature"] },
-      );
+        ifNotCreated: "error", // default is "ignore", can also be "error" or "create" - in last case we might need stringify/parse or fallback?
+        // no stringify here necessary, we're depending on the previous feature to do that (unless "create" is set)
+      });
 
-      // this would be called after all features execute the first stage of `apply` first
-      return (peerContext) => {
-        // all peer context is available here, since all features have run `apply`
-        // running `condu.mergePeerContext(...)` throws in here
-        // but you now have the peerContext applied
+      // loads the file from fs, and modifies it
+      // subsequent calls receive the content from the previous call
+      condu.root.modifyUserEditableFile(".gitignore", {
+        createIfNotExists: true, // default is true
+        content: (content, pkg) => {
+          return content + `...`;
+        },
+        // optional: (by default uses json-comment for .json files, and yaml for .yaml files)
+        // parse: (fileBuffer) => content,
+        // stringify: (content) => content,
+      });
 
-        // subsequent calls overwrite the previous ones
-        // and output a warning
-        condu.root.createManagedFile(".gitignore", {
-          content: (pkg) => `...` + peerContext.ignore.join("\n"),
-          // stringify: (content) => content,
-        });
+      condu.root.addManagedDevDependency("tsx");
 
-        // modifies a file that was created by another feature
-        // modifications are run only after all createManagedFile calls, in the same order as features
-        // if the file wasn't created in another feature, it errors
-        // think of it like middleware for the file creation
-        condu.root.modifyManagedFile(".gitignore", {
-          content: (content, pkg) => {
-            return content + `...`;
-          },
-          ifNotCreated: "error", // default is "ignore", can also be "error" or "create" - in last case we might need stringify/parse or fallback?
-          // no stringify here necessary, we're depending on the previous feature to do that (unless "create" is set)
-        });
+      // target a specific workspace/package:
+      // alternative names: 'matching', 'where'
+      condu.with({ name: "xyz", kind: "package" }).addManagedDependency("abc");
 
-        // loads the file from fs, and modifies it
-        // subsequent calls receive the content from the previous call
-        condu.root.modifyUserEditableFile(".gitignore", {
-          createIfNotExists: true, // default is true
-          content: (content, pkg) => {
-            return content + `...`;
-          },
-          // optional: (by default uses json-comment for .json files, and yaml for .yaml files)
-          // parse: (fileBuffer) => content,
-          // stringify: (content) => content,
-        });
+      // only available in the root package
+      condu.root.setDependencyResolutions({
+        abc: "1.0.0",
+      });
 
-        condu.root.addManagedDevDependency("tsx");
+      // example usage of `mergePackageJson`
+      condu.root.mergePackageJson((pkg) => ({
+        scripts: {
+          ...pkg.scripts,
+          test: "jest",
+        },
+      }));
 
-        // target a specific workspace/package:
-        // alternative names: 'matching', 'where'
-        condu
-          .with({ name: "xyz", kind: "package" })
-          .addManagedDependency("abc");
+      // only update the release-prepared version of the package.json only:
+      condu.with({ kind: "package" }).mergeReleasePackageJson((pkg) => ({
+        scripts: {
+          ...pkg.scripts,
+          test: "jest",
+        },
+      }));
 
-        // only available in the root package
-        condu.root.setDependencyResolutions({
-          abc: "1.0.0",
-        });
-
-        // example usage of `mergePackageJson`
-        condu.root.mergePackageJson((pkg) => ({
-          scripts: {
-            ...pkg.scripts,
-            test: "jest",
-          },
-        }));
-
-        // only update the release-prepared version of the package.json only:
-        condu.with({ kind: "package" }).mergeReleasePackageJson((pkg) => ({
-          scripts: {
-            ...pkg.scripts,
-            test: "jest",
-          },
-        }));
-
-        // etc. other features and methods are available under the `condu` namespace
-      };
+      // etc. other features and methods are available under the `condu` namespace
     },
   });
-
-// after defining many features, and running their apply, then apply result functions - which collects all the "changes to be made", we create a pipeline for creating/updating files:
-// - createManagedFile (all)
-// - modifyUserEditableFile (all)
-// - modifyManagedFile (all)
-// and only then we commit the changes to the file system
-
-// it's important to distinguish between managed files, and user-modifiable files.
-// the managed kind is created and edited by condu
-// the user-modifiable file can be created by the user (or by condu)
-// but the user or other tools can modify that task manually
-// this can be useful for things like vscode settings, where we want individual end users to still be able to either override certain settings or add their own custom settings on top of the ones suggested by the repository configuration
 ```
+
+After configuring the features:
+
+- we sort the features in topological order
+- run their `mergePeerContext` to collect a final reducer of each peer context
+- we execute the peer context reducers in topological order with `config` (`ConduConfigWithInferredValuesAndProject`)
+- run their `apply` with both `config` and `peerContext` (scoped down to only this particular feature's `peerContext`)
+  - `apply`'s function is to collects all the "changes to be made", i.e. `createManagedFile` and other methods only create a "change to be made" object with the correct context
+- once collected, we create a reducer pipeline for creating/updating files from each of these changes. These pipelines are created from grouping all "changes to be made" based on their absolute filepath.
+  - a final "content" reducer is created by combining all matching `createManagedFile` and `modifyManagedFile` (order must be respected)
+  - similarly for `modifyUserEditableFile`
+- finally, we can interface with the FS, parse, run content reducers, stringify and commit the changes to the file system
+
+Notes: it's important to distinguish between managed files, and user-modifiable files:
+
+- The managed kind is created and edited by condu
+- The user-modifiable file can be created by the user (or by condu), but the user or other tools can modify that task manually. This can be useful for things like vscode settings, where we want individual end users to still be able to either override certain settings or add their own custom settings on top of the ones suggested by the repository configuration.
 
 ```ts
 // maybe immutability-helper style?

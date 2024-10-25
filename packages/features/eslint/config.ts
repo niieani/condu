@@ -112,6 +112,7 @@ export const getConfigs = (
       },
       rules: {
         "no-unused-vars": "off",
+        "no-redeclare": "off",
         ...importPlugin.flatConfigs.recommended.rules,
         ...importPlugin.flatConfigs.typescript.rules,
         // turn on errors for missing imports

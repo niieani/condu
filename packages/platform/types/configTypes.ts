@@ -3,6 +3,14 @@ import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js
 import type { Pattern } from "ts-pattern";
 import type { CONFIGURED } from "./configure.js";
 import type { ProjectManifest } from "@pnpm/types";
+import type { FeatureDefinition, PeerContext } from "./applyTypes.js";
+
+type AnyObject = {
+  readonly [key: string]: any;
+
+  // without this dummy property below, TypeScript will widen to 'any':
+  _?: string;
+};
 
 export interface DependencyDef {
   packageAlias: string;
@@ -31,13 +39,6 @@ export class SymlinkTarget {
   }
   constructor(public readonly target: string) {}
 }
-
-type AnyObject = {
-  readonly [key: string]: any;
-
-  // without this dummy property below, TypeScript will widen to 'any':
-  _?: string;
-};
 
 export type FileContent = string | AnyObject | Array<object> | SymlinkTarget;
 
@@ -151,12 +152,6 @@ export interface StateFlags {
   preventAdditionalTasks?: boolean;
 }
 
-export type ToIntermediateState<T> = {
-  [P in keyof T]?: T[P] extends Array<infer O>
-    ? ReadonlyArray<O | false | undefined>
-    : T[P];
-};
-
 export type Effects = {
   /** these files will be created during execution */
   files?: ReadonlyArray<FileDef | false | undefined>;
@@ -195,7 +190,7 @@ export type FeatureActionFn = (
   state: CollectedState,
 ) => FeatureResult | Promise<FeatureResult | void> | void;
 
-export interface FeatureDefinition {
+export interface FeatureDefinitionV1 {
   actionFn: FeatureActionFn;
   name: string;
   order?: {
@@ -251,7 +246,7 @@ export interface ConduConfig {
     access?: "public" | "restricted";
   };
   git?: GitConfig;
-  features: FeatureDefinition[];
+  features: FeatureDefinition<keyof PeerContext>[];
   /** automatically links any config file inside .config/ folder to the root directory and makes it invisible */
   autolink?: boolean | AutoLinkConfig;
   /** when present, assumes monorepo */
@@ -262,20 +257,6 @@ export interface ConduConfig {
 export interface ConfiguredConduConfig extends ConduConfig {
   [CONFIGURED]: true;
 }
-
-export type GetConduConfigPromise = (
-  pkg: IPackageEntry,
-) => Promise<ConfiguredConduConfig>;
-
-export type ConduConfigInput =
-  | ConduConfig
-  | ((pkg: IPackageEntry) => ConduConfig)
-  | ((pkg: IPackageEntry) => Promise<ConduConfig>);
-
-export type ConduConfigDefaultExport =
-  | ConfiguredConduConfig
-  | ((pkg: IPackageEntry) => ConfiguredConduConfig)
-  | ((pkg: IPackageEntry) => Promise<ConfiguredConduConfig>);
 
 export interface ConduConfigWithInferredValues extends ConfiguredConduConfig {
   // TODO: add error / warning functions
@@ -292,28 +273,10 @@ export interface ConduConfigWithInferredValues extends ConfiguredConduConfig {
 export interface Project extends WorkspaceRootPackage {
   projectConventions?: WorkspaceProjectDefined[];
   config: ConduConfigWithInferredValues;
+
+  // TODO: remove, provide synchroneously
   getWorkspacePackages: () => Promise<readonly WorkspaceSubPackage[]>;
 }
-
-export interface ConduConfigWithInferredValuesAndProject
-  extends ConduConfigWithInferredValues {
-  project: Project;
-}
-
-export interface LoadConfigOptions {
-  startDir?: string;
-  throwOnManualChanges?: boolean;
-}
-
-export interface WriteManifestFnOptions {
-  force?: boolean;
-  merge?: boolean;
-}
-
-export type WriteManifestFn = (
-  manifest: ConduPackageJson | PackageJson,
-  options?: WriteManifestFnOptions,
-) => Promise<void>;
 
 export interface WorkspacePackage extends IPackageEntry {
   kind: "workspace" | "package";
@@ -341,6 +304,40 @@ export interface IPackageEntry {
   absPath: string;
   writeProjectManifest: WriteManifestFn;
 }
+
+export interface ConduConfigWithInferredValuesAndProject
+  extends ConduConfigWithInferredValues {
+  project: Project;
+}
+
+export type GetConduConfigPromise = (
+  pkg: IPackageEntry,
+) => Promise<ConfiguredConduConfig>;
+
+export type ConduConfigInput =
+  | ConduConfig
+  | ((pkg: IPackageEntry) => ConduConfig)
+  | ((pkg: IPackageEntry) => Promise<ConduConfig>);
+
+export type ConduConfigDefaultExport =
+  | ConfiguredConduConfig
+  | ((pkg: IPackageEntry) => ConfiguredConduConfig)
+  | ((pkg: IPackageEntry) => Promise<ConfiguredConduConfig>);
+
+export interface LoadConfigOptions {
+  startDir?: string;
+  throwOnManualChanges?: boolean;
+}
+
+export interface WriteManifestFnOptions {
+  force?: boolean;
+  merge?: boolean;
+}
+
+export type WriteManifestFn = (
+  manifest: ConduPackageJson | PackageJson,
+  options?: WriteManifestFnOptions,
+) => Promise<void>;
 
 export interface ProjectConventionConfig {
   private?: boolean;

@@ -1,5 +1,5 @@
-import type { FeatureDefinition } from "./configTypes.js";
+import type { FeatureDefinition, PeerContext } from "./applyTypes.js";
 
-export const defineFeature = (
-  definition: FeatureDefinition,
-): FeatureDefinition => definition;
+export const defineFeature = <NameT extends keyof PeerContext | (string & {})>(
+  definition: FeatureDefinition<NameT>,
+): FeatureDefinition<NameT> => definition;
