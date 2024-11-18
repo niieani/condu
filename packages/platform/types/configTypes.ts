@@ -168,8 +168,12 @@ export type Effects = {
    * ts-pattern for package.jsons that the state applies to. Defaults to workspace.
    * @default { kind: "workspace" }
    * */
-  matchPackage?: Pattern.Pattern<WorkspacePackage> | Partial<WorkspacePackage>;
+  matchPackage?: MatchPackage;
 };
+
+export type MatchPackage =
+  | Pattern.Pattern<WorkspacePackage>
+  | Partial<WorkspacePackage>;
 
 export interface FeatureResult {
   effects?: (Effects | null | undefined | false)[];

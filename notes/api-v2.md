@@ -43,10 +43,35 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
     apply: (condu, peerContext) => {
       // condu.config is available here
 
+      condu.root.ignoreFile(".somefile.js", {
+        gitignore: true, // default is true
+        npmignore: true, // default is true
+      });
+
       // subsequent calls overwrite the previous ones
-      // and output a warning
-      condu.root.createManagedFile(".gitignore", {
+      // and output a warning (multiple attempts to create the same file)
+      condu.root.generateFile(".gitignore", {
+        // persist: true, // default is false
+        // publish: true, // default is false
+        gitignore: false, // default is true
+        npmignore: false, // default is true
         content: (pkg) => `...` + peerContext.ignore.join("\n"),
+        // stringify: (content) => content,
+      });
+
+      condu.root.modifyGeneratedFile(".gitignore", {
+        content: (content, pkg) => `...` + peerContext.ignore.join("\n"),
+        // for now don't implement:
+        // ifNotCreated: "error", // default is "ignore", can also be "error" or "create" - in last case we might need stringify/parse or fallback?
+      });
+
+      // loads the file from fs, and modifies it
+      // subsequent calls receive the content from the previous call
+      condu.root.modifyUserEditableFile(".gitignore", {
+        createIfNotExists: true, // default is true, in which case content signature can include content: undefined
+        content: (content, pkg) => `...` + peerContext.ignore.join("\n"),
+        // optional: (by default uses json-comment for .json files, and yaml for .yaml files)
+        // parse: (fileBuffer) => content,
         // stringify: (content) => content,
       });
 
@@ -58,27 +83,16 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
         content: (content, pkg) => {
           return content + `...`;
         },
-        ifNotCreated: "error", // default is "ignore", can also be "error" or "create" - in last case we might need stringify/parse or fallback?
-        // no stringify here necessary, we're depending on the previous feature to do that (unless "create" is set)
-      });
-
-      // loads the file from fs, and modifies it
-      // subsequent calls receive the content from the previous call
-      condu.root.modifyUserEditableFile(".gitignore", {
-        createIfNotExists: true, // default is true
-        content: (content, pkg) => {
-          return content + `...`;
-        },
-        // optional: (by default uses json-comment for .json files, and yaml for .yaml files)
-        // parse: (fileBuffer) => content,
-        // stringify: (content) => content,
+        // no stringify here necessary, we're depending on the previous feature to do that
       });
 
       condu.root.addManagedDevDependency("tsx");
 
       // target a specific workspace/package:
       // alternative names: 'matching', 'where'
-      condu.with({ name: "xyz", kind: "package" }).addManagedDependency("abc");
+      condu.forEach({ name: "xyz", kind: "package" }, (pkg) =>
+        pkg.addManagedDependency("abc"),
+      );
 
       // only available in the root package
       condu.root.setDependencyResolutions({
@@ -94,13 +108,14 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
       }));
 
       // only update the release-prepared version of the package.json only:
-      condu.with({ kind: "package" }).mergeReleasePackageJson((pkg) => ({
-        scripts: {
-          ...pkg.scripts,
-          test: "jest",
-        },
-      }));
-
+      condu.forEach({ kind: "package" }, (pkg) => {
+        pkg.mergeReleasePackageJson((pkg) => ({
+          scripts: {
+            ...pkg.scripts,
+            test: "jest",
+          },
+        }));
+      });
       // etc. other features and methods are available under the `condu` namespace
     },
   });

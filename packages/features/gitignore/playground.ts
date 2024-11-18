@@ -22,7 +22,7 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
       condu: (peerContext) => ({ ...peerContext }),
     }),
     apply(condu, peerContext) {
-      condu.root.createManagedFile(".gitignore", {
+      condu.root.generateFile(".gitignore", {
         content: ".DS_Store",
       });
     },

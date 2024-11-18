@@ -10,6 +10,8 @@ import type {
   StateFlags,
   WorkspacePackage,
   LoadConfigOptions,
+  Project,
+  MatchPackage,
 } from "@condu/types/configTypes.js";
 import { groupBy, isDeepEqual } from "remeda";
 import { loadConduProject } from "../../loadProject.js";
@@ -30,6 +32,11 @@ import type {
   Condu,
   ChangesCollector,
   GetPeerContext,
+  PackageCondu,
+  ModifyUserEditableFileOptions,
+  GenerateFileOptions,
+  ResolvedSerializedType,
+  ModifyGeneratedFileOptions,
 } from "@condu/types/applyTypes.js";
 
 export async function apply(options: LoadConfigOptions = {}) {
@@ -48,23 +55,6 @@ export async function apply(options: LoadConfigOptions = {}) {
     projectConventions,
   } = project;
 
-  let didChangeManifest = false;
-
-  const projectGlobs = projectConventions
-    ?.map((project) => project.glob)
-    .sort();
-
-  // sync defined workspaces to package.json
-  // TODO: maybe this could live in pnpm/yarn feature instead?
-  if (
-    projectGlobs &&
-    (!Array.isArray(manifest.workspaces) ||
-      !isDeepEqual((manifest.workspaces ?? []).sort(), projectGlobs))
-  ) {
-    manifest.workspaces = projectGlobs;
-    didChangeManifest = true;
-  }
-
   // add autolink built-in feature if not disabled
   const features =
     config.autolink || !("autolink" in config)
@@ -80,13 +70,12 @@ export async function apply(options: LoadConfigOptions = {}) {
   const sortedFeatures = topologicalSortFeatures(features);
 
   // Initialize the PeerContext
-  let peerContext = {} as PeerContext;
+  let peerContext: Record<string, unknown> = {};
 
   // Collect initialPeerContext from features
   for (const feature of sortedFeatures) {
     if ("initialPeerContext" in feature && feature.initialPeerContext) {
-      peerContext[feature.name as "condu"] =
-        feature.initialPeerContext as GetPeerContext<"condu">;
+      peerContext[feature.name] = feature.initialPeerContext;
     }
   }
 
@@ -101,19 +90,21 @@ export async function apply(options: LoadConfigOptions = {}) {
     if (feature.mergePeerContext) {
       const reducers = await feature.mergePeerContext(configAndProject);
       for (const [key, reducer] of Object.entries(reducers)) {
-        const currentValue = peerContext[key as keyof PeerContext];
-        const newValue = await reducer(currentValue);
-        peerContext[key] = newValue;
+        // any as this is impossible to type correctly
+        peerContext[key] = await reducer(peerContext[key] as any);
       }
     }
   }
 
-  // Create the Condu object to collect changes
-  const condu = await createCondu(project);
+  // Create the object to collect changes
+  const { condu, changes } = await createCondu(project);
 
-  // Run apply functions
+  // Run apply functions in topological order
   for (const feature of sortedFeatures) {
-    await feature.apply(condu, peerContext[feature.name]);
+    await feature.apply(
+      condu,
+      peerContext[feature.name] as PeerContext[keyof PeerContext],
+    );
   }
 
   // Now process the collected changes
@@ -196,8 +187,11 @@ function topologicalSortFeaturesInternal(
   return sorted;
 }
 
-async function createCondu(project: Project): Promise<Condu> {
-  const packages = [project, ...(await project.getWorkspacePackages())];
+async function createCondu(
+  project: Project,
+): Promise<{ condu: Condu; changes: ChangesCollector }> {
+  const workspacePackages = await project.getWorkspacePackages();
+  const packages = [project, ...workspacePackages];
   const changes: ChangesCollector = {
     files: [],
     dependencies: [],
@@ -207,55 +201,82 @@ async function createCondu(project: Project): Promise<Condu> {
   };
 
   const condu: Condu = {
-    config: project.config,
+    config: { ...project.config, project },
     root: createPackageCondu([project], changes),
     packages,
-    changes,
-    with(criteria: PackageCriteria): PackageCondu {
-      const matchingPackages = packages.filter((pkg) => {
-        if (criteria.name && pkg.name !== criteria.name) return false;
-        if (criteria.kind && pkg.kind !== criteria.kind) return false;
-        return true;
-      });
+    with(criteria: MatchPackage): PackageCondu {
+      const matchPackageFn = isMatching(criteria);
+      const matchAllPackages =
+        Object.keys(criteria).length === 1 &&
+        "kind" in criteria &&
+        criteria.kind === "package";
+
+      // TODO: check if any packages matched and maybe add a warning if zero matches?
+      const matchingPackages = matchAllPackages
+        ? workspacePackages
+        : packages.filter((pkg) => matchPackageFn(pkg));
+
       return createPackageCondu(matchingPackages, changes);
     },
   };
 
-  return condu;
+  return { changes, condu };
 }
 
 function createPackageCondu(
-  pkgs: WorkspacePackage[],
+  pkgs: readonly WorkspacePackage[],
   changes: ChangesCollector,
 ): PackageCondu {
   return {
-    createManagedFile(path, options) {
+    ignoreFile(p, options) {
       for (const pkg of pkgs) {
-        changes.files.push({
-          pkg,
-          path,
-          type: "createManagedFile",
+        const rootRelativePath = path.join(pkg.relPath, p);
+        changes.ignoredFiles.push({
+          targetPackage: pkg,
+          rootRelativePath,
+          path: p,
           options,
+          changeType: "ignore",
         });
       }
     },
-    modifyManagedFile(path, options) {
+    generateFile(p, options: GenerateFileOptions<any>) {
       for (const pkg of pkgs) {
-        changes.files.push({
-          pkg,
-          path,
-          type: "modifyManagedFile",
+        const rootRelativePath = path.join(pkg.relPath, p);
+        const file = {
+          targetPackage: pkg,
+          rootRelativePath,
+          path: p,
           options,
-        });
+          changeType: "generate",
+        };
+        changes.generatedFiles.push(file);
+        changes.ignoredFiles.push(file);
       }
     },
-    modifyUserEditableFile(path, options) {
+    modifyGeneratedFile(p, options: ModifyGeneratedFileOptions<any>) {
       for (const pkg of pkgs) {
-        changes.files.push({
-          pkg,
-          path,
-          type: "modifyUserEditableFile",
+        const rootRelativePath = path.join(pkg.relPath, p);
+        const file = {
+          targetPackage: pkg,
+          rootRelativePath,
+          path: p,
           options,
+          changeType: "modifyGenerated",
+        };
+        changes.generatedFilesModifications.push(file);
+        changes.ignoredFiles.push(file);
+      }
+    },
+    modifyUserEditableFile(p, options: ModifyUserEditableFileOptions<unknown>) {
+      for (const pkg of pkgs) {
+        const rootRelativePath = path.join(pkg.relPath, p);
+        changes.userEditableFilesModifications.push({
+          targetPackage: pkg,
+          rootRelativePath,
+          path: p,
+          options,
+          changeType: "modifyUserEditable",
         });
       }
     },
@@ -285,7 +306,6 @@ function createPackageCondu(
         changes.packageJsonModifications.push({
           pkg,
           modifier,
-          type: "normal",
         });
       }
     },
@@ -300,74 +320,22 @@ function createPackageCondu(
   };
 }
 
-async function processCollectedChanges(condu: Condu) {
-  const { changes } = condu;
-
-  // Process files
-  // Group file changes by package and path
-  const filesByPackageAndPath = new Map<
-    string,
-    Map<string, CollectedFileChange[]>
-  >();
-
-  for (const fileChange of changes.files) {
-    const pkgName = fileChange.pkg.name;
-    let pkgFiles = filesByPackageAndPath.get(pkgName);
-    if (!pkgFiles) {
-      pkgFiles = new Map();
-      filesByPackageAndPath.set(pkgName, pkgFiles);
-    }
-    let fileChanges = pkgFiles.get(fileChange.path);
-    if (!fileChanges) {
-      fileChanges = [];
-      pkgFiles.set(fileChange.path, fileChanges);
-    }
-    fileChanges.push(fileChange);
-  }
-
-  // For each package and file, process the collected changes
-  for (const [pkgName, pkgFiles] of filesByPackageAndPath.entries()) {
-    const pkg = condu.packages.find((p) => p.name === pkgName)!;
-
-    for (const [filePath, fileChanges] of pkgFiles.entries()) {
-      // Process the file changes
-      await processFileChanges(pkg, filePath, fileChanges);
-    }
-  }
-
-  // Process dependencies
-  // Group dependencies by package
-  const dependenciesByPackage = new Map<string, CollectedDependency[]>();
-  for (const dep of changes.dependencies) {
-    const pkgName = dep.pkg.name;
-    let deps = dependenciesByPackage.get(pkgName);
-    if (!deps) {
-      deps = [];
-      dependenciesByPackage.set(pkgName, deps);
-    }
-    deps.push(dep);
-  }
-
-  for (const [pkgName, deps] of dependenciesByPackage.entries()) {
-    const pkg = condu.packages.find((p) => p.name === pkgName)!;
-    await processDependencies(pkg, deps);
-  }
-
-  // Process resolutions
-  // Assuming resolutions are global
-  if (Object.keys(changes.resolutions).length > 0) {
-    await processResolutions(condu, changes.resolutions);
-  }
-
-  // Process package.json modifications
-  for (const mod of changes.packageJsonModifications) {
-    await processPackageJsonModification(mod);
-  }
-
-  // Process releasePackageJson modifications
-  for (const mod of changes.releasePackageJsonModifications) {
-    await processReleasePackageJsonModification(mod);
-  }
+async function processCollectedChanges(changes: ChangesCollector) {
+  // TODO
+  // sync defined workspaces to package.json
+  // TODO: maybe this could live in pnpm/yarn feature instead?
+  // let didChangeManifest = false;
+  // const projectGlobs = projectConventions
+  //   ?.map((project) => project.glob)
+  //   .sort();
+  // if (
+  //   projectGlobs &&
+  //   (!Array.isArray(manifest.workspaces) ||
+  //     !isDeepEqual((manifest.workspaces ?? []).sort(), projectGlobs))
+  // ) {
+  //   manifest.workspaces = projectGlobs;
+  //   didChangeManifest = true;
+  // }
 }
 
 async function processFileChanges(
