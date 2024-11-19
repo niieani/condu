@@ -4,6 +4,7 @@ import type {
   ConduPackageJson,
   WorkspacePackage,
 } from "./configTypes.js";
+import type { WrittenFile } from "@condu/cli/commands/apply/readWrite.js";
 
 // Define PeerContext as an empty interface to be extended via declaration merging
 export interface PeerContext {
@@ -305,14 +306,37 @@ type ModifyGeneratedFileOptionsWithContext<
   context: CollectionContext;
 };
 
+type FileKind =
+  | "flags-only"
+  | "generated"
+  | "user-editable"
+  | "symlink"
+  | "invalid";
+
 class FileProcessingPipeline<DeserializedT extends PossibleDeserializedValue> {
   path: string;
-  kind: "flags-only" | "generated" | "user-editable" = "flags-only";
+  // kind: "flags-only" | "generated" | "user-editable" | "symlink" = "flags-only";
   flags: GlobalFileFlags = {};
   targetPackage: WorkspacePackage;
   pipelineContextBreadcrumbs: CollectionContext[] = [];
   status: "pending" | "applied" | "ignored" = "pending";
 
+  symlinkTarget?: string;
+  initialContent?:
+    | DeserializedT
+    | ((pkg: ConduPackageJson) => DeserializedT | Promise<DeserializedT>);
+  contentModifications: Array<
+    ModifyGeneratedFileOptionsWithContext<DeserializedT>
+  > = [];
+  editableContentModifications: Array<
+    ModifyUserEditableFileOptionsWithContext<DeserializedT>
+  > = [];
+
+  // defaults to stringify based on file extension
+  stringify: (content: DeserializedT) => string;
+
+  // TODO: path should be relative from repo root
+  // move targetPackage out to addInitialContent/modification
   constructor(
     path: string,
     targetPackage: WorkspacePackage,
@@ -408,12 +432,23 @@ class FileProcessingPipeline<DeserializedT extends PossibleDeserializedValue> {
     // }
   }
 
-  async commit() {
+  setSymlinkTarget(target: string) {
+    this.symlinkTarget = target;
+  }
+
+  async applyAndCommit(): Promise<FileKind> {
     // depending on the kind:
     // reads the file content
     // parses the file content
     // applies the modifications
     // writes the file content
+
+    if (this.symlinkTarget) {
+      await this.updateSymlink();
+      return "symlink";
+    }
+
+    let kind: FileKind = "flags-only";
 
     // move all modifications with createIfNotExists: false to the end
     this.editableContentModifications.sort((a, b) =>
@@ -456,23 +491,32 @@ class FileProcessingPipeline<DeserializedT extends PossibleDeserializedValue> {
           }
           this.status = "ignored";
           // nothing to do, finish here
-          return;
+          return "invalid";
         }
         content = await modification.content(content, this.targetPackage);
       }
       // TODO: add debugging breadcrumbs for actually applied creations / modifications
     }
 
-    let serialized: string | undefined =
-      content !== undefined
-        ? this.stringify(content)
-        : this.editableContentModifications.length > 0
-          ? await tryReadFile(this.path)
-          : undefined;
+    if (content !== undefined) {
+      // if by this point we got content, it's a generated file
+      kind = "generated";
+    }
+
+    let stringified: string | undefined =
+      content !== undefined ? this.stringify(content) : undefined;
+
+    if (this.editableContentModifications.length > 0) {
+      if (stringified) {
+        // TODO: warn that we are editing a generated file, not a user-provided one
+      }
+      // user-editable files get parsed from the filesystem contents
+      stringified = stringified ?? (await this.getContentFromFileSystem());
+    }
 
     for (const modification of this.editableContentModifications) {
       const parse = modification.parse ?? getDefaultParse(this.path);
-      content = serialized ? parse(serialized) : undefined;
+      content = stringified ? parse(stringified) : undefined;
       if (content === undefined) {
         if (modification.createIfNotExists === false) {
           throw new Error(
@@ -481,34 +525,103 @@ class FileProcessingPipeline<DeserializedT extends PossibleDeserializedValue> {
         } else {
           this.status = "ignored";
           // nothing to do, finish here
-          return;
+          return "invalid";
         }
       }
+
+      if (kind !== "generated") {
+        kind = "user-editable";
+      }
+
       // get the next version of the content:
       content = await modification.content(content, this.targetPackage);
-      serialized = this.stringify(content);
+      const stringify =
+        modification.stringify ?? getDefaultStringify(this.path);
+      stringified = stringify(content);
     }
 
-    // if (this.editableContentModifications.length > 0) {
+    if (stringified) {
+      await this.writeToFileSystem(stringified, kind === "user-editable");
+    }
+
+    this.status = "applied";
+
+    return kind;
   }
 
-  initialContent?:
-    | DeserializedT
-    | ((pkg: ConduPackageJson) => DeserializedT | Promise<DeserializedT>);
+  /**
+   * the current file as is present in the FS
+   * if the file was deleted, this will be "deleted"
+   * if the fsState is the same as lastApply, this will be "unchanged"
+   **/
+  _fsState?: Omit<WrittenFile, "path"> | "deleted" | "unchanged";
+  lastApply?: WrittenFile;
 
-  contentModifications: Array<
-    ModifyGeneratedFileOptionsWithContext<DeserializedT>
-  > = [];
-  editableContentModifications: Array<
-    ModifyUserEditableFileOptionsWithContext<DeserializedT>
-  > = [];
+  async ensureFsState(): Promise<
+    Omit<WrittenFile, "path"> | "deleted" | "unchanged"
+  > {
+    if (this._fsState) {
+      return this._fsState;
+    }
+    // TODO
+    // read the file
+    // store in this.fsState
+    // if file doesn't exist, store "deleted" (maybe rename to 'nonexistent'?)
+  }
 
-  // defaults to stringify based on file extension
-  stringify: (content: DeserializedT) => string;
+  async getFsFile(): Promise<Omit<WrittenFile, "path"> | "nonexistent"> {
+    const fsState = await this.ensureFsState();
+    if (typeof fsState === "object") {
+      return fsState;
+    }
+    if (fsState === "unchanged" && this.lastApply) {
+      return this.lastApply;
+    }
+    if (fsState === "deleted") {
+      return "nonexistent";
+    }
+  }
 
-  // below field for user-modifiable files only:
-  createIfNotExists?: boolean;
-  parse?: (rawFileContent: string) => DeserializedT;
+  async getContentFromFileSystem(): Promise<string | undefined> {
+    const file = await this.getFsFile();
+    if (typeof file === "object" && typeof file.content === "string") {
+      return file.content;
+    }
+    return undefined;
+  }
+
+  async writeToFileSystem(
+    content: string,
+    overwriteWithoutAsking = false,
+  ): Promise<void> {
+    // TODO
+    // compare with the fs content
+    // if different:
+    // option to resolve conflicts
+    // write to fs
+    // update this._fsState
+    // update this.lastApply
+    // somewhere else: update cache
+  }
+
+  async updateSymlink(): Promise<void> {
+    const fsState = await this.ensureFsState();
+    if (typeof fsState === "object") {
+      if (typeof fsState.content === "object") {
+        if (fsState.content.target === this.symlinkTarget) {
+          // nothing to do
+          return;
+        } else {
+          // TODO: remove the symlink, will create a new one below
+        }
+      } else {
+        // TODO: warn that the file would be overwritten by a symlink
+        // err on the side of caution
+        return;
+      }
+    }
+    // TODO: write the symlink and update this._fsState
+  }
 }
 
 export interface CollectedDependency {
