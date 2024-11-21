@@ -37,7 +37,7 @@ import type {
   GenerateFileOptions,
   ResolvedSerializedType,
   ModifyGeneratedFileOptions,
-} from "@condu/types/applyTypes.js";
+} from "@condu/cli/commands/apply/applyTypes.js";
 
 export async function apply(options: LoadConfigOptions = {}) {
   // TODO: add a mutex file lock to prevent concurrent runs of apply

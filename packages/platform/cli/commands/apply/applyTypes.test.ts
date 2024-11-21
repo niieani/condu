@@ -1,4 +1,4 @@
-import type { PackageCondu } from "@condu/types/applyTypes.js";
+import type { PackageCondu } from "@condu/cli/commands/apply/applyTypes.js";
 
 declare const packageCondu: PackageCondu;
 

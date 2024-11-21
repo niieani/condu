@@ -105,6 +105,7 @@
 
 ## Later:
 
+- [ ] no use-before-define - it's silly
 - [ ] automatically remove dependencies that were added declaratively by removing a feature
 - [ ] global install with brew + creating github repos via CLI through API
 - [ ] should features be able to contribute CLI command functionality via defineFeature?

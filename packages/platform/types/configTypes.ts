@@ -3,7 +3,10 @@ import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js
 import type { Pattern } from "ts-pattern";
 import type { CONFIGURED } from "./configure.js";
 import type { ProjectManifest } from "@pnpm/types";
-import type { FeatureDefinition, PeerContext } from "./applyTypes.js";
+import type {
+  FeatureDefinition,
+  PeerContext,
+} from "@condu/cli/commands/apply/applyTypes.js";
 
 type AnyObject = {
   readonly [key: string]: any;

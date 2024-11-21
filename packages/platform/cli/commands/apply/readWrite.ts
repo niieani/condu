@@ -214,7 +214,7 @@ const writeFileFromDef = async ({
   });
 };
 
-async function write({
+export async function write({
   targetPath,
   content,
   pathFromWorkspaceDirAbs,

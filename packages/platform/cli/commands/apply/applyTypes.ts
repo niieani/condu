@@ -1,10 +1,23 @@
-import type { stringify } from "node:querystring";
-import type {
-  ConduConfigWithInferredValuesAndProject,
-  ConduPackageJson,
-  WorkspacePackage,
-} from "./configTypes.js";
-import type { WrittenFile } from "@condu/cli/commands/apply/readWrite.js";
+import {
+  SymlinkTarget,
+  type ConduConfigWithInferredValuesAndProject,
+  type ConduPackageJson,
+  type WorkspacePackage,
+} from "@condu/types/configTypes.js";
+import {
+  write,
+  type WrittenFile,
+} from "@condu/cli/commands/apply/readWrite.js";
+import path from "node:path";
+import { match, P } from "ts-pattern";
+import { stringify as yamlStringify, parse as yamlParse } from "yaml";
+import {
+  stringify as commentJsonStringify,
+  parse as commentJsonParse,
+} from "comment-json";
+import fs from "node:fs/promises";
+import { printUnifiedDiff } from "print-diff";
+import readline from "node:readline/promises";
 
 // Define PeerContext as an empty interface to be extended via declaration merging
 export interface PeerContext {
@@ -266,54 +279,60 @@ export interface CollectionContext {
   // we can consider adding a stack trace here
 }
 
-function getDefaultStringify<DeserializedT>(
-  path: string,
-): (content: DeserializedT) => string {
-  // if (path.endsWith(".json")) {
-  //   return (content: object) => JSON.stringify(content, null, 2);
-  // } else if (path.endsWith(".yaml") || path.endsWith(".yml")) {
-  //   return (content: object) => YAML.stringify(content);
-  // } else {
-  //   throw new Error(
-  //     `No default stringify method for file with path ${path}. Please provide a custom stringify method.`,
-  //   );
-  // }
-}
-
-function getDefaultParse<DeserializedT>(
-  path: string,
-): (rawFileContent: string) => DeserializedT {
-  // if (path.endsWith(".json")) {
-  //   return (rawFileContent: string) => JSON.parse(rawFileContent);
-  // } else if (path.endsWith(".yaml") || path.endsWith(".yml")) {
-  //   return (rawFileContent: string) => YAML.parse(rawFileContent);
-  // } else {
-  //   throw new Error(
-  //     `No default parse method for file with path ${path}. Please provide a custom parse method.`,
-  //   );
-  // }
-}
-
-type ModifyUserEditableFileOptionsWithContext<
+export type ModifyUserEditableFileOptionsWithContext<
   DeserializedT extends PossibleDeserializedValue,
 > = ModifyUserEditableFileOptions<DeserializedT> & {
   context: CollectionContext;
 };
 
-type ModifyGeneratedFileOptionsWithContext<
+export type ModifyGeneratedFileOptionsWithContext<
   DeserializedT extends PossibleDeserializedValue,
 > = ModifyGeneratedFileOptions<DeserializedT> & {
   context: CollectionContext;
 };
 
-type FileKind =
+export type FileKind =
   | "flags-only"
   | "generated"
   | "user-editable"
   | "symlink"
   | "invalid";
 
-class FileProcessingPipeline<DeserializedT extends PossibleDeserializedValue> {
+const keepRaw = <T>(value: T) => value;
+
+export function getDefaultParse<DeserializedT>(
+  filePath: string,
+): (rawFileContent: string) => DeserializedT {
+  const extension = path.extname(filePath);
+  return match(extension)
+    .with(P.string.regex(/\.ya?ml$/i), () => yamlParse)
+    .with(
+      P.string.regex(/\.json5?$/i),
+      () => commentJsonParse as (raw: string) => DeserializedT,
+    )
+    .otherwise(() => keepRaw);
+}
+
+const jsonStringify = (content: unknown): string =>
+  commentJsonStringify(content, undefined, 2);
+
+export function getDefaultStringify<DeserializedT>(
+  filePath: string,
+): (content: DeserializedT) => string {
+  const extension = path.extname(filePath);
+  return match(extension)
+    .with(P.string.regex(/\.ya?ml$/i), () => yamlStringify)
+    .otherwise(() => jsonStringify);
+}
+
+const isInteractive =
+  process.stdout.isTTY &&
+  process.stdin.isTTY &&
+  process.env["npm_lifecycle_event"] !== "postinstall";
+
+export class FileProcessingPipeline<
+  DeserializedT extends PossibleDeserializedValue,
+> {
   path: string;
   // kind: "flags-only" | "generated" | "user-editable" | "symlink" = "flags-only";
   flags: GlobalFileFlags = {};
@@ -331,6 +350,10 @@ class FileProcessingPipeline<DeserializedT extends PossibleDeserializedValue> {
   editableContentModifications: Array<
     ModifyUserEditableFileOptionsWithContext<DeserializedT>
   > = [];
+
+  context: {
+    absPath: string;
+  };
 
   // defaults to stringify based on file extension
   stringify: (content: DeserializedT) => string;
@@ -350,7 +373,7 @@ class FileProcessingPipeline<DeserializedT extends PossibleDeserializedValue> {
     this.stringify = getDefaultStringify(this.path);
   }
 
-  updateFlags(flags: GlobalFileFlags) {
+  private updateFlags(flags: GlobalFileFlags) {
     // only set the flags that are provided
     for (const [key, value] of Object.entries(flags)) {
       // flags can only be string, number or boolean
@@ -364,6 +387,11 @@ class FileProcessingPipeline<DeserializedT extends PossibleDeserializedValue> {
         >;
       }
     }
+  }
+
+  updateIgnores(flags: GlobalFileFlags, context: CollectionContext) {
+    this.pipelineContextBreadcrumbs.push(context);
+    this.updateFlags(flags);
   }
 
   addInitialContent({
@@ -444,7 +472,7 @@ class FileProcessingPipeline<DeserializedT extends PossibleDeserializedValue> {
     // writes the file content
 
     if (this.symlinkTarget) {
-      await this.updateSymlink();
+      await this.writeToFileSystem(new SymlinkTarget(this.symlinkTarget));
       return "symlink";
     }
 
@@ -563,23 +591,50 @@ class FileProcessingPipeline<DeserializedT extends PossibleDeserializedValue> {
     if (this._fsState) {
       return this._fsState;
     }
-    // TODO
-    // read the file
-    // store in this.fsState
-    // if file doesn't exist, store "deleted" (maybe rename to 'nonexistent'?)
+    const fullPath = path.join(this.context.absPath, this.path);
+    const stat = await fs.lstat(fullPath).catch(() => undefined);
+    const symlinkTarget = stat?.isSymbolicLink()
+      ? await fs.readlink(fullPath).catch(() => undefined)
+      : undefined;
+    const content = symlinkTarget
+      ? new SymlinkTarget(symlinkTarget)
+      : await fs.readFile(fullPath, "utf-8").catch(() => undefined);
+
+    if (!stat || content === undefined) {
+      // TODO: rename to 'nonexistent'
+      this._fsState = "deleted";
+      return this._fsState;
+    }
+
+    if (this.lastApply?.content === content) {
+      this._fsState = "unchanged";
+      return this._fsState;
+    }
+
+    const modifiedAt = stat.mtimeMs;
+    const size = stat.size;
+
+    // TODO: maybe instead of SymlinkTarget, we have 'target' as a separate field?
+    const fsState: Omit<WrittenFile, "path"> = {
+      content,
+      modifiedAt,
+      size,
+    };
+
+    this._fsState = fsState;
+    return fsState;
   }
 
-  async getFsFile(): Promise<Omit<WrittenFile, "path"> | "nonexistent"> {
+  async getFsFile(): Promise<Omit<WrittenFile, "path"> | undefined> {
     const fsState = await this.ensureFsState();
-    if (typeof fsState === "object") {
-      return fsState;
-    }
-    if (fsState === "unchanged" && this.lastApply) {
-      return this.lastApply;
+    if (fsState === "unchanged") {
+      // lastApply is guaranteed to be set here
+      return this.lastApply!;
     }
     if (fsState === "deleted") {
-      return "nonexistent";
+      return undefined;
     }
+    return fsState;
   }
 
   async getContentFromFileSystem(): Promise<string | undefined> {
@@ -591,37 +646,135 @@ class FileProcessingPipeline<DeserializedT extends PossibleDeserializedValue> {
   }
 
   async writeToFileSystem(
-    content: string,
+    newContent: string | SymlinkTarget,
     overwriteWithoutAsking = false,
-  ): Promise<void> {
+  ): Promise<(() => Promise<WrittenFile>) | WrittenFile | undefined> {
     // TODO
     // compare with the fs content
     // if different:
     // option to resolve conflicts
     // write to fs
-    // update this._fsState
-    // update this.lastApply
+    // TODO: update this._fsState (only if changes made)
+    // TODO: update this.lastApply (only if changes made)
     // somewhere else: update cache
+    const targetPath = path.join(this.context.absPath, this.path);
+
+    const existingFile = await this.getFsFile();
+
+    if (
+      existingFile &&
+      existingFile.content.toString().trim() === newContent.toString().trim()
+    ) {
+      // already up to date
+      return existingFile;
+    }
+
+    if (newContent instanceof SymlinkTarget) {
+      if (existingFile && existingFile.content instanceof SymlinkTarget) {
+        // linked content mismatch, unlink the existing file
+        // no need to ask for confirmation for symlinks
+        console.log(`Unlinking: ${this.path}`);
+        await fs.unlink(targetPath);
+      }
+      return write({
+        targetPath,
+        content: newContent,
+        pathFromWorkspaceDirAbs: this.path,
+      });
+    }
+
+    if (!existingFile || overwriteWithoutAsking) {
+      // no existing file, or different content
+      return write({
+        targetPath,
+        content: newContent,
+        pathFromWorkspaceDirAbs: this.path,
+      });
+    } else if (!overwriteWithoutAsking) {
+      console.warn(
+        new Error(`Manual changes present in ${this.path}, cannot continue.`),
+      );
+      return undefined;
+    } else {
+      // return a function for interactive overwrite
+      // this needs to happen sequentially, because we're prompting the user for input:
+      return async () => {
+        console.log(`Manual changes present in ${this.path}`);
+        printUnifiedDiff(
+          existingFile.content.toString(),
+          newContent,
+          process.stdout,
+        );
+        if (!isInteractive) {
+          process.exitCode = 1;
+          console.log(
+            `Please resolve the conflict by running 'condu apply' interactively. Skipping: ${this.path}`,
+          );
+          return this.lastApply;
+        }
+
+        const rl = readline.createInterface({
+          input: process.stdin,
+          output: process.stdout,
+        });
+        const rawAnswer = await rl.question(
+          "Do you want to overwrite the file? (y/n)",
+        );
+        rl.close();
+        const shouldOverwrite = match(rawAnswer)
+          .with(P.union("y", "Y", P.string.regex(/yes/i)), () => true)
+          .otherwise(() => false);
+
+        if (shouldOverwrite) {
+          return write({
+            targetPath,
+            content: newContent,
+            pathFromWorkspaceDirAbs: this.path,
+          });
+        } else {
+          process.exitCode = 1;
+          console.log(
+            `Please update your config and re-run 'condu apply' when ready. Skipping: ${pathFromWorkspaceDirAbs}`,
+          );
+          return this.lastApply;
+        }
+      };
+    }
   }
 
-  async updateSymlink(): Promise<void> {
-    const fsState = await this.ensureFsState();
-    if (typeof fsState === "object") {
-      if (typeof fsState.content === "object") {
-        if (fsState.content.target === this.symlinkTarget) {
-          // nothing to do
-          return;
-        } else {
-          // TODO: remove the symlink, will create a new one below
-        }
-      } else {
-        // TODO: warn that the file would be overwritten by a symlink
-        // err on the side of caution
-        return;
-      }
-    }
-    // TODO: write the symlink and update this._fsState
-  }
+  // async updateSymlink(symlinkTarget: string): Promise<void> {
+  //   const fsState = await this.getFsFile();
+  //   if (typeof fsState === "object") {
+  //     if (typeof fsState.content === "object") {
+  //       if (fsState.content.target === symlinkTarget) {
+  //         // nothing to do
+  //         return;
+  //       } else {
+  //         // TODO: remove the symlink, will create a new one below
+  //         // no need to ask for confirmation for symlinks
+  //         console.log(`Unlinking: ${this.path}`);
+  //         await fs.unlink(path.join(this.context.absPath, this.path));
+  //       }
+  //     } else {
+  //       // TODO: warn that the file would be overwritten by a symlink
+  //       // err on the side of caution
+  //       console.warn(
+  //         new Error(
+  //           `Cannot create symlink for ${this.path}, file already exists`,
+  //         ),
+  //       );
+  //       return;
+  //     }
+  //   }
+  //   // TODO: write the symlink and update this._fsState
+  //   const targetPath = path.join(this.context.absPath, this.path);
+  //   await fs.symlink(symlinkTarget, targetPath);
+  //   // this._fsState = {
+  //   //   content: new SymlinkTarget(symlinkTarget),
+  //   //   modifiedAt: Date.now(),
+  //   //   size: 0,
+  //   // };
+  // }
 }
 
 export interface CollectedDependency {
