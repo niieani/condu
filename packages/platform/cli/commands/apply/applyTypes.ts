@@ -333,10 +333,16 @@ const isInteractive =
 export class FileProcessingPipeline<
   DeserializedT extends PossibleDeserializedValue,
 > {
-  path: string;
   // kind: "flags-only" | "generated" | "user-editable" | "symlink" = "flags-only";
-  flags: GlobalFileFlags = {};
+  flags: GlobalFileFlags = {
+    gitignore: true,
+    npmignore: true,
+  };
   targetPackage: WorkspacePackage;
+  /** path relative from the package */
+  relPath: string;
+  /** full absolute path */
+  absPath: string;
   pipelineContextBreadcrumbs: CollectionContext[] = [];
   status: "pending" | "applied" | "ignored" = "pending";
 
@@ -351,26 +357,18 @@ export class FileProcessingPipeline<
     ModifyUserEditableFileOptionsWithContext<DeserializedT>
   > = [];
 
-  context: {
-    absPath: string;
-  };
-
   // defaults to stringify based on file extension
   stringify: (content: DeserializedT) => string;
 
   // TODO: path should be relative from repo root
   // move targetPackage out to addInitialContent/modification
-  constructor(
-    path: string,
-    targetPackage: WorkspacePackage,
-    flags: GlobalFileFlags,
-  ) {
-    this.path = path;
-    this.flags = flags;
+  constructor(relPath: string, targetPackage: WorkspacePackage) {
+    this.relPath = relPath;
     // TODO: handle edge case - prevent reaching into other packages by using relative paths or from root (e.g. by specifiying root package + ./packages/file as the path)
     this.targetPackage = targetPackage;
+    this.absPath = path.join(targetPackage.absPath, relPath);
     // set default stringify based on file name/extension
-    this.stringify = getDefaultStringify(this.path);
+    this.stringify = getDefaultStringify(this.relPath);
   }
 
   private updateFlags(flags: GlobalFileFlags) {
@@ -405,7 +403,7 @@ export class FileProcessingPipeline<
     this.updateFlags(flags);
     if (this.initialContent && ifPreviouslyDefined === "error") {
       // TODO: safe error handling instead of throwing
-      throw new Error(`Initial content already set for file ${this.path}`);
+      throw new Error(`Initial content already set for file ${this.relPath}`);
     }
     this.initialContent = content;
     if (stringify) {
@@ -514,7 +512,7 @@ export class FileProcessingPipeline<
         if (content === undefined) {
           if (ifNotCreated === "error") {
             throw new Error(
-              `Cannot generate ${this.path}, no initial content provided`,
+              `Cannot generate ${this.relPath}, no initial content provided`,
             );
           }
           this.status = "ignored";
@@ -543,12 +541,12 @@ export class FileProcessingPipeline<
     }
 
     for (const modification of this.editableContentModifications) {
-      const parse = modification.parse ?? getDefaultParse(this.path);
+      const parse = modification.parse ?? getDefaultParse(this.relPath);
       content = stringified ? parse(stringified) : undefined;
       if (content === undefined) {
         if (modification.createIfNotExists === false) {
           throw new Error(
-            `Cannot modify ${this.path}, no initial content provided`,
+            `Cannot modify ${this.relPath}, no initial content provided`,
           );
         } else {
           this.status = "ignored";
@@ -564,7 +562,7 @@ export class FileProcessingPipeline<
       // get the next version of the content:
       content = await modification.content(content, this.targetPackage);
       const stringify =
-        modification.stringify ?? getDefaultStringify(this.path);
+        modification.stringify ?? getDefaultStringify(this.relPath);
       stringified = stringify(content);
     }
 
@@ -591,7 +589,7 @@ export class FileProcessingPipeline<
     if (this._fsState) {
       return this._fsState;
     }
-    const fullPath = path.join(this.context.absPath, this.path);
+    const fullPath = this.absPath;
     const stat = await fs.lstat(fullPath).catch(() => undefined);
     const symlinkTarget = stat?.isSymbolicLink()
       ? await fs.readlink(fullPath).catch(() => undefined)
@@ -648,7 +646,9 @@ export class FileProcessingPipeline<
   async writeToFileSystem(
     newContent: string | SymlinkTarget,
     overwriteWithoutAsking = false,
-  ): Promise<(() => Promise<WrittenFile>) | WrittenFile | undefined> {
+  ): Promise<
+    (() => Promise<WrittenFile | undefined>) | WrittenFile | undefined
+  > {
     // TODO
     // compare with the fs content
     // if different:
@@ -657,7 +657,7 @@ export class FileProcessingPipeline<
     // TODO: update this._fsState (only if changes made)
     // TODO: update this.lastApply (only if changes made)
     // somewhere else: update cache
-    const targetPath = path.join(this.context.absPath, this.path);
+    const targetPath = this.absPath;
 
     const existingFile = await this.getFsFile();
 
@@ -673,13 +673,13 @@ export class FileProcessingPipeline<
       if (existingFile && existingFile.content instanceof SymlinkTarget) {
         // linked content mismatch, unlink the existing file
         // no need to ask for confirmation for symlinks
-        console.log(`Unlinking: ${this.path}`);
+        console.log(`Unlinking: ${this.relPath}`);
         await fs.unlink(targetPath);
       }
       return write({
         targetPath,
         content: newContent,
-        pathFromWorkspaceDirAbs: this.path,
+        pathFromWorkspaceDirAbs: this.relPath,
       });
     }
 
@@ -688,18 +688,20 @@ export class FileProcessingPipeline<
       return write({
         targetPath,
         content: newContent,
-        pathFromWorkspaceDirAbs: this.path,
+        pathFromWorkspaceDirAbs: this.relPath,
       });
     } else if (!overwriteWithoutAsking) {
       console.warn(
-        new Error(`Manual changes present in ${this.path}, cannot continue.`),
+        new Error(
+          `Manual changes present in ${this.relPath}, cannot continue.`,
+        ),
       );
       return undefined;
     } else {
       // return a function for interactive overwrite
       // this needs to happen sequentially, because we're prompting the user for input:
       return async () => {
-        console.log(`Manual changes present in ${this.path}`);
+        console.log(`Manual changes present in ${this.relPath}`);
         printUnifiedDiff(
           existingFile.content.toString(),
           newContent,
@@ -708,7 +710,7 @@ export class FileProcessingPipeline<
         if (!isInteractive) {
           process.exitCode = 1;
           console.log(
-            `Please resolve the conflict by running 'condu apply' interactively. Skipping: ${this.path}`,
+            `Please resolve the conflict by running 'condu apply' interactively. Skipping: ${this.relPath}`,
           );
           return this.lastApply;
         }
@@ -729,12 +731,12 @@ export class FileProcessingPipeline<
           return write({
             targetPath,
             content: newContent,
-            pathFromWorkspaceDirAbs: this.path,
+            pathFromWorkspaceDirAbs: this.relPath,
           });
         } else {
           process.exitCode = 1;
           console.log(
-            `Please update your config and re-run 'condu apply' when ready. Skipping: ${pathFromWorkspaceDirAbs}`,
+            `Please update your config and re-run 'condu apply' when ready. Skipping: ${this.relPath}`,
           );
           return this.lastApply;
         }
