@@ -1,3 +1,4 @@
+// can be removed once https://github.com/tc39/proposal-upsert gets to stage 4
 export class UpsertMap<K, V> extends Map<K, V> {
   getOrInsert(key: K, defaultValue: V): V {
     if (this.has(key)) {

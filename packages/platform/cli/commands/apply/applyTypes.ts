@@ -3,10 +3,13 @@ import {
   type ConduConfigWithInferredValuesAndProject,
   type ConduPackageJson,
   type WorkspacePackage,
+  type WorkspaceRootPackage,
+  type WorkspaceSubPackage,
 } from "@condu/types/configTypes.js";
-import {
-  write,
-  type WrittenFile,
+import type {
+  FilesJsonCacheFileVersion1,
+  WrittenFile,
+  WrittenFileInCache,
 } from "@condu/cli/commands/apply/readWrite.js";
 import path from "node:path";
 import { match, P } from "ts-pattern";
@@ -18,6 +21,8 @@ import {
 import fs from "node:fs/promises";
 import { printUnifiedDiff } from "print-diff";
 import readline from "node:readline/promises";
+import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
+import { UpsertMap } from "@condu/core/utils/UpsertMap.js";
 
 // Define PeerContext as an empty interface to be extended via declaration merging
 export interface PeerContext {
@@ -292,11 +297,12 @@ export type ModifyGeneratedFileOptionsWithContext<
 };
 
 export type FileKind =
-  | "flags-only"
+  | "dummy"
   | "generated"
   | "user-editable"
   | "symlink"
-  | "invalid";
+  | "invalid"
+  | "no-longer-generated";
 
 const keepRaw = <T>(value: T) => value;
 
@@ -330,10 +336,180 @@ const isInteractive =
   process.stdin.isTTY &&
   process.env["npm_lifecycle_event"] !== "postinstall";
 
-export class FileProcessingPipeline<
-  DeserializedT extends PossibleDeserializedValue,
-> {
-  // kind: "flags-only" | "generated" | "user-editable" | "symlink" = "flags-only";
+interface RootRelativePackageResolutionOptions {
+  rootRelativePath: string;
+  rootPackage: WorkspaceRootPackage;
+  packages: WorkspaceSubPackage[];
+}
+
+function getRootPackageRelativePath({
+  rootRelativePath,
+  rootPackage,
+  packages,
+}: RootRelativePackageResolutionOptions): {
+  targetPackage: WorkspacePackage;
+  packageRelativePath: string;
+} {
+  for (const pkg of packages) {
+    if (rootRelativePath.startsWith(pkg.relPath)) {
+      const packageRelativePath = rootRelativePath.slice(pkg.relPath.length);
+      return {
+        targetPackage: pkg,
+        packageRelativePath,
+      };
+    }
+  }
+
+  return {
+    targetPackage: rootPackage,
+    packageRelativePath: rootRelativePath,
+  };
+}
+
+export const FILE_STATE_PATH = `${CONDU_CONFIG_DIR_NAME}/.cache/files.json`;
+
+const CURRENT_CACHE_VERSION = 1;
+
+export class FileManager {
+  files = new UpsertMap<string, ConduFile<any>>();
+  cacheFile: ConduFile<FilesJsonCacheFileVersion1>;
+  rootPackage: WorkspaceRootPackage;
+  packages: WorkspaceSubPackage[];
+
+  constructor(
+    rootPackage: WorkspaceRootPackage,
+    packages: WorkspaceSubPackage[],
+  ) {
+    this.cacheFile = new ConduFile({
+      relPath: FILE_STATE_PATH,
+      targetPackage: rootPackage,
+    });
+    this.rootPackage = rootPackage;
+    this.packages = packages;
+  }
+
+  manageFile(destination: FileDestination) {
+    const rootRelativePath = path.join(
+      destination.targetPackage.relPath,
+      destination.relPath,
+    );
+    return this.files.getOrInsertComputed(
+      rootRelativePath,
+      () => new ConduFile(destination),
+    );
+  }
+
+  async applyAllFiles(): Promise<void> {
+    for (const file of this.files.values()) {
+      await file.applyAndCommit();
+    }
+    await this.writeAppliedFilesToCacheFileAndClean();
+  }
+
+  async readCache(): Promise<void> {
+    try {
+      const content = await this.cacheFile.getContentFromFileSystem();
+      const cacheContentJson = JSON.parse(content!) as object;
+      let previouslyWrittenFiles: FilesJsonCacheFileVersion1["files"] = [];
+      if (
+        "cacheVersion" in cacheContentJson &&
+        cacheContentJson.cacheVersion === CURRENT_CACHE_VERSION
+      ) {
+        const cacheContent = cacheContentJson as FilesJsonCacheFileVersion1;
+        if (Array.isArray(cacheContent.files)) {
+          previouslyWrittenFiles = cacheContent.files;
+        }
+      }
+
+      this.files = new UpsertMap(
+        previouslyWrittenFiles.map(
+          (file): readonly [string, ConduFile<any>] => {
+            const { targetPackage, packageRelativePath } =
+              getRootPackageRelativePath({
+                packages: this.packages,
+                rootPackage: this.rootPackage,
+                rootRelativePath: file.path,
+              });
+            const conduFile = new ConduFile({
+              relPath: packageRelativePath,
+              targetPackage,
+              lastApply: {
+                ...file,
+                content:
+                  typeof file.content === "string"
+                    ? file.content
+                    : new SymlinkTarget(file.content.target),
+              },
+            });
+
+            // we don't need to read the content here
+            // until we actually write the file
+            // speeding up the loading
+            return [file.path, conduFile];
+          },
+        ),
+      );
+    } catch {
+      // no cache file or invalid
+    }
+  }
+
+  async writeAppliedFilesToCacheFileAndClean(): Promise<void> {
+    const filesToCache: WrittenFileInCache[] = [];
+    for (const [path, file] of this.files) {
+      if (!file.shouldCache) continue;
+      const lastApply = file.lastApply!;
+      filesToCache.push({
+        ...lastApply,
+        path,
+      });
+    }
+    const cacheContent: FilesJsonCacheFileVersion1 = {
+      cacheVersion: CURRENT_CACHE_VERSION,
+      files: filesToCache,
+    };
+    this.cacheFile.addInitialContent({
+      content: cacheContent,
+      context: { featureName: "condu:cache" },
+    });
+    await this.cacheFile.applyAndCommit();
+  }
+}
+
+interface FileDestination {
+  relPath: string;
+  targetPackage: WorkspacePackage;
+}
+
+export async function write({
+  targetPath,
+  content,
+  ignoreCache,
+}: {
+  targetPath: string;
+  content: string | SymlinkTarget;
+  ignoreCache?: boolean;
+}): Promise<WrittenFile> {
+  const parentDir = path.dirname(targetPath);
+  await fs.mkdir(parentDir, { recursive: true });
+  if (typeof content === "string") {
+    console.log(`Writing: ${targetPath}`);
+    await fs.writeFile(targetPath, content);
+  } else {
+    console.log(`Creating symlink: ${targetPath} => ${content.target}`);
+    await fs.symlink(content.target, targetPath);
+  }
+  const stat = await fs.lstat(targetPath);
+  const result: WrittenFile = {
+    content,
+    modifiedAt: stat.mtimeMs,
+    size: stat.size,
+    doNotCache: ignoreCache,
+  };
+  return result;
+}
+
+export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
   flags: GlobalFileFlags = {
     gitignore: true,
     npmignore: true,
@@ -342,31 +518,69 @@ export class FileProcessingPipeline<
   /** path relative from the package */
   relPath: string;
   /** full absolute path */
-  absPath: string;
-  pipelineContextBreadcrumbs: CollectionContext[] = [];
-  status: "pending" | "applied" | "ignored" = "pending";
+  get absPath(): string {
+    return path.join(this.targetPackage.absPath, this.relPath);
+  }
+  managedByFeatures: CollectionContext[] = [];
+  status: "pending" | "applied" | "skipped" | "needs-user-input" = "pending";
+  askUserToWrite?: (() => Promise<void>) | undefined;
+  lastApplyKind?: FileKind;
+  get isManaged(): boolean {
+    return this.managedByFeatures.length > 0;
+  }
+  get hasFileSystemEffects(): boolean {
+    return (
+      this.symlinkTarget !== undefined ||
+      this.initialContent !== undefined ||
+      this.contentModifications.length > 0 ||
+      this.editableContentModifications.length > 0
+    );
+  }
+  get shouldCache(): boolean {
+    return Boolean(
+      this.isManaged &&
+        this.hasFileSystemEffects &&
+        !this.neverCache &&
+        this.status === "applied" &&
+        this.lastApply &&
+        !this.lastApply.doNotCache,
+    );
+  }
+  private neverCache = false;
 
-  symlinkTarget?: string;
-  initialContent?:
+  /**
+   * the current file as is present in the FS
+   * if the file was deleted, this will be "deleted"
+   * if the fsState is the same as lastApply, this will be "unchanged"
+   **/
+  private _fsState?: WrittenFile | "deleted" | "unchanged";
+  lastApply: WrittenFile | undefined;
+
+  private symlinkTarget?: string;
+  private initialContent?:
     | DeserializedT
     | ((pkg: ConduPackageJson) => DeserializedT | Promise<DeserializedT>);
-  contentModifications: Array<
+  private contentModifications: Array<
     ModifyGeneratedFileOptionsWithContext<DeserializedT>
   > = [];
-  editableContentModifications: Array<
+  private editableContentModifications: Array<
     ModifyUserEditableFileOptionsWithContext<DeserializedT>
   > = [];
 
   // defaults to stringify based on file extension
-  stringify: (content: DeserializedT) => string;
+  private stringify: (content: DeserializedT) => string;
 
-  // TODO: path should be relative from repo root
-  // move targetPackage out to addInitialContent/modification
-  constructor(relPath: string, targetPackage: WorkspacePackage) {
+  constructor({
+    relPath,
+    targetPackage,
+    lastApply,
+  }: FileDestination & {
+    lastApply?: WrittenFile;
+  }) {
     this.relPath = relPath;
     // TODO: handle edge case - prevent reaching into other packages by using relative paths or from root (e.g. by specifiying root package + ./packages/file as the path)
     this.targetPackage = targetPackage;
-    this.absPath = path.join(targetPackage.absPath, relPath);
+    this.lastApply = lastApply;
     // set default stringify based on file name/extension
     this.stringify = getDefaultStringify(this.relPath);
   }
@@ -388,7 +602,7 @@ export class FileProcessingPipeline<
   }
 
   updateIgnores(flags: GlobalFileFlags, context: CollectionContext) {
-    this.pipelineContextBreadcrumbs.push(context);
+    this.managedByFeatures.push(context);
     this.updateFlags(flags);
   }
 
@@ -399,7 +613,7 @@ export class FileProcessingPipeline<
     ifPreviouslyDefined = "error",
     ...flags
   }: GenerateFileOptions<DeserializedT> & { context: CollectionContext }) {
-    this.pipelineContextBreadcrumbs.push(context);
+    this.managedByFeatures.push(context);
     this.updateFlags(flags);
     if (this.initialContent && ifPreviouslyDefined === "error") {
       // TODO: safe error handling instead of throwing
@@ -420,7 +634,7 @@ export class FileProcessingPipeline<
       // TODO: maybe a cleaner way to extract flags?
       ...flags
     } = modification;
-    this.pipelineContextBreadcrumbs.push(context);
+    this.managedByFeatures.push(context);
     this.updateFlags(flags);
     this.contentModifications.push(modification);
   }
@@ -445,9 +659,10 @@ export class FileProcessingPipeline<
       // TODO: maybe a cleaner way to extract flags?
       ...flags
     } = modification;
-    this.pipelineContextBreadcrumbs.push(context);
+    this.managedByFeatures.push(context);
     this.updateFlags(flags);
     this.editableContentModifications.push(modification);
+    this.neverCache = true;
 
     // TODO: we should re-parse and re-stringify after each modification?
     // if (!this.parse) {
@@ -462,19 +677,43 @@ export class FileProcessingPipeline<
     this.symlinkTarget = target;
   }
 
-  async applyAndCommit(): Promise<FileKind> {
-    // depending on the kind:
-    // reads the file content
-    // parses the file content
-    // applies the modifications
-    // writes the file content
-
-    if (this.symlinkTarget) {
-      await this.writeToFileSystem(new SymlinkTarget(this.symlinkTarget));
-      return "symlink";
+  /**
+   * Creates the file or applies modifications to it
+   * then updates the filesystem.
+   * If the file is no longer managed, it will be deleted.
+   */
+  async applyAndCommit(): Promise<void> {
+    if (!this.isManaged) {
+      if (this.lastApply) {
+        // no longer managed, delete the file
+        this.lastApplyKind = "no-longer-generated";
+        await this.deleteFromFileSystem();
+        return;
+      } else {
+        console.error(
+          `File ${this.relPath} is not managed by any feature, yet it wasn't present in cache either.`,
+        );
+        this.status = "skipped";
+        this.lastApplyKind = "invalid";
+        return;
+      }
     }
 
-    let kind: FileKind = "flags-only";
+    if (!this.hasFileSystemEffects) {
+      this.status = "skipped";
+      this.lastApplyKind = "dummy";
+      return;
+    }
+
+    if (this.symlinkTarget) {
+      this.lastApplyKind = "symlink";
+      await this.attemptWriteToFileSystem(
+        new SymlinkTarget(this.symlinkTarget),
+      );
+      return;
+    }
+
+    let kind: FileKind = "dummy";
 
     // move all modifications with createIfNotExists: false to the end
     this.editableContentModifications.sort((a, b) =>
@@ -515,9 +754,10 @@ export class FileProcessingPipeline<
               `Cannot generate ${this.relPath}, no initial content provided`,
             );
           }
-          this.status = "ignored";
+          this.status = "skipped";
           // nothing to do, finish here
-          return "invalid";
+          this.lastApplyKind = "invalid";
+          return;
         }
         content = await modification.content(content, this.targetPackage);
       }
@@ -549,9 +789,10 @@ export class FileProcessingPipeline<
             `Cannot modify ${this.relPath}, no initial content provided`,
           );
         } else {
-          this.status = "ignored";
+          this.status = "skipped";
           // nothing to do, finish here
-          return "invalid";
+          this.lastApplyKind = "invalid";
+          return;
         }
       }
 
@@ -567,25 +808,16 @@ export class FileProcessingPipeline<
     }
 
     if (stringified) {
-      await this.writeToFileSystem(stringified, kind === "user-editable");
+      await this.attemptWriteToFileSystem(
+        stringified,
+        kind === "user-editable",
+      );
     }
 
-    this.status = "applied";
-
-    return kind;
+    this.lastApplyKind = kind;
   }
 
-  /**
-   * the current file as is present in the FS
-   * if the file was deleted, this will be "deleted"
-   * if the fsState is the same as lastApply, this will be "unchanged"
-   **/
-  _fsState?: Omit<WrittenFile, "path"> | "deleted" | "unchanged";
-  lastApply?: WrittenFile;
-
-  async ensureFsState(): Promise<
-    Omit<WrittenFile, "path"> | "deleted" | "unchanged"
-  > {
+  async ensureFsState(): Promise<WrittenFile | "deleted" | "unchanged"> {
     if (this._fsState) {
       return this._fsState;
     }
@@ -613,7 +845,7 @@ export class FileProcessingPipeline<
     const size = stat.size;
 
     // TODO: maybe instead of SymlinkTarget, we have 'target' as a separate field?
-    const fsState: Omit<WrittenFile, "path"> = {
+    const fsState: WrittenFile = {
       content,
       modifiedAt,
       size,
@@ -623,7 +855,7 @@ export class FileProcessingPipeline<
     return fsState;
   }
 
-  async getFsFile(): Promise<Omit<WrittenFile, "path"> | undefined> {
+  async getFsFile(): Promise<WrittenFile | undefined> {
     const fsState = await this.ensureFsState();
     if (fsState === "unchanged") {
       // lastApply is guaranteed to be set here
@@ -643,12 +875,10 @@ export class FileProcessingPipeline<
     return undefined;
   }
 
-  async writeToFileSystem(
+  async attemptWriteToFileSystem(
     newContent: string | SymlinkTarget,
     overwriteWithoutAsking = false,
-  ): Promise<
-    (() => Promise<WrittenFile | undefined>) | WrittenFile | undefined
-  > {
+  ): Promise<void> {
     // TODO
     // compare with the fs content
     // if different:
@@ -665,8 +895,10 @@ export class FileProcessingPipeline<
       existingFile &&
       existingFile.content.toString().trim() === newContent.toString().trim()
     ) {
+      this.status = "applied";
+      this.lastApply = existingFile;
       // already up to date
-      return existingFile;
+      return;
     }
 
     if (newContent instanceof SymlinkTarget) {
@@ -676,44 +908,40 @@ export class FileProcessingPipeline<
         console.log(`Unlinking: ${this.relPath}`);
         await fs.unlink(targetPath);
       }
-      return write({
+      this.status = "applied";
+      this.lastApply = await write({
         targetPath,
         content: newContent,
-        pathFromWorkspaceDirAbs: this.relPath,
       });
+      return;
     }
 
     if (!existingFile || overwriteWithoutAsking) {
+      this.status = "applied";
       // no existing file, or different content
-      return write({
+      this.lastApply = await write({
         targetPath,
         content: newContent,
-        pathFromWorkspaceDirAbs: this.relPath,
       });
-    } else if (!overwriteWithoutAsking) {
-      console.warn(
-        new Error(
-          `Manual changes present in ${this.relPath}, cannot continue.`,
-        ),
+      return;
+    } else if (!isInteractive) {
+      process.exitCode = 1;
+      console.log(
+        `Please resolve the conflict by running 'condu apply' interactively. Skipping: ${this.relPath}`,
       );
-      return undefined;
+      this.status = "skipped";
+      return;
     } else {
+      this.status = "needs-user-input";
       // return a function for interactive overwrite
       // this needs to happen sequentially, because we're prompting the user for input:
-      return async () => {
+      this.askUserToWrite = async () => {
         console.log(`Manual changes present in ${this.relPath}`);
         printUnifiedDiff(
           existingFile.content.toString(),
           newContent,
           process.stdout,
         );
-        if (!isInteractive) {
-          process.exitCode = 1;
-          console.log(
-            `Please resolve the conflict by running 'condu apply' interactively. Skipping: ${this.relPath}`,
-          );
-          return this.lastApply;
-        }
 
         const rl = readline.createInterface({
           input: process.stdin,
@@ -728,20 +956,33 @@ export class FileProcessingPipeline<
           .otherwise(() => false);
 
         if (shouldOverwrite) {
-          return write({
+          this.status = "applied";
+          this.lastApply = await write({
             targetPath,
             content: newContent,
-            pathFromWorkspaceDirAbs: this.relPath,
           });
-        } else {
-          process.exitCode = 1;
-          console.log(
-            `Please update your config and re-run 'condu apply' when ready. Skipping: ${this.relPath}`,
-          );
-          return this.lastApply;
+          this.askUserToWrite = undefined;
+          return;
         }
+        this.status = "skipped";
+        this.askUserToWrite = undefined;
+        process.exitCode = 1;
+        console.log(
+          `Please update your config and re-run 'condu apply' when ready. Skipping: ${this.relPath}`,
+        );
       };
     }
+  }
+
+  async deleteFromFileSystem(): Promise<void> {
+    const targetPath = this.absPath;
+    console.log(`Deleting, no longer needed: ${targetPath}`);
+    await fs.unlink(targetPath).catch((reason) => {
+      console.error(`Failed to delete ${targetPath}: ${reason}`);
+    });
+    this._fsState = "deleted";
+    this.status = "applied";
+    this.lastApply = undefined;
   }
 
   // async updateSymlink(symlinkTarget: string): Promise<void> {

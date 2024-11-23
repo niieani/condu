@@ -27,15 +27,20 @@ const CURRENT_CACHE_VERSION = 1;
 
 export interface FilesJsonCacheFileVersion1 {
   cacheVersion: typeof CURRENT_CACHE_VERSION;
-  files: WrittenFile[];
+  files: readonly WrittenFileInCache[];
+}
+
+export interface WrittenFileInCache extends Omit<WrittenFile, "doNotCache"> {
+  /** full path relative to the root of the workspace */
+  path: string;
+  content: string | { target: string };
 }
 
 export interface WrittenFile {
-  path: string;
   content: string | SymlinkTarget;
   modifiedAt: number;
   size: number;
-  ignoreCache?: boolean;
+  doNotCache?: boolean | undefined;
 }
 
 interface CachedWrittenFile {
@@ -213,37 +218,6 @@ const writeFileFromDef = async ({
     ignoreCache: file.alwaysOverwrite,
   });
 };
-
-export async function write({
-  targetPath,
-  content,
-  pathFromWorkspaceDirAbs,
-  ignoreCache,
-}: {
-  targetPath: string;
-  content: string | SymlinkTarget;
-  pathFromWorkspaceDirAbs: string;
-  ignoreCache?: boolean;
-}): Promise<WrittenFile> {
-  const parentDir = path.dirname(targetPath);
-  await fs.mkdir(parentDir, { recursive: true });
-  if (typeof content === "string") {
-    console.log(`Writing: ${targetPath}`);
-    await fs.writeFile(targetPath, content);
-  } else {
-    console.log(`Creating symlink: ${targetPath} => ${content.target}`);
-    await fs.symlink(content.target, targetPath);
-  }
-  const stat = await fs.lstat(targetPath);
-  const result: WrittenFile = {
-    path: pathFromWorkspaceDirAbs,
-    content,
-    modifiedAt: stat.mtimeMs,
-    size: stat.size,
-    ignoreCache,
-  };
-  return result;
-}
 
 interface WriteFilesConfigBase {
   targetPackage: WorkspacePackage;

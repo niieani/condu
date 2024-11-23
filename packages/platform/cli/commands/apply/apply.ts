@@ -275,7 +275,7 @@ export async function apply(options: LoadConfigOptions = {}) {
         path: FILE_STATE_PATH,
         content: {
           cacheVersion: 1,
-          files: writtenFiles.filter((f) => !f.ignoreCache),
+          files: writtenFiles.filter((f) => !f.doNotCache),
         } satisfies FilesJsonCacheFileVersion1,
       },
     ],
