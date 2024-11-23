@@ -114,7 +114,7 @@ export async function findExistingPackage({
     }
   }
 
-  const packages = [project, ...(await project.getWorkspacePackages())];
+  const packages = [project, ...project.workspacePackages];
   const matched = find(
     packages,
     ({ manifest }) => manifest.name === partialPackage,

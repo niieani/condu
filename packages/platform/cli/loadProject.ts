@@ -13,24 +13,16 @@ import {
 import type {
   ConduConfigWithInferredValues,
   LoadConfigOptions,
-  WorkspaceRootPackage,
   WorkspaceSubPackage,
-  WorkspaceProjectDefined,
   ConduConfigDefaultExport,
+  Project,
 } from "@condu/types/configTypes.js";
 import { CONFIGURED } from "@condu/types/configure.js";
 import { getProjectDefinitionsFromConventionConfig } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
-import memoizeOne from "async-memoize-one";
 import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
 import { findUp } from "@condu/core/utils/findUp.js";
 import * as fs from "node:fs/promises";
 import { getManifestsPaths, getPackage } from "@condu/workspace-utils/topo.js";
-
-export interface Project extends WorkspaceRootPackage {
-  projectConventions?: WorkspaceProjectDefined[];
-  config: ConduConfigWithInferredValues;
-  getWorkspacePackages: () => Promise<readonly WorkspaceSubPackage[]>;
-}
 
 export async function loadConduProject({
   startDir = process.cwd(),
@@ -116,7 +108,8 @@ export async function loadConduProject({
     node: {
       ...(packageManagerName === "yarn" ||
       packageManagerName === "pnpm" ||
-      packageManagerName === "npm"
+      packageManagerName === "npm" ||
+      packageManagerName === "bun"
         ? {
             packageManager: {
               name: packageManagerName,
@@ -145,15 +138,17 @@ export async function loadConduProject({
     configDir: path.join(workspacePackage.absPath, CONDU_CONFIG_DIR_NAME),
   } as const;
 
-  const project: Project = {
+  const project: Omit<Project, "workspacePackages"> = {
     kind: "workspace",
     projectConventions,
     config: configWithInferredValues,
-    getWorkspacePackages: memoizeOne(() => getWorkspacePackages(project)),
     ...workspacePackage,
   };
-
-  return project;
+  const workspacePackages = await getWorkspacePackages(project);
+  return {
+    ...project,
+    workspacePackages,
+  };
 }
 
 export const getWorkspacePackages = async (

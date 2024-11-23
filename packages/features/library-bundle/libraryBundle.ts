@@ -22,7 +22,7 @@ export const libraryBundle = ({
   defineFeature({
     name: `library-bundle:${id}`,
     actionFn: async (config, state) => {
-      const packages = await config.project.getWorkspacePackages();
+      const packages = config.project.workspacePackages;
       const matchingPackage = pkgName
         ? [config.project, ...packages].find((p) => p.manifest.name === pkgName)
         : config.project;

@@ -407,7 +407,7 @@ export async function releasePipeline({
       )
     : ["."];
   const packages: readonly (Project | WorkspaceSubPackage)[] =
-    projectConventions ? await project.getWorkspacePackages() : [project];
+    projectConventions ? project.workspacePackages : [project];
 
   const [selectedPackages, unselectedPackages] =
     selectedPackagePaths.length > 0

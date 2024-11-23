@@ -12,6 +12,7 @@ import type {
   LoadConfigOptions,
   Project,
   MatchPackage,
+  WorkspaceSubPackage,
 } from "@condu/types/configTypes.js";
 import { groupBy, isDeepEqual } from "remeda";
 import { loadConduProject } from "../../loadProject.js";
@@ -26,17 +27,19 @@ import {
 } from "./readWrite.js";
 import { autolink } from "../../builtin-features/autolink.js";
 
-import type {
-  FeatureDefinition,
-  PeerContext,
-  Condu,
-  ChangesCollector,
-  GetPeerContext,
-  PackageCondu,
-  ModifyUserEditableFileOptions,
-  GenerateFileOptions,
-  ResolvedSerializedType,
-  ModifyGeneratedFileOptions,
+import {
+  type FeatureDefinition,
+  type PeerContext,
+  type Condu,
+  type ChangesCollector,
+  type GetPeerContext,
+  type PackageCondu,
+  type ModifyUserEditableFileOptions,
+  type GenerateFileOptions,
+  type ResolvedSerializedType,
+  type ModifyGeneratedFileOptions,
+  type CollectionContext,
+  FileManager,
 } from "@condu/cli/commands/apply/applyTypes.js";
 
 export async function apply(options: LoadConfigOptions = {}) {
@@ -96,13 +99,29 @@ export async function apply(options: LoadConfigOptions = {}) {
     }
   }
 
+  const fileManager = new FileManager(project, project.workspacePackages);
+
   // Create the object to collect changes
-  const { condu, changes } = await createCondu(project);
+  const changes: ChangesCollector = {
+    fileManager,
+    dependencies: [],
+    resolutions: {},
+    packageJsonModifications: [],
+    releasePackageJsonModifications: [],
+  };
 
   // Run apply functions in topological order
   for (const feature of sortedFeatures) {
+    const collectionContext = {
+      featureName: feature.name,
+    };
+
     await feature.apply(
-      condu,
+      createConduApi({
+        project,
+        collectionContext,
+        changesCollector: changes,
+      }),
       peerContext[feature.name] as PeerContext[keyof PeerContext],
     );
   }
@@ -187,22 +206,24 @@ function topologicalSortFeaturesInternal(
   return sorted;
 }
 
-async function createCondu(
-  project: Project,
-): Promise<{ condu: Condu; changes: ChangesCollector }> {
-  const workspacePackages = await project.getWorkspacePackages();
-  const packages = [project, ...workspacePackages];
-  const changes: ChangesCollector = {
-    files: [],
-    dependencies: [],
-    resolutions: {},
-    packageJsonModifications: [],
-    releasePackageJsonModifications: [],
-  };
+function createConduApi({
+  project,
+  collectionContext,
+  changesCollector,
+}: {
+  project: Project;
+  collectionContext: CollectionContext;
+  changesCollector: ChangesCollector;
+}): Condu {
+  const packages = [project, ...project.workspacePackages];
 
   const condu: Condu = {
     config: { ...project.config, project },
-    root: createPackageCondu([project], changes),
+    root: createGenerationApi({
+      matchingPackages: [project],
+      changesCollector,
+      collectionContext,
+    }),
     packages,
     with(criteria: MatchPackage): PackageCondu {
       const matchPackageFn = isMatching(criteria);
@@ -216,73 +237,70 @@ async function createCondu(
         ? workspacePackages
         : packages.filter((pkg) => matchPackageFn(pkg));
 
-      return createPackageCondu(matchingPackages, changes);
+      return createGenerationApi({
+        matchingPackages,
+        changesCollector,
+        collectionContext,
+      });
     },
   };
 
-  return { changes, condu };
+  return condu;
 }
 
-function createPackageCondu(
-  pkgs: readonly WorkspacePackage[],
-  changes: ChangesCollector,
-): PackageCondu {
+function createGenerationApi({
+  matchingPackages,
+  changesCollector,
+  collectionContext,
+}: {
+  matchingPackages: readonly WorkspacePackage[];
+  changesCollector: ChangesCollector;
+  collectionContext: CollectionContext;
+}): PackageCondu {
   return {
-    ignoreFile(p, options) {
-      for (const pkg of pkgs) {
-        const rootRelativePath = path.join(pkg.relPath, p);
-        changes.ignoredFiles.push({
-          targetPackage: pkg,
-          rootRelativePath,
-          path: p,
-          options,
-          changeType: "ignore",
-        });
+    ignoreFile(relPath, options) {
+      for (const pkg of matchingPackages) {
+        changesCollector.fileManager
+          .manageFile({
+            targetPackage: pkg,
+            relPath,
+          })
+          .updateIgnores(options ?? {}, collectionContext);
       }
     },
-    generateFile(p, options: GenerateFileOptions<any>) {
-      for (const pkg of pkgs) {
-        const rootRelativePath = path.join(pkg.relPath, p);
-        const file = {
-          targetPackage: pkg,
-          rootRelativePath,
-          path: p,
-          options,
-          changeType: "generate",
-        };
-        changes.generatedFiles.push(file);
-        changes.ignoredFiles.push(file);
+    generateFile(relPath, options) {
+      for (const pkg of matchingPackages) {
+        changesCollector.fileManager
+          .manageFile({
+            targetPackage: pkg,
+            relPath,
+          })
+          .setInitialContent(options, collectionContext);
       }
     },
-    modifyGeneratedFile(p, options: ModifyGeneratedFileOptions<any>) {
-      for (const pkg of pkgs) {
-        const rootRelativePath = path.join(pkg.relPath, p);
-        const file = {
-          targetPackage: pkg,
-          rootRelativePath,
-          path: p,
-          options,
-          changeType: "modifyGenerated",
-        };
-        changes.generatedFilesModifications.push(file);
-        changes.ignoredFiles.push(file);
+    modifyGeneratedFile(relPath, options) {
+      for (const pkg of matchingPackages) {
+        changesCollector.fileManager
+          .manageFile({
+            targetPackage: pkg,
+            relPath,
+          })
+          .addModification(options, collectionContext);
       }
     },
-    modifyUserEditableFile(p, options: ModifyUserEditableFileOptions<unknown>) {
-      for (const pkg of pkgs) {
-        const rootRelativePath = path.join(pkg.relPath, p);
-        changes.userEditableFilesModifications.push({
-          targetPackage: pkg,
-          rootRelativePath,
-          path: p,
-          options,
-          changeType: "modifyUserEditable",
-        });
+    modifyUserEditableFile(relPath, options) {
+      for (const pkg of matchingPackages) {
+        changesCollector.fileManager
+          .manageFile({
+            targetPackage: pkg,
+            relPath,
+          })
+          .addUserEditableModification(options, collectionContext);
       }
     },
     addManagedDevDependency(dependency) {
-      for (const pkg of pkgs) {
-        changes.dependencies.push({
+      for (const pkg of matchingPackages) {
+        changesCollector.dependencies.push({
           pkg,
           dependency,
           type: "dev",
@@ -290,8 +308,8 @@ function createPackageCondu(
       }
     },
     addManagedDependency(dependency) {
-      for (const pkg of pkgs) {
-        changes.dependencies.push({
+      for (const pkg of matchingPackages) {
+        changesCollector.dependencies.push({
           pkg,
           dependency,
           type: "prod",
@@ -299,19 +317,19 @@ function createPackageCondu(
       }
     },
     setDependencyResolutions(resolutions) {
-      Object.assign(changes.resolutions, resolutions);
+      Object.assign(changesCollector.resolutions, resolutions);
     },
     mergePackageJson(modifier) {
-      for (const pkg of pkgs) {
-        changes.packageJsonModifications.push({
+      for (const pkg of matchingPackages) {
+        changesCollector.packageJsonModifications.push({
           pkg,
           modifier,
         });
       }
     },
     mergeReleasePackageJson(modifier) {
-      for (const pkg of pkgs) {
-        changes.releasePackageJsonModifications.push({
+      for (const pkg of matchingPackages) {
+        changesCollector.releasePackageJsonModifications.push({
           pkg,
           modifier,
         });

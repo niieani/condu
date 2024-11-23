@@ -139,7 +139,7 @@ export const gptSummarizer = ({
               alwaysOverwrite: true,
               content: async (c) => {
                 c.getExistingContentAndMarkAsUserEditable();
-                const packages = await config.project.getWorkspacePackages();
+                const packages = config.project.workspacePackages;
                 const summarized = await summarize({
                   rootDir: config.workspaceDir,
                   recursive: false,

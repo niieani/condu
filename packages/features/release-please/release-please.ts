@@ -20,7 +20,7 @@ export const releasePlease = ({
   defineFeature({
     name: "release-please",
     actionFn: async (config, state) => {
-      const allWorkspacePackages = await config.project.getWorkspacePackages();
+      const allWorkspacePackages = config.project.workspacePackages;
       const packages = allWorkspacePackages.filter(
         (pkg) =>
           !pkg.manifest.private && (!selectPackages || selectPackages(pkg)),

@@ -219,7 +219,7 @@ export interface Conventions {
 
 export interface ResolvedConventionsWithWorkspace
   extends Required<Conventions> {
-  projectConventions?: WorkspaceProjectDefined[];
+  projectConventions?: readonly WorkspaceProjectDefined[] | undefined;
 }
 
 type GitConfig = {
@@ -231,9 +231,9 @@ type NodeConfig = {
   /** @default 'yarn' */
   packageManager?: {
     name: "yarn" | "npm" | "pnpm" | "bun";
-    version?: string;
+    version?: string | undefined;
   };
-  version?: string;
+  version?: string | undefined;
 };
 
 type Engine = "node" | "bun";
@@ -278,11 +278,9 @@ export interface ConduConfigWithInferredValues extends ConfiguredConduConfig {
 }
 
 export interface Project extends WorkspaceRootPackage {
-  projectConventions?: WorkspaceProjectDefined[];
+  projectConventions?: WorkspaceProjectDefined[] | undefined;
   config: ConduConfigWithInferredValues;
-
-  // TODO: remove, provide synchroneously
-  getWorkspacePackages: () => Promise<readonly WorkspaceSubPackage[]>;
+  workspacePackages: readonly WorkspaceSubPackage[];
 }
 
 export interface WorkspacePackage extends IPackageEntry {

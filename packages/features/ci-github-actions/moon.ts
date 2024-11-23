@@ -109,10 +109,7 @@ export const moonCi = (opts: {} = {}) =>
         },
       };
 
-      const packages = [
-        ...(await config.project.getWorkspacePackages()),
-        config.project,
-      ];
+      const packages = [...config.project.workspacePackages, config.project];
       const taskList = state.tasks;
       const tasksByType: TasksByType = {
         build: [],

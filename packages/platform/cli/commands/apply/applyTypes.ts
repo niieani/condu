@@ -217,16 +217,7 @@ export interface PackageCriteria {
 
 // Define types for collected changes
 export interface ChangesCollector {
-  ignoredFiles: CollectedIgnoreFileChange<string>[];
-  generatedFiles: CollectedGenerateFileChange<string>[];
-  generatedFilesModifications: CollectedModifyGeneratedFileChange<
-    string,
-    unknown
-  >[];
-  userEditableFilesModifications: CollectedModifyUserEditableFileChange<
-    string,
-    unknown
-  >[];
+  fileManager: FileManager;
   dependencies: CollectedDependency[];
   resolutions: Record<string, string>;
   packageJsonModifications: PackageJsonModification[];
@@ -339,7 +330,7 @@ const isInteractive =
 interface RootRelativePackageResolutionOptions {
   rootRelativePath: string;
   rootPackage: WorkspaceRootPackage;
-  packages: WorkspaceSubPackage[];
+  packages: readonly WorkspaceSubPackage[];
 }
 
 function getRootPackageRelativePath({
@@ -374,16 +365,39 @@ export class FileManager {
   files = new UpsertMap<string, ConduFile<any>>();
   cacheFile: ConduFile<FilesJsonCacheFileVersion1>;
   rootPackage: WorkspaceRootPackage;
-  packages: WorkspaceSubPackage[];
+  packages: readonly WorkspaceSubPackage[];
 
   constructor(
     rootPackage: WorkspaceRootPackage,
-    packages: WorkspaceSubPackage[],
+    packages: readonly WorkspaceSubPackage[],
   ) {
     this.cacheFile = new ConduFile({
       relPath: FILE_STATE_PATH,
       targetPackage: rootPackage,
     });
+
+    this.cacheFile.setInitialContent(
+      {
+        content: () => {
+          const filesToCache: WrittenFileInCache[] = [];
+          for (const [path, file] of this.files) {
+            if (file.shouldCache && file.lastApply) {
+              filesToCache.push({
+                ...file.lastApply,
+                path,
+              });
+            }
+          }
+          const cacheContent: FilesJsonCacheFileVersion1 = {
+            cacheVersion: CURRENT_CACHE_VERSION,
+            files: filesToCache,
+          };
+          return cacheContent;
+        },
+      },
+      { featureName: "condu:cache" },
+    );
+
     this.rootPackage = rootPackage;
     this.packages = packages;
   }
@@ -400,10 +414,17 @@ export class FileManager {
   }
 
   async applyAllFiles(): Promise<void> {
+    const applyPromises: Promise<void>[] = Array.from(
+      this.files.values(),
+      (file) => file.applyAndCommit(),
+    );
+    await Promise.all(applyPromises);
     for (const file of this.files.values()) {
-      await file.applyAndCommit();
+      // any files that need user input/confirmation need to be handled sequentially
+      await file.askUserToWrite?.();
     }
-    await this.writeAppliedFilesToCacheFileAndClean();
+    // write the updated cache file
+    await this.cacheFile.applyAndCommit();
   }
 
   async readCache(): Promise<void> {
@@ -420,59 +441,43 @@ export class FileManager {
           previouslyWrittenFiles = cacheContent.files;
         }
       }
+      for (const { path: filePath, ...file } of previouslyWrittenFiles) {
+        const { targetPackage, packageRelativePath } =
+          getRootPackageRelativePath({
+            packages: this.packages,
+            rootPackage: this.rootPackage,
+            rootRelativePath: filePath,
+          });
 
-      this.files = new UpsertMap(
-        previouslyWrittenFiles.map(
-          (file): readonly [string, ConduFile<any>] => {
-            const { targetPackage, packageRelativePath } =
-              getRootPackageRelativePath({
-                packages: this.packages,
-                rootPackage: this.rootPackage,
-                rootRelativePath: file.path,
-              });
-            const conduFile = new ConduFile({
+        // we don't need to read the content here
+        // until we actually write the file
+        // speeding up the loading
+        const conduFile = this.files.getOrInsertComputed(
+          filePath,
+          () =>
+            new ConduFile({
               relPath: packageRelativePath,
               targetPackage,
-              lastApply: {
-                ...file,
-                content:
-                  typeof file.content === "string"
-                    ? file.content
-                    : new SymlinkTarget(file.content.target),
-              },
-            });
+            }),
+        );
 
-            // we don't need to read the content here
-            // until we actually write the file
-            // speeding up the loading
-            return [file.path, conduFile];
-          },
-        ),
-      );
+        if (
+          !conduFile.lastApply ||
+          file.modifiedAt >= conduFile.lastApply.modifiedAt
+        ) {
+          // update the lastApply with the cached content
+          conduFile.lastApply = {
+            ...file,
+            content:
+              typeof file.content === "string"
+                ? file.content
+                : new SymlinkTarget(file.content.target),
+          };
+        }
+      }
     } catch {
       // no cache file or invalid
     }
-  }
-
-  async writeAppliedFilesToCacheFileAndClean(): Promise<void> {
-    const filesToCache: WrittenFileInCache[] = [];
-    for (const [path, file] of this.files) {
-      if (!file.shouldCache) continue;
-      const lastApply = file.lastApply!;
-      filesToCache.push({
-        ...lastApply,
-        path,
-      });
-    }
-    const cacheContent: FilesJsonCacheFileVersion1 = {
-      cacheVersion: CURRENT_CACHE_VERSION,
-      files: filesToCache,
-    };
-    this.cacheFile.addInitialContent({
-      content: cacheContent,
-      context: { featureName: "condu:cache" },
-    });
-    await this.cacheFile.applyAndCommit();
   }
 }
 
@@ -570,17 +575,10 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
   // defaults to stringify based on file extension
   private stringify: (content: DeserializedT) => string;
 
-  constructor({
-    relPath,
-    targetPackage,
-    lastApply,
-  }: FileDestination & {
-    lastApply?: WrittenFile;
-  }) {
+  constructor({ relPath, targetPackage }: FileDestination) {
     this.relPath = relPath;
     // TODO: handle edge case - prevent reaching into other packages by using relative paths or from root (e.g. by specifiying root package + ./packages/file as the path)
     this.targetPackage = targetPackage;
-    this.lastApply = lastApply;
     // set default stringify based on file name/extension
     this.stringify = getDefaultStringify(this.relPath);
   }
@@ -606,13 +604,15 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     this.updateFlags(flags);
   }
 
-  addInitialContent({
-    content,
-    stringify,
-    context,
-    ifPreviouslyDefined = "error",
-    ...flags
-  }: GenerateFileOptions<DeserializedT> & { context: CollectionContext }) {
+  setInitialContent(
+    {
+      content,
+      stringify,
+      ifPreviouslyDefined = "error",
+      ...flags
+    }: GenerateFileOptions<DeserializedT>,
+    context: CollectionContext,
+  ) {
     this.managedByFeatures.push(context);
     this.updateFlags(flags);
     if (this.initialContent && ifPreviouslyDefined === "error") {
@@ -623,24 +623,27 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     if (stringify) {
       this.stringify = stringify;
     }
+    return this;
   }
 
   addModification(
-    modification: ModifyGeneratedFileOptionsWithContext<DeserializedT>,
+    modification: ModifyGeneratedFileOptions<DeserializedT>,
+    context: CollectionContext,
   ) {
     const {
       content,
-      context,
       // TODO: maybe a cleaner way to extract flags?
       ...flags
     } = modification;
     this.managedByFeatures.push(context);
     this.updateFlags(flags);
-    this.contentModifications.push(modification);
+    this.contentModifications.push({ ...modification, context });
+    return this;
   }
 
   addUserEditableModification(
-    modification: ModifyUserEditableFileOptionsWithContext<DeserializedT>,
+    modification: ModifyUserEditableFileOptions<DeserializedT>,
+    context: CollectionContext,
   ) {
     // it's okay to allow modifications to generated files
     // because we can stringify and parse them
@@ -652,7 +655,6 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     // }
     const {
       content,
-      context,
       parse,
       stringify,
       createIfNotExists,
@@ -661,16 +663,9 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     } = modification;
     this.managedByFeatures.push(context);
     this.updateFlags(flags);
-    this.editableContentModifications.push(modification);
+    this.editableContentModifications.push({ ...modification, context });
     this.neverCache = true;
-
-    // TODO: we should re-parse and re-stringify after each modification?
-    // if (!this.parse) {
-    //   this.parse = parse ?? getDefaultParse(this.path)
-    // }
-    // if (stringify) {
-    //   this.stringify = stringify;
-    // }
+    return this;
   }
 
   setSymlinkTarget(target: string) {

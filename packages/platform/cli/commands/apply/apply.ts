@@ -51,7 +51,7 @@ export async function collectState(
 
   const { project, features } = config;
 
-  const workspacePackages = await project.getWorkspacePackages();
+  const workspacePackages = project.workspacePackages;
   const packages = [project, ...workspacePackages];
 
   // TODO: topo-sort features by `order` config, or support soft dependencies between features

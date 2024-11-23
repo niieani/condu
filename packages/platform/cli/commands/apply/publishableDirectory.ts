@@ -26,7 +26,7 @@ export function getRelativePublishConfigDirectory(
 async function ensurePublishConfigDirectorySetInManifestFiles(
   project: Project,
 ) {
-  for (const pkg of await project.getWorkspacePackages()) {
+  for (const pkg of project.workspacePackages) {
     // ensure there's a publishConfig.directory set for each package
     const relativePath = getRelativePublishConfigDirectory(project, pkg);
     const publishableDirectory = pkg.manifest.publishConfig?.["directory"];
