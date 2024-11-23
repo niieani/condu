@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/niieani/condu/compare/@condu/types@0.1.5...@condu/types@0.1.6) (2024-11-23)
+
+
+### Bug Fixes
+
+* small fixes ([ba55654](https://github.com/niieani/condu/commit/ba556544a3bda8770009202d64f1f25ee99fb19c))
+
 ## [0.1.5](https://github.com/niieani/condu/compare/@condu/types@0.1.4...@condu/types@0.1.5) (2024-10-12)
 
 
