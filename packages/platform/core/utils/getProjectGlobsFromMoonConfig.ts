@@ -1,6 +1,6 @@
 import type {
   WorkspaceProjectsConvention,
-  WorkspaceProjectDefined,
+  DefinedWorkspaceProjectConvention,
 } from "@condu/types/configTypes.js";
 import type {
   PartialWorkspaceProjects,
@@ -9,7 +9,7 @@ import type {
 
 export const getProjectDefinitionsFromConventionConfig = (
   projects?: WorkspaceProjectsConvention[],
-): WorkspaceProjectDefined[] | undefined => {
+): DefinedWorkspaceProjectConvention[] | undefined => {
   if (!projects) {
     return undefined;
   }

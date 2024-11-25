@@ -13,19 +13,19 @@ import {
 import type {
   ConduConfigWithInferredValues,
   LoadConfigOptions,
-  WorkspaceSubPackage,
   ConduConfigDefaultExport,
 } from "@condu/types/configTypes.js";
+import {
+  type WorkspaceSubPackage,
+  ConduPackageEntry,
+} from "./commands/apply/ConduPackageEntry.js";
 import { CONFIGURED } from "@condu/types/configure.js";
 import { getProjectDefinitionsFromConventionConfig } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
 import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
 import { findUp } from "@condu/core/utils/findUp.js";
 import * as fs from "node:fs/promises";
 import { getManifestsPaths, getPackage } from "@condu/workspace-utils/topo.js";
-import {
-  ConduPackageEntry,
-  ConduProject,
-} from "./commands/apply/applyTypes.js";
+import { ConduProject } from "./commands/apply/ConduProject.js";
 
 export async function loadConduProject({
   startDir = process.cwd(),

@@ -1,4 +1,5 @@
-import type { DependencyDef, FileDef } from "@condu/types/configTypes.js";
+import type { FileDef } from "@condu/types/configTypes.js";
+import type { DependencyDefinition } from "@condu/cli/commands/apply/CollectedState.js";
 import { defineFeature } from "condu/defineFeature.js";
 import type { Yarnrc } from "@condu/schema-types/schemas/yarnrc.gen.js";
 import * as fs from "node:fs/promises";
@@ -35,7 +36,7 @@ export const yarn = ({ yarnrc }: { yarnrc?: Yarnrc } = {}) =>
           },
         },
       ];
-      const devDependencies: DependencyDef[] = [];
+      const devDependencies: DependencyDefinition[] = [];
       if (
         await fs
           .access(

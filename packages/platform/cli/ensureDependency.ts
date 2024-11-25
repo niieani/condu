@@ -3,10 +3,10 @@ import { getCacheDir } from "@condu/core/utils/dirs.js";
 import { createFetchFromRegistry } from "@pnpm/fetch";
 import { createGetAuthHeaderByURI } from "@pnpm/network.auth-header";
 import type {
-  DependencyDef,
   MinimalManifest,
   PackageJsonConduSection,
-} from "@condu/types/configTypes.js";
+} from "./commands/apply/ConduPackageEntry.js";
+import type { DependencyDefinition } from "./commands/apply/CollectedState.js";
 
 const registry = "https://registry.npmjs.org/";
 const { resolveFromNpm } = createNpmResolver(
@@ -25,34 +25,32 @@ const { resolveFromNpm } = createNpmResolver(
 
 /**
  * Mutates the manifest to ensure the dependency is present.
- * @returns true if the manifest was changed.
  */
 export async function ensureDependencyIn(
   manifest: MinimalManifest,
   {
     name,
     installAsAlias = name,
-    list = "dependencies",
-    skipIfExists = true,
+    list = "devDependencies",
     managed = "presence",
+    skipIfExists = true,
     rangePrefix = "^",
     ...opts
-  }: DependencyDef,
-): Promise<boolean> {
+  }: DependencyDefinition,
+): Promise<void> {
   const targetDependencyList = (manifest[list] ||= {});
-  if (skipIfExists && targetDependencyList[installAsAlias]) {
-    return false;
+  const existingVersion = targetDependencyList[installAsAlias];
+  if (skipIfExists && existingVersion) {
+    return;
   }
   const dependency =
-    "tag" in opts && opts.tag
-      ? await resolveFromNpm({ alias: name, pref: opts.tag }, { registry })
-      : {
-          manifest: {
-            name,
-            version: opts.version,
-          },
-        };
-  if (!dependency || !dependency.manifest) {
+    managed === "presence" && existingVersion
+      ? { manifest: { name, version: existingVersion } }
+      : "tag" in opts && opts.tag
+        ? await resolveFromNpm({ alias: name, pref: opts.tag }, { registry })
+        : { manifest: { name, version: opts.version } };
+
+  if (!dependency?.manifest) {
     throw new Error(`no ${name} dependency found in the NPM registry`);
   }
 
@@ -61,19 +59,12 @@ export async function ensureDependencyIn(
       ? `npm:${dependency.manifest.name}@`
       : ""
   }${rangePrefix}${dependency.manifest.version}`;
-  if (targetDependencyList[installAsAlias] === pkgDescriptor) {
-    // TODO: should we add to managed list
-    // if the expected version is the same as the one already in the manifest?
-    return false;
-  }
   targetDependencyList[installAsAlias] = pkgDescriptor;
 
   if (managed) {
     const managedDependencies = ensureManagedDependenciesSection(manifest);
     managedDependencies[installAsAlias] = managed;
   }
-
-  return true;
 }
 
 export function ensureManagedDependenciesSection(manifest: MinimalManifest) {

@@ -4,7 +4,8 @@ import { loadConduProject } from "../loadProject.js";
 import type {
   IPackageEntry,
   WorkspaceSubPackage,
-} from "@condu/types/configTypes.js";
+  ConduPackageEntry,
+} from "./apply/ConduPackageEntry.js";
 import { getSingleMatch } from "../matchPackage.js";
 import { match } from "ts-pattern";
 import * as path from "node:path";
@@ -14,7 +15,7 @@ import { safeFn } from "@condu/core/utils/safeFn.js";
 import { spawn } from "node:child_process";
 import which from "which";
 import { getPackage } from "@condu/workspace-utils/topo.js";
-import type { ConduPackageEntry, ConduProject } from "./apply/applyTypes.js";
+import type { ConduProject } from "./apply/ConduProject.js";
 
 export async function execCommand(input: {
   cwd?: string;

@@ -1,28 +1,25 @@
 import type {
-  CollectedState,
   WorkspaceSubPackage,
-} from "@condu/types/configTypes.js";
+  ConduPackageEntry,
+  WorkspaceRootPackage,
+} from "./apply/ConduPackageEntry.js";
 import * as fs from "node:fs/promises";
 import { sortPackageJson } from "sort-package-json";
 import * as path from "node:path";
 import { copyFiles } from "@condu/core/utils/copy.js";
-import { readPreviouslyWrittenFileCache } from "./apply/readWrite.js";
 import spdxLicenseList from "spdx-license-list/full.js";
-import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
 import { createExportableManifest } from "@pnpm/exportable-manifest";
 import { readWorkspaceManifest } from "@pnpm/workspace.read-manifest";
 import { getCatalogsFromWorkspaceManifest } from "@pnpm/catalogs.config";
 import { partition } from "remeda";
 import { getSingleMatch } from "../matchPackage.js";
-import {
-  apply,
-  getPublishablePackageDirectory,
-  getRelativePublishConfigDirectory,
-} from "./apply/apply.js";
+import { apply } from "./apply/apply.js";
 import { topo } from "@condu/workspace-utils/topo.js";
 import { spawn } from "node:child_process";
 import { safelyParseLastJsonFromString } from "@condu/core/utils/safelyParseJsonFromString.js";
-import type { ConduPackageEntry, ConduProject } from "./apply/applyTypes.js";
+import type { ConduProject } from "./apply/ConduProject.js";
+import { getPublishablePackageDirectory } from "./apply/publishableDirectory.js";
+import type { CollectedState } from "./apply/CollectedState.js";
 
 const DECLARATION_FILE_EXT_REGEXP = /\.d\.[cm]?ts$/;
 const TSCONFIG_LIKE_FILENAME_REGEXP = /tsconfig\..*\.json$/;
@@ -55,11 +52,10 @@ export async function prepareAndReleaseDirectoryPackages({
   dryRun?: boolean;
 }) {
   // TODO: ensure we had run 'apply' before this, so that the cache has been populated
-  const { cache: configFileCache } =
-    await readPreviouslyWrittenFileCache(workspaceDirAbs);
-  const configFileAbsolutePaths = Array.from(configFileCache.keys()).map(
-    (filePath) => path.join(workspaceDirAbs, filePath),
-  );
+
+  const configFileAbsolutePaths = Array.from(
+    collectedState.fileManager.files.keys(),
+  ).map((filePath) => path.join(workspaceDirAbs, filePath));
 
   const pnpmWorkspaceManifest = await readWorkspaceManifest(project.absPath);
   const catalogs = getCatalogsFromWorkspaceManifest(pnpmWorkspaceManifest);
@@ -71,12 +67,10 @@ export async function prepareAndReleaseDirectoryPackages({
 
   for (const name of queue) {
     const pkg = packagesToPrepareObj[name]!;
-    const { relPath: packageDir, manifest } = pkg;
+    const { relPath: packageDir } = pkg;
     const packageBuildDir = path.join(absBuildDir, packageDir);
     const packageSourceDir = path.join(workspaceDirAbs, packageDir, srcDirName);
-    console.log(
-      `Copying ${packageDir} for ${manifest.name} to ${buildDirName}`,
-    );
+    console.log(`Copying ${packageDir} for ${pkg.name} to ${buildDirName}`);
     const existingLicensePaths = new Set<string>();
     const existingReadmeNames: Array<string> = [];
     const preferredDirectoryEntries = new Map<string, string>();
@@ -148,7 +142,7 @@ export async function prepareAndReleaseDirectoryPackages({
       },
     }));
 
-    console.log(`Preparing ${manifest.name} for release`);
+    console.log(`Preparing ${pkg.name} for release`);
 
     const generatedEntrySources = Object.fromEntries(
       [...preferredDirectoryEntries].map(([dir, entry]) => {
@@ -171,76 +165,16 @@ export async function prepareAndReleaseDirectoryPackages({
       }),
     );
 
-    const hooks = collectedState.hooksByPackage[manifest.name];
-    const entrySources =
-      (await hooks?.modifyEntrySourcesForRelease?.(generatedEntrySources)) ??
-      generatedEntrySources;
-
-    // TODO: logic to update package.jsons for release
-    const dependencyManifestOverride = getReleaseDependencies(manifest);
-
-    // omit 'directory' from publishConfig in the published package.json
-    const { directory: _, ...publishConfig } = manifest.publishConfig ?? {};
-
-    const newPackageJson: PackageJson = {
-      ...manifest,
-      ...dependencyManifestOverride,
-      version: manifest.version ?? "0.0.0",
-      publishConfig: {
-        // TODO: consider whether to make the assumption that it's public by default
-        access: "public",
-        registry: project.config.publish?.registry,
-        ...publishConfig,
-        // directory: getRelativePublishConfigDirectory(project, pkg),
-      },
-      exports: {
-        ...entrySources,
-        "./*.json": "./*.json",
-        "./*.js": {
-          // types: `./*.d.ts`,
-          bun: `./*.ts`,
-          import: `./*.js`,
-          require: `./*.cjs`,
-          default: `./*.js`,
-        },
-        ...(typeof manifest.exports === "object" ? manifest.exports : {}),
-      },
-      main: entrySources["."]?.require,
-      module: entrySources["."]?.import,
-      source: entrySources["."]?.source,
-      // ensure there's a scripts field so npm doesn't complain with a warning about an invalid package.json
-      scripts: manifest.scripts ?? {},
-      // TODO: types is probably unnecessary?
-      // types: entrySources["."]?.types,
-      // TODO: funding
-      // TODO: support CJS-first projects (maybe?)
-      type: "module",
-
-      // TODO: add unpkg/browser support for cases when bundling (webpack or rollup)
-      // jsdelivr, skypack
-
-      // set all necessary fields for deployment:
-      // main: "dist/index.js",
-      // types: "dist/index.d.ts",
-      // files: ["dist"],
-      // publishConfig: {
-      //   access: "public",
-      // },
-      // repository: {
-      //   type: "git",
-      //   url: "",
-      // },
-    };
-
-    const transformedPackageJson =
-      (await hooks?.modifyPublishPackageJson?.(newPackageJson)) ??
-      newPackageJson;
+    const publishManifest = await pkg.generatePublishManifest({
+      entrySources: generatedEntrySources,
+      project,
+    });
 
     // should we just use the whole pack pipeline from pnpm?
     // see https://github.com/pnpm/pnpm/blob/07a7ac4a93505fc75fa397cd4a3965295d76a689/releasing/plugin-commands-publishing/src/pack.ts#L61
     const exportablePackageJson = await createExportableManifest(
       getPublishablePackageDirectory(project, pkg),
-      transformedPackageJson as any,
+      publishManifest as any,
       {
         // support pnpm catalogs
         catalogs,
@@ -256,7 +190,7 @@ export async function prepareAndReleaseDirectoryPackages({
       JSON.stringify(sortPackageJson(exportablePackageJson), undefined, 2),
     );
 
-    const license = manifest.license ?? project.manifest.license;
+    const license = publishManifest.license ?? project.manifest.license;
     if (
       license &&
       license !== "UNLICENSED" &&
@@ -274,7 +208,9 @@ export async function prepareAndReleaseDirectoryPackages({
             .replace("<year>", new Date().getFullYear().toString())
             .replace(
               "<copyright holders>",
-              manifest.author?.name ?? project.manifest.author?.name ?? "",
+              publishManifest.author?.name ??
+                project.manifest.author?.name ??
+                "",
             ),
         );
       }
@@ -327,10 +263,12 @@ export async function prepareAndReleaseDirectoryPackages({
           safelyParseLastJsonFromString(stdout);
         if (json && "error" in json) {
           throw new Error(
-            `Failed to publish ${manifest.name}:\n${JSON.stringify(json.error)}`,
+            `Failed to publish ${publishManifest.name}:\n${JSON.stringify(json.error)}`,
           );
         }
-        throw new Error(`Failed to publish ${manifest.name}:\n${stderr}`);
+        throw new Error(
+          `Failed to publish ${publishManifest.name}:\n${stderr}`,
+        );
       }
     }
   }
@@ -338,47 +276,6 @@ export async function prepareAndReleaseDirectoryPackages({
 
 const toCompareCase = (str: string) =>
   str.replace(/[^\dA-Za-z]/g, "").toLowerCase();
-
-/**
- * If 'publishDependencies' are defined in the package.json,
- * returns the new fields for the package.json to be published.
- */
-function getReleaseDependencies(manifest: PackageJson) {
-  const keepDependencies = Array.isArray(manifest["publishDependencies"])
-    ? manifest["publishDependencies"]
-    : undefined;
-  const dependencyEntries = Object.entries(manifest.dependencies ?? {});
-  const [finalDependencyEntries, removedDependencyEntries] = keepDependencies
-    ? partition(dependencyEntries, ([dep]) =>
-        keepDependencies.some((keepDep) =>
-          keepDep.startsWith("@") ? dep.startsWith(keepDep) : dep === keepDep,
-        ),
-      )
-    : ([dependencyEntries, []] as const);
-
-  const dependencyManifestOverride = {
-    dependencies: Object.fromEntries(finalDependencyEntries),
-    // mark removed dependencies as optional peerDependencies:
-    // ...(removedDependencyEntries.length > 0
-    //   ? {
-    //       peerDependencies: {
-    //         ...manifest.peerDependencies,
-    //         ...Object.fromEntries(removedDependencyEntries),
-    //       },
-    //       peerDependenciesMeta: {
-    //         ...manifest.peerDependenciesMeta,
-    //         ...Object.fromEntries(
-    //           removedDependencyEntries.map(([dep]) => [
-    //             dep,
-    //             { optional: true },
-    //           ]),
-    //         ),
-    //       },
-    //     }
-    //   : {}),
-  };
-  return dependencyManifestOverride;
-}
 
 export async function releasePipeline({
   ci = Boolean(process.env["CI"]),
@@ -405,8 +302,8 @@ export async function releasePipeline({
           }).path,
       )
     : ["."];
-  const packages: readonly (ConduProject | WorkspaceSubPackage)[] =
-    projectConventions ? project.workspacePackages : [project];
+  const packages: readonly (WorkspaceRootPackage | WorkspaceSubPackage)[] =
+    projectConventions ? project.workspacePackages : [project.workspace];
 
   const [selectedPackages, unselectedPackages] =
     selectedPackagePaths.length > 0
@@ -441,13 +338,17 @@ export async function releasePipeline({
     await Promise.all(
       unselectedPackages
         .filter((pkg) => !pkg.manifest.private)
-        .map((pkg) =>
-          pkg.writeProjectManifest({
-            ...pkg.manifest,
-            $internal$: true,
-            private: true,
-          }),
-        ),
+        .map((pkg) => {
+          pkg.addModification(
+            (pkg) => ({
+              ...pkg,
+              $internal$: true,
+              private: true,
+            }),
+            { featureName: "condu:release-pipeline" },
+          );
+          return pkg.applyAndCommit();
+        }),
     );
   }
 }

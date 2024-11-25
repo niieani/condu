@@ -1,10 +1,10 @@
 import { isDeepEqual } from "remeda";
-import type { WorkspaceProjectDefined } from "@condu/types/configTypes.js";
+import type { DefinedWorkspaceProjectConvention } from "@condu/types/configTypes.js";
 import type { Match, ConventionMatch } from "./commands/create/create.js";
 
 export interface MatchOptions {
   partialPath: string;
-  name?: string;
+  name?: string | undefined;
 }
 
 export function getSingleMatch({
@@ -12,7 +12,7 @@ export function getSingleMatch({
   name,
   projectConventions,
 }: MatchOptions & {
-  projectConventions: WorkspaceProjectDefined[];
+  projectConventions: DefinedWorkspaceProjectConvention[];
 }): Match {
   const conventionMatches = partialPath.startsWith("./")
     ? [{ path: partialPath.slice(2), name: name ?? partialPath.slice(2) }]
@@ -49,7 +49,7 @@ export function getConventionMatches({
   partialPath,
   name,
 }: {
-  projectConventions: WorkspaceProjectDefined[];
+  projectConventions: DefinedWorkspaceProjectConvention[];
   /** the partial path or full package name */
   partialPath: string;
   name?: string;

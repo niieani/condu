@@ -81,7 +81,7 @@
 - [x] CI build and test using moon
 - [x] a way to ensure that certain dependencies/devDependencies/peerDependencies are set, or at least copy them over from template
 - [ ] add `repository`, `homepage` (fallback to repo) and `author`, `license` and `contributors` info to published package.json based on the root package.json
-- [ ] re-evaluate the API for writing features - there's a lot of nesting, can it be simplified a bit?
+- [x] re-evaluate the API for writing features - there's a lot of nesting, can it be simplified a bit?
   - also need a way to hook into each others features (i.e. modify behavior if other features are enabled)
   - maybe simply hooking into the outputted files (if they exist?), creating kind of a pipeline of file transformations?
 - [ ] preset with my features and feature config pre-applied

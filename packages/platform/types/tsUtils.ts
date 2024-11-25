@@ -20,3 +20,9 @@ export type ImmutableArray<T> = ReadonlyArray<Immutable<T>>;
 export type ImmutableMap<K, V> = ReadonlyMap<Immutable<K>, Immutable<V>>;
 export type ImmutableSet<T> = ReadonlySet<Immutable<T>>;
 export type ImmutableObject<T> = { readonly [K in keyof T]: Immutable<T[K]> };
+type AnyObject = {
+  readonly [key: string]: any;
+
+  // without this dummy property below, TypeScript will widen to 'any':
+  _?: string;
+};

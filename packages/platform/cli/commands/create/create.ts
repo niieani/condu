@@ -1,7 +1,4 @@
-import type {
-  ConduProject,
-  WorkspaceProjectDefined,
-} from "@condu/types/configTypes.js";
+import type { DefinedWorkspaceProjectConvention } from "@condu/types/configTypes.js";
 import { loadConduProject } from "../../loadProject.js";
 import * as fs from "node:fs/promises";
 import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
@@ -12,6 +9,7 @@ import type { CommandContext } from "./CreateCommand.js";
 import childProcess from "node:child_process";
 import { copyFiles } from "@condu/core/utils/copy.js";
 import { pick } from "remeda";
+import type { ConduProject } from "../apply/ConduProject.js";
 
 // const gitUser = (await $`git config user.name`).stdout.trim();
 // const gitEmail = (await $`git config user.email`).stdout.trim();
@@ -56,7 +54,7 @@ export async function createCommand({
 }
 
 export interface ConventionMatch {
-  convention: WorkspaceProjectDefined;
+  convention: DefinedWorkspaceProjectConvention;
   path: string;
   name: string;
 }

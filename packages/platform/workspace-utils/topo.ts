@@ -15,13 +15,13 @@ import type {
   IGetWorkspaceOptions,
   IWorkspaceContext,
 } from "./interface.js";
+import type { WriteManifestFnOptions } from "@condu/types/configTypes.js";
 import type {
-  IPackageEntry,
   ConduPackageJson,
-  WriteManifestFnOptions,
+  IPackageEntry,
   PackageKind,
   IPackageEntryWithWriteManifest,
-} from "@condu/types/configTypes.js";
+} from "@condu/cli/commands/apply/ConduPackageEntry.js";
 import { readProjectManifest } from "@pnpm/read-project-manifest";
 import { sortPackageJson } from "sort-package-json";
 import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";

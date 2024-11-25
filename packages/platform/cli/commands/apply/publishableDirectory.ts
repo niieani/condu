@@ -1,8 +1,6 @@
-import type {
-  ConduProject,
-  WorkspaceSubPackage,
-} from "@condu/types/configTypes.js";
+import type { WorkspaceSubPackage } from "./ConduPackageEntry.js";
 import path from "node:path";
+import type { ConduProject } from "./ConduProject.js";
 
 export function getPublishablePackageDirectory(
   project: ConduProject,
@@ -26,21 +24,21 @@ export function getRelativePublishConfigDirectory(
   return relativePath;
 }
 
-async function ensurePublishConfigDirectorySetInManifestFiles(
-  project: ConduProject,
-) {
-  for (const pkg of project.workspacePackages) {
-    // ensure there's a publishConfig.directory set for each package
-    const relativePath = getRelativePublishConfigDirectory(project, pkg);
-    const publishableDirectory = pkg.manifest.publishConfig?.["directory"];
-    // if (publishableDirectory) {
-    //   delete pkg.manifest.publishConfig;
-    //   await pkg.writeProjectManifest(pkg.manifest);
-    // }
-    if (publishableDirectory !== relativePath) {
-      pkg.manifest.publishConfig ??= {};
-      pkg.manifest.publishConfig["directory"] = relativePath;
-      await pkg.writeProjectManifest(pkg.manifest);
-    }
-  }
-}
+// async function ensurePublishConfigDirectorySetInManifestFiles(
+//   project: ConduProject,
+// ) {
+//   for (const pkg of project.workspacePackages) {
+//     // ensure there's a publishConfig.directory set for each package
+//     const relativePath = getRelativePublishConfigDirectory(project, pkg);
+//     const publishableDirectory = pkg.manifest.publishConfig?.["directory"];
+//     // if (publishableDirectory) {
+//     //   delete pkg.manifest.publishConfig;
+//     //   await pkg.writeProjectManifest(pkg.manifest);
+//     // }
+//     if (publishableDirectory !== relativePath) {
+//       pkg.manifest.publishConfig ??= {};
+//       pkg.manifest.publishConfig["directory"] = relativePath;
+//       await pkg.writeProjectManifest(pkg.manifest);
+//     }
+//   }
+// }

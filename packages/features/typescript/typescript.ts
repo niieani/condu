@@ -88,7 +88,8 @@ export const typescript = ({
                     noImplicitOverride: true,
                     noImplicitReturns: true,
                     noPropertyAccessFromIndexSignature: true,
-                    exactOptionalPropertyTypes: true,
+                    // this one is cool, but can be somewhat annoying:
+                    // exactOptionalPropertyTypes: true,
                     noUncheckedIndexedAccess: true,
                     // this is the realm of eslint:
                     // noUnusedLocals: true,

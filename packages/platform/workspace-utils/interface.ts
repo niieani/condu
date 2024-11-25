@@ -1,7 +1,7 @@
 import type {
   IPackageEntry,
   IPackageEntryWithWriteManifest,
-} from "@condu/types/configTypes.js";
+} from "@condu/cli/commands/apply/ConduPackageEntry.js";
 import type { TDepMap, TGraph } from "toposource";
 
 export type IPackageDeps = Record<string, string>;

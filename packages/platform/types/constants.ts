@@ -19,3 +19,9 @@ export const DEFAULT_GENERATED_SOURCE_FILE_NAME_SUFFIXES = [
   ".generated",
   ".gen",
 ];
+export const IS_INTERACTIVE =
+  process.stdout.isTTY &&
+  process.stdin.isTTY &&
+  process.env["npm_lifecycle_event"] !== "postinstall";
+export const FILE_STATE_PATH = `${CONDU_CONFIG_DIR_NAME}/.cache/files.json`;
+export const CURRENT_CACHE_VERSION = 1;
