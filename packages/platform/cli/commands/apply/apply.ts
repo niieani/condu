@@ -62,10 +62,24 @@ export async function collectState(
         ]
       : config.features;
 
-  // TODO: Deduplicate features by name, while preserving the order
+  // Deduplicate features by name, ensuring later features override earlier ones
+  const deduplicatedFeaturesMap = new Map<string, FeatureDefinition<any>>();
 
-  // Topologically sort the features
-  const sortedFeatures = topologicalSortFeatures(features);
+  features.forEach((feature) => {
+    if (deduplicatedFeaturesMap.has(feature.name)) {
+      console.warn(
+        `Duplicate feature found: ${feature.name}. The later definition will be used.`,
+      );
+      // delete the previous one to retain the order based on the later one
+      deduplicatedFeaturesMap.delete(feature.name);
+    }
+    deduplicatedFeaturesMap.set(feature.name, feature);
+  });
+
+  const deduplicatedFeatures = Array.from(deduplicatedFeaturesMap.values());
+
+  // Topologically sort the deduplicated features
+  const sortedFeatures = topologicalSortFeatures(deduplicatedFeatures);
 
   // Initialize the PeerContext
   let peerContext: Record<string, unknown> = {};
@@ -111,9 +125,7 @@ export async function collectState(
   for (const feature of sortedFeatures) {
     const conduApi = createConduApi({
       project,
-      collectionContext: {
-        featureName: feature.name,
-      },
+      collectionContext: { featureName: feature.name },
       changesCollector,
     });
 
