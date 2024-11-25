@@ -54,7 +54,7 @@ export const yarn = ({ yarnrc }: { yarnrc?: Yarnrc } = {}) =>
           )}/yarn.config.cjs');`,
         });
         devDependencies.push({
-          packageAlias: "@yarnpkg/types",
+          name: "@yarnpkg/types",
         });
       }
       return {

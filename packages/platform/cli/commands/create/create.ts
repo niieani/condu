@@ -1,5 +1,5 @@
 import type {
-  Project,
+  ConduProject,
   WorkspaceProjectDefined,
 } from "@condu/types/configTypes.js";
 import { loadConduProject } from "../../loadProject.js";
@@ -76,7 +76,7 @@ export async function createPackage({
   private: privatePackage,
 }: {
   match: Match;
-  project: Project;
+  project: ConduProject;
   description: string | undefined;
   private?: boolean;
   context: CommandContext;

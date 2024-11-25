@@ -1,8 +1,11 @@
-import type { Project, WorkspaceSubPackage } from "@condu/types/configTypes.js";
+import type {
+  ConduProject,
+  WorkspaceSubPackage,
+} from "@condu/types/configTypes.js";
 import path from "node:path";
 
 export function getPublishablePackageDirectory(
-  project: Project,
+  project: ConduProject,
   pkg: Pick<WorkspaceSubPackage, "relPath" | "manifest">,
 ): string {
   return path.join(
@@ -13,7 +16,7 @@ export function getPublishablePackageDirectory(
 }
 
 export function getRelativePublishConfigDirectory(
-  project: Project,
+  project: ConduProject,
   pkg: Pick<WorkspaceSubPackage, "relPath" | "manifest">,
 ): string {
   // see https://pnpm.io/package_json#publishconfigdirectory
@@ -24,7 +27,7 @@ export function getRelativePublishConfigDirectory(
 }
 
 async function ensurePublishConfigDirectorySetInManifestFiles(
-  project: Project,
+  project: ConduProject,
 ) {
   for (const pkg of project.workspacePackages) {
     // ensure there's a publishConfig.directory set for each package

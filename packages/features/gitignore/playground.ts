@@ -21,7 +21,7 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
     mergePeerContext: (config) => ({
       condu: (peerContext) => ({ ...peerContext }),
     }),
-    apply(condu, peerContext) {
+    defineRecipe(condu, peerContext) {
       condu.root.generateFile(".gitignore", {
         content: ".DS_Store",
       });

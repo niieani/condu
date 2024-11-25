@@ -31,16 +31,16 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
       // each feature can define its own peer context
       // and it can be extended by other features
       // e.g. another feature could add a 'gitignore' key to the peer context
-      // which is then available in the 'apply' function
+      // which is then available in the 'defineRecipe' function
       gitignore: (gitIgnorePeerContext) => ({
         ignore: [...gitIgnorePeerContext.ignore, "something"],
       }),
     }),
 
-    // after we have peer context, we we execute 'apply' for every configured feature (in topological order)
+    // after we have peer context, we we execute 'defineRecipe' for every configured feature (in topological order)
     // and any files that are created, modified, their dependencies added,
     // but by this point peer context cannot be extended anymore
-    apply: (condu, peerContext) => {
+    defineRecipe: (condu, peerContext) => {
       // condu.config is available here
 
       condu.root.ignoreFile(".somefile.js", {
@@ -126,8 +126,8 @@ After configuring the features:
 - we sort the features in topological order
 - run their `mergePeerContext` to collect a final reducer of each peer context
 - we execute the peer context reducers in topological order with `config` (`ConduConfigWithInferredValuesAndProject`)
-- run their `apply` with both `config` and `peerContext` (scoped down to only this particular feature's `peerContext`)
-  - `apply`'s function is to collects all the "changes to be made", i.e. `createManagedFile` and other methods only create a "change to be made" object with the correct context
+- run their `defineRecipe` with both `config` and `peerContext` (scoped down to only this particular feature's `peerContext`)
+  - `defineRecipe`'s function is to collects all the "changes to be made", i.e. `createManagedFile` and other methods only create a "change to be made" object with the correct context
 - once collected, we create a reducer pipeline for creating/updating files from each of these changes. These pipelines are created from grouping all "changes to be made" based on their absolute filepath.
   - a final "content" reducer is created by combining all matching `createManagedFile` and `modifyManagedFile` (order must be respected)
   - similarly for `modifyUserEditableFile`
@@ -151,7 +151,7 @@ condu.root.mergePackageJson({
 
 // condu.state?
 
-// how can we ensure that this is not called asynchronously, or how do we allow async `apply`? force `apply` to be synchronous? or make it return another function
+// how can we ensure that this is not called asynchronously, or how do we allow async `defineRecipe`? force `defineRecipe` to be synchronous? or make it return another function
 // from another feature. Alternative is to `await condu.getPeerContext()` and then throw if `mergePeerContext` is called with an error saying that `mergePeerContext` can only be called before `getPeerContext()`
 // or we could yield? nah just returning a function (or undefined) is fine
 ```

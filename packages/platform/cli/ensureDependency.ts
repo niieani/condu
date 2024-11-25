@@ -3,8 +3,8 @@ import { getCacheDir } from "@condu/core/utils/dirs.js";
 import { createFetchFromRegistry } from "@pnpm/fetch";
 import { createGetAuthHeaderByURI } from "@pnpm/network.auth-header";
 import type {
-  ConduPackageJson,
   DependencyDef,
+  MinimalManifest,
   PackageJsonConduSection,
 } from "@condu/types/configTypes.js";
 
@@ -23,49 +23,60 @@ const { resolveFromNpm } = createNpmResolver(
   { offline: false, cacheDir: getCacheDir(process) },
 );
 
-export async function ensureDependency({
-  packageAlias,
-  manifest,
-  versionOrTag = "latest",
-  target = "dependencies",
-  skipIfExists = true,
-  managed = "presence",
-}: DependencyDef & {
-  manifest: ConduPackageJson;
-}) {
-  const targetDependencyList = (manifest[target] ||= {});
-  if (skipIfExists && targetDependencyList[packageAlias]) {
+/**
+ * Mutates the manifest to ensure the dependency is present.
+ * @returns true if the manifest was changed.
+ */
+export async function ensureDependencyIn(
+  manifest: MinimalManifest,
+  {
+    name,
+    installAsAlias = name,
+    list = "dependencies",
+    skipIfExists = true,
+    managed = "presence",
+    rangePrefix = "^",
+    ...opts
+  }: DependencyDef,
+): Promise<boolean> {
+  const targetDependencyList = (manifest[list] ||= {});
+  if (skipIfExists && targetDependencyList[installAsAlias]) {
     return false;
   }
-  const dependency = await resolveFromNpm(
-    { alias: packageAlias, pref: versionOrTag },
-    { registry },
-  );
+  const dependency =
+    "tag" in opts && opts.tag
+      ? await resolveFromNpm({ alias: name, pref: opts.tag }, { registry })
+      : {
+          manifest: {
+            name,
+            version: opts.version,
+          },
+        };
   if (!dependency || !dependency.manifest) {
-    throw new Error(`no ${packageAlias} dependency found in the NPM registry`);
+    throw new Error(`no ${name} dependency found in the NPM registry`);
   }
 
   const pkgDescriptor = `${
-    dependency.manifest.name !== packageAlias
+    dependency.manifest.name !== installAsAlias
       ? `npm:${dependency.manifest.name}@`
       : ""
-  }^${dependency.manifest.version}`;
-  if (targetDependencyList[packageAlias] === pkgDescriptor) {
+  }${rangePrefix}${dependency.manifest.version}`;
+  if (targetDependencyList[installAsAlias] === pkgDescriptor) {
     // TODO: should we add to managed list
     // if the expected version is the same as the one already in the manifest?
     return false;
   }
-  targetDependencyList[packageAlias] = pkgDescriptor;
+  targetDependencyList[installAsAlias] = pkgDescriptor;
 
   if (managed) {
     const managedDependencies = ensureManagedDependenciesSection(manifest);
-    managedDependencies[packageAlias] = managed;
+    managedDependencies[installAsAlias] = managed;
   }
 
   return true;
 }
 
-export function ensureManagedDependenciesSection(manifest: ConduPackageJson) {
+export function ensureManagedDependenciesSection(manifest: MinimalManifest) {
   const conduSection = ensureConduSection(manifest);
   let managedDependencies = conduSection.managedDependencies;
   if (typeof managedDependencies !== "object" || !managedDependencies) {
@@ -75,7 +86,7 @@ export function ensureManagedDependenciesSection(manifest: ConduPackageJson) {
 }
 
 export function ensureConduSection(
-  manifest: ConduPackageJson,
+  manifest: MinimalManifest,
 ): PackageJsonConduSection {
   let conduSection = manifest.condu;
   if (typeof conduSection !== "object" || !conduSection) {

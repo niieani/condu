@@ -1,4 +1,7 @@
-import type { IPackageEntry } from "@condu/types/configTypes.js";
+import type {
+  IPackageEntry,
+  IPackageEntryWithWriteManifest,
+} from "@condu/types/configTypes.js";
 import type { TDepMap, TGraph } from "toposource";
 
 export type IPackageDeps = Record<string, string>;
@@ -33,8 +36,8 @@ export interface ITopoOptionsNormalized extends IGetWorkspaceOptions {
 }
 
 export interface IWorkspaceContext {
-  packages: Record<string, IPackageEntry>;
-  root: IPackageEntry;
+  packages: Record<string, IPackageEntryWithWriteManifest>;
+  root: IPackageEntryWithWriteManifest;
   options: IGetWorkspaceOptions;
 }
 

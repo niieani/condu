@@ -1,10 +1,16 @@
 import {
   SymlinkTarget,
-  type ConduConfigWithInferredValuesAndProject,
+  type ConduConfigWithInferredValues,
   type ConduPackageJson,
-  type WorkspacePackage,
+  type DependencyDef,
+  type IPackageEntry,
+  type IPackageEntryWithWriteManifest,
+  type PackageKind,
+  type Task,
+  type WorkspaceProjectDefined,
   type WorkspaceRootPackage,
   type WorkspaceSubPackage,
+  type WriteManifestFn,
 } from "@condu/types/configTypes.js";
 import type {
   FilesJsonCacheFileVersion1,
@@ -23,6 +29,8 @@ import { printUnifiedDiff } from "print-diff";
 import readline from "node:readline/promises";
 import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
 import { UpsertMap } from "@condu/core/utils/UpsertMap.js";
+import type { I } from "vitest/dist/chunks/reporters.DAfKSDh5.js";
+import type { Immutable } from "@condu/types/tsUtils.js";
 
 // Define PeerContext as an empty interface to be extended via declaration merging
 export interface PeerContext {
@@ -50,21 +58,23 @@ export type FeatureDefinition<
   // todo should this allow regex for dynamically created features?
   after?: Array<string> | string;
   mergePeerContext?: (
-    config: ConduConfigWithInferredValuesAndProject,
+    project: ConduProject,
   ) => Promise<PeerContextReducer> | PeerContextReducer;
-  apply: (
-    condu: Condu,
+  defineRecipe: (
+    condu: ConduApi,
     peerContext: GetPeerContext<NameT>,
   ) => void | Promise<void>;
 } & (NameT extends keyof PeerContext
   ? { initialPeerContext: GetPeerContext<NameT> }
   : {});
 
-export interface Condu {
-  config: ConduConfigWithInferredValuesAndProject;
-  root: PackageCondu;
-  with(criteria: PackageCriteria): PackageCondu;
-  packages: WorkspacePackage[];
+export type ReadonlyProject = Omit<ConduProject, "applyAndCommit">;
+
+export interface ConduApi {
+  readonly project: ReadonlyProject;
+  readonly root: StateDeclarationApi;
+  readonly packages: readonly ConduPackageEntry[];
+  with(criteria: PackageCriteria): StateDeclarationApi;
 }
 
 type JsonFileName = `${string}.${"json" | "jsonc" | "json5"}`;
@@ -99,7 +109,7 @@ export type ResolvedSerializedType<PathT extends string> =
       ? FallbackFileNameToDeserializedTypeMapping[PathT]
       : string;
 
-export interface PackageCondu {
+export interface StateDeclarationApi {
   ignoreFile(path: string, options?: GlobalFileFlags): void;
   generateFile<PathT extends string>(
     path: PathT,
@@ -122,22 +132,25 @@ export interface PackageCondu {
       : {}) &
       ModifyUserEditableFileOptions<DeserializedT>,
   ): void;
-  addManagedDevDependency(dependency: string): void;
-  addManagedDependency(dependency: string): void;
+  addManagedDependency(dependency: DependencyDef): void;
   setDependencyResolutions(resolutions: Record<string, string>): void;
-  mergePackageJson(modifier: (pkg: ConduPackageJson) => ConduPackageJson): void;
-  mergeReleasePackageJson(
-    modifier: (pkg: ConduPackageJson) => ConduPackageJson,
-  ): void;
+  modifyPackageJson(modifier: PackageJsonModifier): void;
+  modifyPublishedPackageJson(modifier: PackageJsonModifier): void;
+  defineTask(taskDefinition: Task): void;
 }
 
 type IfPreviouslyDefined = "error" | "overwrite";
 
+export type InitialContent<DeserializedT> =
+  | DeserializedT
+  | ((
+      pkg: ConduPackageJson,
+      collectedDataApi: ConduCollectedDataPublicApi,
+    ) => DeserializedT | Promise<DeserializedT>);
+
 // Define options interfaces
 export interface GenerateFileOptions<DeserializedT> extends GlobalFileFlags {
-  content:
-    | DeserializedT
-    | ((pkg: ConduPackageJson) => DeserializedT | Promise<DeserializedT>);
+  content: InitialContent<DeserializedT>;
 
   /** defaults to stringify based on file extension */
   stringify?: (content: DeserializedT) => string;
@@ -153,6 +166,7 @@ export interface ModifyOnlyGeneratedFileOptions<DeserializedT>
   content: (
     content: DeserializedT,
     pkg: ConduPackageJson,
+    collectedDataApi: ConduCollectedDataPublicApi,
   ) => DeserializedT | Promise<DeserializedT>;
   // default is "ignore"
   ifNotCreated?: Exclude<IfNotCreated, "create">;
@@ -163,6 +177,7 @@ export interface ModifyOrCreateGeneratedFileOptions<DeserializedT>
   content: (
     content: DeserializedT | undefined,
     pkg: ConduPackageJson,
+    collectedDataApi: ConduCollectedDataPublicApi,
   ) => DeserializedT | Promise<DeserializedT>;
 
   // for now we can not support 'create' here for simplicity
@@ -212,22 +227,41 @@ export interface ModifyUserEditableFileOptionsWithCustomSerialization<
 
 export interface PackageCriteria {
   name?: string;
-  kind?: "workspace" | "package";
+  kind?: PackageKind;
 }
 
 // Define types for collected changes
-export interface ChangesCollector {
+export interface CollectedState {
   fileManager: FileManager;
+  tasks: CollectedTask[];
+  /** we'll ensure these dependencies are installed during execution */
   dependencies: CollectedDependency[];
+  /** we'll ensure these dependency resolutions are applied */
   resolutions: Record<string, string>;
-  packageJsonModifications: PackageJsonModification[];
-  releasePackageJsonModifications: PackageJsonModification[];
+  packageJsonModifications: PackageJsonModificationWithPackage[];
+  releasePackageJsonModifications: PackageJsonModificationWithPackage[];
+}
+
+export interface CollectedDependency {
+  readonly targetPackage: ConduPackageEntry;
+  readonly dependencyDefinition: DependencyDef;
+  readonly context: CollectionContext;
+}
+
+export interface CollectedTask {
+  readonly targetPackage: ConduPackageEntry;
+  readonly taskDefinition: Task;
+  readonly context: CollectionContext;
+}
+
+interface PackageJsonModificationWithPackage extends PackageJsonModification {
+  targetPackage: ConduPackageEntry;
 }
 
 // there needs to be another step to convert those to FileDef
 
 export interface CollectedIgnoreFileChange<PathT extends string> {
-  targetPackage: WorkspacePackage;
+  targetPackage: ConduPackageEntry;
   path: PathT;
   rootRelativePath: string;
   options: GlobalFileFlags | undefined;
@@ -235,7 +269,7 @@ export interface CollectedIgnoreFileChange<PathT extends string> {
 }
 
 export interface CollectedGenerateFileChange<PathT extends string> {
-  targetPackage: WorkspacePackage;
+  targetPackage: ConduPackageEntry;
   path: PathT;
   rootRelativePath: string;
   options: GenerateFileOptions<ResolvedSerializedType<PathT>>;
@@ -246,7 +280,7 @@ export interface CollectedModifyGeneratedFileChange<
   PathT extends string,
   DeserializedT,
 > {
-  targetPackage: WorkspacePackage;
+  targetPackage: ConduPackageEntry;
   path: PathT;
   rootRelativePath: string;
   options: ModifyGeneratedFileOptions<DeserializedT>;
@@ -257,7 +291,7 @@ export interface CollectedModifyUserEditableFileChange<
   PathT extends string,
   DeserializedT,
 > {
-  targetPackage: WorkspacePackage;
+  targetPackage: ConduPackageEntry;
   path: PathT;
   rootRelativePath: string;
   options: ModifyUserEditableFileOptions<DeserializedT>;
@@ -284,6 +318,11 @@ export type ModifyUserEditableFileOptionsWithContext<
 export type ModifyGeneratedFileOptionsWithContext<
   DeserializedT extends PossibleDeserializedValue,
 > = ModifyGeneratedFileOptions<DeserializedT> & {
+  context: CollectionContext;
+};
+
+export type InitialContentWithContext<DeserializedT> = {
+  content: InitialContent<DeserializedT>;
   context: CollectionContext;
 };
 
@@ -338,7 +377,7 @@ function getRootPackageRelativePath({
   rootPackage,
   packages,
 }: RootRelativePackageResolutionOptions): {
-  targetPackage: WorkspacePackage;
+  targetPackage: ConduPackageEntry;
   packageRelativePath: string;
 } {
   for (const pkg of packages) {
@@ -361,6 +400,65 @@ export const FILE_STATE_PATH = `${CONDU_CONFIG_DIR_NAME}/.cache/files.json`;
 
 const CURRENT_CACHE_VERSION = 1;
 
+export type ReadonlyFile = Readonly<
+  Pick<
+    ConduFile<any>,
+    | "absPath"
+    | "relPath"
+    | "flags"
+    | "hasFileSystemEffects"
+    | "isManaged"
+    | "managedByFeatures"
+    | "status"
+    | "targetPackage"
+  >
+>;
+
+// this is the public API that exposes access to all collected changes
+// allowing generators to use that state to generate files
+// making them available via content: (..., publicApi) => ...
+export class ConduCollectedDataPublicApi {
+  #changes: CollectedState;
+
+  constructor(changes: CollectedState) {
+    this.#changes = changes;
+  }
+
+  get files(): Iterable<
+    readonly [workspaceRelPath: string, file: ReadonlyFile]
+  > {
+    return this.#changes.fileManager.files.entries();
+  }
+
+  get tasks(): ReadonlyArray<CollectedTask> {
+    return this.#changes.tasks;
+  }
+
+  get dependencies(): ReadonlyArray<CollectedDependency> {
+    return this.#changes.dependencies;
+  }
+
+  *getFilesByFlag<FlagT extends keyof GlobalFileFlags>({
+    flag,
+    value,
+    includeUnflagged = false,
+  }: {
+    flag: FlagT;
+    value: GlobalFileFlags[FlagT];
+    includeUnflagged?: boolean;
+  }): Generator<[workspaceRelPath: string, file: ReadonlyFile]> {
+    for (const kv of this.#changes.fileManager.files.entries()) {
+      const file = kv[1];
+      if (
+        file.flags[flag] === value ||
+        (includeUnflagged && file.flags[flag] === undefined)
+      ) {
+        yield kv;
+      }
+    }
+  }
+}
+
 export class FileManager {
   files = new UpsertMap<string, ConduFile<any>>();
   cacheFile: ConduFile<FilesJsonCacheFileVersion1>;
@@ -376,7 +474,7 @@ export class FileManager {
       targetPackage: rootPackage,
     });
 
-    this.cacheFile.setInitialContent(
+    this.cacheFile.defineInitialContent(
       {
         content: () => {
           const filesToCache: WrittenFileInCache[] = [];
@@ -413,10 +511,12 @@ export class FileManager {
     );
   }
 
-  async applyAllFiles(): Promise<void> {
+  async applyAllFiles(
+    collectedDataApi: ConduCollectedDataPublicApi,
+  ): Promise<void> {
     const applyPromises: Promise<void>[] = Array.from(
       this.files.values(),
-      (file) => file.applyAndCommit(),
+      (file) => file.applyAndCommit(collectedDataApi),
     );
     await Promise.all(applyPromises);
     for (const file of this.files.values()) {
@@ -424,7 +524,7 @@ export class FileManager {
       await file.askUserToWrite?.();
     }
     // write the updated cache file
-    await this.cacheFile.applyAndCommit();
+    await this.cacheFile.applyAndCommit(collectedDataApi);
   }
 
   async readCache(): Promise<void> {
@@ -483,7 +583,7 @@ export class FileManager {
 
 interface FileDestination {
   relPath: string;
-  targetPackage: WorkspacePackage;
+  targetPackage: ConduPackageEntry;
 }
 
 export async function write({
@@ -515,11 +615,8 @@ export async function write({
 }
 
 export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
-  flags: GlobalFileFlags = {
-    gitignore: true,
-    npmignore: true,
-  };
-  targetPackage: WorkspacePackage;
+  flags: GlobalFileFlags = {};
+  targetPackage: ConduPackageEntry;
   /** path relative from the package */
   relPath: string;
   /** full absolute path */
@@ -562,9 +659,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
   lastApply: WrittenFile | undefined;
 
   private symlinkTarget?: string;
-  private initialContent?:
-    | DeserializedT
-    | ((pkg: ConduPackageJson) => DeserializedT | Promise<DeserializedT>);
+  private initialContent?: InitialContentWithContext<DeserializedT>;
   private contentModifications: Array<
     ModifyGeneratedFileOptionsWithContext<DeserializedT>
   > = [];
@@ -576,8 +671,8 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
   private stringify: (content: DeserializedT) => string;
 
   constructor({ relPath, targetPackage }: FileDestination) {
-    this.relPath = relPath;
     // TODO: handle edge case - prevent reaching into other packages by using relative paths or from root (e.g. by specifiying root package + ./packages/file as the path)
+    this.relPath = relPath;
     this.targetPackage = targetPackage;
     // set default stringify based on file name/extension
     this.stringify = getDefaultStringify(this.relPath);
@@ -604,7 +699,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     this.updateFlags(flags);
   }
 
-  setInitialContent(
+  defineInitialContent(
     {
       content,
       stringify,
@@ -619,7 +714,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       // TODO: safe error handling instead of throwing
       throw new Error(`Initial content already set for file ${this.relPath}`);
     }
-    this.initialContent = content;
+    this.initialContent = { content, context };
     if (stringify) {
       this.stringify = stringify;
     }
@@ -662,7 +757,12 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       ...flags
     } = modification;
     this.managedByFeatures.push(context);
-    this.updateFlags(flags);
+    this.updateFlags({
+      // gitignore: false,
+      // npmignore: false,
+      // ...this.flags,
+      ...flags,
+    });
     this.editableContentModifications.push({ ...modification, context });
     this.neverCache = true;
     return this;
@@ -677,7 +777,9 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
    * then updates the filesystem.
    * If the file is no longer managed, it will be deleted.
    */
-  async applyAndCommit(): Promise<void> {
+  async applyAndCommit(
+    collectedDataApi: ConduCollectedDataPublicApi,
+  ): Promise<void> {
     if (!this.isManaged) {
       if (this.lastApply) {
         // no longer managed, delete the file
@@ -725,9 +827,12 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     );
 
     let content: DeserializedT | undefined =
-      typeof this.initialContent === "function"
-        ? await this.initialContent(this.targetPackage)
-        : this.initialContent;
+      typeof this.initialContent?.content === "function"
+        ? await this.initialContent.content(
+            this.targetPackage,
+            collectedDataApi,
+          )
+        : this.initialContent?.content;
 
     let ifNotCreated: IfNotCreated = "ignore";
 
@@ -735,7 +840,11 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     for (const modification of this.contentModifications) {
       if (content === undefined && modification.ifNotCreated === "create") {
         // if no content, try the modification that can create the file
-        content = await modification.content(undefined, this.targetPackage);
+        content = await modification.content(
+          undefined,
+          this.targetPackage,
+          collectedDataApi,
+        );
         if (modification.stringify) {
           this.stringify = modification.stringify;
         }
@@ -754,7 +863,11 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
           this.lastApplyKind = "invalid";
           return;
         }
-        content = await modification.content(content, this.targetPackage);
+        content = await modification.content(
+          content,
+          this.targetPackage,
+          collectedDataApi,
+        );
       }
       // TODO: add debugging breadcrumbs for actually applied creations / modifications
     }
@@ -874,16 +987,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     newContent: string | SymlinkTarget,
     overwriteWithoutAsking = false,
   ): Promise<void> {
-    // TODO
-    // compare with the fs content
-    // if different:
-    // option to resolve conflicts
-    // write to fs
-    // TODO: update this._fsState (only if changes made)
-    // TODO: update this.lastApply (only if changes made)
-    // somewhere else: update cache
     const targetPath = this.absPath;
-
     const existingFile = await this.getFsFile();
 
     if (
@@ -908,6 +1012,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
         targetPath,
         content: newContent,
       });
+      this._fsState = this.lastApply;
       return;
     }
 
@@ -918,6 +1023,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
         targetPath,
         content: newContent,
       });
+      this._fsState = this.lastApply;
       return;
     } else if (!isInteractive) {
       process.exitCode = 1;
@@ -956,6 +1062,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
             targetPath,
             content: newContent,
           });
+          this._fsState = this.lastApply;
           this.askUserToWrite = undefined;
           return;
         }
@@ -979,49 +1086,144 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     this.status = "applied";
     this.lastApply = undefined;
   }
-
-  // async updateSymlink(symlinkTarget: string): Promise<void> {
-  //   const fsState = await this.getFsFile();
-  //   if (typeof fsState === "object") {
-  //     if (typeof fsState.content === "object") {
-  //       if (fsState.content.target === symlinkTarget) {
-  //         // nothing to do
-  //         return;
-  //       } else {
-  //         // TODO: remove the symlink, will create a new one below
-  //         // no need to ask for confirmation for symlinks
-  //         console.log(`Unlinking: ${this.path}`);
-  //         await fs.unlink(path.join(this.context.absPath, this.path));
-  //       }
-  //     } else {
-  //       // TODO: warn that the file would be overwritten by a symlink
-  //       // err on the side of caution
-  //       console.warn(
-  //         new Error(
-  //           `Cannot create symlink for ${this.path}, file already exists`,
-  //         ),
-  //       );
-  //       return;
-  //     }
-  //   }
-  //   // TODO: write the symlink and update this._fsState
-  //   const targetPath = path.join(this.context.absPath, this.path);
-  //   await fs.symlink(symlinkTarget, targetPath);
-  //   // this._fsState = {
-  //   //   content: new SymlinkTarget(symlinkTarget),
-  //   //   modifiedAt: Date.now(),
-  //   //   size: 0,
-  //   // };
-  // }
 }
 
-export interface CollectedDependency {
-  pkg: WorkspacePackage;
-  dependency: string;
-  type: "dev" | "prod";
+export class ConduProject {
+  #workspacePackage: ConduPackageEntry<"workspace">;
+  readonly workspacePackages: readonly ConduPackageEntry<"package">[];
+  readonly projectConventions: WorkspaceProjectDefined[] | undefined;
+  readonly config: ConduConfigWithInferredValues;
+  readonly allPackages: readonly ConduPackageEntry[];
+
+  constructor({
+    workspacePackage,
+    workspacePackages,
+    projectConventions,
+    config,
+  }: {
+    workspacePackage: ConduPackageEntry<"workspace">;
+    workspacePackages: readonly ConduPackageEntry<"package">[];
+    projectConventions: WorkspaceProjectDefined[] | undefined;
+    config: ConduConfigWithInferredValues;
+  }) {
+    this.#workspacePackage = workspacePackage;
+    this.workspacePackages = workspacePackages;
+    this.projectConventions = projectConventions;
+    this.config = config;
+    this.allPackages = [workspacePackage, ...workspacePackages];
+  }
+
+  get workspace(): ConduPackageEntry<"workspace"> {
+    return this.#workspacePackage;
+  }
+
+  // proxy the most important workspace package properties:
+  get manifest() {
+    return this.#workspacePackage.manifest;
+  }
+
+  get kind() {
+    return this.#workspacePackage.kind;
+  }
+
+  get name() {
+    return this.#workspacePackage.name;
+  }
+
+  get scope() {
+    return this.#workspacePackage.scope;
+  }
+
+  get scopedName() {
+    return this.#workspacePackage.scopedName;
+  }
+
+  get manifestRelPath() {
+    return this.#workspacePackage.manifestRelPath;
+  }
+
+  get manifestAbsPath() {
+    return this.#workspacePackage.manifestAbsPath;
+  }
+
+  get relPath() {
+    return this.#workspacePackage.relPath;
+  }
+
+  get absPath() {
+    return this.#workspacePackage.absPath;
+  }
+
+  async applyAndCommit() {
+    await this.#workspacePackage.applyAndCommit();
+  }
 }
+
+export type PackageJsonModifier = (
+  pkg: ConduPackageJson,
+) => ConduPackageJson | Promise<ConduPackageJson>;
 
 export interface PackageJsonModification {
-  pkg: WorkspacePackage;
-  modifier: (pkg: ConduPackageJson) => ConduPackageJson;
+  modifier: PackageJsonModifier;
+  context: CollectionContext;
+}
+
+export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
+  implements Omit<IPackageEntry, "writeProjectManifest">
+{
+  #manifest: ConduPackageJson;
+  get manifest(): ConduPackageJson {
+    return this.#manifest;
+  }
+  readonly kind: KindT;
+  readonly name: string;
+  readonly scope: string | undefined;
+  readonly scopedName: string;
+  readonly manifestRelPath: string;
+  readonly manifestAbsPath: string;
+  readonly relPath: string;
+  readonly absPath: string;
+  readonly #writeProjectManifest: WriteManifestFn;
+  #modifications: PackageJsonModification[] = [];
+  #publishedModifications: PackageJsonModification[] = [];
+  #managedByFeatures: CollectionContext[] = [];
+  #publishedManagedByFeatures: CollectionContext[] = [];
+
+  constructor(data: IPackageEntryWithWriteManifest<KindT>) {
+    this.kind = data.kind;
+    this.name = data.name ?? path.basename(data.absPath);
+    this.scope = data.scope;
+    this.scopedName = data.scopedName;
+    this.manifestRelPath = data.manifestRelPath;
+    this.manifestAbsPath = data.manifestAbsPath;
+    this.relPath = data.relPath;
+    this.absPath = data.absPath;
+    this.#writeProjectManifest = data.writeProjectManifest;
+    this.#manifest = data.manifest;
+  }
+
+  addModification(modifier: PackageJsonModifier, context: CollectionContext) {
+    this.#modifications.push({ modifier, context });
+    this.#managedByFeatures.push(context);
+  }
+
+  addPublishedModification(
+    modifier: PackageJsonModifier,
+    context: CollectionContext,
+  ) {
+    this.#publishedModifications.push({ modifier, context });
+    this.#publishedManagedByFeatures.push(context);
+  }
+
+  async applyAndCommit(): Promise<void> {
+    for (const { modifier } of this.#modifications) {
+      // for now process sequentially in case the modifier does network calls
+      // TODO: consider parallelizing with a cap
+      this.#manifest = await modifier(this.#manifest);
+    }
+
+    await this.#writeProjectManifest(this.#manifest);
+  }
+
+  // TODO: apply/generation of published version with modifications
 }

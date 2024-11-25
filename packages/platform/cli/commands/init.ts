@@ -7,7 +7,7 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import * as childProcess from "node:child_process";
 import { createCommandContext } from "../createCommandContext.js";
-import { ensureDependency } from "../ensureDependency.js";
+import { ensureDependencyIn } from "../ensureDependency.js";
 import type { ConduPackageJson } from "@condu/types/configTypes.js";
 
 export class InitCommand extends Command {
@@ -95,18 +95,15 @@ export default configure((pkg) => ({
     packageJson["sideEffects"] = false;
     packageJson.type = "module";
 
-    // Add the yarn plugin dependency
     await Promise.all([
-      ensureDependency({
-        packageAlias: "condu",
-        manifest: packageJson,
-        target: "devDependencies",
+      ensureDependencyIn(packageJson, {
+        name: "condu",
+        list: "devDependencies",
         managed: false,
       }),
-      ensureDependency({
-        packageAlias: "@condu-preset/monorepo",
-        manifest: packageJson,
-        target: "devDependencies",
+      ensureDependencyIn(packageJson, {
+        name: "@condu-preset/monorepo",
+        list: "devDependencies",
         managed: false,
       }),
     ]);

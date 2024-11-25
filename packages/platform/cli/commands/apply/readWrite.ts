@@ -4,7 +4,7 @@ import {
   SymlinkTarget,
   type FileDef,
   type GetExistingContentFn,
-  type WorkspacePackage,
+  type ConduPackageEntry,
 } from "@condu/types/configTypes.js";
 import { stringify as yamlStringify, parse as yamlParse } from "yaml";
 import {
@@ -220,7 +220,7 @@ const writeFileFromDef = async ({
 };
 
 interface WriteFilesConfigBase {
-  targetPackage: WorkspacePackage;
+  targetPackage: ConduPackageEntry;
   /** workspace directory */
   workspaceDirAbs: string;
   previouslyWrittenFiles: Map<string, CachedWrittenFile>;

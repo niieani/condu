@@ -1,6 +1,4 @@
 import type {
-  Project,
-  WorkspacePackage,
   CollectedState,
   WorkspaceSubPackage,
 } from "@condu/types/configTypes.js";
@@ -24,6 +22,7 @@ import {
 import { topo } from "@condu/workspace-utils/topo.js";
 import { spawn } from "node:child_process";
 import { safelyParseLastJsonFromString } from "@condu/core/utils/safelyParseJsonFromString.js";
+import type { ConduPackageEntry, ConduProject } from "./apply/applyTypes.js";
 
 const DECLARATION_FILE_EXT_REGEXP = /\.d\.[cm]?ts$/;
 const TSCONFIG_LIKE_FILENAME_REGEXP = /tsconfig\..*\.json$/;
@@ -46,11 +45,11 @@ export async function prepareAndReleaseDirectoryPackages({
   dryRun,
 }: {
   workspaceDirAbs: string;
-  packagesToPrepare: readonly WorkspacePackage[];
+  packagesToPrepare: readonly ConduPackageEntry[];
   absBuildDir: string;
   srcDirName: string;
   buildDirName: string;
-  project: Project;
+  project: ConduProject;
   collectedState: CollectedState;
   npmTag?: string;
   dryRun?: boolean;
@@ -406,7 +405,7 @@ export async function releasePipeline({
           }).path,
       )
     : ["."];
-  const packages: readonly (Project | WorkspaceSubPackage)[] =
+  const packages: readonly (ConduProject | WorkspaceSubPackage)[] =
     projectConventions ? project.workspacePackages : [project];
 
   const [selectedPackages, unselectedPackages] =

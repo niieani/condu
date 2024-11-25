@@ -1,6 +1,6 @@
-import type { PackageCondu } from "@condu/cli/commands/apply/applyTypes.js";
+import type { StateDeclarationApi } from "@condu/cli/commands/apply/applyTypes.js";
 
-declare const packageCondu: PackageCondu;
+declare const packageCondu: StateDeclarationApi;
 
 packageCondu.ignoreFile(".giti", { gitignore: true });
 packageCondu.generateFile("package.json", {
@@ -13,7 +13,7 @@ packageCondu.modifyGeneratedFile("package.json", {
 });
 packageCondu.modifyUserEditableFile("p.json", {
   parse(rawFileContent) {
-    return JSON.parse(rawFileContent) as PackageCondu;
+    return JSON.parse(rawFileContent) as StateDeclarationApi;
   },
   stringify(content) {
     return JSON.stringify(content);

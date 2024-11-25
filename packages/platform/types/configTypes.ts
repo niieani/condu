@@ -4,9 +4,12 @@ import type { Pattern } from "ts-pattern";
 import type { CONFIGURED } from "./configure.js";
 import type { ProjectManifest } from "@pnpm/types";
 import type {
+  ConduPackageEntry,
+  ConduProject,
   FeatureDefinition,
   PeerContext,
 } from "@condu/cli/commands/apply/applyTypes.js";
+import type { Immutable } from "./tsUtils.js";
 
 type AnyObject = {
   readonly [key: string]: any;
@@ -15,21 +18,44 @@ type AnyObject = {
   _?: string;
 };
 
-export interface DependencyDef {
-  packageAlias: string;
-  versionOrTag?: string;
-  target?: "dependencies" | "devDependencies" | "optionalDependencies";
-  skipIfExists?: boolean;
+export type DependencyTargetList =
+  | "dependencies"
+  | "devDependencies"
+  | "optionalDependencies"
+  | "peerDependencies";
+
+export type DependencyDef = {
+  readonly name: string;
+  readonly installAsAlias?: string;
+  /** @default 'devDependencies' */
+  readonly list?: DependencyTargetList;
+  readonly skipIfExists?: boolean;
+  readonly rangePrefix?: "^" | "~" | "";
   /** to what extent should this dependency be managed by condu? */
-  managed?: ManagedDependencyConfig | false;
-}
+  readonly managed?: ManagedDependencyConfig | false;
+} & (
+  | {
+      readonly version: string;
+      readonly tag?: never;
+    }
+  | {
+      /** @default 'latest' */
+      readonly tag?: string | undefined;
+      readonly version?: never;
+    }
+);
+
+export type MinimalManifest = Pick<
+  ConduPackageJson,
+  DependencyTargetList | "condu"
+>;
 
 export interface Task {
   // TODO: allow matching which package the task belongs to, like with Files (matchPackage)
-  name: string;
+  readonly name: string;
   // format is any transformation in-place
-  type: "test" | "build" | "publish" | "format" | "start";
-  definition: PartialTaskConfig;
+  readonly type: "test" | "build" | "publish" | "format" | "start";
+  readonly definition: Immutable<PartialTaskConfig>;
 }
 
 export type GetExistingContentFn = <T extends string | object>(
@@ -70,7 +96,7 @@ export interface FileDef {
   content?:
     | FileContent
     | ((opts: {
-        pkg: WorkspacePackage;
+        pkg: ConduPackageEntry;
         getExistingContentAndMarkAsUserEditable: GetExistingContentFn;
       }) => Promise<FileContent> | FileContent);
   path: string;
@@ -114,7 +140,7 @@ export interface CollectedFileDef extends FileDef {
    **/
   skipIgnore?: boolean | string[];
   targetDir: string;
-  targetPackage: WorkspacePackage;
+  targetPackage: ConduPackageEntry;
 }
 
 export type EntrySources = Record<
@@ -138,20 +164,21 @@ export interface Hooks {
   ) => EntrySources | Promise<EntrySources>;
 }
 
-export interface CollectedState {
-  /** these files will be created during execution */
-  files: CollectedFileDef[];
-  /** we'll ensure these dependencies are installed during execution */
-  devDependencies: (string | DependencyDef)[];
-  resolutions: Record<string, string>;
-  tasks: CollectedTaskDef[];
-  hooksByPackage: {
-    [packageName: string]: Partial<Hooks>;
-  };
-  autolinkIgnore: string[];
-}
+// export interface CollectedState {
+//   /** these files will be created during execution */
+//   files: CollectedFileDef[];
+//   /** we'll ensure these dependencies are installed during execution */
+//   devDependencies: (string | DependencyDef)[];
+//   resolutions: Record<string, string>;
+//   tasks: CollectedTaskDef[];
+//   hooksByPackage: {
+//     [packageName: string]: Partial<Hooks>;
+//   };
+//   autolinkIgnore: string[];
+// }
 
 export interface StateFlags {
+  // doesn't make sense anymore, we'll always have all tasks defined when writing a file
   preventAdditionalTasks?: boolean;
 }
 
@@ -175,8 +202,8 @@ export type Effects = {
 };
 
 export type MatchPackage =
-  | Pattern.Pattern<WorkspacePackage>
-  | Partial<WorkspacePackage>;
+  | Pattern.Pattern<ConduPackageEntry>
+  | Partial<ConduPackageEntry>;
 
 export interface FeatureResult {
   effects?: (Effects | null | undefined | false)[];
@@ -189,7 +216,7 @@ export interface FeatureResult {
 }
 
 export type FeatureActionFn = (
-  config: ConduConfigWithInferredValuesAndProject,
+  config: ConduProject,
   /**
    * TODO: consider lifting 'state' argument to 'content' function of files
    * since the state here is only "collected till now"
@@ -277,29 +304,16 @@ export interface ConduConfigWithInferredValues extends ConfiguredConduConfig {
   engine: Engine;
 }
 
-export interface Project extends WorkspaceRootPackage {
-  projectConventions?: WorkspaceProjectDefined[] | undefined;
-  config: ConduConfigWithInferredValues;
-  workspacePackages: readonly WorkspaceSubPackage[];
-}
+export type PackageKind = "workspace" | "package";
+export type WorkspaceRootPackage = ConduPackageEntry<"workspace">;
+export type WorkspaceSubPackage = ConduPackageEntry<"package">;
 
-export interface WorkspacePackage extends IPackageEntry {
-  kind: "workspace" | "package";
-}
-
-export interface WorkspaceRootPackage extends WorkspacePackage {
-  kind: "workspace";
-}
-
-export interface WorkspaceSubPackage extends WorkspacePackage {
-  kind: "package";
-}
-
-export interface IPackageEntry {
+export interface IPackageEntry<KindT extends PackageKind = PackageKind> {
+  kind: KindT;
   /** shortcut to manifest.name */
   name: string;
-  scope?: string;
-  scopedName?: string;
+  scope?: string | undefined;
+  scopedName: string;
   manifest: ConduPackageJson;
   manifestRelPath: string;
   manifestAbsPath: string;
@@ -307,27 +321,27 @@ export interface IPackageEntry {
   relPath: string;
   /** absolute directory of the package */
   absPath: string;
+}
+
+export interface IPackageEntryWithWriteManifest<
+  KindT extends PackageKind = PackageKind,
+> extends IPackageEntry<KindT> {
   writeProjectManifest: WriteManifestFn;
 }
 
-export interface ConduConfigWithInferredValuesAndProject
-  extends ConduConfigWithInferredValues {
-  project: Project;
-}
-
 export type GetConduConfigPromise = (
-  pkg: IPackageEntry,
+  pkg: ConduPackageEntry,
 ) => Promise<ConfiguredConduConfig>;
 
 export type ConduConfigInput =
   | ConduConfig
-  | ((pkg: IPackageEntry) => ConduConfig)
-  | ((pkg: IPackageEntry) => Promise<ConduConfig>);
+  | ((pkg: ConduPackageEntry) => ConduConfig)
+  | ((pkg: ConduPackageEntry) => Promise<ConduConfig>);
 
 export type ConduConfigDefaultExport =
   | ConfiguredConduConfig
-  | ((pkg: IPackageEntry) => ConfiguredConduConfig)
-  | ((pkg: IPackageEntry) => Promise<ConfiguredConduConfig>);
+  | ((pkg: ConduPackageEntry) => ConfiguredConduConfig)
+  | ((pkg: ConduPackageEntry) => Promise<ConfiguredConduConfig>);
 
 export interface LoadConfigOptions {
   startDir?: string;

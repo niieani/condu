@@ -1,4 +1,4 @@
-import type { ConduConfigWithInferredValuesAndProject } from "@condu/types/configTypes.js";
+import type { ConduProject } from "@condu/types/configTypes.js";
 import type { Linter } from "eslint";
 
 export interface EslintFeatureInput {
@@ -7,10 +7,7 @@ export interface EslintFeatureInput {
 }
 
 export interface ContextProvidedToEslintConfig
-  extends Pick<
-      ConduConfigWithInferredValuesAndProject,
-      "conventions" | "projects"
-    >,
+  extends Pick<ConduProject, "conventions" | "projects">,
     EslintFeatureInput {}
 
 export type AdditionalConfigs =

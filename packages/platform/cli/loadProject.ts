@@ -15,7 +15,6 @@ import type {
   LoadConfigOptions,
   WorkspaceSubPackage,
   ConduConfigDefaultExport,
-  Project,
 } from "@condu/types/configTypes.js";
 import { CONFIGURED } from "@condu/types/configure.js";
 import { getProjectDefinitionsFromConventionConfig } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
@@ -23,10 +22,14 @@ import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
 import { findUp } from "@condu/core/utils/findUp.js";
 import * as fs from "node:fs/promises";
 import { getManifestsPaths, getPackage } from "@condu/workspace-utils/topo.js";
+import {
+  ConduPackageEntry,
+  ConduProject,
+} from "./commands/apply/applyTypes.js";
 
 export async function loadConduProject({
   startDir = process.cwd(),
-}: LoadConfigOptions = {}): Promise<Project | undefined> {
+}: LoadConfigOptions = {}): Promise<ConduProject | undefined> {
   const configDirPath = await findUp(
     async (file) => {
       if (file.name === CONDU_CONFIG_DIR_NAME) {
@@ -52,9 +55,12 @@ export async function loadConduProject({
     CONDU_CONFIG_DIR_NAME,
     CONDU_CONFIG_FILE_NAME,
   );
-  const workspacePackage = await getPackage(
-    workspaceDir,
-    path.resolve(workspaceDir, "package.json"),
+  const workspacePackage = new ConduPackageEntry(
+    await getPackage({
+      workspaceRootDir: workspaceDir,
+      manifestAbsPath: path.resolve(workspaceDir, "package.json"),
+      kind: "workspace",
+    }),
   );
 
   const importedConfigFile = await import(
@@ -138,21 +144,20 @@ export async function loadConduProject({
     configDir: path.join(workspacePackage.absPath, CONDU_CONFIG_DIR_NAME),
   } as const;
 
-  const project: Omit<Project, "workspacePackages"> = {
-    kind: "workspace",
+  const workspacePackages = await getWorkspacePackages({
+    projectConventions,
+    absPath: workspacePackage.absPath,
+  });
+  return new ConduProject({
     projectConventions,
     config: configWithInferredValues,
-    ...workspacePackage,
-  };
-  const workspacePackages = await getWorkspacePackages(project);
-  return {
-    ...project,
+    workspacePackage,
     workspacePackages,
-  };
+  });
 }
 
 export const getWorkspacePackages = async (
-  project: Pick<Project, "projectConventions" | "absPath">,
+  project: Pick<ConduProject, "projectConventions" | "absPath">,
 ): Promise<WorkspaceSubPackage[]> => {
   if (!project.projectConventions) return [];
   // note: could use 'moon query projects --json' instead
@@ -162,9 +167,15 @@ export const getWorkspacePackages = async (
     workspaces: project.projectConventions.map(({ glob }) => glob).sort(),
   });
   return Promise.all(
-    packageJsonPaths.map(async (manifestPath) => ({
-      kind: "package",
-      ...(await getPackage(project.absPath, manifestPath)),
-    })),
+    packageJsonPaths.map(
+      async (manifestAbsPath) =>
+        new ConduPackageEntry(
+          await getPackage({
+            workspaceRootDir: project.absPath,
+            manifestAbsPath,
+            kind: "package",
+          }),
+        ),
+    ),
   );
 };

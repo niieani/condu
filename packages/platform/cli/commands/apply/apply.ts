@@ -1,12 +1,12 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { ensureDependency } from "../../ensureDependency.js";
+import { ensureDependencyIn } from "../../ensureDependency.js";
 import type {
   CollectedFileDef,
   CollectedState,
   DependencyDef,
   Hooks,
-  ConduConfigWithInferredValuesAndProject,
+  ConduProject,
   StateFlags,
   LoadConfigOptions,
 } from "@condu/types/configTypes.js";
@@ -33,7 +33,7 @@ export const getApplyHook =
   };
 
 export async function collectState(
-  config: ConduConfigWithInferredValuesAndProject,
+  config: ConduProject,
   state: CollectedState = {
     files: [],
     devDependencies: [],
@@ -300,17 +300,17 @@ export async function apply(options: LoadConfigOptions = {}) {
         .slice(1)
         .split("@", 2) as [string, string | undefined];
       dependencyDef = {
-        packageAlias: `${packageNameOrDef[0]}${packageAliasPart}`,
-        versionOrTag,
+        name: `${packageNameOrDef[0]}${packageAliasPart}`,
+        tag: versionOrTag,
       };
     } else {
       dependencyDef = packageNameOrDef;
     }
-    previouslyManagedDependencies.delete(dependencyDef.packageAlias);
+    previouslyManagedDependencies.delete(dependencyDef.name);
     // TODO parallelize?
-    didChangeManifest ||= await ensureDependency({
+    didChangeManifest ||= await ensureDependencyIn({
       manifest,
-      target: "devDependencies",
+      list: "devDependencies",
       ...dependencyDef,
     });
   }

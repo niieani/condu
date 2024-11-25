@@ -1,7 +1,10 @@
 import type { BaseContext } from "clipanion";
 import { createCommandContext } from "../createCommandContext.js";
 import { loadConduProject } from "../loadProject.js";
-import type { IPackageEntry, Project } from "@condu/types/configTypes.js";
+import type {
+  IPackageEntry,
+  WorkspaceSubPackage,
+} from "@condu/types/configTypes.js";
 import { getSingleMatch } from "../matchPackage.js";
 import { match } from "ts-pattern";
 import * as path from "node:path";
@@ -11,6 +14,7 @@ import { safeFn } from "@condu/core/utils/safeFn.js";
 import { spawn } from "node:child_process";
 import which from "which";
 import { getPackage } from "@condu/workspace-utils/topo.js";
+import type { ConduPackageEntry, ConduProject } from "./apply/applyTypes.js";
 
 export async function execCommand(input: {
   cwd?: string;
@@ -90,9 +94,13 @@ export async function findExistingPackage({
   project,
 }: {
   partialPackage: string;
-  project: Project;
-}): Promise<IPackageEntry> {
-  const { projectConventions, absPath: workspaceDirAbs } = project;
+  project: ConduProject;
+}): Promise<ConduPackageEntry> {
+  const {
+    projectConventions,
+    absPath: workspaceDirAbs,
+    workspacePackages,
+  } = project;
 
   if (projectConventions) {
     const matchBox = safeFn(getSingleMatch)({
@@ -103,18 +111,14 @@ export async function findExistingPackage({
       .with({ status: "rejected" }, () => undefined)
       .otherwise(async ({ value: matched }) => {
         const modulePath = path.join(workspaceDirAbs, matched.path);
-        const packageJsonPath = path.join(modulePath, "package.json");
-        const pkg = await getPackage(workspaceDirAbs, packageJsonPath).catch(
-          () => undefined,
-        );
-        return pkg;
+        return workspacePackages.find((pkg) => pkg.absPath === modulePath);
       });
     if (matched) {
       return matched;
     }
   }
 
-  const packages = [project, ...project.workspacePackages];
+  const packages = [project.workspace, ...project.workspacePackages];
   const matched = find(
     packages,
     ({ manifest }) => manifest.name === partialPackage,

@@ -19,6 +19,8 @@ import type {
   IPackageEntry,
   ConduPackageJson,
   WriteManifestFnOptions,
+  PackageKind,
+  IPackageEntryWithWriteManifest,
 } from "@condu/types/configTypes.js";
 import { readProjectManifest } from "@pnpm/read-project-manifest";
 import { sortPackageJson } from "sort-package-json";
@@ -33,21 +35,30 @@ const defaultScopes = [
 
 export const getPackages = async (
   options: IGetWorkspaceOptions,
-): Promise<Record<string, IPackageEntry>> => {
+): Promise<Record<string, IPackageEntryWithWriteManifest>> => {
   const { pkgFilter, cwd } = options;
   const manifestsPaths = await getManifestsPaths(options);
-  const entries = await Promise.all<IPackageEntry>(
-    manifestsPaths.map((manifestPath) => getPackage(cwd, manifestPath)),
+  const entries = await Promise.all<IPackageEntryWithWriteManifest>(
+    manifestsPaths.map((manifestAbsPath) =>
+      getPackage({
+        workspaceRootDir: cwd,
+        manifestAbsPath: manifestAbsPath,
+        kind: "package",
+      }),
+    ),
   );
 
   checkDuplicates(entries);
 
-  return entries.reduce<Record<string, IPackageEntry>>((m, entry) => {
-    if (pkgFilter(entry)) {
-      m[entry.name] = entry;
-    }
-    return m;
-  }, {});
+  return entries.reduce<Record<string, IPackageEntryWithWriteManifest>>(
+    (m, entry) => {
+      if (pkgFilter(entry)) {
+        m[entry.name] = entry;
+      }
+      return m;
+    },
+    {},
+  );
 };
 
 const checkDuplicates = (named: { name: string }[]): void | never => {
@@ -59,13 +70,18 @@ const checkDuplicates = (named: { name: string }[]): void | never => {
   }
 };
 
-export const getPackage = async (
-  workspaceRootDirectory: string,
-  manifestPath = join(workspaceRootDirectory, "package.json"),
-): Promise<IPackageEntry> => {
-  const absPath = dirname(manifestPath);
-  const relPath = relative(workspaceRootDirectory, absPath) || ".";
-  const manifestRelPath = relative(workspaceRootDirectory, manifestPath);
+export const getPackage = async <KindT extends PackageKind>({
+  workspaceRootDir,
+  manifestAbsPath = join(workspaceRootDir, "package.json"),
+  kind,
+}: {
+  workspaceRootDir: string;
+  manifestAbsPath?: string;
+  kind: KindT;
+}): Promise<IPackageEntryWithWriteManifest<KindT>> => {
+  const absPath = dirname(manifestAbsPath);
+  const relPath = relative(workspaceRootDir, absPath) || ".";
+  const manifestRelPath = relative(workspaceRootDir, manifestAbsPath);
 
   // readProjectManifest uses pnpm's types for package.json, we need to cast it to our own type
   const pnpmProjectManifestResult = await readProjectManifest(absPath);
@@ -81,11 +97,12 @@ export const getPackage = async (
     ? manifest.name.split("/")
     : [undefined, name];
   return {
+    kind,
     name,
     scope,
     scopedName,
     manifestRelPath,
-    manifestAbsPath: manifestPath,
+    manifestAbsPath: manifestAbsPath,
     manifest,
     relPath,
     absPath,
@@ -134,7 +151,11 @@ export const getWorkspace = async (
     workspaces,
     workspacesExtra = [],
   } = options;
-  const root = await getPackage(cwd, resolve(cwd, "package.json"));
+  const root = await getPackage({
+    workspaceRootDir: cwd,
+    manifestAbsPath: resolve(cwd, "package.json"),
+    kind: "workspace",
+  });
   const _options: IGetWorkspaceOptions = {
     cwd,
     filter,
