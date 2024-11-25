@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.1.7](https://github.com/niieani/condu/compare/@condu/cli@0.1.6...@condu/cli@0.1.7) (2024-11-25)
+
+
+### Features
+
+* copy over dependencies from template package ([c5fd2d7](https://github.com/niieani/condu/commit/c5fd2d7d0a7c28a5e5638211c6a58ec8a4a52608))
+* support private and description fields in 'create' ([68fe9ef](https://github.com/niieani/condu/commit/68fe9ef3f4a3a426b7df39400a4d67d7895daec4))
+
+
+### Bug Fixes
+
+* deduplicate features by name ([176b793](https://github.com/niieani/condu/commit/176b793f7b422ef2130d61e577a424cd69d0e480))
+* keep cli separate from main export ([4d9483f](https://github.com/niieani/condu/commit/4d9483fc9079182b6dae257b2beccdd00773f16f))
+* small fixes ([ba55654](https://github.com/niieani/condu/commit/ba556544a3bda8770009202d64f1f25ee99fb19c))
+* use relPath ([eab99b4](https://github.com/niieani/condu/commit/eab99b43cc6da24444a9dfacd804002000c5c729))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 0.1.6
+    * @condu/types bumped to 0.1.6
+    * @condu/update-specifiers bumped to 0.1.6
+    * @condu/workspace-utils bumped to 0.1.7
+
 ## [0.1.6](https://github.com/niieani/condu/compare/@condu/cli@0.1.5...@condu/cli@0.1.6) (2024-10-12)
 
 
