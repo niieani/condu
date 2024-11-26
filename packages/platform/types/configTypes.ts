@@ -5,7 +5,10 @@ import type {
   ConduPackageEntry,
   ConduPackageJson,
 } from "@condu/cli/commands/apply/ConduPackageEntry.js";
-import type { PeerContext } from "@condu/types/extendable.js";
+import type {
+  GlobalPeerContext,
+  PeerContext,
+} from "@condu/types/extendable.js";
 import type { AutoLinkConfig } from "@condu/cli/builtin-features/autolink.js";
 
 export interface Conventions {
@@ -58,6 +61,7 @@ export interface ConduConfig {
   /** when present, assumes monorepo */
   projects?: WorkspaceProjectsConvention[];
   conventions?: Conventions;
+  globalPeerContext?: Partial<GlobalPeerContext>;
 }
 
 export interface ConfiguredConduConfig extends ConduConfig {
@@ -73,6 +77,7 @@ export interface ConduConfigWithInferredValues extends ConfiguredConduConfig {
   git: Required<GitConfig>;
   node: Required<NodeConfig>;
   engine: Engine;
+  globalPeerContext: Partial<GlobalPeerContext>;
 }
 
 export type GetConduConfigPromise = (

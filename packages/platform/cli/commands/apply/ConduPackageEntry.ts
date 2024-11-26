@@ -14,6 +14,14 @@ import type { Pattern } from "ts-pattern";
 import type { ConduProject } from "./ConduProject.js";
 import { partition } from "remeda";
 
+// only properties, exclude any functions:
+export type ReadonlyConduPackageEntry<KindT extends PackageKind = PackageKind> =
+  {
+    readonly [K in keyof ConduPackageEntry<KindT> as ConduPackageEntry<KindT>[K] extends Function
+      ? never
+      : K]: ConduPackageEntry<KindT>[K];
+  };
+
 export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
   implements Omit<IPackageEntry, "writeProjectManifest">
 {
@@ -263,5 +271,5 @@ export interface ConduPackageJson extends PackageJson {
 }
 
 export type MatchPackage =
-  | Pattern.Pattern<ConduPackageEntry>
-  | Partial<ConduPackageEntry>;
+  | Pattern.Pattern<ReadonlyConduPackageEntry>
+  | Partial<ReadonlyConduPackageEntry>;

@@ -1,10 +1,13 @@
 import type { Task, DependencyDefinition } from "./CollectedState.js";
 import type {
-  PackageKind,
-  ConduPackageEntry,
   PackageJsonModifier,
+  ReadonlyConduPackageEntry,
+  MatchPackage,
 } from "./ConduPackageEntry.js";
-import type { GlobalFileFlags } from "@condu/types/extendable.js";
+import type {
+  GlobalFileFlags,
+  GlobalPeerContext,
+} from "@condu/types/extendable.js";
 import type { PeerContext } from "../../../types/extendable.js";
 import type {
   DefinedFileNames,
@@ -18,19 +21,20 @@ import type {
 import type { ConduProject } from "./ConduProject.js";
 
 export interface ConduApi {
-  // TODO: add error / warning functions
-  readonly project: ReadonlyProject;
-  readonly root: StateDeclarationApi;
-  readonly packages: readonly ConduPackageEntry[];
-  with(criteria: PackageFilterCriteria): StateDeclarationApi;
+  // TODO: add error / warning collection functions
+  readonly project: ReadonlyConduProject;
+  readonly inRoot: StateDeclarationApi;
+  readonly in: (criteria: MatchPackage) => StateDeclarationApi;
 }
 
-export type ReadonlyProject = Omit<ConduProject, "applyAndCommit">;
-
-export interface PackageFilterCriteria {
-  name?: string;
-  kind?: PackageKind;
-}
+export type ReadonlyConduProject = Omit<
+  ConduProject,
+  "applyAndCommit" | "allPackages" | "workspace" | "workspacePackages"
+> & {
+  readonly allPackages: readonly ReadonlyConduPackageEntry[];
+  readonly workspace: ReadonlyConduPackageEntry<"workspace">;
+  readonly workspacePackages: readonly ReadonlyConduPackageEntry<"package">[];
+};
 
 export interface StateDeclarationApi {
   ignoreFile(path: string, options?: GlobalFileFlags): void;
@@ -62,7 +66,6 @@ export interface StateDeclarationApi {
   defineTask(taskDefinition: Task): void;
 }
 
-// Define PeerContextReducer
 export type PeerContextReducer = {
   readonly [K in keyof PeerContext]?: (
     current: PeerContext[K],
@@ -81,11 +84,12 @@ export type FeatureDefinition<
   name: NameT;
   // todo should this allow regex for dynamically created features?
   after?: Array<string> | string;
-  mergePeerContext?: (
-    project: ConduProject,
+  modifyPeerContexts?: (
+    project: ReadonlyConduProject,
+    initialPeerContext: GetPeerContext<NameT>,
   ) => Promise<PeerContextReducer> | PeerContextReducer;
   defineRecipe: (
-    condu: ConduApi,
+    register: ConduApi,
     peerContext: GetPeerContext<NameT>,
   ) => void | Promise<void>;
 } & (NameT extends keyof PeerContext
@@ -93,7 +97,7 @@ export type FeatureDefinition<
       initialPeerContext:
         | GetPeerContext<NameT>
         | ((
-            project: ConduProject,
+            project: ReadonlyConduProject,
           ) => GetPeerContext<NameT> | Promise<GetPeerContext<NameT>>);
     }
   : {});

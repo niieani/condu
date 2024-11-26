@@ -1,6 +1,6 @@
 import { ensureDependencyIn } from "../../ensureDependency.js";
 import type { LoadConfigOptions } from "@condu/types/configTypes.js";
-import type { MatchPackage, ConduPackageEntry } from "./ConduPackageEntry.js";
+import type { ConduPackageEntry } from "./ConduPackageEntry.js";
 import { loadConduProject } from "../../loadProject.js";
 import { isMatching } from "ts-pattern";
 import type {
@@ -16,7 +16,10 @@ import {
 } from "./CollectedState.js";
 import type { ConduProject } from "./ConduProject.js";
 import { FileManager } from "./FileManager.js";
-import type { PeerContext } from "../../../types/extendable.js";
+import type {
+  GlobalPeerContext,
+  PeerContext,
+} from "../../../types/extendable.js";
 import { autolink } from "../../builtin-features/autolink.js";
 import { UpsertMap } from "@condu/core/utils/UpsertMap.js";
 import { topologicalSortFeatures } from "./topologicalSortFeatures.js";
@@ -68,12 +71,11 @@ export async function collectState(
   features.forEach((feature) => {
     if (deduplicatedFeaturesMap.has(feature.name)) {
       console.warn(
-        `Duplicate feature found: ${feature.name}. The later definition will be used.`,
+        `Duplicate feature found: ${feature.name}. The first definition will be used.`,
       );
-      // delete the previous one to retain the order based on the later one
-      deduplicatedFeaturesMap.delete(feature.name);
+    } else {
+      deduplicatedFeaturesMap.set(feature.name, feature);
     }
-    deduplicatedFeaturesMap.set(feature.name, feature);
   });
 
   const deduplicatedFeatures = Array.from(deduplicatedFeaturesMap.values());
@@ -82,11 +84,19 @@ export async function collectState(
   const sortedFeatures = topologicalSortFeatures(deduplicatedFeatures);
 
   // Initialize the PeerContext
-  let peerContext: Record<string, unknown> = {};
+  let peerContext: Partial<Record<(string & {}) | keyof PeerContext, unknown>> =
+    {
+      global: config.globalPeerContext,
+    };
 
   // Collect initialPeerContext from features
   for (const feature of sortedFeatures) {
     if ("initialPeerContext" in feature && feature.initialPeerContext) {
+      if (feature.name === "global") {
+        throw new Error(
+          'Feature name "global" is reserved and cannot be used as a feature name',
+        );
+      }
       const initialPeerContext =
         typeof feature.initialPeerContext === "function"
           ? await feature.initialPeerContext(project)
@@ -97,10 +107,13 @@ export async function collectState(
 
   // Run mergePeerContext functions
   for (const feature of sortedFeatures) {
-    if (feature.mergePeerContext) {
-      const reducers = await feature.mergePeerContext(project);
+    if (feature.modifyPeerContexts) {
+      const reducers = await feature.modifyPeerContexts(
+        project,
+        peerContext[feature.name] as PeerContext[keyof PeerContext],
+      );
       for (const [key, reducer] of Object.entries(reducers)) {
-        // any as this is impossible to type correctly
+        // `any`, as this is impossible to type correctly
         peerContext[key] = await reducer(peerContext[key] as any);
       }
     }
@@ -147,13 +160,12 @@ const createConduApi = ({
   changesCollector: CollectedState;
 }): ConduApi => ({
   project,
-  root: createStateDeclarationApi({
+  inRoot: createStateDeclarationApi({
     matchingPackages: [project.workspace],
     changesCollector,
     collectionContext,
   }),
-  packages: project.allPackages,
-  with(criteria: MatchPackage): StateDeclarationApi {
+  in(criteria) {
     const matchPackageFn = isMatching(criteria);
     const matchAllPackages =
       Object.keys(criteria).length === 1 &&

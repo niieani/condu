@@ -68,7 +68,7 @@ module.exports = require("./${CONDU_CONFIG_DIR_NAME}/${filename}");`,
             symlinkTarget: `./${CONDU_CONFIG_DIR_NAME}/${filename}`,
           }));
 
-        condu.root.generateFile(targetName, fileOptions);
+        condu.inRoot.generateFile(targetName, fileOptions);
       }
     },
   });

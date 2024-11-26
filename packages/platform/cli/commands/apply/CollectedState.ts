@@ -89,6 +89,7 @@ export class ConduCollectedStatePublicApi {
     }
   }
 }
+
 export type DependencyTargetList =
   | "dependencies"
   | "devDependencies"
@@ -106,11 +107,15 @@ export type DependencyDefinition = {
   readonly managed?: ManagedDependencyConfig | false;
 } & (
   | {
+      /** explicit version string to be saved in package json */
       readonly version: string;
       readonly tag?: never;
     }
   | {
-      /** @default 'latest' */
+      /**
+       * tag or a semver range to resolve the version from the npm registry
+       * @default 'latest'
+       **/
       readonly tag?: string | undefined;
       readonly version?: never;
     }

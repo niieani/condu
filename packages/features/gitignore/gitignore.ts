@@ -1,6 +1,5 @@
 import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
 import { defineFeature } from "condu/defineFeature.js";
-import * as path from "node:path";
 import { groupBy } from "remeda";
 
 export interface IgnoreConfig {
@@ -21,15 +20,9 @@ export const gitignore = (opts: IgnoreConfig = {}) =>
     name: "gitignore",
     initialPeerContext: { ignore: opts.ignore ?? [] },
     defineRecipe(condu, { ignore }) {
-      condu.root.modifyGeneratedFile(".gitignore", {
-        content(content, pkg, collectedDataApi) {
-          return content;
-        },
-      });
-
-      condu.root.generateFile(".gitignore", {
-        content(_pkg, collectedDataApi) {
-          const files = collectedDataApi.getFilesWithFlag({
+      condu.inRoot.generateFile(".gitignore", {
+        content({ globalRegistry }) {
+          const files = globalRegistry.getFilesWithFlag({
             flag: "gitignore",
             value: true,
             includeUnflagged: true,

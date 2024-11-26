@@ -2,6 +2,7 @@ import { UpsertMap } from "@condu/core/utils/UpsertMap.js";
 import type {
   ConduPackageEntry,
   ConduPackageJson,
+  ReadonlyConduPackageEntry,
   WorkspaceRootPackage,
   WorkspaceSubPackage,
 } from "./ConduPackageEntry.js";
@@ -81,16 +82,16 @@ export type NeedsCustomSerializer<PathT extends string> =
 export type IfPreviouslyDefined = "error" | "overwrite" | "ignore";
 
 export interface ContentFunctionArgs {
-  packageManifest: ConduPackageJson;
-  collectedDataApi: ConduCollectedStatePublicApi;
+  targetPackage: ReadonlyConduPackageEntry;
+  globalRegistry: ConduCollectedStatePublicApi;
 }
 
 export type InitialContent<DeserializedT> =
   | DeserializedT
-  | ((
-      pkg: ConduPackageJson,
-      collectedDataApi: ConduCollectedStatePublicApi,
-    ) => DeserializedT | Promise<DeserializedT>);
+  | (({
+      globalRegistry,
+      targetPackage,
+    }: ContentFunctionArgs) => DeserializedT | Promise<DeserializedT>);
 
 export interface SymlinkTargetContent {
   symlinkTarget: string;
@@ -148,24 +149,33 @@ export interface GenerateRegularFileOptions<DeserializedT>
 
 export type IfNotCreated = "ignore" | "error" | "create";
 
+export interface ContentModificationFunctionArgs<DeserializedT>
+  extends ContentFunctionArgs {
+  content: DeserializedT;
+}
+
 export interface ModifyOnlyGeneratedFileOptions<DeserializedT>
   extends GlobalFileFlags {
-  content: (
-    content: DeserializedT,
-    pkg: ConduPackageJson,
-    collectedDataApi: ConduCollectedStatePublicApi,
-  ) => DeserializedT | Promise<DeserializedT>;
+  content: ({
+    content,
+    globalRegistry,
+    targetPackage,
+  }: ContentModificationFunctionArgs<DeserializedT>) =>
+    | DeserializedT
+    | Promise<DeserializedT>;
   // default is "ignore"
   ifNotCreated?: Exclude<IfNotCreated, "create">;
 }
 
 export interface ModifyOrCreateGeneratedFileOptions<DeserializedT>
   extends GlobalFileFlags {
-  content: (
-    content: DeserializedT | undefined,
-    pkg: ConduPackageJson,
-    collectedDataApi: ConduCollectedStatePublicApi,
-  ) => DeserializedT | Promise<DeserializedT>;
+  content: ({
+    content,
+    globalRegistry,
+    targetPackage,
+  }: ContentModificationFunctionArgs<DeserializedT | undefined>) =>
+    | DeserializedT
+    | Promise<DeserializedT>;
 
   // for now we can not support 'create' here for simplicity
   ifNotCreated: "create";
@@ -187,10 +197,13 @@ export interface ModifyUserEditableFileOptionsWithBuiltinSerialization<
 > extends GlobalFileFlags {
   // default is true, in which case content signature can include content: undefined
   createIfNotExists?: boolean;
-  content: (
-    content: DeserializedT | undefined,
-    pkg: ConduPackageJson,
-  ) => DeserializedT | Promise<DeserializedT>;
+  content: ({
+    content,
+    globalRegistry,
+    targetPackage,
+  }: ContentModificationFunctionArgs<DeserializedT | undefined>) =>
+    | DeserializedT
+    | Promise<DeserializedT>;
 
   // parse and stringify must exist with a `never` type to make it exact
   // otherwise TS will not discriminate the union correctly
@@ -203,10 +216,13 @@ export interface ModifyUserEditableFileOptionsWithCustomSerialization<
   DeserializedT,
 > extends GlobalFileFlags {
   createIfNotExists?: boolean;
-  content: (
-    content: DeserializedT | undefined,
-    pkg: ConduPackageJson,
-  ) => DeserializedT | Promise<DeserializedT>;
+  content: ({
+    content,
+    globalRegistry,
+    targetPackage,
+  }: ContentModificationFunctionArgs<DeserializedT | undefined>) =>
+    | DeserializedT
+    | Promise<DeserializedT>;
 
   parse: (rawFileContent: string) => DeserializedT;
   stringify: (content: DeserializedT) => string;
@@ -640,10 +656,10 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
 
     let content: DeserializedT | undefined =
       typeof this.initialContent?.content === "function"
-        ? await this.initialContent.content(
-            this.targetPackage,
-            collectedDataApi,
-          )
+        ? await this.initialContent.content({
+            targetPackage: this.targetPackage,
+            globalRegistry: collectedDataApi,
+          })
         : this.initialContent?.content;
 
     let ifNotCreated: IfNotCreated = "ignore";
@@ -652,11 +668,11 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     for (const modification of this.contentModifications) {
       if (content === undefined && modification.ifNotCreated === "create") {
         // if no content, try the modification that can create the file
-        content = await modification.content(
-          undefined,
-          this.targetPackage,
-          collectedDataApi,
-        );
+        content = await modification.content({
+          content,
+          globalRegistry: collectedDataApi,
+          targetPackage: this.targetPackage,
+        });
         if (modification.stringify) {
           this.stringify = modification.stringify;
         }
@@ -675,11 +691,11 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
           this.lastApplyKind = "invalid";
           return;
         }
-        content = await modification.content(
+        content = await modification.content({
           content,
-          this.targetPackage,
-          collectedDataApi,
-        );
+          globalRegistry: collectedDataApi,
+          targetPackage: this.targetPackage,
+        });
       }
       // TODO: add debugging breadcrumbs for actually applied creations / modifications
     }
@@ -721,7 +737,11 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       }
 
       // get the next version of the content:
-      content = await modification.content(content, this.targetPackage);
+      content = await modification.content({
+        content,
+        globalRegistry: collectedDataApi,
+        targetPackage: this.targetPackage,
+      });
       const stringify =
         modification.stringify ?? getDefaultStringify(this.relPath);
       stringified = stringify(content);

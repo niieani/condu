@@ -4,6 +4,15 @@
 export interface PeerContext {
   // TODO: maybe we move as much of functionality into condu context that's always there?
   condu: { _: string };
+  global: GlobalPeerContext;
+}
+
+/**
+ * a public interface that can be extended by features to include additional global context
+ * think of it as global flags that can be set by features
+ */
+export interface GlobalPeerContext {
+  execWithTsSupport: boolean | undefined;
 }
 
 export interface GlobalFileFlags {

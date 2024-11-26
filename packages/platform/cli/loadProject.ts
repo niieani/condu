@@ -142,6 +142,7 @@ export async function loadConduProject({
     },
     workspaceDir: workspacePackage.absPath,
     configDir: path.join(workspacePackage.absPath, CONDU_CONFIG_DIR_NAME),
+    globalPeerContext: config.globalPeerContext ?? {},
   } as const;
 
   const workspacePackages = await getWorkspacePackages({

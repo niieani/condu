@@ -46,9 +46,9 @@ export async function ensureDependencyIn(
   const dependency =
     managed === "presence" && existingVersion
       ? { manifest: { name, version: existingVersion } }
-      : "tag" in opts && opts.tag
-        ? await resolveFromNpm({ alias: name, pref: opts.tag }, { registry })
-        : { manifest: { name, version: opts.version } };
+      : "version" in opts && opts.version
+        ? { manifest: { name, version: opts.version } }
+        : await resolveFromNpm({ alias: name, pref: opts.tag }, { registry });
 
   if (!dependency?.manifest) {
     throw new Error(`no ${name} dependency found in the NPM registry`);
