@@ -5,7 +5,7 @@ import type {
   ConduPackageEntry,
   ConduPackageJson,
 } from "@condu/cli/commands/apply/ConduPackageEntry.js";
-import type { PeerContext } from "@condu/cli/commands/apply/PeerContext.js";
+import type { PeerContext } from "@condu/types/extendable.js";
 import type { AutoLinkConfig } from "@condu/cli/builtin-features/autolink.js";
 
 export interface Conventions {

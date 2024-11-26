@@ -4,13 +4,13 @@ import type {
   ConduPackageEntry,
   PackageJsonModifier,
 } from "./ConduPackageEntry.js";
-import type { GlobalFileFlags } from "./GlobalFileFlags.js";
-import type { PeerContext } from "./PeerContext.js";
+import type { GlobalFileFlags } from "@condu/types/extendable.js";
+import type { PeerContext } from "../../../types/extendable.js";
 import type {
   DefinedFileNames,
   FallbackFileNames,
   FallbackFileNameToDeserializedTypeMapping,
-  GenerateFileOptions,
+  GenerateFileOptionsForPath,
   ModifyGeneratedFileOptions,
   ModifyUserEditableFileOptions,
   ResolvedSerializedType,
@@ -36,7 +36,7 @@ export interface StateDeclarationApi {
   ignoreFile(path: string, options?: GlobalFileFlags): void;
   generateFile<PathT extends string>(
     path: PathT,
-    options: GenerateFileOptions<ResolvedSerializedType<PathT>>,
+    options: GenerateFileOptionsForPath<PathT>,
   ): void;
   modifyGeneratedFile<PathT extends string>(
     path: PathT,

@@ -16,7 +16,7 @@ import {
 } from "./CollectedState.js";
 import type { ConduProject } from "./ConduProject.js";
 import { FileManager } from "./FileManager.js";
-import type { PeerContext } from "./PeerContext.js";
+import type { PeerContext } from "../../../types/extendable.js";
 import { autolink } from "../../builtin-features/autolink.js";
 import { UpsertMap } from "@condu/core/utils/UpsertMap.js";
 import { topologicalSortFeatures } from "./topologicalSortFeatures.js";

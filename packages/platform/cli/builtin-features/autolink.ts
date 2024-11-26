@@ -14,7 +14,7 @@ export interface AutoLinkConfig {
   ignore?: (string | RegExp)[];
 }
 
-declare module "../commands/apply/PeerContext.js" {
+declare module "@condu/types/extendable.js" {
   interface PeerContext {
     autolink: Required<AutoLinkConfig>;
   }

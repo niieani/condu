@@ -3,53 +3,64 @@ import { defineFeature } from "condu/defineFeature.js";
 import * as path from "node:path";
 import { groupBy } from "remeda";
 
-export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
+export interface IgnoreConfig {
+  ignore?: string[];
+}
+
+declare module "@condu/types/extendable.js" {
+  interface PeerContext {
+    gitignore: Required<IgnoreConfig>;
+  }
+  interface FileNameToSerializedTypeMapping {
+    ".gitignore": Array<string>;
+  }
+}
+
+export const gitignore = (opts: IgnoreConfig = {}) =>
   defineFeature({
     name: "gitignore",
-    order: { priority: "end" },
-    actionFn: (config, state) => ({
-      effects: [
-        {
-          files: [
-            {
-              path: ".gitignore",
-              content: () => {
-                const filesByFeature = groupBy(
-                  state.files.filter(
-                    ({ type, skipIgnore }) =>
-                      type !== "committed" && !skipIgnore,
-                  ),
-                  ({ featureName }) => featureName,
-                );
-                const entriesFromFeatures = Object.entries(
-                  filesByFeature,
-                ).flatMap(([featureName, files]) => {
-                  if (featureName === "gitignore") return [];
-                  return [
-                    `# ${featureName}:`,
-                    ...files.map(({ path: p, targetDir, type }) =>
-                      type === "ignore-only"
-                        ? p
-                        : `/${path.join(targetDir, p)}`,
-                    ),
-                  ];
-                });
-                return (
-                  [
-                    ".DS_Store",
-                    "node_modules",
-                    `/${CONDU_CONFIG_DIR_NAME}/.cache/`,
-                    `/${config.conventions.buildDir}/`,
-                    // ignore all generated files:
-                    ...entriesFromFeatures,
-                    ...(ignore.length > 0 ? ["# custom ignore patterns:"] : []),
-                    ...ignore,
-                  ].join("\n") + "\n"
-                );
-              },
-            },
-          ],
+    initialPeerContext: { ignore: opts.ignore ?? [] },
+    defineRecipe(condu, { ignore }) {
+      condu.root.modifyGeneratedFile(".gitignore", {
+        content(content, pkg, collectedDataApi) {
+          return content;
         },
-      ],
-    }),
+      });
+
+      condu.root.generateFile(".gitignore", {
+        content(_pkg, collectedDataApi) {
+          const files = collectedDataApi.getFilesWithFlag({
+            flag: "gitignore",
+            value: true,
+            includeUnflagged: true,
+          });
+          const filesByFeature = groupBy(
+            [...files],
+            ([_path, file]) =>
+              file.managedByFeatures[0]?.featureName ?? "unmanaged",
+          );
+
+          const entriesFromFeatures = Object.entries(filesByFeature).flatMap(
+            ([featureName, files]) => {
+              if (featureName === "gitignore") return [];
+              return [`# ${featureName}:`, ...files.map(([p]) => `/${p}`)];
+            },
+          );
+          return [
+            ".DS_Store",
+            "node_modules",
+            `/${CONDU_CONFIG_DIR_NAME}/.cache/`,
+            `/${condu.project.config.conventions.buildDir}/`,
+            // ignore all generated files:
+            ...entriesFromFeatures,
+            ...(ignore.length > 0 ? ["# custom ignore patterns:"] : []),
+            ...ignore,
+          ];
+        },
+
+        stringify(content) {
+          return content.join("\n") + "\n";
+        },
+      });
+    },
   });

@@ -4,11 +4,9 @@ import type {
   PackageJsonModification,
 } from "./ConduPackageEntry.js";
 import type { FileManager, ReadonlyFile } from "./FileManager.js";
-import type { GlobalFileFlags } from "./GlobalFileFlags.js";
+import type { GlobalFileFlags } from "@condu/types/extendable.js";
 import type { Immutable } from "@condu/types/tsUtils.js";
 import type { PartialTaskConfig } from "@moonrepo/types";
-
-// Define types for collected changes
 
 export interface CollectedState {
   fileManager: FileManager;
@@ -53,7 +51,7 @@ export class ConduCollectedStatePublicApi {
     this.#changes = changes;
   }
 
-  get files(): Iterable<
+  get files(): MapIterator<
     readonly [workspaceRelPath: string, file: ReadonlyFile]
   > {
     return this.#changes.fileManager.files.entries();
@@ -67,7 +65,7 @@ export class ConduCollectedStatePublicApi {
     return this.#changes.dependencies;
   }
 
-  *getFilesByFlag<FlagT extends keyof GlobalFileFlags>({
+  *getFilesWithFlag<FlagT extends keyof GlobalFileFlags>({
     flag,
     value,
     includeUnflagged = false,
@@ -75,7 +73,11 @@ export class ConduCollectedStatePublicApi {
     flag: FlagT;
     value: GlobalFileFlags[FlagT];
     includeUnflagged?: boolean;
-  }): Generator<[workspaceRelPath: string, file: ReadonlyFile]> {
+  }): Generator<
+    [workspaceRelPath: string, file: ReadonlyFile],
+    void,
+    undefined
+  > {
     for (const kv of this.#changes.fileManager.files.entries()) {
       const file = kv[1];
       if (

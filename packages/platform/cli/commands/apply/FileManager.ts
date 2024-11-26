@@ -19,13 +19,13 @@ import {
   getDefaultParse,
 } from "./defaultParseAndStringify.js";
 import { getRootPackageRelativePath } from "./getRootPackageRelativePath.js";
-import type { GlobalFileFlags } from "./GlobalFileFlags.js";
+import type { GlobalFileFlags } from "@condu/types/extendable.js";
 import {
   IS_INTERACTIVE,
   FILE_STATE_PATH,
   CURRENT_CACHE_VERSION,
 } from "@condu/types/constants.js";
-import type { FileNameToSerializedTypeMapping } from "./FileNameToSerializedTypeMapping.js";
+import type { FileNameToSerializedTypeMapping } from "@condu/types/extendable.js";
 
 // types
 export interface FileDestination {
@@ -75,7 +75,15 @@ export type ResolvedSerializedType<PathT extends string> =
       ? FallbackFileNameToDeserializedTypeMapping[PathT]
       : string;
 
+export type NeedsCustomSerializer<PathT extends string> =
+  PathT extends keyof FileNameToSerializedTypeMapping ? true : false;
+
 export type IfPreviouslyDefined = "error" | "overwrite" | "ignore";
+
+export interface ContentFunctionArgs {
+  packageManifest: ConduPackageJson;
+  collectedDataApi: ConduCollectedStatePublicApi;
+}
 
 export type InitialContent<DeserializedT> =
   | DeserializedT
@@ -102,9 +110,27 @@ export type GenerateFileOptions<DeserializedT> =
   | GenerateSymlinkFileOptions
   | GenerateRegularFileOptions<DeserializedT>;
 
+export type GenerateFileOptionsForPath<PathT extends string> =
+  NeedsCustomSerializer<PathT> extends true
+    ? GenerateRegularFileWithRequiredStringifyOptions<
+        ResolvedSerializedType<PathT>
+      >
+    : GenerateFileOptions<ResolvedSerializedType<PathT>>;
+
 export interface GenerateSymlinkFileOptions
   extends GlobalFileFlags,
     SymlinkTargetContent {
+  /** defaults to 'error' */
+  ifPreviouslyDefined?: IfPreviouslyDefined;
+}
+
+export interface GenerateRegularFileWithRequiredStringifyOptions<DeserializedT>
+  extends GlobalFileFlags {
+  content: InitialContent<DeserializedT>;
+
+  /** defaults to stringify based on file extension */
+  stringify: (content: DeserializedT) => string;
+
   /** defaults to 'error' */
   ifPreviouslyDefined?: IfPreviouslyDefined;
 }
