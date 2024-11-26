@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.7](https://github.com/niieani/condu/compare/@condu/workspace-utils@0.1.6...@condu/workspace-utils@0.1.7) (2024-11-26)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/types bumped to 0.1.6
+
 ## [0.1.6](https://github.com/niieani/condu/compare/@condu/workspace-utils@0.1.5...@condu/workspace-utils@0.1.6) (2024-10-12)
 
 
