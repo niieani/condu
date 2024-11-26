@@ -11,13 +11,13 @@ export interface EditorConfig {
   /**
    * A record of sections, each containing a file pattern (e.g., `*`, `*.md`, `[Makefile]`) and its corresponding settings.
    */
-  sections: Record<string, EditorConfigSettings>;
+  sections: Record<string, EditorConfigSection>;
 }
 
 /**
  * Defines the supported settings within a `.editorconfig` section.
  */
-export interface EditorConfigSettings {
+export interface EditorConfigSection {
   /**
    * Set to `tab` or `space` to use hard tabs or soft tabs respectively. The values are case insensitive.
    */

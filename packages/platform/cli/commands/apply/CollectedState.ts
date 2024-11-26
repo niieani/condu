@@ -4,7 +4,7 @@ import type {
   PackageJsonModification,
 } from "./ConduPackageEntry.js";
 import type { FileManager, ReadonlyFile } from "./FileManager.js";
-import type { GlobalFileFlags } from "@condu/types/extendable.js";
+import type { GlobalFileAttributes } from "@condu/types/extendable.js";
 import type { Immutable } from "@condu/types/tsUtils.js";
 import type { PartialTaskConfig } from "@moonrepo/types";
 
@@ -65,15 +65,23 @@ export class ConduCollectedStatePublicApi {
     return this.#changes.dependencies;
   }
 
-  *getFilesWithFlag<FlagT extends keyof GlobalFileFlags>({
-    flag,
-    value,
-    includeUnflagged = false,
-  }: {
-    flag: FlagT;
-    value: GlobalFileFlags[FlagT];
-    includeUnflagged?: boolean;
-  }): Generator<
+  // TODO: allow specifying fallback attributes in order of preference, e.g. ['hidden', 'gitignore']
+  // so that if 'hidden' is set (to anything) it will be used for matching with value,
+  // otherwise 'gitignore' would be used
+  *getFilesWithAttribute<FlagT extends keyof GlobalFileAttributes>(
+    attribute: FlagT,
+    {
+      value,
+      includeUnflagged = false,
+    }: {
+      /**
+       * if left undefined, will return all files with the attribute
+       * property set to any value that is truthy
+       */
+      value?: GlobalFileAttributes[FlagT];
+      includeUnflagged?: boolean;
+    } = {},
+  ): Generator<
     [workspaceRelPath: string, file: ReadonlyFile],
     void,
     undefined
@@ -81,8 +89,10 @@ export class ConduCollectedStatePublicApi {
     for (const kv of this.#changes.fileManager.files.entries()) {
       const file = kv[1];
       if (
-        file.flags[flag] === value ||
-        (includeUnflagged && file.flags[flag] === undefined)
+        (attribute in file.attributes &&
+          ((value === undefined && file.attributes[attribute]) ||
+            (value !== undefined && file.attributes[attribute] === value))) ||
+        (includeUnflagged && file.attributes[attribute] === undefined)
       ) {
         yield kv;
       }
@@ -96,11 +106,14 @@ export type DependencyTargetList =
   | "optionalDependencies"
   | "peerDependencies";
 
-export type DependencyDefinition = {
-  readonly name: string;
+export type DependencyDefinitionInput = {
   readonly installAsAlias?: string;
   /** @default 'devDependencies' */
   readonly list?: DependencyTargetList;
+  /**
+   * do not resolve or install if the dependency is already present
+   * @default true
+   */
   readonly skipIfExists?: boolean;
   readonly rangePrefix?: "^" | "~" | "";
   /** to what extent should this dependency be managed by condu? */
@@ -120,6 +133,11 @@ export type DependencyDefinition = {
       readonly version?: never;
     }
 );
+
+export type DependencyDefinition = DependencyDefinitionInput & {
+  readonly name: string;
+};
+
 export interface Task {
   // TODO: allow matching which package the task belongs to, like with Files (matchPackage)
   readonly name: string;

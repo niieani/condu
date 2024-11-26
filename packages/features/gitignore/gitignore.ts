@@ -13,18 +13,19 @@ declare module "@condu/types/extendable.js" {
   interface FileNameToSerializedTypeMapping {
     ".gitignore": Array<string>;
   }
+  interface GlobalFileAttributes {
+    gitignore: boolean;
+  }
 }
 
 export const gitignore = (opts: IgnoreConfig = {}) =>
-  defineFeature({
-    name: "gitignore",
+  defineFeature("gitignore", {
     initialPeerContext: { ignore: opts.ignore ?? [] },
+
     defineRecipe(condu, { ignore }) {
-      condu.inRoot.generateFile(".gitignore", {
+      condu.root.generateFile(".gitignore", {
         content({ globalRegistry }) {
-          const files = globalRegistry.getFilesWithFlag({
-            flag: "gitignore",
-            value: true,
+          const files = globalRegistry.getFilesWithAttribute("gitignore", {
             includeUnflagged: true,
           });
           const filesByFeature = groupBy(
@@ -32,13 +33,13 @@ export const gitignore = (opts: IgnoreConfig = {}) =>
             ([_path, file]) =>
               file.managedByFeatures[0]?.featureName ?? "unmanaged",
           );
-
           const entriesFromFeatures = Object.entries(filesByFeature).flatMap(
             ([featureName, files]) => {
               if (featureName === "gitignore") return [];
               return [`# ${featureName}:`, ...files.map(([p]) => `/${p}`)];
             },
           );
+          // TODO: option to group all inAllPackages files by adding a single non / prefixed entry for a cleaner output
           return [
             ".DS_Store",
             "node_modules",

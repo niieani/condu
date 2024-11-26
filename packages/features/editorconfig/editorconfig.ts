@@ -1,6 +1,6 @@
 import { defineFeature } from "condu/defineFeature.js";
 import { serializeEditorConfig } from "./serialize.js";
-import type { EditorConfig } from "./types.js";
+import type { EditorConfig, EditorConfigSection } from "./types.js";
 
 const defaultConfig: EditorConfig = {
   root: true,
@@ -17,19 +17,31 @@ const defaultConfig: EditorConfig = {
   },
 };
 
-export const editorconfig = (config: EditorConfig = defaultConfig) =>
-  defineFeature({
-    name: "editorconfig",
-    actionFn: (_config, state) => ({
-      effects: [
-        {
-          files: [
-            {
-              path: ".editorconfig",
-              content: serializeEditorConfig(config),
-            },
-          ],
+declare module "@condu/types/extendable.js" {
+  interface PeerContext {
+    editorconfig: {
+      sections: Record<string, EditorConfigSection>;
+    };
+  }
+  interface FileNameToSerializedTypeMapping {
+    ".editorconfig": EditorConfig;
+  }
+}
+
+export const editorconfig = (config?: EditorConfig) =>
+  defineFeature("editorconfig", {
+    initialPeerContext: {
+      // TODO: perhaps add some basic properties to GlobalPeerContext
+      //       and derive the section defaults from there
+      sections: config?.sections ?? defaultConfig.sections,
+    },
+    defineRecipe(condu, { sections }) {
+      condu.root.generateFile(".editorconfig", {
+        content: {
+          ...defaultConfig,
+          sections,
         },
-      ],
-    }),
+        stringify: serializeEditorConfig,
+      });
+    },
   });

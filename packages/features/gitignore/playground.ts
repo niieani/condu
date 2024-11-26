@@ -3,13 +3,13 @@ import { defineFeature } from "condu/defineFeature.js";
 import * as path from "node:path";
 import { groupBy } from "remeda";
 
-declare module "@condu/types/applyTypes.js" {
-  interface PeerContext {
-    gitignore: {
-      ignore: string[];
-    };
-  }
-}
+// declare module "@condu/types/applyTypes.js" {
+//   interface PeerContext {
+//     gitignore: {
+//       ignore: string[];
+//     };
+//   }
+// }
 
 export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
   defineFeature({
@@ -18,12 +18,23 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
     initialPeerContext: {
       ignore: [],
     },
-    mergePeerContext: (config) => ({
+    modifyPeerContexts: (config) => ({
       condu: (peerContext) => ({ ...peerContext }),
     }),
     defineRecipe(condu, peerContext) {
+      // condu.generateFile(".gitignore", {
+      //   content: '...',
+      //   in: {name: 'abc', kind: 'package'},
+      // })
+      condu.in({ name: "abc", kind: "package" }).generateFile("", {});
+      // condu.project.workspacePackages[0]
       condu.root.generateFile(".gitignore", {
-        content: ".DS_Store",
+        content: [".DS_Store"],
+        stringify(content) {
+          return content.join("\n");
+        },
       });
+
+      condu.root.modifyUserEditableFile(".gitignore", {});
     },
   });

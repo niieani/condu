@@ -1,13 +1,9 @@
-import type { Task, DependencyDefinition } from "./CollectedState.js";
+import type { Task, DependencyDefinitionInput } from "./CollectedState.js";
 import type {
   PackageJsonModifier,
   ReadonlyConduPackageEntry,
   MatchPackage,
 } from "./ConduPackageEntry.js";
-import type {
-  GlobalFileFlags,
-  GlobalPeerContext,
-} from "@condu/types/extendable.js";
 import type { PeerContext } from "../../../types/extendable.js";
 import type {
   DefinedFileNames,
@@ -16,6 +12,7 @@ import type {
   GenerateFileOptionsForPath,
   ModifyGeneratedFileOptions,
   ModifyUserEditableFileOptions,
+  PartialGlobalFileAttributes,
   ResolvedSerializedType,
 } from "./FileManager.js";
 import type { ConduProject } from "./ConduProject.js";
@@ -23,7 +20,7 @@ import type { ConduProject } from "./ConduProject.js";
 export interface ConduApi {
   // TODO: add error / warning collection functions
   readonly project: ReadonlyConduProject;
-  readonly inRoot: StateDeclarationApi;
+  readonly root: StateDeclarationApi;
   readonly in: (criteria: MatchPackage) => StateDeclarationApi;
 }
 
@@ -37,7 +34,10 @@ export type ReadonlyConduProject = Omit<
 };
 
 export interface StateDeclarationApi {
-  ignoreFile(path: string, options?: GlobalFileFlags): void;
+  ignoreFile(
+    path: string,
+    options?: Omit<PartialGlobalFileAttributes, "inAllPackages">,
+  ): void;
   generateFile<PathT extends string>(
     path: PathT,
     options: GenerateFileOptionsForPath<PathT>,
@@ -59,11 +59,11 @@ export interface StateDeclarationApi {
       : {}) &
       ModifyUserEditableFileOptions<DeserializedT>,
   ): void;
-  addManagedDependency(dependency: DependencyDefinition): void;
+  ensureDependency(name: string, dependency?: DependencyDefinitionInput): void;
   setDependencyResolutions(resolutions: Record<string, string>): void;
   modifyPackageJson(modifier: PackageJsonModifier): void;
   modifyPublishedPackageJson(modifier: PackageJsonModifier): void;
-  defineTask(taskDefinition: Task): void;
+  defineTask(name: string, taskDefinition: Omit<Task, "name">): void;
 }
 
 export type PeerContextReducer = {
@@ -72,16 +72,14 @@ export type PeerContextReducer = {
   ) => PeerContext[K] | Promise<PeerContext[K]>;
 };
 
-export type GetPeerContext<NameT extends keyof PeerContext | (string & {})> =
+export type PossibleFeatureNames = keyof PeerContext | (string & {});
+
+export type GetPeerContext<NameT extends PossibleFeatureNames> =
   NameT extends keyof PeerContext ? PeerContext[NameT] : never;
 
-// Define the FeatureDefinition interface for the new API
-export type FeatureDefinition<
-  NameT extends keyof PeerContext | (string & {}) =
-    | keyof PeerContext
-    | (string & {}),
+export type FeatureDefinitionInput<
+  NameT extends PossibleFeatureNames = keyof PeerContext | (string & {}),
 > = {
-  name: NameT;
   // todo should this allow regex for dynamically created features?
   after?: Array<string> | string;
   modifyPeerContexts?: (
@@ -89,7 +87,7 @@ export type FeatureDefinition<
     initialPeerContext: GetPeerContext<NameT>,
   ) => Promise<PeerContextReducer> | PeerContextReducer;
   defineRecipe: (
-    register: ConduApi,
+    condu: ConduApi,
     peerContext: GetPeerContext<NameT>,
   ) => void | Promise<void>;
 } & (NameT extends keyof PeerContext
@@ -101,3 +99,10 @@ export type FeatureDefinition<
           ) => GetPeerContext<NameT> | Promise<GetPeerContext<NameT>>);
     }
   : {});
+
+export type FeatureDefinition<
+  NameT extends PossibleFeatureNames = PossibleFeatureNames,
+> = {
+  name: NameT;
+  stack?: string;
+} & FeatureDefinitionInput<NameT>;

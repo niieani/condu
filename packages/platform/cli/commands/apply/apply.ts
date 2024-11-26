@@ -105,7 +105,7 @@ export async function collectState(
     }
   }
 
-  // Run mergePeerContext functions
+  // Run modifyPeerContexts functions
   for (const feature of sortedFeatures) {
     if (feature.modifyPeerContexts) {
       const reducers = await feature.modifyPeerContexts(
@@ -113,6 +113,10 @@ export async function collectState(
         peerContext[feature.name] as PeerContext[keyof PeerContext],
       );
       for (const [key, reducer] of Object.entries(reducers)) {
+        if (!peerContext[key]) {
+          // peer context was never initialized, skip
+          continue;
+        }
         // `any`, as this is impossible to type correctly
         peerContext[key] = await reducer(peerContext[key] as any);
       }
@@ -160,22 +164,26 @@ const createConduApi = ({
   changesCollector: CollectedState;
 }): ConduApi => ({
   project,
-  inRoot: createStateDeclarationApi({
+  root: createStateDeclarationApi({
     matchingPackages: [project.workspace],
     changesCollector,
     collectionContext,
+    matchesAllWorkspacePackages: false,
   }),
   in(criteria) {
     const matchPackageFn = isMatching(criteria);
-    const matchAllPackages =
+    const matchAllWorkspacePackages =
       Object.keys(criteria).length === 1 &&
       "kind" in criteria &&
       criteria.kind === "package";
 
     // TODO: check if any packages matched and maybe add a warning if zero matches?
-    const matchingPackages = matchAllPackages
+    const matchingPackages = matchAllWorkspacePackages
       ? project.workspacePackages
       : project.allPackages.filter((pkg) => matchPackageFn(pkg));
+
+    const matchesAllWorkspacePackages =
+      matchingPackages.length === project.workspacePackages.length;
 
     // TODO: when matching all packages, we can optimize the gitignore output
     // by using the project.projectConventions[*].glob instead of the package's path
@@ -184,6 +192,7 @@ const createConduApi = ({
       matchingPackages,
       changesCollector,
       collectionContext,
+      matchesAllWorkspacePackages,
     });
   },
 });
@@ -192,10 +201,12 @@ const createStateDeclarationApi = ({
   matchingPackages,
   changesCollector,
   collectionContext,
+  matchesAllWorkspacePackages,
 }: {
   matchingPackages: readonly ConduPackageEntry[];
   changesCollector: CollectedState;
   collectionContext: CollectionContext;
+  matchesAllWorkspacePackages: boolean;
 }): StateDeclarationApi => ({
   ignoreFile(relPath, options) {
     for (const pkg of matchingPackages) {
@@ -204,7 +215,10 @@ const createStateDeclarationApi = ({
           targetPackage: pkg,
           relPath,
         })
-        .updateIgnores(options ?? {}, collectionContext);
+        .updateAttributes(
+          { ...options, inAllPackages: matchesAllWorkspacePackages },
+          collectionContext,
+        );
     }
   },
   generateFile(relPath, options) {
@@ -237,11 +251,11 @@ const createStateDeclarationApi = ({
         .addUserEditableModification(options, collectionContext);
     }
   },
-  addManagedDependency(dependencyDef) {
+  ensureDependency(name, dependencyDef) {
     for (const pkg of matchingPackages) {
       changesCollector.dependencies.push({
         targetPackage: pkg,
-        dependencyDefinition: dependencyDef,
+        dependencyDefinition: { name, ...dependencyDef },
         context: collectionContext,
       });
     }
@@ -269,11 +283,11 @@ const createStateDeclarationApi = ({
       // pkg.addPublishedModification(modifier, collectionContext);
     }
   },
-  defineTask(task) {
+  defineTask(name, task) {
     for (const pkg of matchingPackages) {
       changesCollector.tasks.push({
         targetPackage: pkg,
-        taskDefinition: task,
+        taskDefinition: { name, ...task },
         context: collectionContext,
       });
     }

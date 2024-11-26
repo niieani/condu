@@ -1,7 +1,6 @@
 import { UpsertMap } from "@condu/core/utils/UpsertMap.js";
 import type {
   ConduPackageEntry,
-  ConduPackageJson,
   ReadonlyConduPackageEntry,
   WorkspaceRootPackage,
   WorkspaceSubPackage,
@@ -20,13 +19,13 @@ import {
   getDefaultParse,
 } from "./defaultParseAndStringify.js";
 import { getRootPackageRelativePath } from "./getRootPackageRelativePath.js";
-import type { GlobalFileFlags } from "@condu/types/extendable.js";
 import {
   IS_INTERACTIVE,
   FILE_STATE_PATH,
   CURRENT_CACHE_VERSION,
 } from "@condu/types/constants.js";
 import type { FileNameToSerializedTypeMapping } from "@condu/types/extendable.js";
+import type { GlobalFileAttributes } from "@condu/types/extendable.js";
 
 // types
 export interface FileDestination {
@@ -118,15 +117,21 @@ export type GenerateFileOptionsForPath<PathT extends string> =
       >
     : GenerateFileOptions<ResolvedSerializedType<PathT>>;
 
+export type PartialGlobalFileAttributes = Partial<GlobalFileAttributes>;
+
+export interface WithGlobalFileAttributes {
+  attributes?: PartialGlobalFileAttributes;
+}
+
 export interface GenerateSymlinkFileOptions
-  extends GlobalFileFlags,
+  extends WithGlobalFileAttributes,
     SymlinkTargetContent {
   /** defaults to 'error' */
   ifPreviouslyDefined?: IfPreviouslyDefined;
 }
 
 export interface GenerateRegularFileWithRequiredStringifyOptions<DeserializedT>
-  extends GlobalFileFlags {
+  extends WithGlobalFileAttributes {
   content: InitialContent<DeserializedT>;
 
   /** defaults to stringify based on file extension */
@@ -137,7 +142,7 @@ export interface GenerateRegularFileWithRequiredStringifyOptions<DeserializedT>
 }
 
 export interface GenerateRegularFileOptions<DeserializedT>
-  extends GlobalFileFlags {
+  extends WithGlobalFileAttributes {
   content: InitialContent<DeserializedT>;
 
   /** defaults to stringify based on file extension */
@@ -155,7 +160,7 @@ export interface ContentModificationFunctionArgs<DeserializedT>
 }
 
 export interface ModifyOnlyGeneratedFileOptions<DeserializedT>
-  extends GlobalFileFlags {
+  extends WithGlobalFileAttributes {
   content: ({
     content,
     globalRegistry,
@@ -168,7 +173,7 @@ export interface ModifyOnlyGeneratedFileOptions<DeserializedT>
 }
 
 export interface ModifyOrCreateGeneratedFileOptions<DeserializedT>
-  extends GlobalFileFlags {
+  extends WithGlobalFileAttributes {
   content: ({
     content,
     globalRegistry,
@@ -177,7 +182,6 @@ export interface ModifyOrCreateGeneratedFileOptions<DeserializedT>
     | DeserializedT
     | Promise<DeserializedT>;
 
-  // for now we can not support 'create' here for simplicity
   ifNotCreated: "create";
 
   /** defaults to stringify based on file extension */
@@ -194,7 +198,7 @@ export type ModifyUserEditableFileOptions<DeserializedT> =
 
 export interface ModifyUserEditableFileOptionsWithBuiltinSerialization<
   DeserializedT,
-> extends GlobalFileFlags {
+> extends WithGlobalFileAttributes {
   // default is true, in which case content signature can include content: undefined
   createIfNotExists?: boolean;
   content: ({
@@ -214,7 +218,7 @@ export interface ModifyUserEditableFileOptionsWithBuiltinSerialization<
 
 export interface ModifyUserEditableFileOptionsWithCustomSerialization<
   DeserializedT,
-> extends GlobalFileFlags {
+> extends WithGlobalFileAttributes {
   createIfNotExists?: boolean;
   content: ({
     content,
@@ -404,7 +408,7 @@ export type ReadonlyFile = Readonly<
     ConduFile<any>,
     | "absPath"
     | "relPath"
-    | "flags"
+    | "attributes"
     | "hasFileSystemEffects"
     | "isManaged"
     | "managedByFeatures"
@@ -414,7 +418,7 @@ export type ReadonlyFile = Readonly<
 >;
 
 export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
-  flags: GlobalFileFlags = {};
+  attributes: PartialGlobalFileAttributes = {};
   targetPackage: ConduPackageEntry;
   /** path relative from the package */
   relPath: string;
@@ -422,6 +426,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
   get absPath(): string {
     return path.join(this.targetPackage.absPath, this.relPath);
   }
+  // TODO: add featureExecutionOrder
   managedByFeatures: CollectionContext[] = [];
   status: "pending" | "applied" | "skipped" | "needs-user-input" = "pending";
   askUserToWrite?: (() => Promise<void>) | undefined;
@@ -475,25 +480,31 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     this.stringify = getDefaultStringify(this.relPath);
   }
 
-  private updateFlags(flags: GlobalFileFlags) {
+  #updateAttributes(attributes: PartialGlobalFileAttributes) {
     // only set the flags that are provided
-    for (const [key, value] of Object.entries(flags)) {
-      // flags can only be string, number or boolean
+    for (const [key, value] of Object.entries(attributes)) {
+      // attributes can only be string, number or boolean
       if (
         typeof value === "string" ||
         typeof value === "number" ||
         typeof value === "boolean"
       ) {
-        this.flags[key as keyof GlobalFileFlags] = value as NonNullable<
-          GlobalFileFlags[keyof GlobalFileFlags]
-        >;
+        this.attributes[key as keyof PartialGlobalFileAttributes] =
+          value as NonNullable<
+            PartialGlobalFileAttributes[keyof PartialGlobalFileAttributes]
+          >;
       }
     }
   }
 
-  updateIgnores(flags: GlobalFileFlags, context: CollectionContext) {
+  updateAttributes(
+    attributes: PartialGlobalFileAttributes | undefined,
+    context: CollectionContext,
+  ) {
     this.managedByFeatures.push(context);
-    this.updateFlags(flags);
+    if (attributes) {
+      this.#updateAttributes(attributes);
+    }
   }
 
   defineInitialContent(
@@ -501,7 +512,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     context: CollectionContext,
   ) {
     if ("symlinkTarget" in opts) {
-      const { symlinkTarget, ifPreviouslyDefined = "error", ...flags } = opts;
+      const { symlinkTarget, ifPreviouslyDefined = "error", attributes } = opts;
       if (this.initialContent) {
         if (ifPreviouslyDefined === "error") {
           // TODO: safe error handling instead of throwing
@@ -513,15 +524,14 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
           return this;
         }
       }
-      this.managedByFeatures.push(context);
-      this.updateFlags(flags);
+      this.updateAttributes(attributes, context);
       this.initialContent = { symlinkTarget, context };
     } else {
       const {
         content,
         stringify,
         ifPreviouslyDefined = "error",
-        ...flags
+        attributes,
       } = opts;
       if (this.initialContent) {
         if (ifPreviouslyDefined === "error") {
@@ -534,8 +544,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
           return this;
         }
       }
-      this.managedByFeatures.push(context);
-      this.updateFlags(flags);
+      this.updateAttributes(attributes, context);
       this.initialContent = { content, context };
       if (stringify) {
         this.stringify = stringify;
@@ -548,13 +557,8 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     modification: ModifyGeneratedFileOptions<DeserializedT>,
     context: CollectionContext,
   ) {
-    const {
-      content,
-      // TODO: maybe a cleaner way to extract flags?
-      ...flags
-    } = modification;
-    this.managedByFeatures.push(context);
-    this.updateFlags(flags);
+    const { attributes } = modification;
+    this.updateAttributes(attributes, context);
     this.contentModifications.push({ ...modification, context });
     return this;
   }
@@ -570,21 +574,8 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     // if (this.kind === 'generated') {
     //   throw new Error(`Cannot modify a generated file, use modifyGeneratedFile instead`);
     // }
-    const {
-      content,
-      parse,
-      stringify,
-      createIfNotExists,
-      // TODO: maybe a cleaner way to extract flags?
-      ...flags
-    } = modification;
-    this.managedByFeatures.push(context);
-    this.updateFlags({
-      // gitignore: false,
-      // npmignore: false,
-      // ...this.flags,
-      ...flags,
-    });
+    const { attributes } = modification;
+    this.updateAttributes(attributes, context);
     this.editableContentModifications.push({ ...modification, context });
     this.neverCache = true;
     return this;

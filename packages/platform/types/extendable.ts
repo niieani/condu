@@ -9,15 +9,19 @@ export interface PeerContext {
 
 /**
  * a public interface that can be extended by features to include additional global context
- * think of it as global flags that can be set by features
+ * think of it as global, shared attributes that can be set and modified by features
  */
 export interface GlobalPeerContext {
   execWithTsSupport: boolean | undefined;
 }
 
-export interface GlobalFileFlags {
-  gitignore?: boolean;
+export interface GlobalFileAttributes {
   npmignore?: boolean;
+  /**
+   * internal flag that is set by the apply command
+   * to indicate that the file was created in all packages in the monorepo (except the root)
+   */
+  inAllPackages?: boolean;
 }
 
 /**

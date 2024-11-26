@@ -107,6 +107,8 @@
 
 - [ ] a dependency system of sorts, where user-defined features take precedence
   - in defineFeature we could have a `dependencies` field, which would be a list of features that need to be enabled for this feature to work, with a fallback peerDependency that applies the feature if the dependency is not met
+  - when defining dependencies, you should be able to access peerContext of each of the dependencies
+- [ ] should be possible to derive file attributes from other attributes (e.g. `gitignore` => `hidden` if unset)
 - [ ] no use-before-define - it's silly, similarly no 'one class per file'
 - [ ] automatically remove dependencies that were added declaratively by removing a feature
 - [ ] global install with brew + creating github repos via CLI through API
