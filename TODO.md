@@ -84,6 +84,7 @@
 - [x] re-evaluate the API for writing features - there's a lot of nesting, can it be simplified a bit?
   - also need a way to hook into each others features (i.e. modify behavior if other features are enabled)
   - maybe simply hooking into the outputted files (if they exist?), creating kind of a pipeline of file transformations?
+- [ ] features that can be added multiple times need to have a way to be uniquely identified (feature id?) - update 'apply' to handle this. Question remains about initial peer context - I guess it needs to be empty and then peer merging can handle additions to peer context of that same feature.
 - [ ] preset with my features and feature config pre-applied
 - [ ] test it out in an existing project
   - [ ] add condu to `mockify` and publish the packages

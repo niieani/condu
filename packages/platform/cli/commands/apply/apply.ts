@@ -6,6 +6,7 @@ import { isMatching } from "ts-pattern";
 import type {
   ConduApi,
   FeatureDefinition,
+  PeerContextReducer,
   StateDeclarationApi,
 } from "./conduApi.js";
 import {
@@ -16,10 +17,7 @@ import {
 } from "./CollectedState.js";
 import type { ConduProject } from "./ConduProject.js";
 import { FileManager } from "./FileManager.js";
-import type {
-  GlobalPeerContext,
-  PeerContext,
-} from "../../../types/extendable.js";
+import type { PeerContext } from "@condu/types/extendable.js";
 import { autolink } from "../../builtin-features/autolink.js";
 import { UpsertMap } from "@condu/core/utils/UpsertMap.js";
 import { topologicalSortFeatures } from "./topologicalSortFeatures.js";
@@ -105,6 +103,11 @@ export async function collectState(
     }
   }
 
+  const peerContextReducers: [
+    string,
+    NonNullable<PeerContextReducer[keyof PeerContextReducer]>,
+  ][] = [];
+
   // Run modifyPeerContexts functions
   for (const feature of sortedFeatures) {
     if (feature.modifyPeerContexts) {
@@ -114,13 +117,24 @@ export async function collectState(
       );
       for (const [key, reducer] of Object.entries(reducers)) {
         if (!peerContext[key]) {
-          // peer context was never initialized, skip
+          // peer context was never initialized (e.g. because a feature it relates to isn't used), skip
           continue;
         }
-        // `any`, as this is impossible to type correctly
-        peerContext[key] = await reducer(peerContext[key] as any);
+        // reduce global peer context from all features first,
+        // so it can be available complete, for other context reducers
+        if (key === "global") {
+          peerContext[key] = await reducer(peerContext[key] as any);
+        } else {
+          peerContextReducers.push([key, reducer]);
+        }
       }
     }
+  }
+
+  // Run other peerContext reducers
+  for (const [key, reducer] of peerContextReducers) {
+    // uses `as any`, as this is impossible to type correctly
+    peerContext[key] = await reducer(peerContext[key] as any);
   }
 
   const fileManager = new FileManager(

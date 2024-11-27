@@ -25,7 +25,7 @@ export const gitignore = (opts: IgnoreConfig = {}) =>
     defineRecipe(condu, { ignore }) {
       condu.root.generateFile(".gitignore", {
         content({ globalRegistry }) {
-          const files = globalRegistry.getFilesWithAttribute("gitignore", {
+          const files = globalRegistry.getFilesMatchingAttribute("gitignore", {
             includeUnflagged: true,
           });
           const filesByFeature = groupBy(

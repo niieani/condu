@@ -68,7 +68,7 @@ export class ConduCollectedStatePublicApi {
   // TODO: allow specifying fallback attributes in order of preference, e.g. ['hidden', 'gitignore']
   // so that if 'hidden' is set (to anything) it will be used for matching with value,
   // otherwise 'gitignore' would be used
-  *getFilesWithAttribute<FlagT extends keyof GlobalFileAttributes>(
+  *getFilesMatchingAttribute<FlagT extends keyof GlobalFileAttributes>(
     attribute: FlagT,
     {
       value,

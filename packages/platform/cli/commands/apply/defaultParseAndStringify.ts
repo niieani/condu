@@ -21,7 +21,7 @@ export function getDefaultParse<DeserializedT>(
     .otherwise(() => keepRaw);
 }
 
-const jsonStringify = (content: unknown): string =>
+const jsonStringify = <DeserializedT>(content: DeserializedT): string =>
   commentJsonStringify(content, undefined, 2);
 
 export function getDefaultStringify<DeserializedT>(
@@ -32,3 +32,20 @@ export function getDefaultStringify<DeserializedT>(
     .with(P.string.regex(/\.ya?ml$/i), () => yamlStringify)
     .otherwise(() => jsonStringify);
 }
+
+export const getJsonStringify = <DeserializedT>() =>
+  jsonStringify as (content: DeserializedT) => string;
+export const getYamlStringify = <DeserializedT>() =>
+  yamlStringify as (content: DeserializedT) => string;
+export const getJsonParse = <DeserializedT>() =>
+  commentJsonParse as (raw: string) => DeserializedT;
+export const getYamlParse = <DeserializedT>() =>
+  yamlParse as (raw: string) => DeserializedT;
+export const getYamlParseAndStringify = <DeserializedT>() => ({
+  parse: getYamlParse<DeserializedT>(),
+  stringify: getYamlStringify<DeserializedT>(),
+});
+export const getJsonParseAndStringify = <DeserializedT>() => ({
+  parse: getJsonParse<DeserializedT>(),
+  stringify: getJsonStringify<DeserializedT>(),
+});

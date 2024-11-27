@@ -1,118 +1,100 @@
 import { defineFeature } from "condu/defineFeature.js";
 import { assign } from "comment-json";
 import type { VscodeSettingsWorkspace } from "@condu/schema-types/schemas/vscodeSettingsWorkspace.gen.js";
-import * as path from "node:path";
+import { getYamlParseAndStringify } from "@condu/cli/commands/apply/defaultParseAndStringify.js";
 
 const RUNNING_SOURCE_VERSION = import.meta.url.endsWith(".ts");
 
-const defaultEnforcedConfig: VscodeSettingsWorkspace = {
-  ...(RUNNING_SOURCE_VERSION
-    ? {
-        "eslint.execArgv": [
-          "--import",
-          import.meta.resolve("tsx/esm").slice("file://".length),
-        ],
-      }
-    : {}),
-};
-
-const defaultSuggestedConfig: VscodeSettingsWorkspace = {
-  // TODO: only add these eslint settings if the eslint feature is enabled
-  "eslint.lintTask.enable": true,
-  "eslint.useESLintClass": true,
-  // forces vscode to run eslint with the node version installed in the system,
-  // instead of the one bundled with vscode
-  "eslint.runtime": "node",
-  // "eslint.runtime": process.argv0,
+// TODO: move these to TypeScript feature:
+const defaultSuggestedSettings: VscodeSettingsWorkspace = {
   "typescript.tsserver.experimental.enableProjectDiagnostics": true,
   "typescript.tsdk": "node_modules/typescript/lib",
 };
 
-export const vscode = ({
-  suggestedConfig = {},
-  enforcedConfig = {},
-  hideGeneratedFiles = false,
-}: {
-  hideGeneratedFiles?: boolean;
+declare module "@condu/types/extendable.js" {
+  interface PeerContext {
+    vscode: VSCodePeerContext;
+  }
+  interface GlobalFileAttributes {
+    vscode: boolean;
+  }
+}
+
+interface VSCodePeerContext {
   /** these settings will be added by default, but can be manually overwritten */
-  suggestedConfig?: VscodeSettingsWorkspace;
+  suggestedSettings: VscodeSettingsWorkspace;
   /** these settings will always override the user's preferences; avoid using in most cases */
-  enforcedConfig?: VscodeSettingsWorkspace;
-} = {}) =>
-  defineFeature({
-    name: "vscode",
-    order: { priority: "end" },
-    actionFn: async (config, state) => {
+  enforcedSettings: VscodeSettingsWorkspace;
+}
+
+interface VSCodeConfig extends Partial<VSCodePeerContext> {
+  hideGeneratedFiles?: boolean;
+}
+
+export const vscode = ({
+  hideGeneratedFiles = false,
+  ...config
+}: VSCodeConfig = {}) =>
+  defineFeature("vscode", {
+    initialPeerContext: {
+      suggestedSettings: config.suggestedSettings ?? {},
+      enforcedSettings: config.enforcedSettings ?? {},
+    },
+
+    modifyPeerContexts: () => ({
+      global: (current) => ({
+        ...current,
+        execWithTsSupport: current.execWithTsSupport || RUNNING_SOURCE_VERSION,
+      }),
+    }),
+
+    defineRecipe(condu, { suggestedSettings, enforcedSettings }) {
+      condu.root.modifyUserEditableFile(".vscode/settings.json", {
+        content({ content = {}, globalRegistry }) {
+          const excludedFiles = [
+            // TODO: potentially add a global 'alwaysVisibleInEditor' flag to indicate a file might not be hidden
+            ...globalRegistry.getFilesMatchingAttribute("gitignore", {
+              includeUnflagged: true,
+            }),
+          ].filter(
+            ([_relPath, file]) =>
+              !file.managedByFeatures.some(
+                (context) => context.featureName === "vscode",
+              ),
+          );
+          const withEnforcedConfig = assign(content, {
+            ...enforcedSettings,
+            "files.exclude": {
+              // ...existingContent?.["files.exclude"],
+              // these are defaults that we want to keep:
+              // "**/.git": true,
+              // "**/.svn": true,
+              // "**/.hg": true,
+              // "**/CVS": true,
+              // "**/.DS_Store": true,
+              // "**/Thumbs.db": true,
+              // "**/.ruby-lsp": true,
+              ...(hideGeneratedFiles
+                ? Object.fromEntries(
+                    excludedFiles.map(([relPath]) => [relPath, true]),
+                  )
+                : {}),
+              ...enforcedSettings?.["files.exclude"],
+            },
+            "search.exclude": {
+              [condu.project.config.conventions.buildDir]: true,
+              ...enforcedSettings?.["search.exclude"],
+            },
+          } satisfies VscodeSettingsWorkspace);
+          const suggestedConfigWithDefaults = {
+            ...defaultSuggestedSettings,
+            ...suggestedSettings,
+          };
+          return assign(suggestedConfigWithDefaults, withEnforcedConfig);
+        },
+        ...getYamlParseAndStringify<VscodeSettingsWorkspace>(),
+      });
+
       // TODO: also, auto-add 'tasks.json' based on the defined tasks
-      return {
-        effects: [
-          {
-            files: [
-              {
-                path: ".vscode/settings.json",
-                content: async ({
-                  getExistingContentAndMarkAsUserEditable: getExistingContent,
-                }) =>
-                  // TODO: enable other plugins to contribute to this one, e.g. eslint:
-                  // "eslint.ignoreUntitled": true,
-                  // "eslint.useESLintClass": true,
-                  // and TypeScript:
-                  // "typescript.tsserver.experimental.enableProjectDiagnostics": true,
-                  // "typescript.preferences.preferTypeOnlyAutoImports": true,
-                  {
-                    const existingContent =
-                      ((await getExistingContent()) as VscodeSettingsWorkspace) ??
-                      {};
-                    const excludedFiles = hideGeneratedFiles
-                      ? Object.fromEntries(
-                          state.files
-                            .filter(
-                              ({ type, skipIgnore, featureName }) =>
-                                type !== "committed" &&
-                                !skipIgnore &&
-                                featureName !== "vscode",
-                            )
-                            .map(({ path: p, targetDir }) => [
-                              // remove leading './' from path
-                              path.normalize(path.join(targetDir, p)),
-                              true,
-                            ]),
-                        )
-                      : {};
-                    const withEnforcedConfig = assign(existingContent, {
-                      ...defaultEnforcedConfig,
-                      ...enforcedConfig,
-                      "files.exclude": {
-                        // ...existingContent?.["files.exclude"],
-                        // these are defaults that we want to keep:
-                        // "**/.git": true,
-                        // "**/.svn": true,
-                        // "**/.hg": true,
-                        // "**/CVS": true,
-                        // "**/.DS_Store": true,
-                        // "**/Thumbs.db": true,
-                        // "**/.ruby-lsp": true,
-                        ...excludedFiles,
-                        ...enforcedConfig?.["files.exclude"],
-                      },
-                      "search.exclude": {
-                        [config.conventions.buildDir]: true,
-                      },
-                    } satisfies VscodeSettingsWorkspace);
-                    const suggestedConfigWithDefaults = {
-                      ...defaultSuggestedConfig,
-                      ...suggestedConfig,
-                    };
-                    return assign(
-                      suggestedConfigWithDefaults,
-                      withEnforcedConfig,
-                    );
-                  },
-              },
-            ],
-            devDependencies: RUNNING_SOURCE_VERSION ? ["tsx"] : [],
-          },
-        ],
-      };
     },
   });

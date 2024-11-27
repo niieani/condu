@@ -12,7 +12,7 @@ export interface PeerContext {
  * think of it as global, shared attributes that can be set and modified by features
  */
 export interface GlobalPeerContext {
-  execWithTsSupport: boolean | undefined;
+  execWithTsSupport: boolean;
 }
 
 export interface GlobalFileAttributes {
