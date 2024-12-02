@@ -13,16 +13,25 @@ interface Result {
   filePath: string;
 }
 
-const summaryFileName = "about-the-projects-and-its-source-code.md";
-
-interface FeatureOptions {
+interface FeaturePeerContext {
   ignore?: string[];
   removeComments?: boolean;
 }
 
+interface FeatureOptions extends FeaturePeerContext {
+  summaryFileName?: string;
+}
+
 interface SummarizerOptions extends FeatureOptions {
+  summaryFileName: string;
   rootDir: string;
   recursive?: boolean;
+}
+
+declare module "@condu/types/extendable.js" {
+  interface PeerContext {
+    gptSummarizer: Required<FeaturePeerContext>;
+  }
 }
 
 function removeSingleLineComments(input: string): string {
@@ -37,6 +46,7 @@ export const summarize = async ({
   recursive = true,
   ignore = [],
   removeComments = false,
+  summaryFileName,
 }: SummarizerOptions): Promise<string> => {
   const work: Promise<Result | undefined>[] = [];
   for await (const { directoryPath, entry } of walkDirectoryRecursively(
@@ -123,44 +133,43 @@ export const summarize = async ({
   return summarized;
 };
 
+const DEFAULT_SUMMARY_FILE_NAME = "about-the-projects-and-its-source-code.md";
+
 export const gptSummarizer = ({
-  ignore,
-  removeComments,
+  summaryFileName = DEFAULT_SUMMARY_FILE_NAME,
+  ...opts
 }: FeatureOptions = {}) =>
-  defineFeature({
-    name: "gpt-summarizer",
-    order: { priority: "end" },
-    actionFn: (config, state) => ({
-      effects: [
-        {
-          files: [
-            {
-              path: summaryFileName,
-              alwaysOverwrite: true,
-              content: async (c) => {
-                c.getExistingContentAndMarkAsUserEditable();
-                const packages = config.project.workspacePackages;
-                const summarized = await summarize({
-                  rootDir: config.workspaceDir,
-                  recursive: false,
-                  ignore,
-                  removeComments,
-                });
-                let fullSummary = `# Workspace Documentation\n${summarized}\n`;
-                fullSummary += "# Packages\n";
-                for (const { manifest, absPath } of packages) {
-                  const summarized = await summarize({
-                    rootDir: absPath,
-                    ignore,
-                    removeComments,
-                  });
-                  fullSummary += `## Package ${manifest.name}\n${summarized}\n`;
-                }
-                return fullSummary;
-              },
-            },
-          ],
+  defineFeature("gptSummarizer", {
+    initialPeerContext: {
+      ignore: opts.ignore ?? [],
+      removeComments: opts.removeComments ?? false,
+    },
+
+    defineRecipe: async (condu, { ignore, removeComments }) => {
+      condu.root.generateFile(summaryFileName, {
+        content: async () => {
+          const packages = condu.project.workspacePackages;
+          const summarized = await summarize({
+            rootDir: condu.project.config.workspaceDir,
+            recursive: false,
+            ignore,
+            removeComments,
+            summaryFileName,
+          });
+          let fullSummary = `# Workspace Documentation\n${summarized}\n`;
+          fullSummary += "# Packages\n";
+          for (const pkg of packages) {
+            const summarized = await summarize({
+              rootDir: pkg.absPath,
+              ignore,
+              removeComments,
+              summaryFileName,
+            });
+            fullSummary += `## Package ${pkg.manifest.name}\n${summarized}\n`;
+          }
+          return fullSummary;
         },
-      ],
-    }),
+        attributes: { alwaysOverwrite: true },
+      });
+    },
   });

@@ -839,7 +839,11 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       return;
     }
 
-    if (!existingFile || overwriteWithoutAsking) {
+    if (
+      !existingFile ||
+      overwriteWithoutAsking ||
+      this.attributes.alwaysOverwrite
+    ) {
       this.status = "applied";
       // no existing file, or different content
       this.lastApply = await write({

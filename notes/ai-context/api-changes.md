@@ -1067,6 +1067,75 @@ function getWorkspaceTasks({
 }
 ```
 
+# ./packages/features/condu-packages/conduPackages.ts
+
+## before
+
+```ts
+import { defineFeature } from "condu/defineFeature.js";
+import {
+  CONDU_WORKSPACE_PACKAGE_NAME,
+  CORE_NAME,
+} from "@condu/types/constants.js";
+
+export const conduPackages = (opts: {} = {}) =>
+  defineFeature({
+    name: "condu",
+    actionFn: (config, state) => {
+      const isInternalCondu =
+        config.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME;
+      return {
+        effects: [
+          {
+            tasks: [
+              {
+                type: "publish",
+                name: "release",
+                definition: {
+                  command: `${
+                    isInternalCondu
+                      ? `${config.node.packageManager.name} run `
+                      : ""
+                  }${CORE_NAME} release`,
+                },
+              },
+            ],
+          },
+        ],
+      };
+    },
+  });
+```
+
+## after
+
+```ts
+import { defineFeature } from "condu/defineFeature.js";
+import {
+  CONDU_WORKSPACE_PACKAGE_NAME,
+  CORE_NAME,
+} from "@condu/types/constants.js";
+
+export const conduPackages = (opts: {} = {}) =>
+  defineFeature("condu-packages", {
+    defineRecipe: (condu, peerContext) => {
+      const isInternalCondu =
+        condu.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME;
+
+      condu.root.defineTask("release", {
+        type: "publish",
+        definition: {
+          command: `${
+            isInternalCondu
+              ? `${condu.project.config.node.packageManager.name} run `
+              : ""
+          }${CORE_NAME} release`,
+        },
+      });
+    },
+  });
+```
+
 ---
 
 # types.ts

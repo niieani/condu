@@ -16,12 +16,22 @@ export interface GlobalPeerContext {
 }
 
 export interface GlobalFileAttributes {
+  /**
+   * when set to true, file will not be published to npm
+   */
   npmignore?: boolean;
+
   /**
    * internal flag that is set by the apply command
    * to indicate that the file was created in all packages in the monorepo (except the root)
    */
   inAllPackages?: boolean;
+
+  /**
+   * when set to true, the file will always be overwritten without asking,
+   * even if it contains local changes
+   */
+  alwaysOverwrite?: boolean;
 }
 
 /**
