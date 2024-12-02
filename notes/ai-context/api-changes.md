@@ -628,6 +628,445 @@ export const vscode = ({
   });
 ```
 
+# ./packages/features/ci-github-actions/moon.ts
+
+## before
+
+```ts
+import { defineFeature } from "condu/defineFeature.js";
+import type { GithubWorkflow } from "@condu/schema-types/schemas/githubWorkflow.gen.js";
+import type {
+  PartialTaskConfig,
+  PartialProjectConfig as Project,
+} from "@moonrepo/types";
+import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
+import { mapValues } from "remeda";
+import type { Effects, Task, Conventions } from "@condu/types/configTypes.js";
+import type { GithubAction } from "@condu/schema-types/schemas/githubAction.gen.js";
+
+type TasksByType = Record<
+  Task["type"],
+  [projectName: string, taskName: string][]
+>;
+
+export const moonCi = (opts: {} = {}) =>
+  defineFeature({
+    name: "moonCi",
+    order: { priority: "end" },
+    actionFn: async (config, state) => {
+      const packageManager = config.node.packageManager.name;
+      const ciSetupAction: GithubAction = {
+        name: "Moon CI Setup",
+        description: "Setup the environment for Moon CI",
+        inputs: {
+          "registry-url": {
+            description: "The NPM registry URL",
+            required: false,
+            default: "https://registry.npmjs.org/",
+          },
+        },
+        runs: {
+          using: "composite",
+          steps: [
+            ...(config.node.packageManager.name !== "npm"
+              ? [{ run: `corepack enable`, shell: "bash" }]
+              : []),
+            {
+              uses: "actions/setup-node@v4",
+              with: {
+                "node-version-file": "package.json",
+                // "node-version": config.node.version,
+                cache: config.node.packageManager.name,
+                "registry-url": "${{ inputs.registry-url }}",
+              },
+            },
+            { uses: "oven-sh/setup-bun@v1" },
+            {
+              run: `${packageManager} ${
+                packageManager === "yarn"
+                  ? "install --immutable"
+                  : packageManager === "npm"
+                    ? "ci"
+                    : "install --frozen-lockfile"
+              }`,
+              shell: "bash",
+            },
+            {
+              run: `./node_modules/.bin/moon ci :build`,
+              shell: "bash",
+              env: { MOON_TOOLCHAIN_FORCE_GLOBALS: "true" },
+            },
+          ],
+        },
+      };
+      const ciWorkflow: GithubWorkflow = {
+        name: "Moon CI",
+        on: {
+          push: { branches: [config.git.defaultBranch] },
+          pull_request: {},
+        },
+        env: {
+          GIT_DEFAULT_BRANCH: "${{ github.event.repository.default_branch }}",
+        },
+        jobs: {
+          ci: {
+            name: "Moon CI",
+            "runs-on": "ubuntu-latest",
+            env: { MOON_TOOLCHAIN_FORCE_GLOBALS: "true" },
+            steps: [
+              {
+                uses: "actions/checkout@v4",
+                with: { "fetch-depth": 0 },
+              },
+              {
+                name: "Moon CI Setup",
+                uses: "./.github/actions/moon-ci-setup",
+              },
+              {
+                name: "Test",
+                run: `./node_modules/.bin/moon ci :test`,
+                shell: "bash",
+              },
+            ],
+          },
+        },
+      };
+
+      const packages = [
+        ...(await config.project.getWorkspacePackages()),
+        config.project,
+      ];
+      const taskList = state.tasks;
+      const tasksByType: TasksByType = {
+        build: [],
+        test: [],
+        format: [],
+        publish: [],
+        start: [],
+      };
+
+      const projectStates = packages.flatMap<Effects>((pkg) => {
+        const tasksForProject = taskList.flatMap((task) => {
+          if (task.name in tasksByType) {
+            throw new Error(
+              `In ${pkg.manifest.name}: Task name '${task.name}' is reserved for the global task type`,
+            );
+          }
+          if (task.target.name === pkg.manifest.name) {
+            tasksByType[task.type].push([pkg.manifest.name, task.name]);
+            return [[task.name, task.definition]] as const;
+          }
+          return [];
+        });
+        if (tasksForProject.length === 0 && pkg.kind === "package") {
+          return [];
+        }
+        return {
+          matchPackage: {
+            name: pkg.manifest.name,
+            kind: pkg.kind,
+          },
+          files: [
+            {
+              path: "moon.yml",
+              content: {
+                $schema: schemas.project,
+                tasks:
+                  pkg.kind === "package"
+                    ? Object.fromEntries(tasksForProject)
+                    : {
+                        ...Object.fromEntries(tasksForProject),
+                        ...getWorkspaceTasks({
+                          tasksByType,
+                          conventions: config.conventions,
+                        }),
+                      },
+              } satisfies Project,
+            },
+          ],
+        } as const;
+      });
+
+      return {
+        effects: [
+          ...projectStates,
+          {
+            files: [
+              {
+                path: ".github/actions/moon-ci-setup/action.yml",
+                type: "committed",
+                content: ciSetupAction,
+              },
+              {
+                path: ".github/workflows/moon-ci.yml",
+                type: "committed",
+                content: ciWorkflow,
+              },
+            ],
+          },
+        ],
+
+        flags: ["preventAdditionalTasks"],
+      };
+    },
+  });
+
+function getWorkspaceTasks({
+  tasksByType,
+  conventions,
+}: {
+  tasksByType: TasksByType;
+  conventions: Required<Conventions>;
+}): Record<string, PartialTaskConfig> {
+  const tasks = mapValues(
+    tasksByType,
+    (tasks, type): PartialTaskConfig => ({
+      deps: tasks.map(
+        ([projectName, taskName]) => `${projectName}:${taskName}`,
+      ),
+      inputs: [],
+      ...(type === "publish" && { options: { runDepsInParallel: false } }),
+      ...(type === "format" && { options: { runInCI: false } }),
+    }),
+  );
+
+  return {
+    ...tasks,
+    clean: {
+      command: `rm -rf ${conventions.buildDir} .moon/cache/states`,
+      options: { cache: false, runInCI: false },
+    },
+  };
+}
+```
+
+## after
+
+```ts
+import { defineFeature } from "condu/defineFeature.js";
+import type { GithubWorkflow } from "@condu/schema-types/schemas/githubWorkflow.gen.js";
+import type {
+  PartialTaskConfig as MoonTask,
+  PartialProjectConfig as MoonProject,
+} from "@moonrepo/types";
+import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
+import { mapValues } from "remeda";
+import type { Conventions } from "@condu/types/configTypes.js";
+import type {
+  CollectedTask,
+  Task,
+} from "@condu/cli/commands/apply/CollectedState.js";
+import type { GithubAction } from "@condu/schema-types/schemas/githubAction.gen.js";
+import { getYamlParseAndStringify } from "@condu/cli/commands/apply/defaultParseAndStringify.js";
+
+declare module "@condu/types/extendable.js" {
+  interface FileNameToSerializedTypeMapping {
+    ".github/actions/moon-ci-setup/action.yml": GithubAction;
+    ".github/workflows/moon-ci.yml": GithubWorkflow;
+    "moon.yml": MoonProject;
+  }
+}
+
+export const moonCi = (opts: {} = {}) =>
+  defineFeature("moonCi", {
+    defineRecipe(condu, peerContext) {
+      const config = condu.project.config;
+      const packageManager = config.node.packageManager.name;
+      condu.root.generateFile(".github/actions/moon-ci-setup/action.yml", {
+        ...getYamlParseAndStringify<GithubAction>(),
+        content: {
+          name: "Moon CI Setup",
+          description: "Setup the environment for Moon CI",
+          inputs: {
+            "registry-url": {
+              description: "The NPM registry URL",
+              required: false,
+              default:
+                config.publish?.registry ?? "https://registry.npmjs.org/",
+            },
+          },
+          runs: {
+            using: "composite",
+            steps: [
+              ...(packageManager !== "npm" && packageManager !== "bun"
+                ? [{ run: `corepack enable`, shell: "bash" }]
+                : []),
+              {
+                uses: "actions/setup-node@v4",
+                with: {
+                  "node-version-file": "package.json",
+                  cache: packageManager === "bun" ? "" : packageManager,
+                  "registry-url": "${{ inputs.registry-url }}",
+                },
+              },
+              { uses: "oven-sh/setup-bun@v2" },
+              {
+                run: `${packageManager} ${
+                  packageManager === "yarn"
+                    ? "install --immutable"
+                    : packageManager === "npm"
+                      ? "ci"
+                      : "install --frozen-lockfile"
+                }`,
+                shell: "bash",
+              },
+              {
+                run: `./node_modules/.bin/moon ci :build`,
+                shell: "bash",
+                env: { MOON_TOOLCHAIN_FORCE_GLOBALS: "true" },
+              },
+            ],
+          },
+        },
+      });
+
+      condu.root.generateFile(".github/workflows/moon-ci.yml", {
+        ...getYamlParseAndStringify<GithubWorkflow>(),
+        content: {
+          name: "Moon CI",
+          on: {
+            push: { branches: [config.git.defaultBranch] },
+            pull_request: {},
+          },
+          env: {
+            GIT_DEFAULT_BRANCH: "${{ github.event.repository.default_branch }}",
+          },
+          jobs: {
+            ci: {
+              name: "Moon CI",
+              "runs-on": "ubuntu-latest",
+              env: { MOON_TOOLCHAIN_FORCE_GLOBALS: "true" },
+              steps: [
+                {
+                  uses: "actions/checkout@v4",
+                  with: { "fetch-depth": 0 },
+                },
+                {
+                  name: "Moon CI Setup",
+                  uses: "./.github/actions/moon-ci-setup",
+                },
+                {
+                  name: "Test",
+                  run: `./node_modules/.bin/moon ci :test`,
+                  shell: "bash",
+                },
+              ],
+            },
+          },
+        },
+      });
+
+      condu.in({ kind: "package" }).generateFile("moon.yml", {
+        ...getYamlParseAndStringify<MoonProject>(),
+        content: ({ targetPackage, globalRegistry }) => {
+          const tasksForPackage = Array.from(
+            globalRegistry.getTasksMatchingPackage(targetPackage),
+            (task) =>
+              [getTaskName(task), task.taskDefinition.definition] as const,
+          );
+          const tasks = Object.fromEntries(tasksForPackage) as Record<
+            string,
+            MoonTask
+          >;
+
+          return {
+            $schema: schemas.project,
+            tasks,
+          };
+        },
+      });
+
+      // add in type-tasks:
+      condu.root.generateFile("moon.yml", {
+        ...getYamlParseAndStringify<MoonProject>(),
+        content: ({ targetPackage, globalRegistry }) => {
+          const tasksForPackage = Array.from(
+            globalRegistry.getTasksMatchingPackage(targetPackage),
+            (task) =>
+              [
+                task.taskDefinition.name,
+                task.taskDefinition.definition,
+              ] as const,
+          );
+          const tasks = Object.fromEntries(tasksForPackage) as Record<
+            string,
+            MoonTask
+          >;
+
+          return {
+            $schema: schemas.project,
+            tasks: {
+              ...tasks,
+              ...getWorkspaceTasks({
+                tasks: globalRegistry.tasks,
+                conventions: config.conventions,
+              }),
+            },
+          };
+        },
+      });
+    },
+  });
+
+type TasksByType = Record<Task["type"], CollectedTask[]>;
+
+const builtinTaskNames = new Set<string>([
+  "build",
+  "test",
+  "format",
+  "publish",
+  "start",
+] satisfies Task["type"][]);
+
+const getTaskName = (task: CollectedTask) =>
+  builtinTaskNames.has(task.taskDefinition.name)
+    ? `${task.targetPackage.scopedName}-${task.taskDefinition.name}`
+    : task.taskDefinition.name;
+
+function getWorkspaceTasks({
+  tasks,
+  conventions,
+}: {
+  tasks: readonly CollectedTask[];
+  conventions: Required<Conventions>;
+}): Record<string, MoonTask> {
+  const tasksByType: TasksByType = {
+    build: [],
+    test: [],
+    format: [],
+    publish: [],
+    start: [],
+  };
+
+  for (const task of tasks) {
+    if (task.targetPackage.kind === "workspace") {
+      continue;
+    }
+    tasksByType[task.taskDefinition.type].push(task);
+  }
+
+  const taskDefinitions = mapValues(
+    tasksByType,
+    (tasks, type): MoonTask => ({
+      deps: tasks.map(
+        (task) => `${task.targetPackage.name}:${getTaskName(task)}`,
+      ),
+      inputs: [],
+      ...(type === "publish" && { options: { runDepsInParallel: false } }),
+      ...(type === "format" && { options: { runInCI: false } }),
+    }),
+  );
+
+  return {
+    ...taskDefinitions,
+    clean: {
+      command: `rm -rf ${conventions.buildDir} .moon/cache/states`,
+      options: { cache: false, runInCI: false },
+    },
+  };
+}
+```
+
 ---
 
 # types.ts

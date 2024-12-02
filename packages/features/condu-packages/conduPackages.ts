@@ -5,30 +5,21 @@ import {
 } from "@condu/types/constants.js";
 
 export const conduPackages = (opts: {} = {}) =>
-  defineFeature({
-    name: "condu",
-    actionFn: (config, state) => {
+  defineFeature("condu-packages", {
+    defineRecipe: (condu, peerContext) => {
       const isInternalCondu =
-        config.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME;
-      return {
-        effects: [
-          {
-            tasks: [
-              {
-                type: "publish",
-                name: "release",
-                definition: {
-                  // TODO: add configurability/arguments
-                  command: `${
-                    isInternalCondu
-                      ? `${config.node.packageManager.name} run `
-                      : ""
-                  }${CORE_NAME} release`,
-                },
-              },
-            ],
-          },
-        ],
-      };
+        condu.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME;
+
+      condu.root.defineTask("release", {
+        type: "publish",
+        definition: {
+          // TODO: add configurability/arguments
+          command: `${
+            isInternalCondu
+              ? `${condu.project.config.node.packageManager.name} run `
+              : ""
+          }${CORE_NAME} release`,
+        },
+      });
     },
   });
