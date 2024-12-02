@@ -234,6 +234,7 @@ const createStateDeclarationApi = ({
           collectionContext,
         );
     }
+    return this;
   },
   generateFile(relPath, options) {
     for (const pkg of matchingPackages) {
@@ -244,6 +245,7 @@ const createStateDeclarationApi = ({
         })
         .defineInitialContent(options, collectionContext);
     }
+    return this;
   },
   modifyGeneratedFile(relPath, options) {
     for (const pkg of matchingPackages) {
@@ -254,6 +256,7 @@ const createStateDeclarationApi = ({
         })
         .addModification(options, collectionContext);
     }
+    return this;
   },
   modifyUserEditableFile(relPath, options) {
     for (const pkg of matchingPackages) {
@@ -264,6 +267,7 @@ const createStateDeclarationApi = ({
         })
         .addUserEditableModification(options, collectionContext);
     }
+    return this;
   },
   ensureDependency(name, dependencyDef) {
     for (const pkg of matchingPackages) {
@@ -273,9 +277,11 @@ const createStateDeclarationApi = ({
         context: collectionContext,
       });
     }
+    return this;
   },
   setDependencyResolutions(resolutions) {
     Object.assign(changesCollector.resolutions, resolutions);
+    return this;
   },
   modifyPackageJson(modifier) {
     for (const pkg of matchingPackages) {
@@ -286,6 +292,7 @@ const createStateDeclarationApi = ({
       });
       // pkg.addModification(modifier, collectionContext);
     }
+    return this;
   },
   modifyPublishedPackageJson(modifier) {
     for (const pkg of matchingPackages) {
@@ -296,6 +303,7 @@ const createStateDeclarationApi = ({
       });
       // pkg.addPublishedModification(modifier, collectionContext);
     }
+    return this;
   },
   defineTask(name, task) {
     for (const pkg of matchingPackages) {
@@ -305,6 +313,7 @@ const createStateDeclarationApi = ({
         context: collectionContext,
       });
     }
+    return this;
   },
 });
 

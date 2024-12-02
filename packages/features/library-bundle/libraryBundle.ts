@@ -2,6 +2,7 @@ import { defineFeature } from "condu/defineFeature.js";
 import type { LibraryBundleConfig } from "./types.js";
 import * as path from "node:path";
 import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
+import type { PackageExportsEntryObject } from "@condu/schema-types/schemas/packageJson.gen.js";
 
 export const libraryBundle = ({
   id,
@@ -19,13 +20,13 @@ export const libraryBundle = ({
   entry: string;
   package?: string;
 } & Omit<LibraryBundleConfig, "filename" | "outDir">) =>
-  defineFeature({
-    name: `library-bundle:${id}`,
-    actionFn: async (config, state) => {
-      const packages = config.project.workspacePackages;
+  defineFeature(`libraryBundle:${id}`, {
+    defineRecipe(condu) {
       const matchingPackage = pkgName
-        ? [config.project, ...packages].find((p) => p.manifest.name === pkgName)
-        : config.project;
+        ? [condu.project, ...condu.project.workspacePackages].find(
+            (p) => p.manifest.name === pkgName,
+          )
+        : condu.project;
 
       if (!matchingPackage) {
         console.error(new Error(`Could not find package ${pkgName}`));
@@ -42,7 +43,10 @@ export const libraryBundle = ({
         entry,
         path.extname(entry),
       )}.bundle.js`;
-      const outDir = path.join(config.conventions.buildDir, entryDir);
+      const outDir = path.join(
+        condu.project.config.conventions.buildDir,
+        entryDir,
+      );
       // TODO: right now this is incorrect
       const outDirRelativeToPackageSource = path.relative(
         matchingPackage.relPath,
@@ -52,65 +56,19 @@ export const libraryBundle = ({
       // TODO: consider using an esm transpiled webpack config with WEBPACK_CLI_FORCE_LOAD_ESM_CONFIG
       const configPathRelativeToPackage = `./${CONDU_CONFIG_DIR_NAME}/generated/webpack.config.cjs`;
       const userConfigPathRelativeToPackage = `./${CONDU_CONFIG_DIR_NAME}/webpack.config.cjs`;
-      // const configPathRelativeToPackage = path.relative(
-      //   matchingPackage.dir,
-      //   path.join(config.project.dir, configPath),
-      // );
 
       // TODO: check if entry exists
 
-      return {
-        effects: [
-          {
-            matchPackage: { name: matchingPackage.manifest.name },
-            hooks: {
-              modifyEntrySourcesForRelease(entrySources) {
-                const rootEntry = { ...entrySources["."]! };
-                const relativeToPath = `./${path.join(packageRelativePathToEntry, builtEntryName)}`;
-                const types = `./${entry.replace(/\.[cm]?ts$/, ".d.ts")}`;
-                if (rootEntry.source === `./${entry}`) {
-                  // we're overriding the root entry with the built version
-                  rootEntry.import = relativeToPath;
-                  rootEntry.bun = relativeToPath;
-                  rootEntry.default = relativeToPath;
-                  rootEntry.types = types;
-                  delete rootEntry.require;
-                }
-                return {
-                  [relativeToPath]: {
-                    import: relativeToPath,
-                    bun: relativeToPath,
-                    default: relativeToPath,
-                    types: types,
-                  },
-                  ...entrySources,
-                  ".": rootEntry,
-                };
-              },
-              ...(binName
-                ? {
-                    modifyPublishPackageJson(packageJson) {
-                      return {
-                        ...packageJson,
-                        bin: { [binName]: builtEntryName },
-                      };
-                    },
-                  }
-                : {}),
-            },
-            // TODO: do we want these dependencies to be condu-global or per-package?
-            devDependencies: [
-              "webpack",
-              "webpack-cli",
-              "webpack-merge",
-              "@swc/core",
-              "swc-loader",
-            ],
-            files: [
-              {
-                // TODO: use unique filename for each library bundle feature instance, need $id to be filename-safe
-                path: configPathRelativeToPackage,
-                content: `const sharedWebpackConfigFn = require('@condu-feature/library-bundle/webpack.config.cjs');
+      const inMatchingPackage = condu.in({
+        name: matchingPackage.manifest.name,
+      });
+
+      inMatchingPackage.generateFile(
+        // TODO: use unique filename for each library bundle feature instance, need $id to be filename-safe
+        configPathRelativeToPackage,
+        {
+          content: /* ts */ `
+const sharedWebpackConfigFn = require('@condu-feature/library-bundle/webpack.config.cjs');
 module.exports = async (env, argv) => {
   const sharedConfig = sharedWebpackConfigFn(env, argv);
   try {
@@ -129,57 +87,95 @@ module.exports = async (env, argv) => {
     // ignore
   }
   return sharedConfig;
-};
-`,
-              },
-            ],
-            tasks: [
-              {
-                type: "build",
-                name: `build-library-bundle-${id}`,
-                definition: {
-                  command: "webpack",
-                  // TODO: source dir and config only?
-                  inputs: [
-                    "**/*",
-                    // "/yarn.lock",
-                    // "/features/library-bundle/webpack.config.cjs",
-                  ],
-                  outputs: [
-                    `/${config.conventions.buildDir}/$projectSource/${builtEntryName}`,
-                    `/${config.conventions.buildDir}/$projectSource/${builtEntryName}.map`,
-                    `/${config.conventions.buildDir}/$projectSource/_build_/**/*`,
-                  ],
-                  args: [
-                    "build",
-                    "--config",
-                    configPathRelativeToPackage,
-                    "--entry",
-                    `./${entry}`,
-                    ...(moduleTarget
-                      ? ["--env", `moduleTarget=${moduleTarget}`]
-                      : []),
-                    ...(codeTarget
-                      ? ["--env", `codeTarget=${codeTarget}`]
-                      : []),
-                    ...(engineTarget
-                      ? ["--env", `engineTarget=${engineTarget}`]
-                      : []),
-                    ...(exportName ? ["--env", `export=${exportName}`] : []),
-                    ...(binName ? ["--env", `name=${binName}`] : []),
-                    "--env",
-                    `filename=${builtEntryName}`,
-                    "--env",
-                    `outDir=${outDirRelativeToPackageSource}`,
-                    // "--mode",
-                    // // "development",
-                    // "${NODE_ENV}",
-                  ],
-                },
-              },
-            ],
+};\n`.trimStart(),
+        },
+      );
+
+      // Add dependencies
+      // TODO: do we want these global, or per package?
+      inMatchingPackage
+        .ensureDependency("webpack")
+        .ensureDependency("webpack-cli")
+        .ensureDependency("webpack-merge")
+        .ensureDependency("@swc/core")
+        .ensureDependency("swc-loader");
+
+      // Define tasks
+      inMatchingPackage.defineTask(`build-library-bundle-${id}`, {
+        type: "build",
+        definition: {
+          command: "webpack",
+          // TODO: source dir and config only as inputs? /yarn.lock?
+          inputs: ["**/*"],
+          outputs: [
+            `/${condu.project.config.conventions.buildDir}/$projectSource/${builtEntryName}`,
+            `/${condu.project.config.conventions.buildDir}/$projectSource/${builtEntryName}.map`,
+            `/${condu.project.config.conventions.buildDir}/$projectSource/_build_/**/*`,
+          ],
+          args: [
+            "build",
+            "--config",
+            configPathRelativeToPackage,
+            "--entry",
+            `./${entry}`,
+            ...(moduleTarget ? ["--env", `moduleTarget=${moduleTarget}`] : []),
+            ...(codeTarget ? ["--env", `codeTarget=${codeTarget}`] : []),
+            ...(engineTarget ? ["--env", `engineTarget=${engineTarget}`] : []),
+            ...(exportName ? ["--env", `export=${exportName}`] : []),
+            ...(binName ? ["--env", `name=${binName}`] : []),
+            "--env",
+            `filename=${builtEntryName}`,
+            "--env",
+            `outDir=${outDirRelativeToPackageSource}`,
+            // "--mode", "development", // "${NODE_ENV}"
+          ],
+        },
+      });
+
+      if (binName) {
+        inMatchingPackage.modifyPublishedPackageJson((pkg) => ({
+          ...pkg,
+          bin: { [binName]: builtEntryName },
+        }));
+      }
+
+      inMatchingPackage.modifyPublishedPackageJson((pkg) => {
+        const exports =
+          typeof pkg.exports === "object" && pkg.exports
+            ? { ...pkg.exports }
+            : { ".": pkg.exports };
+        const rootEntryInput = exports && "." in exports ? exports : undefined;
+        const dotEntry = rootEntryInput?.["."];
+        const rootEntry: PackageExportsEntryObject | undefined = dotEntry
+          ? ((typeof dotEntry === "object"
+              ? { ...dotEntry }
+              : { default: dotEntry }) as PackageExportsEntryObject)
+          : undefined;
+        const relativeToPath = `./${path.join(packageRelativePathToEntry, builtEntryName)}`;
+        const types = `./${entry.replace(/\.[cm]?ts$/, ".d.ts")}`;
+
+        if (rootEntry?.["source"] === `./${entry}`) {
+          // override the source entry with the built entry
+          rootEntry.import = relativeToPath;
+          rootEntry["bun"] = relativeToPath;
+          rootEntry.default = relativeToPath;
+          rootEntry.types = types;
+          delete rootEntry.require;
+        }
+
+        return {
+          ...pkg,
+          exports: {
+            [relativeToPath]: {
+              import: relativeToPath,
+              bun: relativeToPath,
+              default: relativeToPath,
+              types,
+            },
+            ...exports,
+            ".": rootEntry,
           },
-        ],
-      };
+        };
+      });
     },
   });
