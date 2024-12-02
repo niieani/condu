@@ -2,6 +2,7 @@ import type {
   ManagedDependencyConfig,
   ConduPackageEntry,
   PackageJsonModification,
+  ReadonlyConduPackageEntry,
 } from "./ConduPackageEntry.js";
 import type { FileManager, ReadonlyFile } from "./FileManager.js";
 import type { GlobalFileAttributes } from "@condu/types/extendable.js";
@@ -59,6 +60,16 @@ export class ConduCollectedStatePublicApi {
 
   get tasks(): ReadonlyArray<CollectedTask> {
     return this.#changes.tasks;
+  }
+
+  *getTasksMatchingPackage(
+    packageEntry: ReadonlyConduPackageEntry,
+  ): Generator<CollectedTask, void, undefined> {
+    for (const task of this.#changes.tasks) {
+      if (task.targetPackage.absPath === packageEntry.absPath) {
+        yield task;
+      }
+    }
   }
 
   get dependencies(): ReadonlyArray<CollectedDependency> {

@@ -77,9 +77,9 @@ export type PossibleFeatureNames = keyof PeerContext | (string & {});
 export type GetPeerContext<NameT extends PossibleFeatureNames> =
   NameT extends keyof PeerContext ? PeerContext[NameT] : never;
 
-export type FeatureDefinitionInput<
+interface FeatureDefinitionInputBase<
   NameT extends PossibleFeatureNames = keyof PeerContext | (string & {}),
-> = {
+> {
   // todo should this allow regex for dynamically created features?
   after?: Array<string> | string;
   modifyPeerContexts?: (
@@ -90,19 +90,32 @@ export type FeatureDefinitionInput<
     condu: ConduApi,
     peerContext: GetPeerContext<NameT>,
   ) => void | Promise<void>;
-} & (NameT extends keyof PeerContext
-  ? {
-      initialPeerContext:
-        | GetPeerContext<NameT>
-        | ((
-            project: ReadonlyConduProject,
-          ) => GetPeerContext<NameT> | Promise<GetPeerContext<NameT>>);
-    }
-  : {});
+}
+
+type WithInitialPeerContext<NameT extends PossibleFeatureNames> =
+  NameT extends keyof PeerContext
+    ? {
+        initialPeerContext:
+          | GetPeerContext<NameT>
+          | ((
+              project: ReadonlyConduProject,
+            ) => GetPeerContext<NameT> | Promise<GetPeerContext<NameT>>);
+      }
+    : {};
+
+export type FeatureDefinitionInput<
+  NameT extends PossibleFeatureNames = keyof PeerContext | (string & {}),
+> = FeatureDefinitionInputBase<NameT> & WithInitialPeerContext<NameT>;
 
 export type FeatureDefinition<
   NameT extends PossibleFeatureNames = PossibleFeatureNames,
-> = {
+> = FeatureDefinitionInput<NameT> & {
   name: NameT;
-  stack?: string;
-} & FeatureDefinitionInput<NameT>;
+  // TODO: maybe instead of stack just the file path of the feature definition from import.meta.url?
+  stack: string;
+};
+
+export type FeatureActionFn = <NameT extends keyof PeerContext | (string & {})>(
+  name: NameT,
+  definition: FeatureDefinitionInput<NameT>,
+) => FeatureDefinition<NameT>;
