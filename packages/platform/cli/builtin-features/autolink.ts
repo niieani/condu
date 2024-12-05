@@ -21,8 +21,7 @@ declare module "@condu/types/extendable.js" {
 }
 
 export const autolink = (config: AutoLinkConfig = {}) =>
-  defineFeature({
-    name: "autolink",
+  defineFeature("autolink", {
     after: "*",
     initialPeerContext: {
       ignore: config.ignore ?? [],

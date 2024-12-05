@@ -1,70 +1,35 @@
-import type { FileDef } from "@condu/types/configTypes.js";
-import type { DependencyDefinition } from "@condu/cli/commands/apply/CollectedState.js";
 import { defineFeature } from "condu/defineFeature.js";
 import type { Yarnrc } from "@condu/schema-types/schemas/yarnrc.gen.js";
-import * as fs from "node:fs/promises";
-import * as path from "node:path";
+import { getYamlParseAndStringify } from "@condu/cli/commands/apply/defaultParseAndStringify.js";
+
+declare module "@condu/types/extendable.js" {}
 
 export const yarn = ({ yarnrc }: { yarnrc?: Yarnrc } = {}) =>
-  defineFeature({
-    name: "yarn",
-    actionFn: async (config, state) => {
+  defineFeature("yarn", {
+    defineRecipe(condu) {
       // TODO: auto-run `yarn constraints` at some point, maybe during apply?
-      const files: FileDef[] = [
-        // gitignores:
-        { path: ".pnp.*", type: "ignore-only" },
-        { path: ".yarn/*", type: "ignore-only" },
-        { path: "!.yarn/patches", type: "ignore-only" },
-        { path: "!.yarn/plugins", type: "ignore-only" },
-        { path: "!.yarn/releases", type: "ignore-only" },
-        { path: "!.yarn/sdks", type: "ignore-only" },
-        { path: "!.yarn/versions", type: "ignore-only" },
-        {
-          path: ".yarnrc.yml",
-          // if we moved fully to 'bun' for package management,
-          // we could get rid of one more file ¯\_(ツ)_/¯
-          type: "committed",
-          content: async (f) => {
-            const existingContent =
-              await f.getExistingContentAndMarkAsUserEditable<object>();
-            return {
-              enableConstraintsChecks: true,
-              ...yarnrc,
-              nodeLinker: yarnrc?.nodeLinker ?? "node-modules",
-              ...existingContent,
-            } satisfies Yarnrc;
-          },
-        },
-      ];
-      const devDependencies: DependencyDefinition[] = [];
-      if (
-        await fs
-          .access(
-            path.join(config.configDir, "yarn.config.cjs"),
-            fs.constants.F_OK,
-          )
-          .then(
-            () => true,
-            () => false,
-          )
-      ) {
-        files.push({
-          path: "yarn.config.cjs",
-          content: `module.exports = require('./${path.basename(
-            config.configDir,
-          )}/yarn.config.cjs');`,
-        });
-        devDependencies.push({
-          name: "@yarnpkg/types",
-        });
-      }
-      return {
-        effects: [
-          {
-            files,
-            devDependencies,
-          },
-        ],
-      };
+
+      // gitignores:
+      condu.root.ignoreFile(".pnp.*");
+      condu.root.ignoreFile(".yarn/*");
+      condu.root.ignoreFile("!.yarn/patches");
+      condu.root.ignoreFile("!.yarn/plugins");
+      condu.root.ignoreFile("!.yarn/releases");
+      condu.root.ignoreFile("!.yarn/sdks");
+      condu.root.ignoreFile("!.yarn/versions");
+
+      // if we moved fully to 'bun' for package management,
+      // we could get rid of one more file ¯\_(ツ)_/¯
+      condu.root.modifyUserEditableFile(".yarnrc.yml", {
+        ...getYamlParseAndStringify<Yarnrc>(),
+        content: ({ content }) => ({
+          enableConstraintsChecks: true,
+          ...yarnrc,
+          nodeLinker: yarnrc?.nodeLinker ?? "node-modules",
+          ...content,
+        }),
+      });
+
+      condu.root.ensureDependency("@yarnpkg/types");
     },
   });

@@ -4,31 +4,37 @@ import {
 } from "@condu/core/utils/createPackageOverridesForLinking.js";
 import { defineFeature } from "condu/defineFeature.js";
 
-export const linkOtherMonorepo = ({
-  links,
-}: {
+interface LinkingConfig {
   links: (
     | Omit<LinkingOptions, "linkedProjectDir" | "targetPackageDir">
     | Pick<Required<LinkingOptions>, "linkedProjectDir">
   )[];
-}) =>
-  defineFeature({
-    name: "link-other-monorepo",
-    actionFn: async (config, state) => {
+}
+
+declare module "@condu/types/extendable.js" {
+  interface PeerContext {
+    linkOtherMonorepo: LinkingConfig;
+  }
+}
+
+export const linkOtherMonorepo = (opts: LinkingConfig) =>
+  defineFeature("linkOtherMonorepo", {
+    initialPeerContext: opts,
+
+    async defineRecipe(condu, { links }) {
       const resolutions = Object.fromEntries(
         (
           await Promise.all(
             links.map((linkDef) =>
               createPackageOverridesForLinking({
                 ...linkDef,
-                targetPackageDir: config.project.absPath,
+                targetPackageDir: condu.project.absPath,
               }),
             ),
           )
         ).flat(1),
       );
-      return {
-        effects: [{ resolutions }],
-      };
+
+      condu.root.setDependencyResolutions(resolutions);
     },
   });

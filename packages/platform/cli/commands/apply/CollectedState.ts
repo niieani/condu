@@ -5,7 +5,10 @@ import type {
   ReadonlyConduPackageEntry,
 } from "./ConduPackageEntry.js";
 import type { FileManager, ReadonlyFile } from "./FileManager.js";
-import type { GlobalFileAttributes } from "@condu/types/extendable.js";
+import type {
+  GlobalFileAttributes,
+  PeerContext,
+} from "@condu/types/extendable.js";
 import type { Immutable } from "@condu/types/tsUtils.js";
 import type { PartialTaskConfig } from "@moonrepo/types";
 
@@ -18,6 +21,7 @@ export interface CollectedState {
   resolutions: Record<string, string>;
   packageJsonModifications: PackageJsonModificationWithPackage[];
   releasePackageJsonModifications: PackageJsonModificationWithPackage[];
+  peerContext: PeerContext;
 }
 
 export interface CollectionContext {
@@ -50,6 +54,10 @@ export class ConduCollectedStatePublicApi {
 
   constructor(changes: CollectedState) {
     this.#changes = changes;
+  }
+
+  get peerContext(): PeerContext {
+    return this.#changes.peerContext;
   }
 
   get files(): MapIterator<

@@ -4,48 +4,52 @@ import type { PnpmConfig } from "./npmrcType.js";
 import { parse, stringify } from "ini";
 import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
 
-export const pnpm = ({
-  workspace,
-  npmrc,
-}: {
+interface PnpmFeatureConfig {
   workspace?: Omit<WorkspaceManifest, "packages">;
   npmrc?: PnpmConfig;
-} = {}) =>
-  defineFeature({
-    name: "pnpm",
-    actionFn: (config, state) => ({
-      effects: [
-        {
-          files: [
-            (config.project.projectConventions || workspace) && {
-              path: "pnpm-workspace.yaml",
-              type: "committed",
-              content: {
-                packages: (config.project.projectConventions ?? [])
-                  .map(({ glob }) => glob)
-                  .sort(),
-                ...workspace,
-              } satisfies WorkspaceManifest,
-            },
-            npmrc && {
-              path: ".npmrc",
-              content: async ({
-                getExistingContentAndMarkAsUserEditable,
-              }): Promise<string> => {
-                const ini =
-                  (await getExistingContentAndMarkAsUserEditable()) as string;
-                const parsed = ini ? parse(ini, { bracketedArray: true }) : {};
-                const updated: PnpmConfig = {
-                  // apply some defaults
-                  "patches-dir": `${CONDU_CONFIG_DIR_NAME}/patches`,
-                  ...parsed,
-                  ...npmrc,
-                };
-                return stringify(updated, { bracketedArray: true });
-              },
-            },
-          ],
-        },
-      ],
-    }),
+}
+
+declare module "@condu/types/extendable.js" {
+  interface PeerContext {
+    pnpm: Required<PnpmFeatureConfig>;
+  }
+}
+
+// TODO: there should be a npmrc feature and pnpm depends on it, contributing to it's peerContext
+export const pnpm = (config: PnpmFeatureConfig = {}) =>
+  defineFeature("pnpm", {
+    initialPeerContext: {
+      workspace: config.workspace ?? {},
+      npmrc: config.npmrc ?? {},
+    },
+
+    defineRecipe(condu, { workspace, npmrc }) {
+      if (condu.project.projectConventions || workspace) {
+        condu.root.generateFile("pnpm-workspace.yaml", {
+          content: {
+            packages: (condu.project.projectConventions ?? [])
+              .map(({ glob }) => glob)
+              .sort(),
+            ...workspace,
+          } satisfies WorkspaceManifest,
+        });
+      }
+
+      if (npmrc) {
+        condu.root.modifyUserEditableFile<".npmrc", PnpmConfig>(".npmrc", {
+          content: ({ content }) => {
+            return {
+              // apply some defaults
+              "patches-dir": `${CONDU_CONFIG_DIR_NAME}/patches`,
+              ...content,
+              ...npmrc,
+            };
+          },
+          createIfNotExists: true,
+          parse: (content): PnpmConfig =>
+            parse(content, { bracketedArray: true }),
+          stringify: (content) => stringify(content, { bracketedArray: true }),
+        });
+      }
+    },
   });

@@ -150,6 +150,7 @@ export async function collectState(
     packageJsonModifications: [],
     releasePackageJsonModifications: [],
     tasks: [],
+    peerContext: peerContext as PeerContext,
   };
 
   // Run apply functions in topological order

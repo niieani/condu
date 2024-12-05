@@ -107,6 +107,8 @@
 ## Later:
 
 - [ ] maybe even basic config like 'node' in ConduConfig should be its own feature with peerContext?
+- [ ] look into supporting [unimport](https://github.com/unjs/unimport)
+- [ ] maybe use [nypm](https://github.com/unjs/nypm) to install/remove packages? or maybe just using [tinyexec](https://github.com/tinylibs/tinyexec) is [enough](https://github.com/unjs/nypm/blob/c2dce581644f1d9b8e11af587f2ba5114f24cdd2/src/_utils.ts#L62-L67)
 - [ ] should features be able to contribute CLI command functionality via defineFeature?
 - [ ] a dependency system of sorts, where user-defined features take precedence
   - in defineFeature we could have a `dependencies` field, which would be a list of features that need to be enabled for this feature to work, with a fallback peerDependency that applies the feature if the dependency is not met
