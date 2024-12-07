@@ -62,6 +62,7 @@ export const releasePlease = ({
         `${CONDU_CONFIG_DIR_NAME}/release-please/config.json`,
         {
           stringify: getJsonStringify<ReleasePleaseConfig>(),
+          attributes: { gitignore: false },
           content: {
             $schema: schemas.releasePleaseConfig,
             "tag-separator": "@",
@@ -89,13 +90,14 @@ export const releasePlease = ({
             ...defaultManifest,
             ...content,
           }),
-          createIfNotExists: true,
+          ifNotExists: "create",
           attributes: { gitignore: false },
         },
       );
 
       condu.root.generateFile(".github/workflows/release-please.yml", {
         stringify: getYamlStringify<GithubWorkflow>(),
+        attributes: { gitignore: false },
         content: () => ({
           name: "Release Please",
           on: {

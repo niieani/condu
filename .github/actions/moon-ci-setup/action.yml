@@ -15,7 +15,7 @@ runs:
         node-version-file: package.json
         cache: pnpm
         registry-url: ${{ inputs.registry-url }}
-    - uses: oven-sh/setup-bun@v1
+    - uses: oven-sh/setup-bun@v2
     - run: pnpm install --frozen-lockfile
       shell: bash
     - run: ./node_modules/.bin/moon ci :build

@@ -1,6 +1,6 @@
 import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
 import { defineFeature } from "condu/defineFeature.js";
-import { groupBy } from "remeda";
+import { groupBy, unique } from "remeda";
 
 export interface IgnoreConfig {
   ignore?: string[];
@@ -28,6 +28,7 @@ export const gitignore = (opts: IgnoreConfig = {}) =>
           const files = globalRegistry.getFilesMatchingAttribute("gitignore", {
             includeUnflagged: true,
           });
+          // TODO: use Object.groupBy in April 2026 when Node 20 is no longer supported
           const filesByFeature = groupBy(
             [...files],
             ([_path, file]) =>
@@ -36,11 +37,16 @@ export const gitignore = (opts: IgnoreConfig = {}) =>
           const entriesFromFeatures = Object.entries(filesByFeature).flatMap(
             ([featureName, files]) => {
               if (featureName === "gitignore") return [];
-              return [`# ${featureName}:`, ...files.map(([p]) => `/${p}`)];
+              return [
+                `# ${featureName}:`,
+                ...files.map(([p, f]) =>
+                  f.attributes.inAllPackages ? f.relPath : `/${p}`,
+                ),
+              ];
             },
           );
           // TODO: option to group all inAllPackages files by adding a single non / prefixed entry for a cleaner output
-          return [
+          return unique([
             ".DS_Store",
             "node_modules",
             `/${CONDU_CONFIG_DIR_NAME}/.cache/`,
@@ -49,7 +55,7 @@ export const gitignore = (opts: IgnoreConfig = {}) =>
             ...entriesFromFeatures,
             ...(ignore.length > 0 ? ["# custom ignore patterns:"] : []),
             ...ignore,
-          ];
+          ]);
         },
 
         stringify(content) {

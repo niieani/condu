@@ -7,7 +7,6 @@
   "bin": {
     "condu": "cli.ts"
   },
-  "//dependencies": "these need to inherit/include all dependencies from @condu/cli",
   "dependencies": {
     "@condu/cli": "workspace:^",
     "@condu/types": "workspace:^",
@@ -26,10 +25,23 @@
     "spdx-license-list": "^6.9.0"
   },
   "devDependencies": {
-    "@types/which": "^3.0.4"
+    "@swc/core": "^1.10.0",
+    "@types/which": "^3.0.4",
+    "swc-loader": "^0.2.6",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-merge": "^6.0.1"
   },
+  "//dependencies": "these need to inherit/include all dependencies from @condu/cli",
   "condu": {
-    "initialDevelopment": true
+    "initialDevelopment": true,
+    "managedDependencies": {
+      "webpack": "presence",
+      "webpack-cli": "presence",
+      "webpack-merge": "presence",
+      "@swc/core": "presence",
+      "swc-loader": "presence"
+    }
   },
   "publishDependencies": [
     "@pnpm",

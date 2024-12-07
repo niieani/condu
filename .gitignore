@@ -8,7 +8,7 @@ node_modules
 /.editorconfig
 # typescript:
 /tsconfig.json
-# library-bundle:cli:
+# libraryBundle:cli:
 /packages/platform/condu/.config/generated/webpack.config.cjs
 # eslint:
 /eslint.config.js
@@ -22,11 +22,11 @@ node_modules
 /.moon/workspace.yml
 /.moon/tasks.yml
 # moonCi:
-/packages/platform/condu/moon.yml
+moon.yml
 /moon.yml
 # vscode:
 /.vscode/settings.json
-# gpt-summarizer:
+# gptSummarizer:
 /about-the-projects-and-its-source-code.md
 # autolink:
 /.env

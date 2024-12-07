@@ -16,7 +16,10 @@ import {
   type CollectedDependency,
 } from "./CollectedState.js";
 import type { ConduProject } from "./ConduProject.js";
-import { FileManager } from "./FileManager.js";
+import {
+  FileManager,
+  type ModifyUserEditableFileOptions,
+} from "./FileManager.js";
 import type { PeerContext } from "@condu/types/extendable.js";
 import { autolink } from "../../builtin-features/autolink.js";
 import { UpsertMap } from "@condu/core/utils/UpsertMap.js";
@@ -66,7 +69,7 @@ export async function collectState(
   // Deduplicate features by name, ensuring later features override earlier ones
   const deduplicatedFeaturesMap = new Map<string, FeatureDefinition<any>>();
 
-  features.forEach((feature) => {
+  for (const feature of features) {
     if (deduplicatedFeaturesMap.has(feature.name)) {
       console.warn(
         `Duplicate feature found: ${feature.name}. The first definition will be used.`,
@@ -74,7 +77,7 @@ export async function collectState(
     } else {
       deduplicatedFeaturesMap.set(feature.name, feature);
     }
-  });
+  }
 
   const deduplicatedFeatures = Array.from(deduplicatedFeaturesMap.values());
 
@@ -244,7 +247,16 @@ const createStateDeclarationApi = ({
           targetPackage: pkg,
           relPath,
         })
-        .defineInitialContent(options, collectionContext);
+        .defineInitialContent(
+          {
+            ...options,
+            attributes: {
+              ...options.attributes,
+              inAllPackages: matchesAllWorkspacePackages,
+            },
+          },
+          collectionContext,
+        );
     }
     return this;
   },
@@ -255,18 +267,36 @@ const createStateDeclarationApi = ({
           targetPackage: pkg,
           relPath,
         })
-        .addModification(options, collectionContext);
+        .addModification(
+          {
+            ...options,
+            attributes: {
+              ...options.attributes,
+              inAllPackages: matchesAllWorkspacePackages,
+            },
+          },
+          collectionContext,
+        );
     }
     return this;
   },
-  modifyUserEditableFile(relPath, options) {
+  modifyUserEditableFile(relPath, options: ModifyUserEditableFileOptions<any>) {
     for (const pkg of matchingPackages) {
       changesCollector.fileManager
         .manageFile({
           targetPackage: pkg,
           relPath,
         })
-        .addUserEditableModification(options, collectionContext);
+        .addUserEditableModification(
+          {
+            ...options,
+            attributes: {
+              ...options.attributes,
+              inAllPackages: matchesAllWorkspacePackages,
+            },
+          },
+          collectionContext,
+        );
     }
     return this;
   },

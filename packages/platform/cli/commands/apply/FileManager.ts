@@ -24,8 +24,10 @@ import {
   FILE_STATE_PATH,
   CURRENT_CACHE_VERSION,
 } from "@condu/types/constants.js";
-import type { FileNameToSerializedTypeMapping } from "@condu/types/extendable.js";
-import type { GlobalFileAttributes } from "@condu/types/extendable.js";
+import type {
+  FileNameToSerializedTypeMapping,
+  GlobalFileAttributes,
+} from "@condu/types/extendable.js";
 
 // types
 export interface FileDestination {
@@ -90,7 +92,10 @@ export type InitialContent<DeserializedT> =
   | (({
       globalRegistry,
       targetPackage,
-    }: ContentFunctionArgs) => DeserializedT | Promise<DeserializedT>);
+    }: ContentFunctionArgs) =>
+      | DeserializedT
+      | Promise<DeserializedT>
+      | undefined);
 
 export interface SymlinkTargetContent {
   symlinkTarget: string;
@@ -132,6 +137,7 @@ export interface GenerateSymlinkFileOptions
 
 export interface GenerateRegularFileWithRequiredStringifyOptions<DeserializedT>
   extends WithGlobalFileAttributes {
+  /** if the function returns undefined, we will remove the file */
   content: InitialContent<DeserializedT>;
 
   /** defaults to stringify based on file extension */
@@ -199,15 +205,17 @@ export type ModifyUserEditableFileOptions<DeserializedT> =
 export interface ModifyUserEditableFileOptionsWithBuiltinSerialization<
   DeserializedT,
 > extends WithGlobalFileAttributes {
-  // default is true, in which case content signature can include content: undefined
-  createIfNotExists?: boolean;
+  // default is 'create'
+  ifNotExists?: IfNotCreated;
+  /** if the function returns undefined, we will not modify the file */
   content: ({
     content,
     globalRegistry,
     targetPackage,
   }: ContentModificationFunctionArgs<DeserializedT | undefined>) =>
     | DeserializedT
-    | Promise<DeserializedT>;
+    | Promise<DeserializedT | undefined>
+    | undefined;
 
   // parse and stringify must exist with a `never` type to make it exact
   // otherwise TS will not discriminate the union correctly
@@ -219,14 +227,17 @@ export interface ModifyUserEditableFileOptionsWithBuiltinSerialization<
 export interface ModifyUserEditableFileOptionsWithCustomSerialization<
   DeserializedT,
 > extends WithGlobalFileAttributes {
-  createIfNotExists?: boolean;
+  // default is 'create'
+  ifNotExists?: IfNotCreated;
+  /** if the function returns undefined, we will not modify the file */
   content: ({
     content,
     globalRegistry,
     targetPackage,
   }: ContentModificationFunctionArgs<DeserializedT | undefined>) =>
     | DeserializedT
-    | Promise<DeserializedT>;
+    | Promise<DeserializedT | undefined>
+    | undefined;
 
   parse: (rawFileContent: string) => DeserializedT;
   stringify: (content: DeserializedT) => string;
@@ -278,6 +289,7 @@ export class FileManager {
           };
           return cacheContent;
         },
+        attributes: { alwaysOverwrite: true },
       },
       { featureName: "condu:cache" },
     );
@@ -302,7 +314,12 @@ export class FileManager {
   ): Promise<void> {
     const applyPromises: Promise<void>[] = Array.from(
       this.files.values(),
-      (file) => file.applyAndCommit(collectedDataApi),
+      (file) =>
+        file.applyAndCommit(collectedDataApi).then(() => {
+          console.log(
+            `${file.status} (${file.lastApplyKind}): ${file.relPath} [${file.managedByFeatures.map((f) => f.featureName).join(", ")}]`,
+          );
+        }),
     );
     await Promise.all(applyPromises);
     for (const file of this.files.values()) {
@@ -396,7 +413,7 @@ export async function write({
 }
 
 export type FileKind =
-  | "dummy"
+  | "non-fs"
   | "generated"
   | "user-editable"
   | "symlink"
@@ -607,7 +624,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
 
     if (!this.hasFileSystemEffects) {
       this.status = "skipped";
-      this.lastApplyKind = "dummy";
+      this.lastApplyKind = "non-fs";
       return;
     }
 
@@ -629,14 +646,14 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       return;
     }
 
-    let kind: FileKind = "dummy";
+    let kind: FileKind = "non-fs";
 
-    // move all modifications with createIfNotExists: false to the end
+    // move all modifications with ifNotExists: "create" to the beginning
     this.editableContentModifications.sort((a, b) =>
-      a.createIfNotExists === false
-        ? 1
-        : b.createIfNotExists === false
-          ? -1
+      !a.ifNotExists || a.ifNotExists === "create"
+        ? -1
+        : !b.ifNotExists || b.ifNotExists === "create"
+          ? 1
           : 0,
     );
 
@@ -711,15 +728,15 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       const parse = modification.parse ?? getDefaultParse(this.relPath);
       content = stringified ? parse(stringified) : undefined;
       if (content === undefined) {
-        if (modification.createIfNotExists === false) {
-          throw new Error(
-            `Cannot modify ${this.relPath}, no initial content provided`,
-          );
-        } else {
+        if (modification.ifNotExists === "ignore") {
+          // nothing to do, skip
+          continue;
+        } else if (modification.ifNotExists === "error") {
           this.status = "skipped";
-          // nothing to do, finish here
           this.lastApplyKind = "invalid";
-          return;
+          throw new Error(
+            `Cannot edit ${this.relPath}, no initial content provided`,
+          );
         }
       }
 
@@ -735,7 +752,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       });
       const stringify =
         modification.stringify ?? getDefaultStringify(this.relPath);
-      stringified = stringify(content);
+      stringified = content !== undefined ? stringify(content) : undefined;
     }
 
     if (stringified) {
@@ -743,7 +760,12 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
         stringified,
         kind === "user-editable",
       );
+    } else if (kind === "non-fs") {
+      this.status = "skipped";
     }
+    // else if (kind === "generated") {
+    //   await this.deleteFromFileSystem();
+    // }
 
     this.lastApplyKind = kind;
   }
@@ -789,7 +811,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
   async getFsFile(): Promise<WrittenFile | undefined> {
     const fsState = await this.ensureFsState();
     if (fsState === "unchanged") {
-      // lastApply is guaranteed to be set here
+      // lastApply is guaranteed to be set if fsState === "unchanged"
       return this.lastApply!;
     }
     if (fsState === "deleted") {
@@ -839,10 +861,14 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       return;
     }
 
+    const lastEditedByCondu = existingFile === this.lastApply;
+
     if (
       !existingFile ||
       overwriteWithoutAsking ||
-      this.attributes.alwaysOverwrite
+      this.attributes.alwaysOverwrite ||
+      // condu can freely overwrite files that it previously generated
+      lastEditedByCondu
     ) {
       this.status = "applied";
       // no existing file, or different content
@@ -864,7 +890,9 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       // return a function for interactive overwrite
       // this needs to happen sequentially, because we're prompting the user for input:
       this.askUserToWrite = async () => {
-        console.log(`Manual changes present in ${this.relPath}`);
+        console.log(
+          `[${this.managedByFeatures.map((f) => f.featureName).join(", ")}] Manual changes present in ${this.relPath}`,
+        );
         printUnifiedDiff(
           existingFile.content.toString(),
           newContent,
@@ -904,6 +932,10 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
   }
 
   async deleteFromFileSystem(): Promise<void> {
+    if (!this.lastApply) {
+      // only allow deletion if the file was previously generated
+      return;
+    }
     const targetPath = this.absPath;
     console.log(`Deleting, no longer needed: ${targetPath}`);
     await fs.unlink(targetPath).catch((reason) => {

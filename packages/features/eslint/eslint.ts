@@ -39,6 +39,15 @@ export const eslint = (config: EslintFeatureConfig = {}) =>
           initialPeerContext.importAdditionalConfigFrom?.endsWith(".ts") ||
           current.execWithTsSupport,
       }),
+      autolink: (current) => ({
+        ...current,
+        ignore: [
+          ...current.ignore,
+          ...(initialPeerContext.importAdditionalConfigFrom
+            ? [initialPeerContext.importAdditionalConfigFrom]
+            : []),
+        ],
+      }),
       vscode: (current) => ({
         ...current,
         suggestedSettings: {

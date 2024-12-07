@@ -60,10 +60,19 @@ export class ConduCollectedStatePublicApi {
     return this.#changes.peerContext;
   }
 
-  get files(): MapIterator<
+  *#getManagedFiles() {
+    for (const kv of this.#changes.fileManager.files.entries()) {
+      const file = kv[1];
+      if (file.isManaged) {
+        yield kv;
+      }
+    }
+  }
+
+  get files(): Generator<
     readonly [workspaceRelPath: string, file: ReadonlyFile]
   > {
-    return this.#changes.fileManager.files.entries();
+    return this.#getManagedFiles();
   }
 
   get tasks(): ReadonlyArray<CollectedTask> {
@@ -105,7 +114,7 @@ export class ConduCollectedStatePublicApi {
     void,
     undefined
   > {
-    for (const kv of this.#changes.fileManager.files.entries()) {
+    for (const kv of this.#getManagedFiles()) {
       const file = kv[1];
       if (
         (attribute in file.attributes &&

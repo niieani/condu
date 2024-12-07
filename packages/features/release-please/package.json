@@ -6,6 +6,7 @@
   "dependencies": {
     "@condu/schema-types": "workspace:^",
     "@condu/types": "workspace:^",
-    "condu": "workspace:^"
+    "condu": "workspace:^",
+    "@condu/cli": "workspace:^"
   }
 }

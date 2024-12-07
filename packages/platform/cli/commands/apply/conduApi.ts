@@ -4,7 +4,7 @@ import type {
   ReadonlyConduPackageEntry,
   MatchPackage,
 } from "./ConduPackageEntry.js";
-import type { PeerContext } from "../../../types/extendable.js";
+import type { PeerContext } from "@condu/types/extendable.js";
 import type {
   DefinedFileNames,
   FallbackFileNames,

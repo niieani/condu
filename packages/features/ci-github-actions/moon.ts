@@ -31,6 +31,7 @@ export const moonCi = (opts: {} = {}) =>
       const packageManager = config.node.packageManager.name;
       condu.root.generateFile(".github/actions/moon-ci-setup/action.yml", {
         ...getYamlParseAndStringify<GithubAction>(),
+        attributes: { gitignore: false },
         content: {
           name: "Moon CI Setup",
           description: "Setup the environment for Moon CI",
@@ -89,6 +90,7 @@ export const moonCi = (opts: {} = {}) =>
 
       condu.root.generateFile(".github/workflows/moon-ci.yml", {
         ...getYamlParseAndStringify<GithubWorkflow>(),
+        attributes: { gitignore: false },
         content: {
           name: "Moon CI",
           on: {
@@ -137,6 +139,10 @@ export const moonCi = (opts: {} = {}) =>
             string,
             MoonTask
           >;
+
+          if (!tasksForPackage.length) {
+            return undefined;
+          }
 
           return {
             $schema: schemas.project,
@@ -209,9 +215,6 @@ function getWorkspaceTasks({
   };
 
   for (const task of tasks) {
-    if (task.targetPackage.kind === "workspace") {
-      continue;
-    }
     tasksByType[task.taskDefinition.type].push(task);
   }
 

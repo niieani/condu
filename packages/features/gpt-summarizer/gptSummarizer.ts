@@ -146,29 +146,28 @@ export const gptSummarizer = ({
     },
 
     defineRecipe: async (condu, { ignore, removeComments }) => {
+      const packages = condu.project.workspacePackages;
+      const summarized = await summarize({
+        rootDir: condu.project.config.workspaceDir,
+        recursive: false,
+        ignore,
+        removeComments,
+        summaryFileName,
+      });
+      let fullSummary = `# Workspace Documentation\n${summarized}\n`;
+      fullSummary += "# Packages\n";
+      for (const pkg of packages) {
+        const summarized = await summarize({
+          rootDir: pkg.absPath,
+          ignore,
+          removeComments,
+          summaryFileName,
+        });
+        fullSummary += `## Package ${pkg.name}\n${summarized}\n`;
+      }
+
       condu.root.generateFile(summaryFileName, {
-        content: async () => {
-          const packages = condu.project.workspacePackages;
-          const summarized = await summarize({
-            rootDir: condu.project.config.workspaceDir,
-            recursive: false,
-            ignore,
-            removeComments,
-            summaryFileName,
-          });
-          let fullSummary = `# Workspace Documentation\n${summarized}\n`;
-          fullSummary += "# Packages\n";
-          for (const pkg of packages) {
-            const summarized = await summarize({
-              rootDir: pkg.absPath,
-              ignore,
-              removeComments,
-              summaryFileName,
-            });
-            fullSummary += `## Package ${pkg.manifest.name}\n${summarized}\n`;
-          }
-          return fullSummary;
-        },
+        content: fullSummary,
         attributes: { alwaysOverwrite: true },
       });
     },

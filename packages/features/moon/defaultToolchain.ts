@@ -17,20 +17,20 @@ export const defaultToolchain: Toolchain = {
     },
 
     /** Add `node.version` as a constraint in the root `package.json` `engines`. */
-    addEnginesConstraint: true,
+    // addEnginesConstraint: true,
 
     /** Dedupe dependencies after the lockfile has changed. */
-    dedupeOnLockfileChange: true,
+    // dedupeOnLockfileChange: true,
 
     /** Version format to use when syncing dependencies within the project's `package.json`. */
-    dependencyVersionFormat: "workspace",
+    // dependencyVersionFormat: "workspace",
 
     /** Infer and automatically create moon tasks from `package.json` scripts, per project. */
     // BEWARE: Tasks and scripts are not 1:1 in functionality, so please refer to the documentation.
-    inferTasksFromScripts: false,
+    // inferTasksFromScripts: false,
 
     /** Sync a project's `dependsOn` as dependencies within the project's `package.json`. */
-    syncProjectWorkspaceDependencies: true,
+    // syncProjectWorkspaceDependencies: true,
     /** Sync `node.version` to a 3rd-party version manager's config file. */
     // Accepts "nodenv" (.node-version), "nvm" (.nvmrc), or none.
     // syncVersionManagerConfig: 'nodenv'

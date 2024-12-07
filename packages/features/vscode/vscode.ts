@@ -1,7 +1,7 @@
 import { defineFeature } from "condu/defineFeature.js";
 import { assign } from "comment-json";
 import type { VscodeSettingsWorkspace } from "@condu/schema-types/schemas/vscodeSettingsWorkspace.gen.js";
-import { getYamlParseAndStringify } from "@condu/cli/commands/apply/defaultParseAndStringify.js";
+import { getJsonParseAndStringify } from "@condu/cli/commands/apply/defaultParseAndStringify.js";
 
 const RUNNING_SOURCE_VERSION = import.meta.url.endsWith(".ts");
 
@@ -50,6 +50,8 @@ export const vscode = ({
 
     defineRecipe(condu, { suggestedSettings, enforcedSettings }) {
       condu.root.modifyUserEditableFile(".vscode/settings.json", {
+        ...getJsonParseAndStringify<VscodeSettingsWorkspace>(),
+        ifNotExists: "create",
         content({ content = {}, globalRegistry }) {
           const excludedFiles = [
             // TODO: potentially add a global 'alwaysVisibleInEditor' flag to indicate a file might not be hidden
@@ -85,14 +87,20 @@ export const vscode = ({
               [condu.project.config.conventions.buildDir]: true,
               ...enforcedSettings?.["search.exclude"],
             },
-          } satisfies VscodeSettingsWorkspace);
+          });
           const suggestedConfigWithDefaults = {
             ...defaultSuggestedSettings,
             ...suggestedSettings,
           };
-          return assign(suggestedConfigWithDefaults, withEnforcedConfig);
+          const finalConfig = assign(
+            suggestedConfigWithDefaults,
+            withEnforcedConfig,
+          );
+          if (Object.keys(finalConfig).length === 0) {
+            return undefined;
+          }
+          return finalConfig;
         },
-        ...getYamlParseAndStringify<VscodeSettingsWorkspace>(),
       });
 
       // TODO: also, auto-add 'tasks.json' based on the defined tasks

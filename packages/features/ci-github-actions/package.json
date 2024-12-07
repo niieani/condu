@@ -5,7 +5,8 @@
   "dependencies": {
     "@condu/schema-types": "workspace:^",
     "@condu/types": "workspace:^",
-    "remeda": "^2.15.0"
+    "remeda": "^2.15.0",
+    "@condu/cli": "workspace:^"
   },
   "peerDependencies": {
     "condu": "workspace:^"

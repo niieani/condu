@@ -23,6 +23,8 @@ export function getDefaultParse<DeserializedT>(
 
 const jsonStringify = <DeserializedT>(content: DeserializedT): string =>
   commentJsonStringify(content, undefined, 2);
+const noopStringify = <DeserializedT>(content: DeserializedT) =>
+  String(content);
 
 export function getDefaultStringify<DeserializedT>(
   filePath: string,
@@ -30,7 +32,8 @@ export function getDefaultStringify<DeserializedT>(
   const extension = path.extname(filePath);
   return match(extension)
     .with(P.string.regex(/\.ya?ml$/i), () => yamlStringify)
-    .otherwise(() => jsonStringify);
+    .with(P.string.regex(/\.json5?$/i), () => jsonStringify)
+    .otherwise(() => noopStringify);
 }
 
 export const getJsonStringify = <DeserializedT>() =>

@@ -6,6 +6,7 @@ import { moonCi } from "@condu-feature/ci-github-actions/moon.js";
 import { eslint } from "@condu-feature/eslint/eslint.js";
 import { pnpm } from "@condu-feature/pnpm/pnpm.js";
 import { vscode } from "@condu-feature/vscode/vscode.js";
+import { vitest } from "@condu-feature/vitest/vitest.js";
 import { libraryBundle } from "@condu-feature/library-bundle/libraryBundle.js";
 import { editorconfig } from "@condu-feature/editorconfig/editorconfig.js";
 import { prettier } from "@condu-feature/prettier/prettier.js";
@@ -96,6 +97,7 @@ export default configure((pkg) => ({
     prettier({
       ignore: ["**/.*.json"],
     }),
+    vitest(),
     moon(),
     moonCi(),
     releasePlease({
@@ -106,7 +108,7 @@ export default configure((pkg) => ({
     }),
     vscode({
       hideGeneratedFiles: false,
-      suggestedConfig: {
+      suggestedSettings: {
         "explorer.fileNesting.enabled": true,
         "explorer.fileNesting.expand": false,
         "explorer.fileNesting.patterns": {

@@ -21,20 +21,20 @@ packageCondu.modifyUserEditableFile("p.json", {
   content(content, pkg) {
     return content!;
   },
-  createIfNotExists: true,
+  ifNotExists: true,
 });
 packageCondu.modifyUserEditableFile("p.json", {
   content(content, pkg) {
     return content!;
   },
-  createIfNotExists: true,
+  ifNotExists: true,
 });
 
 packageCondu.modifyUserEditableFile("p", {
   content(content, pkg) {
     return content!;
   },
-  createIfNotExists: true,
+  ifNotExists: true,
 });
 
 // @ts-expect-error

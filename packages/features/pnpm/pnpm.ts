@@ -32,6 +32,9 @@ export const pnpm = (config: PnpmFeatureConfig = {}) =>
               .sort(),
             ...workspace,
           } satisfies WorkspaceManifest,
+          attributes: {
+            gitignore: false,
+          },
         });
       }
 
@@ -45,7 +48,7 @@ export const pnpm = (config: PnpmFeatureConfig = {}) =>
               ...npmrc,
             };
           },
-          createIfNotExists: true,
+          ifNotExists: "create",
           parse: (content): PnpmConfig =>
             parse(content, { bracketedArray: true }),
           stringify: (content) => stringify(content, { bracketedArray: true }),
