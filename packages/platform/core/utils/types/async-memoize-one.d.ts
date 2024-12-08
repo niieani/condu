@@ -1,7 +1,15 @@
 declare module "async-memoize-one" {
-  function asyncMemoizeOne<TFn extends (...params: any[]) => Promise<any>>(
-    callback: TFn,
-  ): TFn;
+  type EqualityFn = <T>(a: T[], b: T[]) => boolean;
 
-  export default asyncMemoizeOne;
+  interface Options {
+    cachePromiseRejection?: boolean;
+  }
+
+  function memoizeOne<T extends (...args: any[]) => any>(
+    fn: T,
+    isEqual?: EqualityFn,
+    options?: Options,
+  ): T;
+
+  export default memoizeOne;
 }

@@ -4,10 +4,7 @@ import type {
   CollectionContext,
   DependencyTargetList,
 } from "./CollectedState.js";
-import type {
-  PackageExportsEntryObject,
-  PackageJson,
-} from "@condu/schema-types/schemas/packageJson.gen.js";
+import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
 import type { PartialProjectConfig } from "@moonrepo/types";
 import type { ProjectManifest } from "@pnpm/types";
 import type { Pattern } from "ts-pattern";

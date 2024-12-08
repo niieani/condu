@@ -2,7 +2,7 @@ import type {
   WorkspaceSubPackage,
   ConduPackageEntry,
   WorkspaceRootPackage,
-} from "./apply/ConduPackageEntry.js";
+} from "../apply/ConduPackageEntry.js";
 import * as fs from "node:fs/promises";
 import { sortPackageJson } from "sort-package-json";
 import * as path from "node:path";
@@ -12,14 +12,14 @@ import { createExportableManifest } from "@pnpm/exportable-manifest";
 import { readWorkspaceManifest } from "@pnpm/workspace.read-manifest";
 import { getCatalogsFromWorkspaceManifest } from "@pnpm/catalogs.config";
 import { partition } from "remeda";
-import { getSingleMatch } from "../matchPackage.js";
-import { apply } from "./apply/apply.js";
+import { getSingleMatch } from "../../matchPackage.js";
+import { apply } from "../apply/apply.js";
 import { topo } from "@condu/workspace-utils/topo.js";
 import { spawn } from "node:child_process";
 import { safelyParseLastJsonFromString } from "@condu/core/utils/safelyParseJsonFromString.js";
-import type { ConduProject } from "./apply/ConduProject.js";
-import { getPublishablePackageDirectory } from "./apply/publishableDirectory.js";
-import type { CollectedState } from "./apply/CollectedState.js";
+import type { ConduProject } from "../apply/ConduProject.js";
+import { getPublishablePackageDirectory } from "./publishableDirectory.js";
+import type { CollectedState } from "../apply/CollectedState.js";
 
 const DECLARATION_FILE_EXT_REGEXP = /\.d\.[cm]?ts$/;
 const TSCONFIG_LIKE_FILENAME_REGEXP = /tsconfig\..*\.json$/;

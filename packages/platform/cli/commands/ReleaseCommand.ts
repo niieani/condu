@@ -20,7 +20,7 @@ export class ReleaseCommand extends Command {
   packages = Option.Rest({ name: "packages" });
 
   async execute() {
-    const { releasePipeline } = await import("./release.js");
+    const { releasePipeline } = await import("./release/release.js");
     await releasePipeline(this);
   }
 }

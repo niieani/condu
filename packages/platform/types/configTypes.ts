@@ -1,6 +1,6 @@
 import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
 import type { CONFIGURED } from "./configure.js";
-import type { FeatureDefinition } from "@condu/cli/commands/apply/conduApi.js";
+import type { FeatureDefinition } from "@condu/cli/commands/apply/conduApiTypes.js";
 import type {
   ConduPackageEntry,
   ConduPackageJson,

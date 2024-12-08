@@ -1,8 +1,14 @@
 import type {
   WorkspaceRootPackage,
   WorkspaceSubPackage,
+  ConduPackageEntry,
 } from "./ConduPackageEntry.js";
-import type { ConduPackageEntry } from "./ConduPackageEntry.js";
+
+export interface RootRelativePackageResolutionOptions {
+  rootRelativePath: string;
+  rootPackage: WorkspaceRootPackage;
+  packages: readonly WorkspaceSubPackage[];
+}
 
 export function getRootPackageRelativePath({
   rootRelativePath,
@@ -26,10 +32,4 @@ export function getRootPackageRelativePath({
     targetPackage: rootPackage,
     packageRelativePath: rootRelativePath,
   };
-}
-
-export interface RootRelativePackageResolutionOptions {
-  rootRelativePath: string;
-  rootPackage: WorkspaceRootPackage;
-  packages: readonly WorkspaceSubPackage[];
 }

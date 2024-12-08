@@ -1,5 +1,5 @@
 import { partition } from "remeda";
-import type { FeatureDefinition } from "./conduApi.js";
+import type { FeatureDefinition } from "./conduApiTypes.js";
 
 // Helper function to topologically sort features based on 'after' dependencies
 export function topologicalSortFeatures(

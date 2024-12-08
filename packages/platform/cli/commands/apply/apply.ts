@@ -8,7 +8,7 @@ import type {
   FeatureDefinition,
   PeerContextReducer,
   StateDeclarationApi,
-} from "./conduApi.js";
+} from "./conduApiTypes.js";
 import {
   type CollectedState,
   type CollectionContext,

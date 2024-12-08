@@ -1,12 +1,12 @@
+/// <reference path="./types/async-memoize-one.d.ts" />
+
 import { promises as fs } from "node:fs";
 import * as path from "node:path";
 
 import memoize from "async-memoize-one";
 import { findUp } from "./findUp.js";
 
-export const getDefaultGitBranch_ = async (
-  rootDir: string,
-): Promise<string> => {
+const _getDefaultGitBranch = async (rootDir: string): Promise<string> => {
   const { GIT_DEFAULT_BRANCH } = process.env;
   if (GIT_DEFAULT_BRANCH) {
     return GIT_DEFAULT_BRANCH;
@@ -38,4 +38,4 @@ export const getDefaultGitBranch_ = async (
   }
 };
 
-export const getDefaultGitBranch = memoize(getDefaultGitBranch_);
+export const getDefaultGitBranch = memoize(_getDefaultGitBranch);

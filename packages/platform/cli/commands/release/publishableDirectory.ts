@@ -1,6 +1,6 @@
-import type { WorkspaceSubPackage } from "./ConduPackageEntry.js";
-import path from "node:path";
-import type { ConduProject } from "./ConduProject.js";
+import type { WorkspaceSubPackage } from "../apply/ConduPackageEntry.js";
+import * as path from "node:path";
+import type { ConduProject } from "../apply/ConduProject.js";
 
 export function getPublishablePackageDirectory(
   project: ConduProject,

@@ -12,7 +12,7 @@ export class ApplyCommand extends Command {
 
   async execute() {
     // TODO: also run: ./node_modules/.bin/moon sync projects
-    const { apply } = await import("./apply.js");
+    const { apply } = await import("./apply/apply.js");
     await apply();
     // await $`./node_modules/.bin/moon sync projects`;
 
