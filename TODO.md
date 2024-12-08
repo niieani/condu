@@ -2,7 +2,6 @@
 
 - [x] moonrepo integration
 - [x] typescript
-- [x] typescript references
 - [x] scaffolding new packages in monorepo (Create package command)
 - [x] GitHub Actions
 - [x] automatically add missing workspace dependencies to package.json
@@ -66,7 +65,6 @@
   - [x] add a script to package.json "postinstall": "test -f .config/condu.ts && condu apply"
   - [x] optionally create a new folder with git repo if `name` positional parameter is provided
   - [x] a preset package just exports an object, so applying a preset is just merging each of the properties
-  - [ ] can be used to apply changes to an existing project, in which case it will infer certain things from the existing project, like the package manager
 - [x] ensure `sourceDir` works with publishing
 - [x] something is up with resolving
 - [x] non-monorepo/single package mode
@@ -74,17 +72,19 @@
 - [x] editorconfig
 - [x] eslint customization / extension
   - [x] allow loading .config/eslint.ts (or specify custom filename?)
-- [ ] add `inputs` / `implicitInputs`
 - [x] update release-please to use google version and update fork with https://github.com/googleapis/release-please-action/pull/1041
 - [x] cache file needs to include condu version
 - [x] vitest feature
 - [x] CI build and test using moon
 - [x] a way to ensure that certain dependencies/devDependencies/peerDependencies are set, or at least copy them over from template
-- [ ] add `repository`, `homepage` (fallback to repo) and `author`, `license` and `contributors` info to published package.json based on the root package.json
 - [x] re-evaluate the API for writing features - there's a lot of nesting, can it be simplified a bit?
   - also need a way to hook into each others features (i.e. modify behavior if other features are enabled)
   - maybe simply hooking into the outputted files (if they exist?), creating kind of a pipeline of file transformations?
-- [ ] features that can be added multiple times need to have a way to be uniquely identified (feature id?) - update 'apply' to handle this. Question remains about initial peer context - I guess it needs to be empty and then peer merging can handle additions to peer context of that same feature.
+- [ ] fix imports so that the only thing you need to import from for features is 'condu'
+- [ ] exclude generated files from TS build
+- [ ] feature to autogenerate 'exports' in package.json - both for published and non-published packages
+- [ ] add `repository`, `homepage` (fallback to repo) and `author`, `license` and `contributors` info to published package.json based on the root package.json
+- [ ] features that can be added multiple times need to have a way to be uniquely identified (feature id?) - update 'apply' to handle this. Question remains about initial peer context - I guess it needs to be empty and then peer merging can handle additions to peer context of that same feature. Maybe instead of feature ID, we only apply the first one, but we apply the peerContext for all of them - merging in like a reducer?
 - [ ] preset with my features and feature config pre-applied
 - [ ] test it out in an existing project
   - [ ] add condu to `mockify` and publish the packages
@@ -95,7 +95,7 @@
   - [ ] by default 'tsx' is missing from eslint apply, since bun always uses 'source' version its always needed
 - [ ] use non-composite projects by default (composite support might need more work - adding references based on dependencies)
 - [ ] 'apply' command:
-  - [ ] when applying is done for the first time, and files exist, make sure to prompt for overwrite and remove these files from git using git rm --cached
+  - [ ] when applying is done for the first time, and files exist, make sure to prompt for overwrite and post-apply should remove these files from git using git rm --cached if they're gitignored - this can be verified with `git ls-files --cached -- <file>`
 - [ ] something is still broken with figuring out default branch
 - [ ] if we had a wrapper on the tool (pnpm/yarn/bun), could maybe symlink the workspace (and even lock) files? although maybe best not to move the lockfile in case it's used by other tools that do static analysis (like Snyk) and depend on it being in the root
 - [ ] add a command to update/set the package manager and node version in the root package.json
@@ -106,6 +106,8 @@
 
 ## Later:
 
+- [ ] better logger (potentially https://github.com/unjs/consola)
+- [ ] `condu init` can be used to apply changes to an existing project, in which case it will infer certain things from the existing project, like the package manager
 - [ ] maybe even basic config like 'node' in ConduConfig should be its own feature with peerContext?
 - [ ] look into supporting [unimport](https://github.com/unjs/unimport)
 - [ ] maybe use [nypm](https://github.com/unjs/nypm) to install/remove packages? or maybe just using [tinyexec](https://github.com/tinylibs/tinyexec) is [enough](https://github.com/unjs/nypm/blob/c2dce581644f1d9b8e11af587f2ba5114f24cdd2/src/_utils.ts#L62-L67)
@@ -126,6 +128,7 @@
 - [ ] add [knip](https://github.com/webpro-nl/knip)
 - [ ] ability to publish multiple npm utility packages from a single folder (one per file)
 - [ ] should this be a feature? package.json "exports" should be updated in apply to route paths to the sourceDir and support importing from the package name (should we discourage imports from root package? but it's an industry practice though)
+- [ ] auto-generated typescript references
 - [ ] adopt EffectTS
 - [ ] support TS's `rewriteRelativeImportExtensions` and use .ts extensions as default (use eslint to enforce .ts extensions)
   - this also solves Deno compatibility
@@ -195,6 +198,7 @@
   - potentially offer not publishing dual-package, but instead having CJS require and re-export ESM for Node >=22
 - [ ] prettier plugins: https://github.com/un-ts/prettier
 - [ ] "recommended" preset of features that always opts you in to the latest and greatest of the JS ecosystem
+- [ ] add `inputs` / `implicitInputs`
 - [ ] website
   - inspiration: [tailwind](https://tailwindcss.com/) - make configs disappear and appear in a mock vscode/github UI?
 - [ ] easy way to quickly create a new Github repo, already preconfigured, with initial commit, etc.

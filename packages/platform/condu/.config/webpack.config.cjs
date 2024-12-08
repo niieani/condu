@@ -59,7 +59,9 @@ module.exports = (
     // ...Object.fromEntries(
     //   builtin.map((name) => [`${name}$`, `external node:${name}`]),
     // ),
-    externals: async (data) => {
+    externals: async (
+      /** @type {import('webpack').ExternalItemFunctionData} */ data,
+    ) => {
       const { request, context, getResolve } = data;
       const externals = [
         /^node:/,
