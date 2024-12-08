@@ -1,15 +1,11 @@
-import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
 import type { CONFIGURED } from "./configure.js";
-import type { FeatureDefinition } from "@condu/cli/commands/apply/conduApiTypes.js";
-import type {
-  ConduPackageEntry,
-  ConduPackageJson,
-} from "@condu/cli/commands/apply/ConduPackageEntry.js";
+import type { FeatureDefinition } from "../commands/apply/conduApiTypes.js";
+import type { ConduPackageEntry } from "../commands/apply/ConduPackageEntry.js";
 import type {
   GlobalPeerContext,
   PeerContext,
 } from "@condu/types/extendable.js";
-import type { AutoLinkConfig } from "@condu/cli/builtin-features/autolink.js";
+import type { AutoLinkConfig } from "../builtin-features/autolink.js";
 
 export interface Conventions {
   /** @default '.' */
@@ -98,16 +94,6 @@ export interface LoadConfigOptions {
   startDir?: string;
   throwOnManualChanges?: boolean;
 }
-
-export interface WriteManifestFnOptions {
-  force?: boolean;
-  merge?: boolean;
-}
-
-export type WriteManifestFn = (
-  manifest: ConduPackageJson | PackageJson,
-  options?: WriteManifestFnOptions,
-) => Promise<void>;
 
 export interface ProjectConventionConfig {
   private?: boolean;

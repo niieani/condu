@@ -1,4 +1,4 @@
-import type { ConduConfigWithInferredValues } from "@condu/types/configTypes.js";
+import type { ConduConfigWithInferredValues } from "condu";
 import type { Linter } from "eslint";
 
 export interface EslintFeatureInput {

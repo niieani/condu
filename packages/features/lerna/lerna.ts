@@ -1,6 +1,5 @@
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature, getJsonParseAndStringify } from "condu";
 import type { Lerna } from "@condu/schema-types/schemas/lerna.gen.js";
-import { getJsonParseAndStringify } from "@condu/cli/commands/apply/defaultParseAndStringify.js";
 
 declare module "@condu/types/extendable.js" {
   interface FileNameToSerializedTypeMapping {

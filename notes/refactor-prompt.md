@@ -69,7 +69,7 @@ export default configure((pkg) => ({
     }),
     prettier({ ignore: ["**/.*.json"] }),
     moonCi(),
-    releasePlease({initialVersion: "0.0.1"}),
+    releasePlease({ initialVersion: "0.0.1" }),
     vscode({
       suggestedConfig: { "explorer.fileNesting.enabled": true },
     }),
@@ -84,7 +84,7 @@ export default configure((pkg) => ({
 
 ```ts
 import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import * as path from "node:path";
 import { groupBy } from "remeda";
 
@@ -123,7 +123,7 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
 ## eslint feature example (old API)
 
 ```ts
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import { pick } from "remeda";
 import type {
   ContextProvidedToEslintConfig,
@@ -335,7 +335,6 @@ Notes: it's important to distinguish between managed files, and user-modifiable 
 ## `configTypes.ts`
 
 ```ts
-
 export interface DependencyDef {
   packageAlias: string;
   versionOrTag?: string;

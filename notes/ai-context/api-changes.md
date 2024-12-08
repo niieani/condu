@@ -3,7 +3,7 @@
 ## before
 
 ```ts
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import { serializeEditorConfig } from "./serialize.js";
 import type { EditorConfig } from "./types.js";
 
@@ -43,7 +43,7 @@ export const editorconfig = (config: EditorConfig = defaultConfig) =>
 ## after
 
 ```ts
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import { serializeEditorConfig } from "./serialize.js";
 import type { EditorConfig, EditorConfigSection } from "./types.js";
 
@@ -95,7 +95,7 @@ export const editorconfig = (config?: EditorConfig) =>
 ## before
 
 ```ts
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import { pick } from "remeda";
 import type {
   ContextProvidedToEslintConfig,
@@ -185,7 +185,7 @@ export default configs;\n`;
 ## after
 
 ```ts
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import { pick } from "remeda";
 import type {
   ContextProvidedToEslintConfig,
@@ -306,7 +306,7 @@ export default configs;
 
 ```ts
 import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import * as path from "node:path";
 import { groupBy } from "remeda";
 
@@ -366,7 +366,7 @@ export const gitignore = ({ ignore = [] }: { ignore?: string[] } = {}) =>
 
 ```ts
 import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import { groupBy } from "remeda";
 
 export interface IgnoreConfig {
@@ -432,7 +432,7 @@ export const gitignore = (opts: IgnoreConfig = {}) =>
 ## before
 
 ```ts
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import { assign } from "comment-json";
 import type { VscodeSettingsWorkspace } from "@condu/schema-types/schemas/vscodeSettingsWorkspace.gen.js";
 import * as path from "node:path";
@@ -537,7 +537,7 @@ export const vscode = ({
 ## after
 
 ```ts
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import { assign } from "comment-json";
 import type { VscodeSettingsWorkspace } from "@condu/schema-types/schemas/vscodeSettingsWorkspace.gen.js";
 import { getYamlParseAndStringify } from "@condu/cli/commands/apply/defaultParseAndStringify.js";
@@ -633,7 +633,7 @@ export const vscode = ({
 ## before
 
 ```ts
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import type { GithubWorkflow } from "@condu/schema-types/schemas/githubWorkflow.gen.js";
 import type {
   PartialTaskConfig,
@@ -843,7 +843,7 @@ function getWorkspaceTasks({
 ## after
 
 ```ts
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import type { GithubWorkflow } from "@condu/schema-types/schemas/githubWorkflow.gen.js";
 import type {
   PartialTaskConfig as MoonTask,
@@ -1072,7 +1072,7 @@ function getWorkspaceTasks({
 ## before
 
 ```ts
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import {
   CONDU_WORKSPACE_PACKAGE_NAME,
   CORE_NAME,
@@ -1110,7 +1110,7 @@ export const conduPackages = (opts: {} = {}) =>
 ## after
 
 ```ts
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import {
   CONDU_WORKSPACE_PACKAGE_NAME,
   CORE_NAME,

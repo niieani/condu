@@ -1,11 +1,11 @@
 import type { BaseContext } from "clipanion";
 import { createCommandContext } from "../createCommandContext.js";
 import { loadConduProject } from "../loadProject.js";
+import type { ConduPackageEntry } from "./apply/ConduPackageEntry.js";
 import type {
   IPackageEntry,
   WorkspaceSubPackage,
-  ConduPackageEntry,
-} from "./apply/ConduPackageEntry.js";
+} from "@condu/workspace-utils/packageJsonTypes.js";
 import { getSingleMatch } from "../matchPackage.js";
 import { match } from "ts-pattern";
 import * as path from "node:path";

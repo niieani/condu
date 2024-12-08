@@ -1,7 +1,6 @@
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature, CONDU_CONFIG_DIR_NAME } from "condu";
 import type { LibraryBundleConfig } from "./types.js";
 import * as path from "node:path";
-import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
 import type { PackageExportsEntryObject } from "@condu/schema-types/schemas/packageJson.gen.js";
 
 export const libraryBundle = ({
@@ -58,7 +57,6 @@ export const libraryBundle = ({
       const userConfigPathRelativeToPackage = `./${CONDU_CONFIG_DIR_NAME}/webpack.config.cjs`;
 
       // TODO: check if entry exists
-
       const inMatchingPackage = condu.in({
         name: matchingPackage.manifest.name,
       });

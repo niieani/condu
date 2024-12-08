@@ -1,5 +1,5 @@
 import { ensureDependencyIn } from "../../ensureDependency.js";
-import type { LoadConfigOptions } from "@condu/types/configTypes.js";
+import type { LoadConfigOptions } from "../../api/configTypes.js";
 import type { ConduPackageEntry } from "./ConduPackageEntry.js";
 import { loadConduProject } from "../../loadProject.js";
 import { isMatching } from "ts-pattern";

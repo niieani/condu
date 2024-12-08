@@ -1,4 +1,10 @@
-import { defineFeature } from "condu/defineFeature.js";
+import {
+  defineFeature,
+  getYamlParseAndStringify,
+  getMoonWorkspaceProjectsFromConventionConfig,
+  CONDU_CONFIG_DIR_NAME,
+  CONDU_CONFIG_FILE_NAME,
+} from "condu";
 import type {
   PartialVcsConfig,
   PartialToolchainConfig as Toolchain,
@@ -7,13 +13,7 @@ import type {
 } from "@moonrepo/types";
 
 import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
-import { getMoonWorkspaceProjectsFromConventionConfig } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
-import {
-  CONDU_CONFIG_DIR_NAME,
-  CONDU_CONFIG_FILE_NAME,
-} from "@condu/types/constants.js";
 import { defaultToolchain } from "./defaultToolchain.js";
-import { getYamlParseAndStringify } from "@condu/cli/commands/apply/defaultParseAndStringify.js";
 
 declare module "@condu/types/extendable.js" {
   interface PeerContext {

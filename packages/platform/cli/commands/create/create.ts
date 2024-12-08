@@ -1,4 +1,4 @@
-import type { DefinedWorkspaceProjectConvention } from "@condu/types/configTypes.js";
+import type { DefinedWorkspaceProjectConvention } from "../../api/configTypes.js";
 import { loadConduProject } from "../../loadProject.js";
 import * as fs from "node:fs/promises";
 import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";

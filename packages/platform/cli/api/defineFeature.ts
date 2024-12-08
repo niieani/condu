@@ -1,4 +1,4 @@
-import type { FeatureActionFn } from "@condu/cli/commands/apply/conduApiTypes.js";
+import type { FeatureActionFn } from "../commands/apply/conduApiTypes.js";
 
 export const defineFeature: FeatureActionFn = (name, definition) => ({
   ...definition,

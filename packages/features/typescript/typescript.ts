@@ -1,8 +1,6 @@
-import { CORE_NAME } from "@condu/types/constants.js";
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature, getJsonStringify, CORE_NAME } from "condu";
 import type TSConfig from "@condu/schema-types/schemas/tsconfig.gen.js";
 import * as path from "node:path";
-import { getJsonStringify } from "@condu/cli/commands/apply/defaultParseAndStringify.js";
 
 declare module "@condu/types/extendable.js" {
   interface PeerContext {
@@ -134,13 +132,13 @@ export const typescript = ({
             : config.projects
               ? {
                   // TODO: infer normalized project conventions from config.projects
-                  paths: Object.fromEntries(
-                    config.projects?.map((p) =>
-                      typeof p === "object" && "parentPath" in p
-                        ? [p.nameConvention, [`./${p.parentPath}/*`]]
-                        : [],
-                    ),
-                  ),
+                  // paths: Object.fromEntries(
+                  //   config.projects?.map((p) =>
+                  //     typeof p === "object" && "parentPath" in p
+                  //       ? [p.nameConvention, [`./${p.parentPath}/*`]]
+                  //       : [],
+                  //   ),
+                  // ),
                 }
               : {}),
           // TODO: this should be true for projects that use external compilers

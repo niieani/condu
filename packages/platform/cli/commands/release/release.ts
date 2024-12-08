@@ -1,6 +1,6 @@
 import type {
-  WorkspaceSubPackage,
   ConduPackageEntry,
+  WorkspaceSubPackage,
   WorkspaceRootPackage,
 } from "../apply/ConduPackageEntry.js";
 import * as fs from "node:fs/promises";

@@ -1,7 +1,7 @@
 import type {
   WorkspaceProjectsConvention,
   DefinedWorkspaceProjectConvention,
-} from "@condu/types/configTypes.js";
+} from "./api/configTypes.js";
 import type {
   PartialWorkspaceProjects,
   PartialWorkspaceProjectsConfig,

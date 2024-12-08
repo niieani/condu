@@ -1,9 +1,12 @@
 import type {
-  ManagedDependencyConfig,
   ConduPackageEntry,
   PackageJsonModification,
   ReadonlyConduPackageEntry,
 } from "./ConduPackageEntry.js";
+import type {
+  DependencyTargetList,
+  ManagedDependencyConfig,
+} from "@condu/workspace-utils/packageJsonTypes.js";
 import type { FileManager, ReadonlyFile } from "./FileManager.js";
 import type {
   GlobalFileAttributes,
@@ -127,12 +130,6 @@ export class ConduCollectedStatePublicApi {
     }
   }
 }
-
-export type DependencyTargetList =
-  | "dependencies"
-  | "devDependencies"
-  | "optionalDependencies"
-  | "peerDependencies";
 
 export type DependencyDefinitionInput = {
   readonly installAsAlias?: string;

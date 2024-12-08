@@ -1,5 +1,3 @@
-/// <reference path="./async-memoize-one.d.ts" />
-
 import * as path from "node:path";
 import {
   CONDU_CONFIG_DIR_NAME,
@@ -14,13 +12,13 @@ import type {
   ConduConfigWithInferredValues,
   LoadConfigOptions,
   ConduConfigDefaultExport,
-} from "@condu/types/configTypes.js";
+} from "./api/configTypes.js";
 import {
-  type WorkspaceSubPackage,
   ConduPackageEntry,
+  type WorkspaceSubPackage,
 } from "./commands/apply/ConduPackageEntry.js";
-import { CONFIGURED } from "@condu/types/configure.js";
-import { getProjectDefinitionsFromConventionConfig } from "@condu/core/utils/getProjectGlobsFromMoonConfig.js";
+import { CONFIGURED } from "./api/configure.js";
+import { getProjectDefinitionsFromConventionConfig } from "./getProjectGlobsFromMoonConfig.js";
 import { getDefaultGitBranch } from "@condu/core/utils/getDefaultGitBranch.js";
 import { findUp } from "@condu/core/utils/findUp.js";
 import * as fs from "node:fs/promises";

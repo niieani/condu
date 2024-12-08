@@ -1,5 +1,11 @@
-import { defineFeature } from "condu/defineFeature.js";
-import { CORE_NAME, CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
+import {
+  defineFeature,
+  CORE_NAME,
+  CONDU_CONFIG_DIR_NAME,
+  getJsonParseAndStringify,
+  getJsonStringify,
+  getYamlStringify,
+} from "condu";
 import { schemas } from "@condu/schema-types/utils/schemas.js";
 import type {
   ReleaserConfigOptions,
@@ -7,11 +13,6 @@ import type {
 } from "@condu/schema-types/schemas/releasePleaseConfig.gen.js";
 import type { GithubWorkflow } from "@condu/schema-types/schemas/githubWorkflow.gen.js";
 import type { ReadonlyConduPackageEntry } from "@condu/cli/commands/apply/ConduPackageEntry.js";
-import {
-  getJsonParseAndStringify,
-  getJsonStringify,
-  getYamlStringify,
-} from "@condu/cli/commands/apply/defaultParseAndStringify.js";
 
 declare module "@condu/types/extendable.js" {
   interface FileNameToSerializedTypeMapping {

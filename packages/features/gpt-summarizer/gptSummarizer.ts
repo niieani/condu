@@ -3,7 +3,7 @@
 // we probably wanna use glob to list all source and then copy them one by one
 
 import { walkDirectoryRecursively } from "@condu/core/utils/walkDirectoryRecursively.js";
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 

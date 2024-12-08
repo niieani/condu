@@ -1,11 +1,10 @@
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature, CONDU_CONFIG_DIR_NAME } from "condu";
 import { pick } from "remeda";
 import type {
   ContextProvidedToEslintConfig,
   EslintFeatureInput,
 } from "./types.js";
 import path from "node:path";
-import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
 
 const RUNNING_SOURCE_VERSION = import.meta.url.endsWith(".ts");
 

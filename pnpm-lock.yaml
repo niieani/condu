@@ -343,6 +343,9 @@ importers:
 
   packages/features/typescript:
     dependencies:
+      '@condu/schema-types':
+        specifier: workspace:^
+        version: link:../../platform/schema-types
       '@condu/types':
         specifier: workspace:^
         version: link:../../platform/types
@@ -373,6 +376,9 @@ importers:
 
   packages/features/yarn:
     dependencies:
+      '@condu/schema-types':
+        specifier: workspace:^
+        version: link:../../platform/schema-types
       '@condu/types':
         specifier: workspace:^
         version: link:../../platform/types
@@ -387,6 +393,9 @@ importers:
       '@condu/core':
         specifier: workspace:^
         version: link:../core
+      '@condu/schema-types':
+        specifier: workspace:^
+        version: link:../schema-types
       '@condu/types':
         specifier: workspace:^
         version: link:../types
@@ -469,6 +478,9 @@ importers:
       '@condu/cli':
         specifier: workspace:^
         version: link:../cli
+      '@condu/schema-types':
+        specifier: workspace:^
+        version: link:../schema-types
       '@condu/types':
         specifier: workspace:^
         version: link:../types
@@ -592,12 +604,18 @@ importers:
 
   packages/platform/workspace-utils:
     dependencies:
+      '@condu/schema-types':
+        specifier: workspace:^
+        version: link:../schema-types
       '@condu/types':
         specifier: workspace:^
         version: link:../types
       '@pnpm/read-project-manifest':
         specifier: ^6.0.5
         version: 6.0.10
+      '@pnpm/types':
+        specifier: ^12.2.0
+        version: 12.2.0
       '@pnpm/workspace.read-manifest':
         specifier: ^2.2.0
         version: 2.2.2
@@ -659,6 +677,9 @@ importers:
       '@condu-feature/vscode':
         specifier: workspace:^
         version: link:../../features/vscode
+      '@condu/types':
+        specifier: workspace:^
+        version: link:../../platform/types
 
   packages/test/dummy:
     dependencies:

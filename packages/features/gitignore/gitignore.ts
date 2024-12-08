@@ -1,5 +1,4 @@
-import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature, CONDU_CONFIG_DIR_NAME } from "condu";
 import { groupBy, unique } from "remeda";
 
 export interface IgnoreConfig {

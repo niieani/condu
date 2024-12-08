@@ -1,8 +1,7 @@
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature, getYamlParseAndStringify } from "condu";
 import type { Yarnrc } from "@condu/schema-types/schemas/yarnrc.gen.js";
-import { getYamlParseAndStringify } from "@condu/cli/commands/apply/defaultParseAndStringify.js";
 
-declare module "@condu/types/extendable.js" {}
+// declare module "@condu/types/extendable.js" {}
 
 export const yarn = ({ yarnrc }: { yarnrc?: Yarnrc } = {}) =>
   defineFeature("yarn", {

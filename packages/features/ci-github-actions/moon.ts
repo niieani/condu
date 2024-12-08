@@ -1,4 +1,10 @@
-import { defineFeature } from "condu/defineFeature.js";
+import {
+  defineFeature,
+  getYamlParseAndStringify,
+  type CollectedTask,
+  type Task,
+  type Conventions,
+} from "condu";
 import type { GithubWorkflow } from "@condu/schema-types/schemas/githubWorkflow.gen.js";
 import type {
   PartialTaskConfig as MoonTask,
@@ -6,13 +12,7 @@ import type {
 } from "@moonrepo/types";
 import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
 import { mapValues } from "remeda";
-import type { Conventions } from "@condu/types/configTypes.js";
-import type {
-  CollectedTask,
-  Task,
-} from "@condu/cli/commands/apply/CollectedState.js";
 import type { GithubAction } from "@condu/schema-types/schemas/githubAction.gen.js";
-import { getYamlParseAndStringify } from "@condu/cli/commands/apply/defaultParseAndStringify.js";
 
 declare module "@condu/types/extendable.js" {
   interface FileNameToSerializedTypeMapping {

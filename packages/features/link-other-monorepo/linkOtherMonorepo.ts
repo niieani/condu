@@ -2,7 +2,7 @@ import {
   createPackageOverridesForLinking,
   type LinkingOptions,
 } from "@condu/core/utils/createPackageOverridesForLinking.js";
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 
 interface LinkingConfig {
   links: (

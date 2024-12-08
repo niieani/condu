@@ -1,5 +1,5 @@
 import { isDeepEqual } from "remeda";
-import type { DefinedWorkspaceProjectConvention } from "@condu/types/configTypes.js";
+import type { DefinedWorkspaceProjectConvention } from "./api/configTypes.js";
 import type { Match, ConventionMatch } from "./commands/create/create.js";
 
 export interface MatchOptions {

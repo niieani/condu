@@ -5,7 +5,7 @@ import { createGetAuthHeaderByURI } from "@pnpm/network.auth-header";
 import type {
   MinimalManifest,
   PackageJsonConduSection,
-} from "./commands/apply/ConduPackageEntry.js";
+} from "@condu/workspace-utils/packageJsonTypes.js";
 import type { DependencyDefinition } from "./commands/apply/CollectedState.js";
 
 const registry = "https://registry.npmjs.org/";

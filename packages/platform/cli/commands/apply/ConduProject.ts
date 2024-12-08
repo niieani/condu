@@ -1,7 +1,7 @@
 import type {
   DefinedWorkspaceProjectConvention,
   ConduConfigWithInferredValues,
-} from "@condu/types/configTypes.js";
+} from "../../api/configTypes.js";
 import type { ConduPackageEntry } from "./ConduPackageEntry.js";
 
 export class ConduProject {

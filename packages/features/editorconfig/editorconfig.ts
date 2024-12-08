@@ -1,4 +1,4 @@
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 import { serializeEditorConfig } from "./serialize.js";
 import type { EditorConfig, EditorConfigSection } from "./types.js";
 

@@ -1,15 +1,16 @@
-import type { WriteManifestFn } from "@condu/types/configTypes.js";
 import path from "node:path";
-import type {
-  CollectionContext,
-  DependencyTargetList,
-} from "./CollectedState.js";
+import type { CollectionContext } from "./CollectedState.js";
 import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
-import type { PartialProjectConfig } from "@moonrepo/types";
-import type { ProjectManifest } from "@pnpm/types";
 import type { Pattern } from "ts-pattern";
 import type { ConduProject } from "./ConduProject.js";
 import { partition } from "remeda";
+import type {
+  PackageKind,
+  IPackageEntry,
+  ConduPackageJson,
+  WriteManifestFn,
+  IPackageEntryWithWriteManifest,
+} from "@condu/workspace-utils/packageJsonTypes.js";
 
 // only properties, exclude any functions:
 export type ReadonlyConduPackageEntry<KindT extends PackageKind = PackageKind> =
@@ -153,6 +154,9 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
   }
 }
 
+export type WorkspaceRootPackage = ConduPackageEntry<"workspace">;
+export type WorkspaceSubPackage = ConduPackageEntry<"package">;
+
 export type EntrySources = Record<
   string,
   {
@@ -214,57 +218,6 @@ export type PackageJsonModifier = (
 export interface PackageJsonModification {
   modifier: PackageJsonModifier;
   context: CollectionContext;
-}
-export type PackageKind = "workspace" | "package";
-export type WorkspaceRootPackage = ConduPackageEntry<"workspace">;
-export type WorkspaceSubPackage = ConduPackageEntry<"package">;
-
-export interface IPackageEntry<KindT extends PackageKind = PackageKind> {
-  kind: KindT;
-  /** shortcut to manifest.name */
-  name: string;
-  scope?: string | undefined;
-  scopedName: string;
-  manifest: ConduPackageJson;
-  manifestRelPath: string;
-  manifestAbsPath: string;
-  /** relative directory of the package from the workspace path */
-  relPath: string;
-  /** absolute directory of the package */
-  absPath: string;
-}
-
-export interface IPackageEntryWithWriteManifest<
-  KindT extends PackageKind = PackageKind,
-> extends IPackageEntry<KindT> {
-  writeProjectManifest: WriteManifestFn;
-}
-export type MinimalManifest = Pick<
-  ConduPackageJson,
-  DependencyTargetList | "condu"
->;
-
-export type ManagedDependencyConfig = "presence" | "version";
-
-export interface PackageJsonConduSection
-  extends Pick<
-    PartialProjectConfig,
-    "language" | "platform" | "tags" | "type" | "stack"
-  > {
-  initialDevelopment?: boolean;
-  managedDependencies?: Record<string, ManagedDependencyConfig>;
-  defaultScope?: string;
-}
-
-export interface ConduPackageJson extends PackageJson {
-  // name is mandatory
-  name: string;
-  condu?: PackageJsonConduSection;
-
-  bolt?: { workspaces?: string[] };
-  pnpm?: ProjectManifest["pnpm"];
-  resolutions?: Record<string, string>;
-  overrides?: Record<string, string>;
 }
 
 export type MatchPackage =

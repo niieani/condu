@@ -1,7 +1,6 @@
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature, getJsonParseAndStringify } from "condu";
 import { assign } from "comment-json";
 import type { VscodeSettingsWorkspace } from "@condu/schema-types/schemas/vscodeSettingsWorkspace.gen.js";
-import { getJsonParseAndStringify } from "@condu/cli/commands/apply/defaultParseAndStringify.js";
 
 const RUNNING_SOURCE_VERSION = import.meta.url.endsWith(".ts");
 

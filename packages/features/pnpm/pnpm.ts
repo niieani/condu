@@ -1,8 +1,7 @@
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature, CONDU_CONFIG_DIR_NAME } from "condu";
 import type { WorkspaceManifest } from "@pnpm/workspace.read-manifest";
 import type { PnpmConfig } from "./npmrcType.js";
 import { parse, stringify } from "ini";
-import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
 
 interface PnpmFeatureConfig {
   workspace?: Omit<WorkspaceManifest, "packages">;

@@ -8,7 +8,7 @@ import * as path from "node:path";
 import * as childProcess from "node:child_process";
 import { createCommandContext } from "../createCommandContext.js";
 import { ensureDependencyIn } from "../ensureDependency.js";
-import type { ConduPackageJson } from "./apply/ConduPackageEntry.js";
+import type { ConduPackageJson } from "@condu/workspace-utils/packageJsonTypes.js";
 
 export class InitCommand extends Command {
   static override paths = [["init"]];

@@ -7,8 +7,7 @@ import { eslint } from "@condu-feature/eslint/eslint.js";
 import { pnpm } from "@condu-feature/pnpm/pnpm.js";
 import { vscode } from "@condu-feature/vscode/vscode.js";
 import { releasePlease } from "@condu-feature/release-please/release-please.js";
-import type { ConduConfig } from "@condu/types/configTypes.js";
-import type { IPackageEntry } from "@condu/cli/commands/apply/ConduPackageEntry.js";
+import type { ConduConfig, IPackageEntry } from "condu";
 
 type Argument<T extends (arg: any) => any> = T extends (arg: infer P) => any
   ? P

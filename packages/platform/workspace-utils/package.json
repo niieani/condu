@@ -6,8 +6,10 @@
   "type": "module",
   "dependencies": {
     "@condu/types": "workspace:^",
+    "@condu/schema-types": "workspace:^",
     "@pnpm/read-project-manifest": "^6.0.5",
     "@pnpm/workspace.read-manifest": "^2.2.0",
+    "@pnpm/types": "^12.2.0",
     "fast-glob": "^3.3.2",
     "slash": "^5.1.0",
     "sort-package-json": "^2.10.0",

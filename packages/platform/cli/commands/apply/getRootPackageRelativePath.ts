@@ -1,7 +1,7 @@
 import type {
+  ConduPackageEntry,
   WorkspaceRootPackage,
   WorkspaceSubPackage,
-  ConduPackageEntry,
 } from "./ConduPackageEntry.js";
 
 export interface RootRelativePackageResolutionOptions {

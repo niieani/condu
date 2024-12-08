@@ -12,7 +12,7 @@ import { editorconfig } from "@condu-feature/editorconfig/editorconfig.js";
 import { prettier } from "@condu-feature/prettier/prettier.js";
 import { gptSummarizer } from "@condu-feature/gpt-summarizer/gptSummarizer.js";
 import { releasePlease } from "@condu-feature/release-please/release-please.js";
-import { configure } from "condu/configure.js";
+import { configure } from "condu";
 
 export default configure((pkg) => ({
   engine: "bun",
@@ -56,13 +56,14 @@ export default configure((pkg) => ({
           composite: false,
         },
         exclude: ["integration-tests"],
+        // include: [".config/condu.ts"],
       },
     }),
     conduPackages(),
     libraryBundle({
       id: "cli",
       package: "condu",
-      entry: "cli.ts",
+      entry: "main.ts",
       moduleTarget: "esm",
       binName: "condu",
     }),

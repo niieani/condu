@@ -1,4 +1,4 @@
-import { defineFeature } from "condu/defineFeature.js";
+import { defineFeature } from "condu";
 
 // TODO: support workspace configs https://vitest.dev/guide/workspace
 // TODO: create config file

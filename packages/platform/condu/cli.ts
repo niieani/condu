@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
-export type * from "@condu/types/configTypes.js";
-export * from "./configure.js";
-export * from "./defineFeature.js";
-import "@condu/cli/main.js";
+const IS_RUNNING_SOURCE = import.meta.url.endsWith(".ts");
+
+import(IS_RUNNING_SOURCE ? "./main.js" : "./main.bundle.js").then(
+  ({ runCli }: typeof import("./main.js")) => runCli(),
+);
