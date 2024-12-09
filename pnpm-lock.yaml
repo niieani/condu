@@ -364,6 +364,9 @@ importers:
       '@condu/cli':
         specifier: workspace:^
         version: link:../../platform/cli
+      '@condu/schema-types':
+        specifier: workspace:^
+        version: link:../../platform/schema-types
       '@condu/types':
         specifier: workspace:^
         version: link:../../platform/types
@@ -462,6 +465,9 @@ importers:
       ts-pattern:
         specifier: ^5.2.0
         version: 5.5.0
+      type-fest:
+        specifier: ^4.30.0
+        version: 4.30.0
       which:
         specifier: ^5.0.0
         version: 5.0.0
@@ -680,6 +686,9 @@ importers:
       '@condu/types':
         specifier: workspace:^
         version: link:../../platform/types
+      condu:
+        specifier: workspace:^
+        version: link:../../platform/condu
 
   packages/test/dummy:
     dependencies:
@@ -4537,8 +4546,8 @@ packages:
     resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
     engines: {node: '>=14.16'}
 
-  type-fest@4.28.0:
-    resolution: {integrity: sha512-jXMwges/FVbFRe5lTMJZVEZCrO9kI9c8k0PA/z7nF3bo0JSCCLysvokFjNPIUK/itEMas10MQM+AiHoHt/T/XA==}
+  type-fest@4.30.0:
+    resolution: {integrity: sha512-G6zXWS1dLj6eagy6sVhOMQiLtJdxQBHIA9Z6HFUNLOlr6MFOgzV8wvmidtPONfPtEUv0uZsy77XJNzTAfwPDaA==}
     engines: {node: '>=16'}
 
   type-is@1.6.18:
@@ -8495,7 +8504,7 @@ snapshots:
 
   remeda@2.17.4:
     dependencies:
-      type-fest: 4.28.0
+      type-fest: 4.30.0
 
   rename-overwrite@6.0.0:
     dependencies:
@@ -9015,7 +9024,7 @@ snapshots:
 
   type-fest@3.13.1: {}
 
-  type-fest@4.28.0: {}
+  type-fest@4.30.0: {}
 
   type-is@1.6.18:
     dependencies:

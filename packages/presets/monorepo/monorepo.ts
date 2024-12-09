@@ -7,7 +7,7 @@ import { eslint } from "@condu-feature/eslint/eslint.js";
 import { pnpm } from "@condu-feature/pnpm/pnpm.js";
 import { vscode } from "@condu-feature/vscode/vscode.js";
 import { releasePlease } from "@condu-feature/release-please/release-please.js";
-import type { ConduConfig, IPackageEntry } from "condu";
+import { configure, type IPackageEntry } from "condu";
 
 type Argument<T extends (arg: any) => any> = T extends (arg: infer P) => any
   ? P
@@ -25,7 +25,7 @@ export const monorepo = (configs: {
   releasePlease?: Argument<typeof releasePlease>;
   pkg: IPackageEntry;
 }) =>
-  ({
+  configure({
     projects: [
       {
         parentPath: "packages",
@@ -46,4 +46,4 @@ export const monorepo = (configs: {
         ignore: [".env", ".env.*", ...(configs.gitignore?.ignore ?? [])],
       }),
     ],
-  }) satisfies ConduConfig;
+  });

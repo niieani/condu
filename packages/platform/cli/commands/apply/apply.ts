@@ -24,11 +24,16 @@ import type { PeerContext } from "@condu/types/extendable.js";
 import { autolink } from "../../builtin-features/autolink.js";
 import { UpsertMap } from "@condu/core/utils/UpsertMap.js";
 import { topologicalSortFeatures } from "./topologicalSortFeatures.js";
+import type { UnionToIntersection } from "type-fest";
 
 export interface ProjectAndCollectedState {
   project: ConduProject;
   collectedState: CollectedState;
 }
+
+type AllPossiblePeerContexts = UnionToIntersection<
+  PeerContext[keyof PeerContext]
+>;
 
 export async function apply(
   options: LoadConfigOptions = {},
@@ -116,7 +121,7 @@ export async function collectState(
     if (feature.modifyPeerContexts) {
       const reducers = await feature.modifyPeerContexts(
         project,
-        peerContext[feature.name] as PeerContext[keyof PeerContext],
+        peerContext[feature.name] as AllPossiblePeerContexts,
       );
       for (const [key, reducer] of Object.entries(reducers)) {
         if (!peerContext[key]) {
@@ -126,7 +131,9 @@ export async function collectState(
         // reduce global peer context from all features first,
         // so it can be available complete, for other context reducers
         if (key === "global") {
-          peerContext[key] = await reducer(peerContext[key] as any);
+          peerContext[key] = await reducer(
+            peerContext[key] as AllPossiblePeerContexts,
+          );
         } else {
           peerContextReducers.push([key, reducer]);
         }
@@ -136,8 +143,9 @@ export async function collectState(
 
   // Run other peerContext reducers
   for (const [key, reducer] of peerContextReducers) {
-    // uses `as any`, as this is impossible to type correctly
-    peerContext[key] = await reducer(peerContext[key] as any);
+    peerContext[key] = await reducer(
+      peerContext[key] as AllPossiblePeerContexts,
+    );
   }
 
   const fileManager = new FileManager(
@@ -163,11 +171,14 @@ export async function collectState(
       collectionContext: { featureName: feature.name },
       changesCollector,
     });
-
-    await feature.defineRecipe(
-      conduApi,
-      peerContext[feature.name] as PeerContext[keyof PeerContext],
-    );
+    if ("initialPeerContext" in feature) {
+      await feature.defineRecipe(
+        conduApi,
+        peerContext[feature.name] as AllPossiblePeerContexts,
+      );
+    } else {
+      await feature.defineRecipe(conduApi);
+    }
   }
   return { collectedState: changesCollector, project };
 }

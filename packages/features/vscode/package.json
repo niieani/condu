@@ -4,8 +4,9 @@
   "type": "module",
   "dependencies": {
     "@condu/types": "workspace:^",
-    "comment-json": "^4.2.4",
-    "@condu/cli": "workspace:^"
+    "@condu/schema-types": "workspace:^",
+    "@condu/cli": "workspace:^",
+    "comment-json": "^4.2.4"
   },
   "peerDependencies": {
     "condu": "workspace:^"

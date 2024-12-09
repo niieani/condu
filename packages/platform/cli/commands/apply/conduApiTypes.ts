@@ -87,45 +87,54 @@ export type PossibleFeatureNames = keyof PeerContext | (string & {});
 export type GetPeerContext<NameT extends PossibleFeatureNames> =
   NameT extends keyof PeerContext ? PeerContext[NameT] : never;
 
-interface FeatureDefinitionInputBase<
-  NameT extends PossibleFeatureNames = keyof PeerContext | (string & {}),
-> {
+interface FeatureDefinitionSharedProps {
   // todo should this allow regex for dynamically created features?
   after?: Array<string> | string;
-  modifyPeerContexts?: (
-    project: ReadonlyConduProject,
-    initialPeerContext: GetPeerContext<NameT>,
-  ) => Promise<PeerContextReducer> | PeerContextReducer;
-  defineRecipe: (
-    condu: ConduApi,
-    peerContext: GetPeerContext<NameT>,
-  ) => void | Promise<void>;
 }
 
-type WithInitialPeerContext<NameT extends PossibleFeatureNames> =
-  NameT extends keyof PeerContext
-    ? {
-        initialPeerContext:
-          | GetPeerContext<NameT>
-          | ((
-              project: ReadonlyConduProject,
-            ) => GetPeerContext<NameT> | Promise<GetPeerContext<NameT>>);
-      }
-    : {};
+type FeatureDefinitionPeerContextDependentProps<
+  NameT extends PossibleFeatureNames,
+> = NameT extends keyof PeerContext
+  ? {
+      initialPeerContext:
+        | GetPeerContext<NameT>
+        | ((
+            project: ReadonlyConduProject,
+          ) => GetPeerContext<NameT> | Promise<GetPeerContext<NameT>>);
+      modifyPeerContexts?: (
+        project: ReadonlyConduProject,
+        initialPeerContext: GetPeerContext<NameT>,
+      ) => Promise<PeerContextReducer> | PeerContextReducer;
+      defineRecipe: (
+        condu: ConduApi,
+        peerContext: GetPeerContext<NameT>,
+      ) => void | Promise<void>;
+    }
+  : {
+      defineRecipe: (condu: ConduApi) => void | Promise<void>;
+      modifyPeerContexts?: (
+        project: ReadonlyConduProject,
+      ) => Promise<PeerContextReducer> | PeerContextReducer;
+    };
 
 export type FeatureDefinitionInput<
-  NameT extends PossibleFeatureNames = keyof PeerContext | (string & {}),
-> = FeatureDefinitionInputBase<NameT> & WithInitialPeerContext<NameT>;
-
-export type FeatureDefinition<
   NameT extends PossibleFeatureNames = PossibleFeatureNames,
-> = FeatureDefinitionInput<NameT> & {
+> = FeatureDefinitionSharedProps &
+  FeatureDefinitionPeerContextDependentProps<NameT>;
+
+export interface FeatureDefinitionMeta<
+  NameT extends PossibleFeatureNames = PossibleFeatureNames,
+> {
   name: NameT;
   // TODO: maybe instead of stack just the file path of the feature definition from import.meta.url?
   stack: string;
-};
+}
 
-export type FeatureActionFn = <NameT extends keyof PeerContext | (string & {})>(
+export type FeatureDefinition<
+  NameT extends PossibleFeatureNames = PossibleFeatureNames,
+> = FeatureDefinitionInput<NameT> & FeatureDefinitionMeta<NameT>;
+
+export type FeatureActionFn = <NameT extends PossibleFeatureNames>(
   name: NameT,
   definition: FeatureDefinitionInput<NameT>,
 ) => FeatureDefinition<NameT>;

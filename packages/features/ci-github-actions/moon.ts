@@ -26,7 +26,7 @@ declare module "@condu/types/extendable.js" {
 // then the Github Actions CI pulls those commands in
 export const moonCi = (opts: {} = {}) =>
   defineFeature("moonCi", {
-    defineRecipe(condu, peerContext) {
+    defineRecipe(condu) {
       const config = condu.project.config;
       const packageManager = config.node.packageManager.name;
       condu.root.generateFile(".github/actions/moon-ci-setup/action.yml", {

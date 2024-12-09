@@ -14,5 +14,8 @@
     "@condu-feature/typescript": "workspace:^",
     "@condu-feature/vscode": "workspace:^",
     "@condu/types": "workspace:^"
+  },
+  "peerDependencies": {
+    "condu": "workspace:^"
   }
 }

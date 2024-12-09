@@ -1,12 +1,12 @@
-import { type GenerateFileOptions } from "../commands/apply/FileManager.js";
+import type { GenerateFileOptions } from "../commands/apply/FileManager.js";
 import {
   CONDU_CONFIG_FILE_NAME,
   CONDU_CONFIG_DIR_NAME,
 } from "@condu/types/constants.js";
-import { defineFeature } from "@condu/types/defineFeature.js";
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
 import { match, P } from "ts-pattern";
+import { defineFeature } from "../api/defineFeature.js";
 
 export interface AutoLinkConfig {
   /** remap file names, key is the filename in .config/, value is the target name */

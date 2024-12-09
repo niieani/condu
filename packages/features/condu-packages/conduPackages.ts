@@ -2,7 +2,7 @@ import { defineFeature, CONDU_WORKSPACE_PACKAGE_NAME, CORE_NAME } from "condu";
 
 export const conduPackages = (opts: {} = {}) =>
   defineFeature("condu-packages", {
-    defineRecipe: (condu, peerContext) => {
+    defineRecipe: (condu) => {
       const isInternalCondu =
         condu.project.manifest.name === CONDU_WORKSPACE_PACKAGE_NAME;
 

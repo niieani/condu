@@ -45,13 +45,20 @@ export interface NpmPublishConfig {
   access?: "public" | "restricted";
 }
 
+type PeerContexts = keyof PeerContext;
+type UnionOfFeatureDefinitions =
+  | {
+      [K in PeerContexts]: FeatureDefinition<K>;
+    }[PeerContexts]
+  | FeatureDefinition<string & {}>;
+
 export interface ConduConfig {
   /** primary engine used to run the tool */
   engine?: Engine;
   node?: NodeConfig;
   publish?: NpmPublishConfig;
   git?: GitConfig;
-  features: FeatureDefinition<keyof PeerContext>[];
+  features: UnionOfFeatureDefinitions[];
   /** automatically links any config file inside .config/ folder to the root directory and makes it invisible */
   autolink?: boolean | AutoLinkConfig;
   /** when present, assumes monorepo */

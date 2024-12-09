@@ -3,7 +3,7 @@
 
 export interface PeerContext {
   // TODO: maybe we move as much of functionality into condu context that's always there?
-  condu: { _: string };
+  // condu: { _: string };
   global: GlobalPeerContext;
 }
 
