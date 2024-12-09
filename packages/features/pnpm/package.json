@@ -5,14 +5,15 @@
   "sideEffects": false,
   "type": "module",
   "devDependencies": {
-    "@pnpm/workspace.read-manifest": "^2.2.0"
+    "@pnpm/workspace.read-manifest": "^900.0.1"
   },
   "peerDependencies": {
     "condu": "workspace:^"
   },
   "dependencies": {
     "@condu/types": "workspace:^",
-    "@pnpm/config": "^21.8.3",
+    "@pnpm/config": "^900.0.1",
+    "@pnpm/logger": "^900.0.0",
     "@types/ini": "^4.1.1",
     "ini": "^5.0.0"
   }
