@@ -20,7 +20,7 @@ import {
   FileManager,
   type ModifyUserEditableFileOptions,
 } from "./FileManager.js";
-import type { PeerContext } from "@condu/types/extendable.js";
+import type { PeerContext } from "../../extendable.js";
 import { autolink } from "../../builtin-features/autolink.js";
 import { UpsertMap } from "@condu/core/utils/UpsertMap.js";
 import { topologicalSortFeatures } from "./topologicalSortFeatures.js";

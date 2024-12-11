@@ -23,7 +23,7 @@
     "packages/test/*"
   ],
   "scripts": {
-    "condu": "bun packages/platform/condu/cli.ts",
+    "condu": "bun packages/platform/condu/bin.ts",
     "postinstall": "test -f .config/condu.ts && bun condu apply",
     "moon": "moon",
     "start": "bun condu",

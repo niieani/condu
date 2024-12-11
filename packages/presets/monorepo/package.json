@@ -12,8 +12,7 @@
     "@condu-feature/pnpm": "workspace:^",
     "@condu-feature/release-please": "workspace:^",
     "@condu-feature/typescript": "workspace:^",
-    "@condu-feature/vscode": "workspace:^",
-    "@condu/types": "workspace:^"
+    "@condu-feature/vscode": "workspace:^"
   },
   "peerDependencies": {
     "condu": "workspace:^"

@@ -3,9 +3,6 @@
   "version": "0.1.6",
   "license": "MIT",
   "type": "module",
-  "dependencies": {
-    "@condu/cli": "workspace:^"
-  },
   "devDependencies": {
     "@yarnpkg/core": "^4.1.1",
     "@yarnpkg/fslib": "^3.1.0"

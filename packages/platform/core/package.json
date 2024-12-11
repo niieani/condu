@@ -3,7 +3,6 @@
   "version": "0.1.5",
   "type": "module",
   "dependencies": {
-    "@condu/types": "workspace:^",
     "@condu/workspace-utils": "workspace:^",
     "async-memoize-one": "^1.1.8",
     "remeda": "^2.15.0"

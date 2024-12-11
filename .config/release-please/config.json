@@ -96,11 +96,6 @@
       "component": "gitignore-matcher",
       "initial-version": "0.0.1"
     },
-    "packages/platform/cli": {
-      "release-type": "node",
-      "component": "@condu/cli",
-      "initial-version": "0.0.1"
-    },
     "packages/platform/condu": {
       "release-type": "node",
       "component": "condu",
@@ -114,11 +109,6 @@
     "packages/platform/schema-types": {
       "release-type": "node",
       "component": "@condu/schema-types",
-      "initial-version": "0.0.1"
-    },
-    "packages/platform/types": {
-      "release-type": "node",
-      "component": "@condu/types",
       "initial-version": "0.0.1"
     },
     "packages/platform/update-specifiers": {

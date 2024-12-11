@@ -1,7 +1,7 @@
 import { defineFeature, getJsonParseAndStringify } from "condu";
 import type { Lerna } from "@condu/schema-types/schemas/lerna.gen.js";
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface FileNameToSerializedTypeMapping {
     "lerna.json": Lerna;
   }

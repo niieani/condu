@@ -2,7 +2,7 @@ import { defineFeature, getJsonStringify, CORE_NAME } from "condu";
 import type TSConfig from "@condu/schema-types/schemas/tsconfig.gen.js";
 import * as path from "node:path";
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface PeerContext {
     typescript: {
       tsconfig: TSConfig;

@@ -80,7 +80,7 @@ module.exports = (
         "fs-extra",
         // "zx" // required to get rid of Warning: async_hooks.createHook is not implemented in Bun.
       ];
-      if (request === "@condu/cli/main.js") {
+      if (!request || request === "condu/cli.js") {
         return false;
       }
       const isExternal = externals.some((external) => {

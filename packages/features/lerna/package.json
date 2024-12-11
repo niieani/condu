@@ -3,7 +3,7 @@
   "version": "0.1.7",
   "type": "module",
   "dependencies": {
-    "@condu/types": "workspace:^"
+    "@condu/schema-types": "workspace:^"
   },
   "peerDependencies": {
     "condu": "workspace:^"

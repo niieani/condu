@@ -72,7 +72,7 @@ importers:
         version: 1.22.1
       '@swc/core':
         specifier: ^1.10.0
-        version: 1.10.0
+        version: 1.10.1
       '@types/eslint':
         specifier: ^9.6.1
         version: 9.6.1
@@ -117,10 +117,10 @@ importers:
         version: 4.28.1
       rollup-plugin-swc3:
         specifier: ^0.12.1
-        version: 0.12.1(@swc/core@1.10.0)(rollup@4.28.1)
+        version: 0.12.1(@swc/core@1.10.1)(rollup@4.28.1)
       swc-loader:
         specifier: ^0.2.6
-        version: 0.2.6(@swc/core@1.10.0)(webpack@5.97.1)
+        version: 0.2.6(@swc/core@1.10.1)(webpack@5.97.1)
       tslib:
         specifier: ^2.7.0
         version: 2.8.1
@@ -138,7 +138,7 @@ importers:
         version: 2.1.8(@types/node@22.10.1)(terser@5.37.0)
       webpack:
         specifier: ^5.97.1
-        version: 5.97.1(@swc/core@1.10.0)(webpack-cli@5.1.4(webpack@5.97.1))
+        version: 5.97.1(@swc/core@1.10.1)(webpack-cli@5.1.4(webpack@5.97.1))
       webpack-cli:
         specifier: ^5.1.4
         version: 5.1.4(webpack@5.97.1)
@@ -148,15 +148,9 @@ importers:
 
   packages/features/ci-github-actions:
     dependencies:
-      '@condu/cli':
-        specifier: workspace:^
-        version: link:../../platform/cli
       '@condu/schema-types':
         specifier: workspace:^
         version: link:../../platform/schema-types
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../../platform/types
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
@@ -166,9 +160,6 @@ importers:
 
   packages/features/condu-packages:
     dependencies:
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../../platform/types
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
@@ -181,9 +172,9 @@ importers:
 
   packages/features/eslint:
     dependencies:
-      '@condu/types':
+      '@condu/schema-types':
         specifier: workspace:^
-        version: link:../../platform/types
+        version: link:../../platform/schema-types
       '@eslint/js':
         specifier: ^9.10.0
         version: 9.16.0
@@ -224,9 +215,6 @@ importers:
 
   packages/features/gitignore:
     dependencies:
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../../platform/types
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
@@ -245,25 +233,25 @@ importers:
 
   packages/features/lerna:
     dependencies:
-      '@condu/types':
+      '@condu/schema-types':
         specifier: workspace:^
-        version: link:../../platform/types
+        version: link:../../platform/schema-types
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
 
   packages/features/library-bundle:
     dependencies:
-      '@condu/types':
+      '@condu/schema-types':
         specifier: workspace:^
-        version: link:../../platform/types
+        version: link:../../platform/schema-types
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
     devDependencies:
       webpack:
         specifier: ^5.93.0
-        version: 5.97.1(@swc/core@1.10.0)(webpack-cli@5.1.4(webpack@5.97.1))
+        version: 5.97.1(@swc/core@1.10.1)(webpack-cli@5.1.4(webpack@5.97.1))
 
   packages/features/link-other-monorepo:
     dependencies:
@@ -282,9 +270,6 @@ importers:
       '@condu/schema-types':
         specifier: workspace:^
         version: link:../../platform/schema-types
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../../platform/types
       '@moonrepo/types':
         specifier: ^1.21.0
         version: 1.22.1
@@ -294,9 +279,6 @@ importers:
 
   packages/features/pnpm:
     dependencies:
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../../platform/types
       '@pnpm/config':
         specifier: ^900.0.1
         version: 900.0.1(@pnpm/logger@900.0.0)
@@ -319,9 +301,6 @@ importers:
 
   packages/features/prettier:
     dependencies:
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../../platform/types
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
@@ -331,15 +310,9 @@ importers:
 
   packages/features/release-please:
     dependencies:
-      '@condu/cli':
-        specifier: workspace:^
-        version: link:../../platform/cli
       '@condu/schema-types':
         specifier: workspace:^
         version: link:../../platform/schema-types
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../../platform/types
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
@@ -349,9 +322,6 @@ importers:
       '@condu/schema-types':
         specifier: workspace:^
         version: link:../../platform/schema-types
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../../platform/types
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
@@ -364,15 +334,9 @@ importers:
 
   packages/features/vscode:
     dependencies:
-      '@condu/cli':
-        specifier: workspace:^
-        version: link:../../platform/cli
       '@condu/schema-types':
         specifier: workspace:^
         version: link:../../platform/schema-types
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../../platform/types
       comment-json:
         specifier: ^4.2.4
         version: 4.2.5
@@ -385,16 +349,13 @@ importers:
       '@condu/schema-types':
         specifier: workspace:^
         version: link:../../platform/schema-types
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../../platform/types
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
 
   packages/generic/gitignore-matcher: {}
 
-  packages/platform/cli:
+  packages/platform/condu:
     dependencies:
       '@condu/core':
         specifier: workspace:^
@@ -402,9 +363,6 @@ importers:
       '@condu/schema-types':
         specifier: workspace:^
         version: link:../schema-types
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../types
       '@condu/update-specifiers':
         specifier: workspace:^
         version: link:../update-specifiers
@@ -478,73 +436,18 @@ importers:
         specifier: ^2.5.0
         version: 2.6.1
     devDependencies:
+      '@swc/core':
+        specifier: ^1.10.1
+        version: 1.10.1
+      swc-loader:
+        specifier: ^0.2.6
+        version: 0.2.6(@swc/core@1.10.1)(webpack@5.97.1)
       vitest:
         specifier: ^2.0.4
         version: 2.1.8(@types/node@22.10.1)(terser@5.37.0)
-
-  packages/platform/condu:
-    dependencies:
-      '@condu/cli':
-        specifier: workspace:^
-        version: link:../cli
-      '@condu/schema-types':
-        specifier: workspace:^
-        version: link:../schema-types
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../types
-      '@condu/update-specifiers':
-        specifier: workspace:^
-        version: link:../update-specifiers
-      '@condu/workspace-utils':
-        specifier: workspace:^
-        version: link:../workspace-utils
-      '@pnpm/catalogs.config':
-        specifier: ^900.0.1
-        version: 900.0.1
-      '@pnpm/exportable-manifest':
-        specifier: ^900.0.1
-        version: 900.0.1
-      '@pnpm/fetch':
-        specifier: ^900.0.0
-        version: 900.0.0(@pnpm/logger@900.0.0)
-      '@pnpm/logger':
-        specifier: ^900.0.0
-        version: 900.0.0
-      '@pnpm/network.auth-header':
-        specifier: ^900.0.1
-        version: 900.0.1
-      '@pnpm/npm-resolver':
-        specifier: ^900.0.2
-        version: 900.0.2(@pnpm/logger@900.0.0)
-      '@pnpm/read-project-manifest':
-        specifier: ^900.0.1
-        version: 900.0.1
-      '@pnpm/types':
-        specifier: ^900.0.0
-        version: 900.0.0
-      '@pnpm/workspace.find-packages':
-        specifier: ^900.0.1
-        version: 900.0.1(@pnpm/logger@900.0.0)
-      '@pnpm/workspace.read-manifest':
-        specifier: ^900.0.1
-        version: 900.0.1
-      spdx-license-list:
-        specifier: ^6.9.0
-        version: 6.9.0
-    devDependencies:
-      '@swc/core':
-        specifier: ^1.10.0
-        version: 1.10.0
-      '@types/which':
-        specifier: ^3.0.4
-        version: 3.0.4
-      swc-loader:
-        specifier: ^0.2.6
-        version: 0.2.6(@swc/core@1.10.0)(webpack@5.97.1)
       webpack:
         specifier: ^5.97.1
-        version: 5.97.1(@swc/core@1.10.0)(webpack-cli@5.1.4)
+        version: 5.97.1(@swc/core@1.10.1)(webpack-cli@5.1.4)
       webpack-cli:
         specifier: ^5.1.4
         version: 5.1.4(webpack@5.97.1)
@@ -554,9 +457,6 @@ importers:
 
   packages/platform/core:
     dependencies:
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../types
       '@condu/workspace-utils':
         specifier: workspace:^
         version: link:../workspace-utils
@@ -583,22 +483,6 @@ importers:
         specifier: ^15.0.0
         version: 15.0.3
 
-  packages/platform/types:
-    dependencies:
-      '@condu/schema-types':
-        specifier: workspace:^
-        version: link:../schema-types
-      '@moonrepo/types':
-        specifier: ^1.21.0
-        version: 1.22.1
-      ts-pattern:
-        specifier: ^5.2.0
-        version: 5.5.0
-    devDependencies:
-      '@pnpm/types':
-        specifier: ^900.0.0
-        version: 900.0.0
-
   packages/platform/update-specifiers:
     dependencies:
       '@condu/core':
@@ -616,9 +500,6 @@ importers:
       '@condu/schema-types':
         specifier: workspace:^
         version: link:../schema-types
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../types
       '@pnpm/read-project-manifest':
         specifier: ^900.0.1
         version: 900.0.1
@@ -645,10 +526,6 @@ importers:
         version: 2.6.1
 
   packages/platform/yarn-plugin:
-    dependencies:
-      '@condu/cli':
-        specifier: workspace:^
-        version: link:../cli
     devDependencies:
       '@yarnpkg/core':
         specifier: ^4.1.1
@@ -686,9 +563,6 @@ importers:
       '@condu-feature/vscode':
         specifier: workspace:^
         version: link:../../features/vscode
-      '@condu/types':
-        specifier: workspace:^
-        version: link:../../platform/types
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
@@ -1465,68 +1339,68 @@ packages:
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
     engines: {node: '>=10'}
 
-  '@swc/core-darwin-arm64@1.10.0':
-    resolution: {integrity: sha512-wCeUpanqZyzvgqWRtXIyhcFK3CqukAlYyP+fJpY2gWc/+ekdrenNIfZMwY7tyTFDkXDYEKzvn3BN/zDYNJFowQ==}
+  '@swc/core-darwin-arm64@1.10.1':
+    resolution: {integrity: sha512-NyELPp8EsVZtxH/mEqvzSyWpfPJ1lugpTQcSlMduZLj1EASLO4sC8wt8hmL1aizRlsbjCX+r0PyL+l0xQ64/6Q==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [darwin]
 
-  '@swc/core-darwin-x64@1.10.0':
-    resolution: {integrity: sha512-0CZPzqTynUBO+SHEl/qKsFSahp2Jv/P2ZRjFG0gwZY5qIcr1+B/v+o74/GyNMBGz9rft+F2WpU31gz2sJwyF4A==}
+  '@swc/core-darwin-x64@1.10.1':
+    resolution: {integrity: sha512-L4BNt1fdQ5ZZhAk5qoDfUnXRabDOXKnXBxMDJ+PWLSxOGBbWE6aJTnu4zbGjJvtot0KM46m2LPAPY8ttknqaZA==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [darwin]
 
-  '@swc/core-linux-arm-gnueabihf@1.10.0':
-    resolution: {integrity: sha512-oq+DdMu5uJOFPtRkeiITc4kxmd+QSmK+v+OBzlhdGkSgoH3yRWZP+H2ao0cBXo93ZgCr2LfjiER0CqSKhjGuNA==}
+  '@swc/core-linux-arm-gnueabihf@1.10.1':
+    resolution: {integrity: sha512-Y1u9OqCHgvVp2tYQAJ7hcU9qO5brDMIrA5R31rwWQIAKDkJKtv3IlTHF0hrbWk1wPR0ZdngkQSJZple7G+Grvw==}
     engines: {node: '>=10'}
     cpu: [arm]
     os: [linux]
 
-  '@swc/core-linux-arm64-gnu@1.10.0':
-    resolution: {integrity: sha512-Y6+PC8knchEViRxiCUj3j8wsGXaIhuvU+WqrFqV834eiItEMEI9+Vh3FovqJMBE3L7d4E4ZQtgImHCXjrHfxbw==}
+  '@swc/core-linux-arm64-gnu@1.10.1':
+    resolution: {integrity: sha512-tNQHO/UKdtnqjc7o04iRXng1wTUXPgVd8Y6LI4qIbHVoVPwksZydISjMcilKNLKIwOoUQAkxyJ16SlOAeADzhQ==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
 
-  '@swc/core-linux-arm64-musl@1.10.0':
-    resolution: {integrity: sha512-EbrX9A5U4cECCQQfky7945AW9GYnTXtCUXElWTkTYmmyQK87yCyFfY8hmZ9qMFIwxPOH6I3I2JwMhzdi8Qoz7g==}
+  '@swc/core-linux-arm64-musl@1.10.1':
+    resolution: {integrity: sha512-x0L2Pd9weQ6n8dI1z1Isq00VHFvpBClwQJvrt3NHzmR+1wCT/gcYl1tp9P5xHh3ldM8Cn4UjWCw+7PaUgg8FcQ==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
 
-  '@swc/core-linux-x64-gnu@1.10.0':
-    resolution: {integrity: sha512-TaxpO6snTjjfLXFYh5EjZ78se69j2gDcqEM8yB9gguPYwkCHi2Ylfmh7iVaNADnDJFtjoAQp0L41bTV/Pfq9Cg==}
+  '@swc/core-linux-x64-gnu@1.10.1':
+    resolution: {integrity: sha512-yyYEwQcObV3AUsC79rSzN9z6kiWxKAVJ6Ntwq2N9YoZqSPYph+4/Am5fM1xEQYf/kb99csj0FgOelomJSobxQA==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
 
-  '@swc/core-linux-x64-musl@1.10.0':
-    resolution: {integrity: sha512-IEGvDd6aEEKEyZFZ8oCKuik05G5BS7qwG5hO5PEMzdGeh8JyFZXxsfFXbfeAqjue4UaUUrhnoX+Ze3M2jBVMHw==}
+  '@swc/core-linux-x64-musl@1.10.1':
+    resolution: {integrity: sha512-tcaS43Ydd7Fk7sW5ROpaf2Kq1zR+sI5K0RM+0qYLYYurvsJruj3GhBCaiN3gkzd8m/8wkqNqtVklWaQYSDsyqA==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
 
-  '@swc/core-win32-arm64-msvc@1.10.0':
-    resolution: {integrity: sha512-UkQ952GSpY+Z6XONj9GSW8xGSkF53jrCsuLj0nrcuw7Dvr1a816U/9WYZmmcYS8tnG2vHylhpm6csQkyS8lpCw==}
+  '@swc/core-win32-arm64-msvc@1.10.1':
+    resolution: {integrity: sha512-D3Qo1voA7AkbOzQ2UGuKNHfYGKL6eejN8VWOoQYtGHHQi1p5KK/Q7V1ku55oxXBsj79Ny5FRMqiRJpVGad7bjQ==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [win32]
 
-  '@swc/core-win32-ia32-msvc@1.10.0':
-    resolution: {integrity: sha512-a2QpIZmTiT885u/mUInpeN2W9ClCnqrV2LnMqJR1/Fgx1Afw/hAtiDZPtQ0SqS8yDJ2VR5gfNZo3gpxWMrqdVA==}
+  '@swc/core-win32-ia32-msvc@1.10.1':
+    resolution: {integrity: sha512-WalYdFoU3454Og+sDKHM1MrjvxUGwA2oralknXkXL8S0I/8RkWZOB++p3pLaGbTvOO++T+6znFbQdR8KRaa7DA==}
     engines: {node: '>=10'}
     cpu: [ia32]
     os: [win32]
 
-  '@swc/core-win32-x64-msvc@1.10.0':
-    resolution: {integrity: sha512-tZcCmMwf483nwsEBfUk5w9e046kMa1iSik4bP9Kwi2FGtOfHuDfIcwW4jek3hdcgF5SaBW1ktnK/lgQLDi5AtA==}
+  '@swc/core-win32-x64-msvc@1.10.1':
+    resolution: {integrity: sha512-JWobfQDbTnoqaIwPKQ3DVSywihVXlQMbDuwik/dDWlj33A8oEHcjPOGs4OqcA3RHv24i+lfCQpM3Mn4FAMfacA==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [win32]
 
-  '@swc/core@1.10.0':
-    resolution: {integrity: sha512-+CuuTCmQFfzaNGg1JmcZvdUVITQXJk9sMnl1C2TiDLzOSVOJRwVD4dNo5dljX/qxpMAN+2BIYlwjlSkoGi6grg==}
+  '@swc/core@1.10.1':
+    resolution: {integrity: sha512-rQ4dS6GAdmtzKiCRt3LFVxl37FaY1cgL9kSUTnhQ2xc3fmHOd7jdJK/V4pSZMG1ruGTd0bsi34O2R0Olg9Zo/w==}
     engines: {node: '>=10'}
     peerDependencies:
       '@swc/helpers': '*'
@@ -5678,51 +5552,51 @@ snapshots:
 
   '@sindresorhus/is@4.6.0': {}
 
-  '@swc/core-darwin-arm64@1.10.0':
+  '@swc/core-darwin-arm64@1.10.1':
     optional: true
 
-  '@swc/core-darwin-x64@1.10.0':
+  '@swc/core-darwin-x64@1.10.1':
     optional: true
 
-  '@swc/core-linux-arm-gnueabihf@1.10.0':
+  '@swc/core-linux-arm-gnueabihf@1.10.1':
     optional: true
 
-  '@swc/core-linux-arm64-gnu@1.10.0':
+  '@swc/core-linux-arm64-gnu@1.10.1':
     optional: true
 
-  '@swc/core-linux-arm64-musl@1.10.0':
+  '@swc/core-linux-arm64-musl@1.10.1':
     optional: true
 
-  '@swc/core-linux-x64-gnu@1.10.0':
+  '@swc/core-linux-x64-gnu@1.10.1':
     optional: true
 
-  '@swc/core-linux-x64-musl@1.10.0':
+  '@swc/core-linux-x64-musl@1.10.1':
     optional: true
 
-  '@swc/core-win32-arm64-msvc@1.10.0':
+  '@swc/core-win32-arm64-msvc@1.10.1':
     optional: true
 
-  '@swc/core-win32-ia32-msvc@1.10.0':
+  '@swc/core-win32-ia32-msvc@1.10.1':
     optional: true
 
-  '@swc/core-win32-x64-msvc@1.10.0':
+  '@swc/core-win32-x64-msvc@1.10.1':
     optional: true
 
-  '@swc/core@1.10.0':
+  '@swc/core@1.10.1':
     dependencies:
       '@swc/counter': 0.1.3
       '@swc/types': 0.1.17
     optionalDependencies:
-      '@swc/core-darwin-arm64': 1.10.0
-      '@swc/core-darwin-x64': 1.10.0
-      '@swc/core-linux-arm-gnueabihf': 1.10.0
-      '@swc/core-linux-arm64-gnu': 1.10.0
-      '@swc/core-linux-arm64-musl': 1.10.0
-      '@swc/core-linux-x64-gnu': 1.10.0
-      '@swc/core-linux-x64-musl': 1.10.0
-      '@swc/core-win32-arm64-msvc': 1.10.0
-      '@swc/core-win32-ia32-msvc': 1.10.0
-      '@swc/core-win32-x64-msvc': 1.10.0
+      '@swc/core-darwin-arm64': 1.10.1
+      '@swc/core-darwin-x64': 1.10.1
+      '@swc/core-linux-arm-gnueabihf': 1.10.1
+      '@swc/core-linux-arm64-gnu': 1.10.1
+      '@swc/core-linux-arm64-musl': 1.10.1
+      '@swc/core-linux-x64-gnu': 1.10.1
+      '@swc/core-linux-x64-musl': 1.10.1
+      '@swc/core-win32-arm64-msvc': 1.10.1
+      '@swc/core-win32-ia32-msvc': 1.10.1
+      '@swc/core-win32-x64-msvc': 1.10.1
 
   '@swc/counter@0.1.3': {}
 
@@ -6251,17 +6125,17 @@ snapshots:
 
   '@webpack-cli/configtest@2.1.1(webpack-cli@5.1.4)(webpack@5.97.1)':
     dependencies:
-      webpack: 5.97.1(@swc/core@1.10.0)(webpack-cli@5.1.4)
+      webpack: 5.97.1(@swc/core@1.10.1)(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack@5.97.1)
 
   '@webpack-cli/info@2.0.2(webpack-cli@5.1.4)(webpack@5.97.1)':
     dependencies:
-      webpack: 5.97.1(@swc/core@1.10.0)(webpack-cli@5.1.4)
+      webpack: 5.97.1(@swc/core@1.10.1)(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack@5.97.1)
 
   '@webpack-cli/serve@2.0.5(webpack-cli@5.1.4)(webpack@5.97.1)':
     dependencies:
-      webpack: 5.97.1(@swc/core@1.10.0)(webpack-cli@5.1.4)
+      webpack: 5.97.1(@swc/core@1.10.1)(webpack-cli@5.1.4)
       webpack-cli: 5.1.4(webpack@5.97.1)
 
   '@xmldom/xmldom@0.8.10': {}
@@ -8451,12 +8325,12 @@ snapshots:
 
   rfc4648@1.5.3: {}
 
-  rollup-plugin-swc3@0.12.1(@swc/core@1.10.0)(rollup@4.28.1):
+  rollup-plugin-swc3@0.12.1(@swc/core@1.10.1)(rollup@4.28.1):
     dependencies:
       '@dual-bundle/import-meta-resolve': 4.1.0
       '@fastify/deepmerge': 2.0.0
       '@rollup/pluginutils': 5.1.2(rollup@4.28.1)
-      '@swc/core': 1.10.0
+      '@swc/core': 1.10.1
       get-tsconfig: 4.8.1
       rollup: 4.28.1
       rollup-preserve-directives: 1.1.2(rollup@4.28.1)
@@ -8773,11 +8647,11 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  swc-loader@0.2.6(@swc/core@1.10.0)(webpack@5.97.1):
+  swc-loader@0.2.6(@swc/core@1.10.1)(webpack@5.97.1):
     dependencies:
-      '@swc/core': 1.10.0
+      '@swc/core': 1.10.1
       '@swc/counter': 0.1.3
-      webpack: 5.97.1(@swc/core@1.10.0)(webpack-cli@5.1.4)
+      webpack: 5.97.1(@swc/core@1.10.1)(webpack-cli@5.1.4)
 
   tapable@2.2.1: {}
 
@@ -8796,27 +8670,27 @@ snapshots:
       mkdirp: 1.0.4
       yallist: 4.0.0
 
-  terser-webpack-plugin@5.3.10(@swc/core@1.10.0)(webpack@5.97.1(@swc/core@1.10.0)(webpack-cli@5.1.4(webpack@5.97.1))):
+  terser-webpack-plugin@5.3.10(@swc/core@1.10.1)(webpack@5.97.1(@swc/core@1.10.1)(webpack-cli@5.1.4(webpack@5.97.1))):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.37.0
-      webpack: 5.97.1(@swc/core@1.10.0)(webpack-cli@5.1.4(webpack@5.97.1))
+      webpack: 5.97.1(@swc/core@1.10.1)(webpack-cli@5.1.4(webpack@5.97.1))
     optionalDependencies:
-      '@swc/core': 1.10.0
+      '@swc/core': 1.10.1
 
-  terser-webpack-plugin@5.3.10(@swc/core@1.10.0)(webpack@5.97.1):
+  terser-webpack-plugin@5.3.10(@swc/core@1.10.1)(webpack@5.97.1):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.37.0
-      webpack: 5.97.1(@swc/core@1.10.0)(webpack-cli@5.1.4)
+      webpack: 5.97.1(@swc/core@1.10.1)(webpack-cli@5.1.4)
     optionalDependencies:
-      '@swc/core': 1.10.0
+      '@swc/core': 1.10.1
 
   terser@5.37.0:
     dependencies:
@@ -9177,7 +9051,7 @@ snapshots:
       import-local: 3.2.0
       interpret: 3.1.1
       rechoir: 0.8.0
-      webpack: 5.97.1(@swc/core@1.10.0)(webpack-cli@5.1.4)
+      webpack: 5.97.1(@swc/core@1.10.1)(webpack-cli@5.1.4)
       webpack-merge: 5.10.0
 
   webpack-merge@5.10.0:
@@ -9194,7 +9068,7 @@ snapshots:
 
   webpack-sources@3.2.3: {}
 
-  webpack@5.97.1(@swc/core@1.10.0)(webpack-cli@5.1.4(webpack@5.97.1)):
+  webpack@5.97.1(@swc/core@1.10.1)(webpack-cli@5.1.4(webpack@5.97.1)):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.6
@@ -9216,7 +9090,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(@swc/core@1.10.0)(webpack@5.97.1(@swc/core@1.10.0)(webpack-cli@5.1.4(webpack@5.97.1)))
+      terser-webpack-plugin: 5.3.10(@swc/core@1.10.1)(webpack@5.97.1(@swc/core@1.10.1)(webpack-cli@5.1.4(webpack@5.97.1)))
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     optionalDependencies:
@@ -9226,7 +9100,7 @@ snapshots:
       - esbuild
       - uglify-js
 
-  webpack@5.97.1(@swc/core@1.10.0)(webpack-cli@5.1.4):
+  webpack@5.97.1(@swc/core@1.10.1)(webpack-cli@5.1.4):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.6
@@ -9248,7 +9122,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(@swc/core@1.10.0)(webpack@5.97.1)
+      terser-webpack-plugin: 5.3.10(@swc/core@1.10.1)(webpack@5.97.1)
       watchpack: 2.4.2
       webpack-sources: 3.2.3
     optionalDependencies:

@@ -12,9 +12,9 @@ import type {
   default as ReleasePleaseConfig,
 } from "@condu/schema-types/schemas/releasePleaseConfig.gen.js";
 import type { GithubWorkflow } from "@condu/schema-types/schemas/githubWorkflow.gen.js";
-import type { ReadonlyConduPackageEntry } from "@condu/cli/commands/apply/ConduPackageEntry.js";
+import type { ReadonlyConduPackageEntry } from "condu/commands/apply/ConduPackageEntry.js";
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface FileNameToSerializedTypeMapping {
     ".config/release-please/config.json": ReleasePleaseConfig;
     ".github/workflows/release-please.yml": GithubWorkflow;

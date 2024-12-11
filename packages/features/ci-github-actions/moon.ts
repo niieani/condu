@@ -14,7 +14,7 @@ import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
 import { mapValues } from "remeda";
 import type { GithubAction } from "@condu/schema-types/schemas/githubAction.gen.js";
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface FileNameToSerializedTypeMapping {
     ".github/actions/moon-ci-setup/action.yml": GithubAction;
     ".github/workflows/moon-ci.yml": GithubWorkflow;

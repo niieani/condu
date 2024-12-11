@@ -8,7 +8,7 @@ interface PnpmFeatureConfig {
   npmrc?: PnpmConfig;
 }
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface PeerContext {
     pnpm: Required<PnpmFeatureConfig>;
   }

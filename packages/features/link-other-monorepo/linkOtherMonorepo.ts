@@ -11,7 +11,7 @@ interface LinkingConfig {
   )[];
 }
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface PeerContext {
     linkOtherMonorepo: LinkingConfig;
   }

@@ -30,7 +30,7 @@ const plugin = {
             childProcess.on("error", reject);
             childProcess.on("exit", (code, signal) => {
               if (code === 0) {
-                resolve();
+                resolve(undefined);
               } else {
                 reject(new Error(`Process exited with code ${code}`));
               }
@@ -46,9 +46,9 @@ const plugin = {
           // const pathToConduCli = isInternalCondu
           //   ? path.join(
           //       project.cwd,
-          //       "build/packages/platform/cli/main.bundle.js",
+          //       "build/packages/platform/condu/main.bundle.js",
           //     )
-          //   : "@condu/cli";
+          //   : "condu";
           // const { apply } = await import(pathToConduCli);
           // await apply();
         },

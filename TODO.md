@@ -80,7 +80,8 @@
 - [x] re-evaluate the API for writing features - there's a lot of nesting, can it be simplified a bit?
   - also need a way to hook into each others features (i.e. modify behavior if other features are enabled)
   - maybe simply hooking into the outputted files (if they exist?), creating kind of a pipeline of file transformations?
-- [ ] fix imports so that the only thing you need to import from for features is 'condu'
+- [x] fix imports so that the only thing you need to import from for features is 'condu'
+- [ ] why doesn't the correct TS project get loaded in .config/condu?
 - [ ] exclude generated files from TS build
 - [ ] feature to autogenerate 'exports' in package.json - both for published and non-published packages
 - [ ] add `repository`, `homepage` (fallback to repo) and `author`, `license` and `contributors` info to published package.json based on the root package.json
@@ -109,6 +110,7 @@
 - [ ] better logger (potentially https://github.com/unjs/consola)
 - [ ] `condu init` can be used to apply changes to an existing project, in which case it will infer certain things from the existing project, like the package manager
 - [ ] maybe even basic config like 'node' in ConduConfig should be its own feature with peerContext?
+- [ ] auto-deprecate packages that have been removed from the repo
 - [ ] look into supporting [unimport](https://github.com/unjs/unimport)
 - [ ] maybe use [nypm](https://github.com/unjs/nypm) to install/remove packages? or maybe just using [tinyexec](https://github.com/tinylibs/tinyexec) is [enough](https://github.com/unjs/nypm/blob/c2dce581644f1d9b8e11af587f2ba5114f24cdd2/src/_utils.ts#L62-L67)
 - [ ] should features be able to contribute CLI command functionality via defineFeature?

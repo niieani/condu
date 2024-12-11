@@ -5,7 +5,6 @@
   "dependencies": {
     "@condu/core": "workspace:^",
     "@condu/schema-types": "workspace:^",
-    "@condu/types": "workspace:^",
     "@moonrepo/types": "^1.21.0"
   },
   "peerDependencies": {

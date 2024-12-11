@@ -1,8 +1,5 @@
 import { Command, Option } from "clipanion";
-import {
-  CONDU_CONFIG_FILE_NAME,
-  CONDU_CONFIG_DIR_NAME,
-} from "@condu/types/constants.js";
+import { CONDU_CONFIG_FILE_NAME, CONDU_CONFIG_DIR_NAME } from "../constants.js";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import * as childProcess from "node:child_process";

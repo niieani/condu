@@ -6,7 +6,6 @@
   "type": "module",
   "dependencies": {
     "@condu/schema-types": "workspace:^",
-    "@condu/types": "workspace:^",
     "@pnpm/read-project-manifest": "^900.0.1",
     "@pnpm/types": "^1000.0.0",
     "@pnpm/workspace.read-manifest": "^900.0.1",

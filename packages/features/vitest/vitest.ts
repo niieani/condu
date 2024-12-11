@@ -13,7 +13,7 @@ export const vitest = (opts: {} = {}) =>
         },
       }),
     }),
-    defineRecipe(condu, peerContext) {
+    defineRecipe(condu) {
       condu.root.ensureDependency("vitest");
     },
   });

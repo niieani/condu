@@ -17,7 +17,7 @@ const defaultConfig: EditorConfig = {
   },
 };
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface PeerContext {
     editorconfig: {
       sections: Record<string, EditorConfigSection>;

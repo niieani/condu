@@ -1,30 +1,13 @@
 {
   "name": "condu",
   "version": "0.1.7",
-  "license": "MIT",
-  "sideEffects": true,
   "type": "module",
   "bin": {
-    "condu": "cli.ts"
-  },
-  "exports": {
-    ".": {
-      "import": "./main.ts",
-      "default": "./main.ts"
-    },
-    "./configure.js": {
-      "import": "./configure.js",
-      "default": "./configure.js"
-    },
-    "./defineFeature.js": {
-      "import": "./defineFeature.js",
-      "default": "./defineFeature.js"
-    }
+    "condu": "bin.ts"
   },
   "dependencies": {
-    "@condu/cli": "workspace:^",
+    "@condu/core": "workspace:^",
     "@condu/schema-types": "workspace:^",
-    "@condu/types": "workspace:^",
     "@condu/update-specifiers": "workspace:^",
     "@condu/workspace-utils": "workspace:^",
     "@pnpm/catalogs.config": "^900.0.1",
@@ -37,19 +20,28 @@
     "@pnpm/types": "^900.0.0",
     "@pnpm/workspace.find-packages": "^900.0.1",
     "@pnpm/workspace.read-manifest": "^900.0.1",
-    "spdx-license-list": "^6.9.0"
+    "@types/which": "^3.0.4",
+    "async-memoize-one": "^1.1.8",
+    "clipanion": "^4.0.0-rc.3",
+    "comment-json": "^4.2.4",
+    "print-diff": "^2.0.0",
+    "remeda": "^2.15.0",
+    "sort-package-json": "^2.10.0",
+    "spdx-license-list": "^6.9.0",
+    "ts-pattern": "^5.2.0",
+    "type-fest": "^4.30.0",
+    "which": "^5.0.0",
+    "yaml": "^2.5.0"
   },
   "devDependencies": {
-    "@swc/core": "^1.10.0",
-    "@types/which": "^3.0.4",
+    "@swc/core": "^1.10.1",
     "swc-loader": "^0.2.6",
+    "vitest": "^2.0.4",
     "webpack": "^5.97.1",
     "webpack-cli": "^5.1.4",
     "webpack-merge": "^6.0.1"
   },
-  "//dependencies": "these need to inherit/include all dependencies from @condu/cli",
   "condu": {
-    "initialDevelopment": true,
     "managedDependencies": {
       "webpack": "presence",
       "webpack-cli": "presence",

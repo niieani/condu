@@ -28,7 +28,7 @@ interface SummarizerOptions extends FeatureOptions {
   recursive?: boolean;
 }
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface PeerContext {
     gptSummarizer: Required<FeaturePeerContext>;
   }

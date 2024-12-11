@@ -63,9 +63,8 @@ export default configure((pkg) => ({
     libraryBundle({
       id: "cli",
       package: "condu",
-      entry: "main.ts",
+      entry: "index.ts",
       moduleTarget: "esm",
-      binName: "condu",
     }),
     eslint({
       importAdditionalConfigFrom: "./eslint.ts",

@@ -10,7 +10,7 @@ import noExtraneousDependencies, {
   type Options,
 } from "./rules/no-extraneous-dependencies.js";
 import unicornPlugin from "eslint-plugin-unicorn";
-import { CONDU_CONFIG_DIR_NAME } from "@condu/types/constants.js";
+import { CONDU_CONFIG_DIR_NAME } from "condu";
 import type { ContextProvidedToEslintConfig } from "./types.js";
 
 export const getConfigs = (

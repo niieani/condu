@@ -5,7 +5,7 @@ export interface IgnoreConfig {
   ignore?: string[];
 }
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface PeerContext {
     gitignore: Required<IgnoreConfig>;
   }

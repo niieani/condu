@@ -11,7 +11,6 @@
     "condu": "workspace:^"
   },
   "dependencies": {
-    "@condu/types": "workspace:^",
     "@pnpm/config": "^900.0.1",
     "@pnpm/logger": "^900.0.0",
     "@types/ini": "^4.1.1",

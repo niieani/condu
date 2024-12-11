@@ -7,7 +7,7 @@ import {
   DEFAULT_PACKAGE_MANAGER,
   DEFAULT_SOURCE_EXTENSIONS,
   DEFAULT_GENERATED_SOURCE_FILE_NAME_SUFFIXES,
-} from "@condu/types/constants.js";
+} from "./constants.js";
 import type {
   ConduConfigWithInferredValues,
   LoadConfigOptions,
@@ -65,9 +65,7 @@ export async function loadConduProject({
     /* webpackIgnore: true */
     configFilePath
   ).catch((error) => {
-    console.error(
-      `Unable to load the ${CORE_NAME} config file:\n${error.message}`,
-    );
+    console.error(`Unable to load the ${CORE_NAME} config file:\n`, error);
   });
 
   const configFn: ConduConfigDefaultExport | undefined =

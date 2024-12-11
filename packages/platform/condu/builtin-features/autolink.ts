@@ -1,8 +1,5 @@
 import type { GenerateFileOptions } from "../commands/apply/FileManager.js";
-import {
-  CONDU_CONFIG_FILE_NAME,
-  CONDU_CONFIG_DIR_NAME,
-} from "@condu/types/constants.js";
+import { CONDU_CONFIG_FILE_NAME, CONDU_CONFIG_DIR_NAME } from "../constants.js";
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
 import { match, P } from "ts-pattern";
@@ -14,7 +11,7 @@ export interface AutoLinkConfig {
   ignore?: (string | RegExp)[];
 }
 
-declare module "@condu/types/extendable.js" {
+declare module "../extendable.js" {
   interface PeerContext {
     autolink: Required<AutoLinkConfig>;
   }

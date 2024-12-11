@@ -1,10 +1,7 @@
 import type { CONFIGURED } from "./configure.js";
 import type { FeatureDefinition } from "../commands/apply/conduApiTypes.js";
 import type { ConduPackageEntry } from "../commands/apply/ConduPackageEntry.js";
-import type {
-  GlobalPeerContext,
-  PeerContext,
-} from "@condu/types/extendable.js";
+import type { GlobalPeerContext, PeerContext } from "../extendable.js";
 import type { AutoLinkConfig } from "../builtin-features/autolink.js";
 
 export interface Conventions {

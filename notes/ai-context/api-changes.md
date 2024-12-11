@@ -62,7 +62,7 @@ const defaultConfig: EditorConfig = {
   },
 };
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface PeerContext {
     editorconfig: {
       sections: Record<string, EditorConfigSection>;
@@ -204,7 +204,7 @@ export interface EslintFeaturePeerContext extends Required<EslintFeatureInput> {
   importAdditionalConfigFrom?: string;
 }
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface PeerContext {
     eslint: EslintFeaturePeerContext;
   }
@@ -373,7 +373,7 @@ export interface IgnoreConfig {
   ignore?: string[];
 }
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface PeerContext {
     gitignore: Required<IgnoreConfig>;
   }
@@ -550,7 +550,7 @@ const defaultSuggestedSettings: VscodeSettingsWorkspace = {
   "typescript.tsdk": "node_modules/typescript/lib",
 };
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface PeerContext {
     vscode: VSCodePeerContext;
   }
@@ -859,7 +859,7 @@ import type {
 import type { GithubAction } from "@condu/schema-types/schemas/githubAction.gen.js";
 import { getYamlParseAndStringify } from "@condu/cli/commands/apply/defaultParseAndStringify.js";
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface FileNameToSerializedTypeMapping {
     ".github/actions/moon-ci-setup/action.yml": GithubAction;
     ".github/workflows/moon-ci.yml": GithubWorkflow;

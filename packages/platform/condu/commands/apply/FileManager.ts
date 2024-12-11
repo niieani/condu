@@ -23,11 +23,11 @@ import {
   IS_INTERACTIVE,
   FILE_STATE_PATH,
   CURRENT_CACHE_VERSION,
-} from "@condu/types/constants.js";
+} from "../../constants.js";
 import type {
   FileNameToSerializedTypeMapping,
   GlobalFileAttributes,
-} from "@condu/types/extendable.js";
+} from "../../extendable.js";
 
 // types
 export interface FileDestination {

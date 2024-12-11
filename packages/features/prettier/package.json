@@ -6,9 +6,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
-    "@condu/types": "workspace:^"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "condu": "workspace:^",
     "prettier": "^3.3.3"

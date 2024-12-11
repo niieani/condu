@@ -10,7 +10,7 @@ const defaultSuggestedSettings: VscodeSettingsWorkspace = {
   "typescript.tsdk": "node_modules/typescript/lib",
 };
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface PeerContext {
     vscode: VSCodePeerContext;
   }

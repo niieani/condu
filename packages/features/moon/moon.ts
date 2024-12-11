@@ -15,7 +15,7 @@ import type {
 import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
 import { defaultToolchain } from "./defaultToolchain.js";
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface PeerContext {
     moon: MoonPeerContext;
   }

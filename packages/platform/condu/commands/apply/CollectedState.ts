@@ -8,11 +8,8 @@ import type {
   ManagedDependencyConfig,
 } from "@condu/workspace-utils/packageJsonTypes.js";
 import type { FileManager, ReadonlyFile } from "./FileManager.js";
-import type {
-  GlobalFileAttributes,
-  PeerContext,
-} from "@condu/types/extendable.js";
-import type { Immutable } from "@condu/types/tsUtils.js";
+import type { GlobalFileAttributes, PeerContext } from "../../extendable.js";
+import type { Immutable } from "../../tsUtils.js";
 import type { PartialTaskConfig } from "@moonrepo/types";
 
 export interface CollectedState {

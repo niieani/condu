@@ -16,7 +16,7 @@ export interface EslintFeaturePeerContext extends Required<EslintFeatureInput> {
   importAdditionalConfigFrom?: string;
 }
 
-declare module "@condu/types/extendable.js" {
+declare module "condu" {
   interface PeerContext {
     eslint: EslintFeaturePeerContext;
   }

@@ -1,3 +1,3 @@
-import { dummyDep } from "@condu-test/dummy-dep/main.js";
+import { dummyDep } from "@condu/test-dummy-dep/main.js";
 
 export const dummy = `dummy changed ${dummyDep}`;
