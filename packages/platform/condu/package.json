@@ -52,10 +52,7 @@
   },
   "publishDependencies": [
     "@pnpm",
-    "@condu/update-specifiers",
-    "@condu/types",
-    "@condu/workspace-utils",
-    "@condu/schema-types",
+    "@condu",
     "spdx-license-list"
   ]
 }

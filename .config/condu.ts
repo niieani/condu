@@ -12,7 +12,7 @@ import { editorconfig } from "@condu-feature/editorconfig/editorconfig.js";
 import { prettier } from "@condu-feature/prettier/prettier.js";
 import { gptSummarizer } from "@condu-feature/gpt-summarizer/gptSummarizer.js";
 import { releasePlease } from "@condu-feature/release-please/release-please.js";
-import { configure } from "condu";
+import { configure, defineFeature } from "condu";
 
 export default configure((pkg) => ({
   engine: "bun",
@@ -65,6 +65,23 @@ export default configure((pkg) => ({
       package: "condu",
       entry: "index.ts",
       moduleTarget: "esm",
+    }),
+    defineFeature("bin", {
+      defineRecipe(condu) {
+        condu.in({ name: "condu" }).modifyPublishedPackageJson((pkg) => ({
+          ...pkg,
+          bin: { condu: "bin.js" },
+          exports: {
+            ".": {
+              source: "./index.ts",
+              types: "./index.d.ts",
+              bun: "./index.bundle.js",
+              import: "./index.bundle.js",
+              default: "./index.bundle.js",
+            },
+          },
+        }));
+      },
     }),
     eslint({
       importAdditionalConfigFrom: "./eslint.ts",

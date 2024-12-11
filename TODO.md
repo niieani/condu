@@ -81,6 +81,9 @@
   - also need a way to hook into each others features (i.e. modify behavior if other features are enabled)
   - maybe simply hooking into the outputted files (if they exist?), creating kind of a pipeline of file transformations?
 - [x] fix imports so that the only thing you need to import from for features is 'condu'
+- [ ] ability to add simple functional recipe-only features (condu) => condu.in('package').modifyPublishedPackageJson()
+- [ ] consider changing condu api to add prefixes e.g. `condu.in('package').file.create(...)`, `condu.packageJson.merge({...})`
+- [ ] support shorthand for filtering packages by name: `condu.in('package')`
 - [ ] why doesn't the correct TS project get loaded in .config/condu?
 - [ ] exclude generated files from TS build
 - [ ] feature to autogenerate 'exports' in package.json - both for published and non-published packages
