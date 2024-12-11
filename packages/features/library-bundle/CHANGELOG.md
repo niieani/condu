@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.8](https://github.com/niieani/condu/compare/@condu-feature/library-bundle@0.1.7...@condu-feature/library-bundle@0.1.8) (2024-12-11)
+
+
+### Bug Fixes
+
+* keep cli separate from main export ([4d9483f](https://github.com/niieani/condu/commit/4d9483fc9079182b6dae257b2beccdd00773f16f))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * peerDependencies
+    * condu bumped to 0.1.8
+
 ## [0.1.7](https://github.com/niieani/condu/compare/@condu-feature/library-bundle@0.1.6...@condu-feature/library-bundle@0.1.7) (2024-10-12)
 
 

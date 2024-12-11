@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.0.3](https://github.com/niieani/condu/compare/@condu-feature/prettier@0.0.2...@condu-feature/prettier@0.0.3) (2024-12-11)
+
+
+### Bug Fixes
+
+* do not format prettier on CI ([19637d2](https://github.com/niieani/condu/commit/19637d2ad5531ccc0a7d8b69516538f8a604b742))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * peerDependencies
+    * condu bumped to 0.1.8
+
 ## [0.0.2](https://github.com/niieani/condu/compare/@condu-feature/prettier@0.0.1...@condu-feature/prettier@0.0.2) (2024-10-12)
 
 
