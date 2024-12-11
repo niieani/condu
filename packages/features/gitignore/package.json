@@ -1,6 +1,6 @@
 {
   "name": "@condu-feature/gitignore",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "type": "module",
   "dependencies": {
     "remeda": "^2.15.0"

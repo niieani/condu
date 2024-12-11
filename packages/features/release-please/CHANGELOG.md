@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.8](https://github.com/niieani/condu/compare/@condu-feature/release-please@0.1.7...@condu-feature/release-please@0.1.8) (2024-12-11)
+
+
+### Bug Fixes
+
+* small fixes ([ba55654](https://github.com/niieani/condu/commit/ba556544a3bda8770009202d64f1f25ee99fb19c))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * peerDependencies
+    * condu bumped to 0.1.8
+
 ## [0.1.7](https://github.com/niieani/condu/compare/@condu-feature/release-please@0.1.6...@condu-feature/release-please@0.1.7) (2024-10-12)
 
 
