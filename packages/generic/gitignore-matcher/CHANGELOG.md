@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.2](https://github.com/niieani/condu/compare/gitignore-matcher@0.0.1...gitignore-matcher@0.0.2) (2024-12-21)
+
+
+### Features
+
+* skip release if up-to-date and add provenance ([26347b7](https://github.com/niieani/condu/commit/26347b753f62a619d86222ad018a0e01d1a55975))
+
 ## 0.0.1 (2024-12-11)
 
 

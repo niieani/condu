@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.0.4](https://github.com/niieani/condu/compare/@condu-feature/editorconfig@0.0.3...@condu-feature/editorconfig@0.0.4) (2024-12-21)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * peerDependencies
+    * condu bumped to 0.1.9
+
 ## [0.0.3](https://github.com/niieani/condu/compare/@condu-feature/editorconfig@0.0.2...@condu-feature/editorconfig@0.0.3) (2024-12-11)
 
 
