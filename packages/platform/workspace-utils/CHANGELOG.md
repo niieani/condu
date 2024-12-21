@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.7](https://github.com/niieani/condu/compare/@condu/workspace-utils@0.1.6...@condu/workspace-utils@0.1.7) (2024-12-21)
+
+
+### Bug Fixes
+
+* move constants to separate file ([f15e47a](https://github.com/niieani/condu/commit/f15e47a35768012ec47ccec2f6f19af1cb5b611d))
+
 ## [0.1.6](https://github.com/niieani/condu/compare/@condu/workspace-utils@0.1.5...@condu/workspace-utils@0.1.6) (2024-10-12)
 
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.0.7](https://github.com/niieani/condu/compare/@condu-feature/link-other-monorepo@0.0.6...@condu-feature/link-other-monorepo@0.0.7) (2024-12-21)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 0.1.7
+    * condu bumped to 0.1.10
+
 ## [0.0.6](https://github.com/niieani/condu/compare/@condu-feature/link-other-monorepo@0.0.5...@condu-feature/link-other-monorepo@0.0.6) (2024-12-21)
 
 
