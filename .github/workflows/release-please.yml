@@ -16,6 +16,7 @@ permissions:
   contents: write
   pull-requests: write
   attestations: write
+  id-token: write
 jobs:
   release-please:
     name: Get packages to release & update release-please PRs

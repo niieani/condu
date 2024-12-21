@@ -11,8 +11,8 @@
     "@pnpm/workspace.read-manifest": "^900.0.1",
     "fast-glob": "^3.3.2",
     "slash": "^5.1.0",
-    "sort-package-json": "^2.10.0",
+    "sort-package-json": "^2.12.0",
     "toposource": "^1.2.0",
-    "yaml": "^2.5.0"
+    "yaml": "^2.6.1"
   }
 }
