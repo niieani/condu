@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.7](https://github.com/niieani/condu/compare/@condu-preset/monorepo@0.0.6...@condu-preset/monorepo@0.0.7) (2024-12-21)
+
+
+### Bug Fixes
+
+* correct monorepo preset ([4d87bda](https://github.com/niieani/condu/commit/4d87bda8b6d439f0f913d55e256ffc34f9e0f030))
+
 ## [0.0.6](https://github.com/niieani/condu/compare/@condu-preset/monorepo@0.0.5...@condu-preset/monorepo@0.0.6) (2024-12-21)
 
 
