@@ -118,7 +118,7 @@ export default configure((pkg) => ({
     moon(),
     moonCi(),
     releasePlease({
-      initialVersion: "0.0.1",
+      initialVersion: "1.0.0",
       configOverrides: {
         "bootstrap-sha": "487dfcb00e029d0c8f483f41d0de82a992885f3d",
       },
