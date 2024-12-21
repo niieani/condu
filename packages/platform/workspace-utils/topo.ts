@@ -25,13 +25,7 @@ import type {
 import { readProjectManifest } from "@pnpm/read-project-manifest";
 import { sortPackageJson } from "sort-package-json";
 import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
-
-const defaultScopes = [
-  "dependencies",
-  "devDependencies",
-  "peerDependencies",
-  "optionalDependencies",
-];
+import { DEFAULT_IGNORE, DEFAULT_SCOPES } from "./constants.js";
 
 export const getPackages = async (
   options: IGetWorkspaceOptions,
@@ -124,7 +118,7 @@ export const topo = (
   packages: readonly IPackageEntry[],
   {
     depFilter = (_) => true,
-    scopes = defaultScopes,
+    scopes = DEFAULT_SCOPES,
   }: Pick<ITopoOptions, "depFilter"> & { scopes?: string[] } = {},
 ) => {
   const { edges, nodes } = getGraph(
@@ -204,7 +198,7 @@ export const extractWorkspaces = async (root: IPackageEntry) =>
 export const getGraph = (
   manifests: ConduPackageJson[],
   depFilter: ITopoOptionsNormalized["depFilter"],
-  scopes = defaultScopes,
+  scopes = DEFAULT_SCOPES,
 ): {
   nodes: string[];
   edges: [dependencyName: string, packageName: string][];
@@ -237,8 +231,6 @@ export const getGraph = (
     nodes,
   };
 };
-
-const DEFAULT_IGNORE = ["**/node_modules/**", "**/bower_components/**"];
 
 // deterministically sort the packages by name
 export const deterministicSort = <T>(a: T, b: T) =>
@@ -285,7 +277,7 @@ export const traverseQueue = async ({
 export const traverseDeps = async ({
   packages,
   pkg: parent,
-  scopes = defaultScopes,
+  scopes = DEFAULT_SCOPES,
   cb,
 }: {
   pkg: IPackageEntry;
@@ -314,7 +306,7 @@ export const traverseDeps = async ({
 export const iterateDeps = (
   manifest: ConduPackageJson,
   cb: (ctx: IDepEntry & { deps: IPackageDeps }) => any,
-  scopes = defaultScopes,
+  scopes = DEFAULT_SCOPES,
 ) => {
   for (const scope of scopes) {
     const deps = manifest[scope as keyof ConduPackageJson] as IPackageDeps;
