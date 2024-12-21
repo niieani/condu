@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.0.5](https://github.com/niieani/condu/compare/@condu-feature/prettier@0.0.4...@condu-feature/prettier@0.0.5) (2024-12-21)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * peerDependencies
+    * condu bumped to 0.1.10
+
 ## [0.0.4](https://github.com/niieani/condu/compare/@condu-feature/prettier@0.0.3...@condu-feature/prettier@0.0.4) (2024-12-21)
 
 

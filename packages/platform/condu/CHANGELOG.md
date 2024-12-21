@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.10](https://github.com/niieani/condu/compare/condu@0.1.9...condu@0.1.10) (2024-12-21)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 0.1.7
+    * @condu/update-specifiers bumped to 0.1.7
+    * @condu/workspace-utils bumped to 0.1.7
+
 ## [0.1.9](https://github.com/niieani/condu/compare/condu@0.1.8...condu@0.1.9) (2024-12-21)
 
 
