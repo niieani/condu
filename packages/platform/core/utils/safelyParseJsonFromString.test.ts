@@ -57,4 +57,16 @@ describe("safelyParseLastJsonFromString", () => {
     const expectedOutput = { third: "value" };
     expect(safelyParseLastJsonFromString(input)).toEqual(expectedOutput);
   });
+
+  it("should parse a simple JSON string", () => {
+    const input = '"value"';
+    const expected = "value";
+    expect(safelyParseLastJsonFromString(input)).toEqual(expected);
+  });
+
+  it("should parse a simple JSON number", () => {
+    const input = "123";
+    const expected = 123;
+    expect(safelyParseLastJsonFromString(input)).toEqual(expected);
+  });
 });

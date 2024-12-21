@@ -113,7 +113,11 @@
 - [ ] better logger (potentially https://github.com/unjs/consola)
 - [ ] `condu init` can be used to apply changes to an existing project, in which case it will infer certain things from the existing project, like the package manager
 - [ ] maybe even basic config like 'node' in ConduConfig should be its own feature with peerContext?
+- [ ] when using conventional commits, set set `github.copilot.chat.commitMessageGeneration.instructions`
+- [ ] solve development mode linking? https://devblogs.microsoft.com/typescript/announcing-typescript-5-7/#path-rewriting-for-relative-paths
+- [ ] perhaps bake-in a test tsconfig configuration using project references? see [this section](https://devblogs.microsoft.com/typescript/announcing-typescript-5-7/#searching-ancestor-configuration-files-for-project-ownership) of the article
 - [ ] auto-deprecate packages that have been removed from the repo
+- [ ] use `module.enableCompileCache()` ([link](https://github.com/nodejs/node/pull/54501))
 - [ ] look into supporting [unimport](https://github.com/unjs/unimport)
 - [ ] maybe use [nypm](https://github.com/unjs/nypm) to install/remove packages? or maybe just using [tinyexec](https://github.com/tinylibs/tinyexec) is [enough](https://github.com/unjs/nypm/blob/c2dce581644f1d9b8e11af587f2ba5114f24cdd2/src/_utils.ts#L62-L67)
 - [ ] should features be able to contribute CLI command functionality via defineFeature?

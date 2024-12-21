@@ -124,6 +124,8 @@ export const releasePlease = ({
             "pull-requests": "write",
             // allows NPM release with attestations:
             attestations: "write",
+            // allows NPM publishing with provenance:
+            "id-token": "write",
           },
           jobs: {
             "release-please": {
@@ -161,7 +163,6 @@ export const releasePlease = ({
                 },
               ],
             },
-            // TODO: the next steps should be NPM publishing with lerna
             release: {
               name: "Release packages to NPM",
               "runs-on": "ubuntu-latest",

@@ -104,6 +104,16 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
         ...publishConfig,
         // directory: getRelativePublishConfigDirectory(project, pkg),
       },
+      // if we're in Github Actions, let's set the repository based on the environment vars:
+      repository:
+        publishManifest.repository ??
+        (process.env["GITHUB_REPOSITORY"]
+          ? {
+              type: "git",
+              url: `git+${process.env["GITHUB_SERVER_URL"]}/${process.env["GITHUB_REPOSITORY"]}.git`,
+              directory: this.relPath,
+            }
+          : publishManifest.repository),
       exports: {
         ...entrySources,
         "./*.json": "./*.json",

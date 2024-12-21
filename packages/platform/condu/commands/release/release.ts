@@ -230,38 +230,48 @@ export async function prepareAndReleaseDirectoryPackages({
 
     // publish:
     if (npmTag) {
+      // check for existing version on npm
+      const existingLatestVersion = await executeNpmCommand({
+        npmArgs: [
+          "show",
+          "--json",
+          `${publishManifest.name}@${npmTag}`,
+          "version",
+        ],
+        packageBuildDir,
+        parseJson: "always",
+      });
+
+      if (existingLatestVersion.json === publishManifest.version) {
+        console.log(
+          `${publishManifest.name}@${publishManifest.version} previously published to npm, skipping...`,
+        );
+        // TODO: check if the published version is exactly the same, otherwise throw an error
+        continue;
+      }
+
+      // TODO: make this configurable
+      const supportsProvenance =
+        publishManifest.publishConfig?.access === "public" &&
+        typeof publishManifest.repository === "object" &&
+        publishManifest.repository?.url?.includes("https://github.com/");
+
       // TODO: add support for --provenance https://docs.npmjs.com/generating-provenance-statements
       // needs to detect if "repository" is set in package.json, and propagate it to other package.jsons
       // if it is matching github or gitlab, then we can auto-enable it here
-      const publishProcess = spawn(
-        "npm",
-        [
+      const { exitCode, stderr, json } = await executeNpmCommand({
+        npmArgs: [
           "publish",
           "--json",
           "--tag",
           npmTag,
+          ...(supportsProvenance ? ["--provenance"] : []),
           ...(dryRun ? ["--dry-run"] : []),
         ],
-        { cwd: packageBuildDir },
-      );
-      let stdout = "";
-      publishProcess.stdout.on("data", (data) => {
-        stdout += data;
+        packageBuildDir,
       });
-      let stderr = "";
-      publishProcess.stderr.on("data", (data) => {
-        stderr += data;
-      });
-      publishProcess.stdout.pipe(process.stdout);
-      publishProcess.stderr.pipe(process.stderr);
-      const exitCode = await new Promise<number>((resolve) =>
-        publishProcess.on("exit", resolve),
-      );
       if (exitCode !== 0) {
-        const json =
-          safelyParseLastJsonFromString(stderr) ||
-          safelyParseLastJsonFromString(stdout);
-        if (json && "error" in json) {
+        if (typeof json === "object" && "error" in json) {
           throw new Error(
             `Failed to publish ${publishManifest.name}:\n${JSON.stringify(json.error)}`,
           );
@@ -276,6 +286,37 @@ export async function prepareAndReleaseDirectoryPackages({
 
 const toCompareCase = (str: string) =>
   str.replace(/[^\dA-Za-z]/g, "").toLowerCase();
+
+async function executeNpmCommand({
+  npmArgs,
+  packageBuildDir,
+  parseJson = "on-error",
+}: {
+  npmArgs: string[];
+  packageBuildDir: string;
+  parseJson?: "always" | "on-error" | "never";
+}) {
+  const publishProcess = spawn("npm", npmArgs, { cwd: packageBuildDir });
+  let stdout = "";
+  publishProcess.stdout.on("data", (data) => {
+    stdout += data;
+  });
+  let stderr = "";
+  publishProcess.stderr.on("data", (data) => {
+    stderr += data;
+  });
+  publishProcess.stdout.pipe(process.stdout);
+  publishProcess.stderr.pipe(process.stderr);
+  const exitCode = await new Promise<number>((resolve) =>
+    publishProcess.on("exit", resolve),
+  );
+  const json =
+    parseJson !== "never" && (parseJson === "always" || exitCode !== 0)
+      ? safelyParseLastJsonFromString(stdout) ||
+        safelyParseLastJsonFromString(stderr)
+      : undefined;
+  return { exitCode, stderr, stdout, json };
+}
 
 export async function releasePipeline({
   ci = Boolean(process.env["CI"]),
