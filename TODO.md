@@ -81,6 +81,7 @@
   - also need a way to hook into each others features (i.e. modify behavior if other features are enabled)
   - maybe simply hooking into the outputted files (if they exist?), creating kind of a pipeline of file transformations?
 - [x] fix imports so that the only thing you need to import from for features is 'condu'
+- [ ] auto-map 'exports' in dist package.json - if only one file in directory, use that
 - [ ] ability to add simple functional recipe-only features (condu) => condu.in('package').modifyPublishedPackageJson()
 - [ ] consider changing condu api to add prefixes e.g. `condu.in('package').file.create(...)`, `condu.packageJson.merge({...})`
 - [ ] support shorthand for filtering packages by name: `condu.in('package')`
