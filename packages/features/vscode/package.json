@@ -1,6 +1,6 @@
 {
   "name": "@condu-feature/vscode",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "type": "module",
   "dependencies": {
     "@condu/schema-types": "workspace:^",

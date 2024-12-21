@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/niieani/condu/compare/@condu/core@0.1.5...@condu/core@0.1.6) (2024-12-21)
+
+
+### Features
+
+* skip release if up-to-date and add provenance ([26347b7](https://github.com/niieani/condu/commit/26347b753f62a619d86222ad018a0e01d1a55975))
+
 ## [0.1.5](https://github.com/niieani/condu/compare/@condu/core@0.1.4...@condu/core@0.1.5) (2024-10-12)
 
 
