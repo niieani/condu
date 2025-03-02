@@ -53,13 +53,17 @@ export const typescript = ({
       // TODO: explain pros and cons of composite projects
       // cons: slower, more memory, no incremental builds
       // pros: more responsive to changes in other projects, auto-import suggestions from other projects
+      // can use different configs for different projects
+      // can even use different configs for different files / extensions
 
       const config = condu.project.config;
       const isComposite =
         config.projects && tsconfig?.compilerOptions?.composite !== false;
       const selectedPreset = presets[preset];
-      const includeDir =
+      const rootDir =
         config.projects && !isComposite ? "." : config.conventions.sourceDir;
+      const includeDirs =
+        config.projects && !isComposite ? [".", ".config/**/*"] : [rootDir];
 
       condu.root.ensureDependency("typescript");
 
@@ -103,7 +107,7 @@ export const typescript = ({
           // noUnusedLocals: true,
           // noUnusedParameters: true,
           resolveJsonModule: true,
-          rootDir: includeDir,
+          rootDir,
           outDir: config.conventions.buildDir,
           // mapRoot is overridden because the directory that we publish
           // is not the same as the directory that we compile to
@@ -150,7 +154,7 @@ export const typescript = ({
         ...(isComposite
           ? {}
           : {
-              include: tsconfig?.include ?? [includeDir],
+              include: tsconfig?.include ?? includeDirs,
               exclude: [
                 config.conventions.buildDir,
                 ...(tsconfig?.exclude ?? []),

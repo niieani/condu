@@ -56,7 +56,7 @@ export const moon = (config: MoonConfig = {}) =>
       const sourceExtensionsConcatenated =
         config.conventions.sourceExtensions.join(",");
 
-      condu.root.ensureDependency("@moonrepo/cli");
+      condu.root.ensureDependency("@moonrepo/cli", { built: true });
       condu.root.ignoreFile(".moon/");
       condu.root.ignoreFile(".moon/cache");
       condu.root.ignoreFile(".moon/docker");
@@ -77,11 +77,7 @@ export const moon = (config: MoonConfig = {}) =>
             },
           }),
           node: {
-            version: config.node.version,
             packageManager: config.node.packageManager.name,
-            [config.node.packageManager.name]: {
-              version: config.node.packageManager.version,
-            },
             ...toolchain.node,
           },
         },

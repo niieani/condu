@@ -9,7 +9,7 @@ Keep ALL of your project configuration up to date, and easily override it, using
 
 Setup your repository configuration declaratively, and keep up with best practices.
 
-> WORK IN PROGRESS - NOT YET FUNCTIONAL
+> WORK IN PROGRESS
 
 ---
 

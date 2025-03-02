@@ -47,7 +47,7 @@ export interface IPackageEntryWithWriteManifest<
 }
 export type MinimalManifest = Pick<
   ConduPackageJson,
-  DependencyTargetList | "condu"
+  DependencyTargetList | "condu" | "pnpm" | "packageManager"
 >;
 
 export type ManagedDependencyConfig = "presence" | "version";

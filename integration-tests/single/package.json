@@ -6,34 +6,38 @@
     "postinstall": "test -f .config/condu.ts && condu apply"
   },
   "devDependencies": {
-    "@condu-feature/ci-github-actions": "link:../../packages/features/ci-github-actions",
-    "@condu-feature/condu-packages": "link:../../packages/features/condu-packages",
-    "@condu-feature/eslint": "link:../../packages/features/eslint",
-    "@condu-feature/gitignore": "link:../../packages/features/gitignore",
-    "@condu-feature/link-other-monorepo": "link:../../packages/features/link-other-monorepo",
-    "@condu-feature/moon": "link:../../packages/features/moon",
-    "@condu-feature/pnpm": "link:../../packages/features/pnpm",
-    "@condu-feature/typescript": "link:../../packages/features/typescript",
-    "@condu/core": "link:../../packages/platform/core",
-    "@eslint/js": "^9.11.1",
-    "@moonrepo/cli": "^1.28.3",
-    "@typescript-eslint/eslint-plugin": "^8.8.0",
-    "@typescript-eslint/parser": "^8.8.0",
-    "condu": "link:../../packages/platform/condu",
-    "eslint": "^9.11.1",
-    "eslint-import-resolver-typescript": "^3.6.3",
-    "eslint-plugin-import-x": "^4.3.1",
-    "eslint-plugin-unicorn": "^55.0.0",
-    "tsx": "^4.19.1",
-    "typescript": "^5.6.2"
+    "@condu-feature/ci-github-actions": "link:../../../../packages/features/ci-github-actions",
+    "@condu-feature/condu-packages": "link:../../../../packages/features/condu-packages",
+    "@condu-feature/eslint": "link:../../../../packages/features/eslint",
+    "@condu-feature/gitignore": "link:../../../../packages/features/gitignore",
+    "@condu-feature/link-other-monorepo": "link:../../../../packages/features/link-other-monorepo",
+    "@condu-feature/moon": "link:../../../../packages/features/moon",
+    "@condu-feature/pnpm": "link:../../../../packages/features/pnpm",
+    "@condu-feature/typescript": "link:../../../../packages/features/typescript",
+    "@condu/core": "link:../../../../packages/platform/core",
+    "@eslint/js": "^9.20.0",
+    "@moonrepo/cli": "^1.32.4",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
+    "condu": "link:../../../../packages/platform/condu",
+    "eslint": "^9.20.1",
+    "eslint-import-resolver-typescript": "^3.7.0",
+    "eslint-plugin-import-x": "^4.6.1",
+    "eslint-plugin-unicorn": "^56.0.1",
+    "node-resolve-ts": "^1.0.2",
+    "typescript": "^5.7.3"
   },
   "engines": {
-    "node": "latest"
+    "node": "23.7.0"
   },
   "pnpm": {
+    "onlyBuiltDependencies": [
+      "@moonrepo/cli"
+    ],
     "overrides": {
       "@condu-feature/ci-github-actions": "link:../../packages/features/ci-github-actions",
       "@condu-feature/condu-packages": "link:../../packages/features/condu-packages",
+      "@condu-feature/editorconfig": "link:../../packages/features/editorconfig",
       "@condu-feature/eslint": "link:../../packages/features/eslint",
       "@condu-feature/gitignore": "link:../../packages/features/gitignore",
       "@condu-feature/gpt-summarizer": "link:../../packages/features/gpt-summarizer",
@@ -42,6 +46,7 @@
       "@condu-feature/link-other-monorepo": "link:../../packages/features/link-other-monorepo",
       "@condu-feature/moon": "link:../../packages/features/moon",
       "@condu-feature/pnpm": "link:../../packages/features/pnpm",
+      "@condu-feature/prettier": "link:../../packages/features/prettier",
       "@condu-feature/release-please": "link:../../packages/features/release-please",
       "@condu-feature/typescript": "link:../../packages/features/typescript",
       "@condu-feature/vitest": "link:../../packages/features/vitest",
@@ -56,7 +61,8 @@
       "@condu/update-specifiers": "link:../../packages/platform/update-specifiers",
       "@condu/workspace-utils": "link:../../packages/platform/workspace-utils",
       "@condu/yarn-plugin": "link:../../packages/platform/yarn-plugin",
-      "condu": "link:../../packages/platform/condu"
+      "condu": "link:../../packages/platform/condu",
+      "gitignore-matcher": "link:../../packages/generic/gitignore-matcher"
     }
   },
   "condu": {
@@ -68,7 +74,6 @@
       "@typescript-eslint/parser": "presence",
       "@typescript-eslint/eslint-plugin": "presence",
       "@moonrepo/cli": "presence",
-      "tsx": "presence",
       "@eslint/js": "presence"
     }
   }

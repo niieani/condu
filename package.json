@@ -1,20 +1,20 @@
 {
   "name": "condu-workspace",
-  "license": "MIT",
-  "type": "module",
-  "author": {
-    "name": "Bazyli Brzóska",
-    "email": "npm@invent.life",
-    "url": "https://invent.life"
+  "homepage": "https://github.com/niieani/condu#readme",
+  "bugs": {
+    "url": "https://github.com/niieani/condu/issues"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/niieani/condu"
   },
-  "bugs": {
-    "url": "https://github.com/niieani/condu/issues"
+  "license": "MIT",
+  "author": {
+    "name": "Bazyli Brzóska",
+    "email": "npm@invent.life",
+    "url": "https://invent.life"
   },
-  "homepage": "https://github.com/niieani/condu#readme",
+  "type": "module",
   "workspaces": [
     "packages/features/*",
     "packages/generic/*",
@@ -31,8 +31,8 @@
   },
   "resolutions": {
     "@pnpm/fetching-types@npm:5.0.0": "patch:@pnpm/fetching-types@npm%3A5.0.0#~/.config/patches/@pnpm-fetching-types-npm-5.0.0-d10b510b05.patch",
-    "@typescript-eslint/utils": "8.4.0",
-    "esbuild": "0.23.1",
+    "@typescript-eslint/utils": "8.24.0",
+    "esbuild": "0.25.0",
     "graceful-fs": "4.2.11"
   },
   "devDependencies": {
@@ -50,40 +50,45 @@
     "@condu-feature/typescript": "workspace:*",
     "@condu-feature/vitest": "workspace:*",
     "@condu-feature/vscode": "workspace:*",
-    "@eslint/js": "^9.17.0",
-    "@moonrepo/cli": "^1.30.5",
-    "@moonrepo/types": "^1.22.1",
-    "@swc/core": "^1.10.1",
+    "@eslint/js": "^9.20.0",
+    "@moonrepo/cli": "^1.32.4",
+    "@moonrepo/types": "^1.24.1",
+    "@swc/core": "^1.10.15",
     "@types/eslint": "^9.6.1",
-    "@types/node": "^22.10.2",
-    "@typescript-eslint/eslint-plugin": "^8.18.1",
-    "@typescript-eslint/parser": "^8.18.1",
+    "@types/node": "^22.13.1",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
     "@yarnpkg/types": "^4.0.0",
-    "bun-types": "^1.1.42",
+    "bun-types": "^1.2.2",
     "condu": "workspace:*",
-    "eslint": "^9.17.0",
+    "eslint": "^9.20.1",
     "eslint-import-resolver-typescript": "^3.7.0",
     "eslint-plugin-import-x": "^4.6.1",
     "eslint-plugin-unicorn": "^56.0.1",
-    "prettier": "^3.4.2",
+    "node-resolve-ts": "^1.0.2",
+    "prettier": "^3.5.0",
     "release-please": "npm:release-please-fork@^16.10.5",
-    "rollup": "^4.29.1",
+    "rollup": "^4.34.6",
     "rollup-plugin-swc3": "^0.12.1",
     "swc-loader": "^0.2.6",
     "tslib": "^2.8.1",
     "tsx": "^4.19.2",
-    "typescript": "5.7.2",
-    "vite": "^5.4.11",
-    "vitest": "^2.1.8",
+    "typescript": "5.7.3",
+    "vite": "^6.1.0",
+    "vitest": "^3.0.5",
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1",
     "webpack-merge": "^6.0.1"
   },
-  "packageManager": "pnpm@9.12.1",
+  "packageManager": "pnpm@10.3.0",
   "engines": {
     "node": "22.9.0"
   },
   "pnpm": {
+    "onlyBuiltDependencies": [
+      "@moonrepo/cli",
+      "@swc/core"
+    ],
     "patchedDependencies": {
       "@verdaccio/types@13.0.0-next-8.1": ".config/patches/@verdaccio__types@13.0.0-next-8.1.patch"
     },
@@ -96,7 +101,8 @@
     "managedDependencies": {
       "eslint-plugin-import-x": "presence",
       "@eslint/js": "presence",
-      "prettier": "presence"
+      "prettier": "presence",
+      "node-resolve-ts": "presence"
     }
   }
 }

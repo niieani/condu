@@ -4,6 +4,8 @@ node_modules
 /build/
 # typescript:
 /tsconfig.json
+# pnpm:
+/.npmrc
 # eslint:
 /eslint.config.js
 # moon:

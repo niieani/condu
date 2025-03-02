@@ -4,7 +4,7 @@
   "type": "module",
   "dependencies": {
     "@condu/core": "workspace:^",
-    "@ts-morph/common": "^0.25.0",
-    "ts-morph": "^24.0.0"
+    "@ts-morph/common": "^0.26.1",
+    "ts-morph": "^25.0.1"
   }
 }

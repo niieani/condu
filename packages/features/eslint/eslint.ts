@@ -65,6 +65,12 @@ export const eslint = (config: EslintFeatureConfig = {}) =>
                 "eslint.execArgv": [
                   "--import",
                   import.meta.resolve("tsx/esm").slice("file://".length),
+                  // "--experimental-strip-types",
+                  // "--import",
+                  // // this is a chicken and egg problem, the package might not be installed yet, so we can't resolve it :(
+                  // import.meta
+                  //   .resolve("node-resolve-ts/register")
+                  //   .slice("file://".length),
                 ],
               }
             : {}),
@@ -106,7 +112,7 @@ export default configs;
       condu.root.ensureDependency("@typescript-eslint/parser");
       condu.root.ensureDependency("@typescript-eslint/eslint-plugin");
       if (execWithTsSupport) {
-        condu.root.ensureDependency("tsx");
+        condu.root.ensureDependency("node-resolve-ts");
       }
 
       condu.root.defineTask("eslint", {

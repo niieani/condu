@@ -10,9 +10,14 @@ jobs:
   ci:
     name: Moon CI
     runs-on: ubuntu-latest
+    env:
+      MOON_TOOLCHAIN_FORCE_GLOBALS: "true"
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Moon CI
+      - name: Moon CI Setup
         uses: ./.github/actions/moon-ci-setup
+      - name: Test
+        run: ./node_modules/.bin/moon ci :test
+        shell: bash

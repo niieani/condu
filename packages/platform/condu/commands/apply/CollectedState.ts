@@ -140,6 +140,8 @@ export type DependencyDefinitionInput = {
   readonly rangePrefix?: "^" | "~" | "";
   /** to what extent should this dependency be managed by condu? */
   readonly managed?: ManagedDependencyConfig | false;
+  /** whether the dependency should be built */
+  readonly built?: boolean;
 } & (
   | {
       /** explicit version string to be saved in package json */

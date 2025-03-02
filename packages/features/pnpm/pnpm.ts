@@ -24,11 +24,10 @@ export const pnpm = (config: PnpmFeatureConfig = {}) =>
 
     defineRecipe(condu, { workspace, npmrc }) {
       if (condu.project.projectConventions || workspace) {
+        const conventions = condu.project.projectConventions ?? [];
         condu.root.generateFile("pnpm-workspace.yaml", {
           content: {
-            packages: (condu.project.projectConventions ?? [])
-              .map(({ glob }) => glob)
-              .sort(),
+            packages: conventions.map(({ glob }) => glob).sort(),
             ...workspace,
           } satisfies WorkspaceManifest,
           attributes: {

@@ -81,6 +81,11 @@
   - also need a way to hook into each others features (i.e. modify behavior if other features are enabled)
   - maybe simply hooking into the outputted files (if they exist?), creating kind of a pipeline of file transformations?
 - [x] fix imports so that the only thing you need to import from for features is 'condu'
+- [ ] correct `init` generated monorepo config (generates invalid condu config)
+- [ ] in monorepo preset allow passing `false` for each feature to disable it
+- [ ] perhaps merge object (for package json) by default ([see](https://youtu.be/Pmieyp75SrA?t=491)), rather than replacing it, set undefined if you want to remove keys explicitly
+- [ ] consider using `dependencies` and `prepare` hooks to run condu apply
+- [ ] when a symlink already exists and we say to overwrite, it should remove the symlink first, otherwise for some reason it writes over the symlink target
 - [ ] auto-map 'exports' in dist package.json - if only one file in directory, use that
 - [ ] ability to add simple functional recipe-only features (condu) => condu.in('package').modifyPublishedPackageJson()
 - [ ] consider changing condu api to add prefixes e.g. `condu.in('package').file.create(...)`, `condu.packageJson.merge({...})`
@@ -111,6 +116,7 @@
 
 ## Later:
 
+- [ ] share on https://peerlist.io/
 - [ ] better logger (potentially https://github.com/unjs/consola)
 - [ ] `condu init` can be used to apply changes to an existing project, in which case it will infer certain things from the existing project, like the package manager
 - [ ] maybe even basic config like 'node' in ConduConfig should be its own feature with peerContext?

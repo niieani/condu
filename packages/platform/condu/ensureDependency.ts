@@ -35,9 +35,21 @@ export async function ensureDependencyIn(
     managed = "presence",
     skipIfExists = true,
     rangePrefix = "^",
+    built = false,
     ...opts
   }: DependencyDefinition,
 ): Promise<void> {
+  if (
+    (manifest.pnpm || manifest.packageManager?.startsWith("pnpm@")) &&
+    built
+  ) {
+    const pnpm = (manifest.pnpm ??= {});
+    const onlyBuiltDependencies = (pnpm.onlyBuiltDependencies ??= []);
+    if (!onlyBuiltDependencies.includes(installAsAlias)) {
+      onlyBuiltDependencies.push(installAsAlias);
+    }
+  }
+
   const targetDependencyList = (manifest[list] ||= {});
   const existingVersion = targetDependencyList[installAsAlias];
   if (skipIfExists && existingVersion) {
