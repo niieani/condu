@@ -8,6 +8,7 @@ import { moonCi } from "@condu-feature/ci-github-actions/moon.js";
 import { moon } from "@condu-feature/moon/moon.js";
 import { eslint } from "@condu-feature/eslint/eslint.js";
 import { vscode } from "@condu-feature/vscode/vscode.js";
+import path from "node:path";
 
 export default configure({
   engine: "bun",
@@ -25,7 +26,7 @@ export default configure({
       },
     }),
     linkOtherMonorepo({
-      links: [{ linkedProjectDir: "/Volumes/Projects/Software/toolchain" }],
+      links: [{ linkedProjectDir: path.resolve("../..") }],
     }),
     conduPackages(),
     pnpm(),

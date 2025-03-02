@@ -1,5 +1,6 @@
 import { getWorkspace } from "@condu/workspace-utils/topo.js";
 import * as path from "node:path";
+import * as fs from "node:fs/promises";
 
 export interface LinkingOptions {
   /** the foreign project that you want to link to */
@@ -22,12 +23,14 @@ export async function createPackageOverridesForLinking({
   modifyTargetDir,
 }: LinkingOptions) {
   const project = await getWorkspace({ cwd: linkedProjectDir });
+  // resolve the real path in case it's a symlink, which would cause an incorrect relative path
+  const realTargetPackageDir = await fs.realpath(targetPackageDir);
   const overrideList = Object.values(project.packages).map(
     ({ relPath: dir, manifest }) =>
       [
         manifest.name,
         `${protocol}${path.relative(
-          targetPackageDir,
+          realTargetPackageDir,
           path.join(
             project.root.absPath,
             modifyTargetDir ? modifyTargetDir(dir) : dir,

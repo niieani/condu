@@ -24,19 +24,26 @@ This project is a configuration management library that uses code-based configur
   - `packages/presets` - condu presets
   - `packages/test` - test packages and packages related to testing
 - TypeScript: Strict mode, prefer undefined over null
-- Dependencies: when one package requires another as an internal dependency, use `workspace:*` as its version, then run `pnpm i` to ensure it resolves
+- Dependencies: when one package requires another as an internal dependency, use `workspace:*` as its version, then run `pnpm i` to ensure it resolves. `devDependencies` that are reused for building/testing of many packages should be added to the root package.json of the monorepo, not to the individual package.
+- scripts: Do not modify package.json scripts, global build/test/lint commands listed above can already do this for all and specific packages.
 - Files: .ts source files, build outputs include .js/.cjs/.cts with maps into the `build` dir
 - Configuration management: project dog-foods itself as the configuration manager, so all config files for all tools are managed inside of `.config` and never committed to git. Specifically, `.config/condu.ts` configures things like TypeScript, eslint, pnpm, Github Action workflows, etc. Running `pnpm exec condu apply` re-generates config files based on the config.
 - Project management: the project keeps track of TODOs and remaining work to be done in `TODO.md`
 - Always spell `condu` lowercase
 - Code:
   - Formatting: 2 space indentation, 80 char line limit
-  - Naming: camelCase for variables/functions, PascalCase for classes/types
+  - Naming: camelCase for variables/functions/filenames, PascalCase for classes/types
   - Imports: ESM style, include `.js` extension even when importing `.ts` files, use package name for importing from internal monorepo packages
+  - Node Builtins: use the `node:` prefix when importing, e.g. `node:fs` instead of `fs`.
   - Prefer nullish coalescing `??` operator when safe to use instead of `||`
   - Error Handling: Use Result types or async/await with try/catch
+  - Source files: Source files are put in the package's folder, without an additional `src` subdirectory.
 - key places in the repo:
   - `packages/platform/condu/cli.ts`: CLI command are registered
   - `packages/platform/condu/commands`: Actual command implementation
   - `packages/platform/condu/commands/apply/*`: everything related to `apply`ing the features' recipes - generating and modifying files, adding dependencies, etc.
 - Documentation in `DOCUMENTATION.md`
+
+## Actions to take after modifying the project
+
+1. Stage the changes in git & commit. Use Conventional Commits for semantic commit message. Include expanded message describing the change and the prompt used to create it.

@@ -10,7 +10,7 @@ const runServer = _runServer as any as (
 const __dirname = new URL(".", import.meta.url).pathname;
 const selfPath = path.join(__dirname, ".cache");
 
-export const runVerdaccio = async () => {
+export const runVerdaccio = async ({ port }: { port: number }) => {
   const app = await runServer({
     self_path: selfPath,
     storage: "./storage",
@@ -54,7 +54,7 @@ export const runVerdaccio = async () => {
   const server = await new Promise<
     Server<typeof IncomingMessage, typeof ServerResponse>
   >((resolve) => {
-    const srv = app.listen(4000, () => {
+    const srv = app.listen(port, () => {
       resolve(srv);
     });
   });

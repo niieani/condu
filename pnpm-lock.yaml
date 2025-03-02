@@ -580,6 +580,9 @@ importers:
 
   packages/test/integration:
     dependencies:
+      '@condu/core':
+        specifier: workspace:*
+        version: link:../../platform/core
       '@verdaccio/types':
         specifier: 13.0.0-next-8.1
         version: 13.0.0-next-8.1(patch_hash=317de6718365e092a00080a8c1788b6bf95c3aefaf9948d4be1c5bcc71a0a4c4)
@@ -590,6 +593,9 @@ importers:
       '@types/express':
         specifier: ^5.0.0
         version: 5.0.0
+      '@types/node':
+        specifier: ^22.13.1
+        version: 22.13.1
 
 packages:
 
