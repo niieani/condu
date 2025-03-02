@@ -80,7 +80,14 @@
     "webpack-cli": "^6.0.1",
     "webpack-merge": "^6.0.1"
   },
-  "packageManager": "pnpm@10.3.0",
+  "condu": {
+    "managedDependencies": {
+      "eslint-plugin-import-x": "presence",
+      "@eslint/js": "presence",
+      "prettier": "presence",
+      "node-resolve-ts": "presence"
+    }
+  },
   "engines": {
     "node": "22.9.0"
   },
@@ -96,13 +103,5 @@
     "ignoredOptionalDependencies": [
       "eslint-plugin-import"
     ]
-  },
-  "condu": {
-    "managedDependencies": {
-      "eslint-plugin-import-x": "presence",
-      "@eslint/js": "presence",
-      "prettier": "presence",
-      "node-resolve-ts": "presence"
-    }
   }
 }
