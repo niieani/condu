@@ -24,11 +24,19 @@ This project is a configuration management library that uses code-based configur
   - `packages/presets` - condu presets
   - `packages/test` - test packages and packages related to testing
 - TypeScript: Strict mode, prefer undefined over null
-- Formatting: 2 space indentation, 80 char line limit
-- Naming: camelCase for variables/functions, PascalCase for classes/types
-- Imports: ESM style, include `.js` extension even when importing `.ts` files, use package name for importing from internal monorepo packages
 - Dependencies: when one package requires another as an internal dependency, use `workspace:*` as its version, then run `pnpm i` to ensure it resolves
 - Files: .ts source files, build outputs include .js/.cjs/.cts with maps into the `build` dir
-- Error Handling: Use Result types or async/await with try/catch
-- Configuration management: project dog-foods itself as the configuration manager, so all config files for all tools are managed inside of `.config` and never committed to git. Specifically, `.config/condu.ts` configures things like TypeScript, eslint, pnpm, Github Actions, etc. Running `pnpm exec condu apply` re-generates config files based on the config.
+- Configuration management: project dog-foods itself as the configuration manager, so all config files for all tools are managed inside of `.config` and never committed to git. Specifically, `.config/condu.ts` configures things like TypeScript, eslint, pnpm, Github Action workflows, etc. Running `pnpm exec condu apply` re-generates config files based on the config.
 - Project management: the project keeps track of TODOs and remaining work to be done in `TODO.md`
+- Always spell `condu` lowercase
+- Code:
+  - Formatting: 2 space indentation, 80 char line limit
+  - Naming: camelCase for variables/functions, PascalCase for classes/types
+  - Imports: ESM style, include `.js` extension even when importing `.ts` files, use package name for importing from internal monorepo packages
+  - Prefer nullish coalescing `??` operator when safe to use instead of `||`
+  - Error Handling: Use Result types or async/await with try/catch
+- key places in the repo:
+  - `packages/platform/condu/cli.ts`: CLI command are registered
+  - `packages/platform/condu/commands`: Actual command implementation
+  - `packages/platform/condu/commands/apply/*`: everything related to `apply`ing the features' recipes - generating and modifying files, adding dependencies, etc.
+- Documentation in `DOCUMENTATION.md`
