@@ -1,5 +1,8 @@
 import path from "node:path";
-import type { CollectionContext } from "./CollectedState.js";
+import type {
+  CollectionContext,
+  ConduReadonlyCollectedStateView,
+} from "./CollectedState.js";
 import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
 import type { Pattern } from "ts-pattern";
 import type { ConduProject } from "./ConduProject.js";
@@ -54,24 +57,29 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
     this.#manifest = data.manifest;
   }
 
-  addModification(modifier: PackageJsonModifier, context: CollectionContext) {
-    this.#pendingModifications.push({ modifier, context });
+  addModification(
+    modifier: PackageJsonModifier,
+    context: CollectionContext,
+    globalRegistry: ConduReadonlyCollectedStateView,
+  ) {
+    this.#pendingModifications.push({ modifier, context, globalRegistry });
     this.#managedByFeatures.push(context);
   }
 
   addPublishedModification(
     modifier: PackageJsonModifier,
     context: CollectionContext,
+    globalRegistry: ConduReadonlyCollectedStateView,
   ) {
-    this.#publishedModifications.push({ modifier, context });
+    this.#publishedModifications.push({ modifier, context, globalRegistry });
     this.#publishedManagedByFeatures.push(context);
   }
 
   async applyAndCommit(): Promise<void> {
-    for (const { modifier } of this.#pendingModifications) {
+    for (const { modifier, globalRegistry } of this.#pendingModifications) {
       // for now process sequentially in case the modifier does network calls
       // TODO: consider parallelizing with a cap
-      this.#manifest = await modifier(this.#manifest);
+      this.#manifest = await modifier(this.#manifest, { globalRegistry });
     }
 
     this.#pendingModifications = [];
@@ -156,8 +164,8 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
     };
 
     // process this.#publishedModifications sequentially:
-    for (const { modifier } of this.#publishedModifications) {
-      publishManifest = await modifier(newPackageJson);
+    for (const { modifier, globalRegistry } of this.#publishedModifications) {
+      publishManifest = await modifier(newPackageJson, { globalRegistry });
     }
 
     return publishManifest;
@@ -223,11 +231,14 @@ function getReleaseDependencies(manifest: PackageJson) {
 
 export type PackageJsonModifier = (
   pkg: ConduPackageJson,
+  { globalRegistry }: { globalRegistry: ConduReadonlyCollectedStateView },
 ) => ConduPackageJson | Promise<ConduPackageJson>;
 
+// internal type for storing pending modifications
 export interface PackageJsonModification {
   modifier: PackageJsonModifier;
   context: CollectionContext;
+  globalRegistry: ConduReadonlyCollectedStateView;
 }
 
 export type MatchPackage =

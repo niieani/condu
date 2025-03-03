@@ -12,7 +12,7 @@ import type {
 import {
   type CollectedState,
   type CollectionContext,
-  ConduCollectedStatePublicApi,
+  ConduReadonlyCollectedStateView,
   type CollectedDependency,
 } from "./CollectedState.js";
 import type { ConduProject } from "./ConduProject.js";
@@ -29,6 +29,7 @@ import type { UnionToIntersection } from "type-fest";
 export interface ProjectAndCollectedState {
   project: ConduProject;
   collectedState: CollectedState;
+  collectedStateReadOnlyView: ConduReadonlyCollectedStateView;
 }
 
 type AllPossiblePeerContexts = UnionToIntersection<
@@ -163,6 +164,9 @@ export async function collectState(
     tasks: [],
     peerContext: peerContext as PeerContext,
   };
+  const collectedStateReadOnlyView = new ConduReadonlyCollectedStateView(
+    changesCollector,
+  );
 
   // Run apply functions in topological order
   for (const feature of sortedFeatures) {
@@ -170,6 +174,7 @@ export async function collectState(
       project,
       collectionContext: { featureName: feature.name },
       changesCollector,
+      collectedStateReadOnlyView,
     });
     if ("initialPeerContext" in feature) {
       await feature.defineRecipe(
@@ -180,17 +185,23 @@ export async function collectState(
       await feature.defineRecipe(conduApi);
     }
   }
-  return { collectedState: changesCollector, project };
+  return {
+    collectedState: changesCollector,
+    project,
+    collectedStateReadOnlyView,
+  };
 }
 
 const createConduApi = ({
   project,
   collectionContext,
   changesCollector,
+  collectedStateReadOnlyView,
 }: {
   project: ConduProject;
   collectionContext: CollectionContext;
   changesCollector: CollectedState;
+  collectedStateReadOnlyView: ConduReadonlyCollectedStateView;
 }): ConduApi => ({
   project,
   root: createStateDeclarationApi({
@@ -198,6 +209,7 @@ const createConduApi = ({
     changesCollector,
     collectionContext,
     matchesAllWorkspacePackages: false,
+    collectedStateReadOnlyView,
   }),
   in(criteria) {
     const matchPackageFn = isMatching(criteria);
@@ -222,6 +234,7 @@ const createConduApi = ({
       changesCollector,
       collectionContext,
       matchesAllWorkspacePackages,
+      collectedStateReadOnlyView,
     });
   },
 });
@@ -230,11 +243,13 @@ const createStateDeclarationApi = ({
   matchingPackages,
   changesCollector,
   collectionContext,
+  collectedStateReadOnlyView,
   matchesAllWorkspacePackages,
 }: {
   matchingPackages: readonly ConduPackageEntry[];
   changesCollector: CollectedState;
   collectionContext: CollectionContext;
+  collectedStateReadOnlyView: ConduReadonlyCollectedStateView;
   matchesAllWorkspacePackages: boolean;
 }): StateDeclarationApi => ({
   ignoreFile(relPath, options) {
@@ -329,6 +344,7 @@ const createStateDeclarationApi = ({
     for (const pkg of matchingPackages) {
       changesCollector.packageJsonModifications.push({
         targetPackage: pkg,
+        globalRegistry: collectedStateReadOnlyView,
         modifier,
         context: collectionContext,
       });
@@ -340,6 +356,7 @@ const createStateDeclarationApi = ({
     for (const pkg of matchingPackages) {
       changesCollector.releasePackageJsonModifications.push({
         targetPackage: pkg,
+        globalRegistry: collectedStateReadOnlyView,
         modifier,
         context: collectionContext,
       });
@@ -361,9 +378,9 @@ const createStateDeclarationApi = ({
 
 async function applyAndCommitCollectedState({
   collectedState,
+  collectedStateReadOnlyView,
   project,
 }: ProjectAndCollectedState) {
-  const collectedDataApi = new ConduCollectedStatePublicApi(collectedState);
   const {
     fileManager,
     dependencies,
@@ -375,7 +392,7 @@ async function applyAndCommitCollectedState({
   // that way we can speed up the process by not reading cache if we only want publishing changes
   await fileManager.readCache();
   // compute the content and write any changes to file system
-  await fileManager.applyAllFiles(collectedDataApi);
+  await fileManager.applyAllFiles(collectedStateReadOnlyView);
 
   // Group dependency additions by target package
   const dependenciesByPackage = new UpsertMap<
@@ -396,6 +413,7 @@ async function applyAndCommitCollectedState({
     packageJsonModifications.push({
       targetPackage,
       context: { featureName: "condu:dependencies" },
+      globalRegistry: collectedStateReadOnlyView,
       modifier: async (manifest) => {
         const noLongerManagedDependencies = new Set(
           Object.keys(manifest.condu?.managedDependencies ?? {}),
@@ -440,6 +458,7 @@ async function applyAndCommitCollectedState({
     packageJsonModifications.push({
       targetPackage: project.workspace,
       context: { featureName: "condu:dependency-resolutions" },
+      globalRegistry: collectedStateReadOnlyView,
       modifier: (manifest) => {
         const manifestResolutions =
           manifest.resolutions ??
@@ -470,7 +489,11 @@ async function applyAndCommitCollectedState({
   const touchedPackages = new Set<ConduPackageEntry>();
 
   for (const { targetPackage, modifier, context } of packageJsonModifications) {
-    targetPackage.addModification(modifier, context);
+    targetPackage.addModification(
+      modifier,
+      context,
+      collectedStateReadOnlyView,
+    );
     touchedPackages.add(targetPackage);
   }
 
@@ -479,7 +502,11 @@ async function applyAndCommitCollectedState({
     modifier,
     context,
   } of releasePackageJsonModifications) {
-    targetPackage.addPublishedModification(modifier, context);
+    targetPackage.addPublishedModification(
+      modifier,
+      context,
+      collectedStateReadOnlyView,
+    );
   }
 
   for (const pkg of touchedPackages) {

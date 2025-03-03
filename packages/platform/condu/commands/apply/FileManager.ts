@@ -11,7 +11,7 @@ import path from "node:path";
 import { printUnifiedDiff } from "print-diff";
 import { match, P } from "ts-pattern";
 import type {
-  ConduCollectedStatePublicApi,
+  ConduReadonlyCollectedStateView,
   CollectionContext,
 } from "./CollectedState.js";
 import {
@@ -84,7 +84,7 @@ export type IfPreviouslyDefined = "error" | "overwrite" | "ignore";
 
 export interface ContentFunctionArgs {
   targetPackage: ReadonlyConduPackageEntry;
-  globalRegistry: ConduCollectedStatePublicApi;
+  globalRegistry: ConduReadonlyCollectedStateView;
 }
 
 export type InitialContent<DeserializedT> =
@@ -310,12 +310,12 @@ export class FileManager {
   }
 
   async applyAllFiles(
-    collectedDataApi: ConduCollectedStatePublicApi,
+    collectedStateReadOnlyView: ConduReadonlyCollectedStateView,
   ): Promise<void> {
     const applyPromises: Promise<void>[] = Array.from(
       this.files.values(),
       (file) =>
-        file.applyAndCommit(collectedDataApi).then(() => {
+        file.applyAndCommit(collectedStateReadOnlyView).then(() => {
           console.log(
             `${file.status} (${file.lastApplyKind}): ${file.relPath} [${file.managedByFeatures.map((f) => f.featureName).join(", ")}]`,
           );
@@ -327,7 +327,7 @@ export class FileManager {
       await file.askUserToWrite?.();
     }
     // write the updated cache file
-    await this.cacheFile.applyAndCommit(collectedDataApi);
+    await this.cacheFile.applyAndCommit(collectedStateReadOnlyView);
   }
 
   async readCache(): Promise<void> {
@@ -604,7 +604,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
    * If the file is no longer managed, it will be deleted.
    */
   async applyAndCommit(
-    collectedDataApi: ConduCollectedStatePublicApi,
+    collectedStateReadOnlyView: ConduReadonlyCollectedStateView,
   ): Promise<void> {
     if (!this.isManaged) {
       if (this.lastApply) {
@@ -666,7 +666,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       typeof this.initialContent?.content === "function"
         ? await this.initialContent.content({
             targetPackage: this.targetPackage,
-            globalRegistry: collectedDataApi,
+            globalRegistry: collectedStateReadOnlyView,
           })
         : this.initialContent?.content;
 
@@ -678,7 +678,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
         // if no content, try the modification that can create the file
         content = await modification.content({
           content,
-          globalRegistry: collectedDataApi,
+          globalRegistry: collectedStateReadOnlyView,
           targetPackage: this.targetPackage,
         });
         if (modification.stringify) {
@@ -701,7 +701,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
         }
         content = await modification.content({
           content,
-          globalRegistry: collectedDataApi,
+          globalRegistry: collectedStateReadOnlyView,
           targetPackage: this.targetPackage,
         });
       }
@@ -747,7 +747,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       // get the next version of the content:
       content = await modification.content({
         content,
-        globalRegistry: collectedDataApi,
+        globalRegistry: collectedStateReadOnlyView,
         targetPackage: this.targetPackage,
       });
       const stringify =

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 export type TaskArgs = null | string | string[];
 
 /** Expanded information about a task dependency. */
@@ -265,6 +266,7 @@ export interface InheritedTasksConfig {
 	 * Extends one or many task configuration files. Supports a relative
 	 * file path or a secure URL.
 	 */
+  // @ts-ignore
 	extends: ExtendsFrom | null;
 	/**
 	 * A mapping of group IDs to a list of file paths, globs, and
@@ -518,6 +520,7 @@ export interface PartialInheritedTasksConfig {
 	 * Extends one or many task configuration files. Supports a relative
 	 * file path or a secure URL.
 	 */
+  // @ts-ignore
 	extends?: ExtendsFrom | null;
 	/**
 	 * A mapping of group IDs to a list of file paths, globs, and

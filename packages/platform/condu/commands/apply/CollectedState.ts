@@ -45,11 +45,12 @@ export interface PackageJsonModificationWithPackage
   targetPackage: ConduPackageEntry;
 }
 
-// this is the public API that exposes access to all collected changes
-// allowing generators to use that state to generate files
-// making them available via content: (..., publicApi) => ...
-
-export class ConduCollectedStatePublicApi {
+/**
+ * The public API that exposes read-only access to all collected changes
+ * allowing generators to use that state to generate files
+ * making them available via content: (..., { globalRegistry }) => ... in callbacks of the recipe
+ */
+export class ConduReadonlyCollectedStateView {
   #changes: CollectedState;
 
   constructor(changes: CollectedState) {

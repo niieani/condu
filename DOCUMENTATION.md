@@ -126,7 +126,11 @@ export default configure({
 
 ## Creating Custom Features
 
-You can create custom features to encapsulate your own configuration logic:
+You can create custom features to encapsulate your own configuration logic.
+
+The key part of the feature is a _recipe_.
+It's a list of changes that should be made whenever `condu apply` is run.
+If you've ever used react, you can think of the calls to any of the condu recipe APIs similarly to calling a component hook.
 
 ```typescript
 import { defineFeature } from "condu";
@@ -291,6 +295,7 @@ condu init my-new-project
 Options: None
 
 The init command will:
+
 - Create a `.config` directory with a default `condu.ts` file
 - Set up a package.json with the necessary dependencies
 - Initialize a git repository if one doesn't exist
@@ -321,6 +326,7 @@ condu create features/my-feature --as @myorg/custom-name
 ```
 
 Options:
+
 - `--as <name>`: Specify a custom package name
 - `--description <text>`: Add a description to the package.json
 - `--private`: Mark the package as private
@@ -338,6 +344,7 @@ condu tsc --preset ts-to-mts
 ```
 
 Options:
+
 - `--preset ts-to-cts|ts-to-mts`: Generate CommonJS or ES Module versions
 - All standard TypeScript compiler options are supported
 
@@ -357,6 +364,7 @@ condu release --dry-run
 ```
 
 Options:
+
 - `--ci`: Mark non-released packages as private (useful in CI environments)
 - `--npm-tag <tag>`: Specify the npm tag to use (default: latest)
 - `--dry-run`: Prepare packages without actually publishing
@@ -374,6 +382,7 @@ condu exec --pkg @myorg/my-package npm run test
 ```
 
 Options:
+
 - `--cwd <path>`: Specify the working directory
 - `--pkg <package>`: Specify the target package
 
