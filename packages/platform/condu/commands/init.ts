@@ -65,11 +65,11 @@ export class InitCommand extends Command {
     const configFilePath = path.join(configDirectory, CONDU_CONFIG_FILE_NAME);
     await fs.writeFile(
       configFilePath,
-      `import { configure } from "condu";
+      /* typescript */ `import { configure } from "condu";
 import { monorepo } from "@condu-preset/monorepo";
 
-export default configure((pkg) => ({
-  ...monorepo({ pkg }),
+export default configure(monorepo({
+  // Add your monorepo configuration here
 }));
 `,
     );

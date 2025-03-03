@@ -1,17 +1,20 @@
 ## MVP / alpha TODO List
 
-- [ ] correct `init` generated monorepo config (generates invalid condu config)
+- [x] correct `init` command's generated monorepo config (right now it generates invalid condu config)
+- [x] why doesn't the correct TS project get loaded in .config/condu?
+  - because all dotfiles are ignored and have to be explicitly included by typescript, by adding `.config/**/*` to includes
+- [ ] Ability to add simple way to define recipe-only features, using a shorthand, functional-style, e.g. `(condu) => condu.in('package').modifyPublishedPackageJson(...)`. These features would not have a name (they can attempt to read Function's `name` property if it exist, but default to a generated ID). Because of this, these features also not be involved in peerContext merging, etc., but otherwise would get applied the same regular features.
+- [ ] Create a new feature called 'package-scripts' that could be used instead of 'moon', in conjunction with a package manager (e.g. pnpm, yarn, npm or bun) to run the Tasks defined in features as package scripts. It should work both in single repo and monorepo contexts (but in a monorepo you'd expect the package manager to take the role of the script runner for all the scripts). The root-level scripts would use the package manager's feature to recursively run all scripts of a given kind/type, e.g. `pnpm -r run test`. You can see how moon is currently implemented in packages/features/moon/moon.ts. Currently CollectedState's `Task` type uses moonrepo's `PartialTaskConfig`, but we'll probably only support a subset of that type. See notes/tasks-config.ts for definition.
+- [ ] feature to autogenerate 'exports' in package.json - both for published and non-published packages
+  - include adding a custom condition which is the name of the package, that points to the source ts
 - [ ] in monorepo preset allow passing `false` for each feature to disable it
 - [ ] perhaps merge object (for package json) by default ([see](https://youtu.be/Pmieyp75SrA?t=491)), rather than replacing it, set undefined if you want to remove keys explicitly
-- [ ] consider using `dependencies` and `prepare` hooks to run condu apply
+- [ ] consider using `dependencies` and `prepare` [lifecycle scripts](https://docs.npmjs.com/cli/v11/using-npm/scripts#life-cycle-scripts) to run `condu apply`
 - [ ] when a symlink already exists and we say to overwrite, it should remove the symlink first, otherwise for some reason it writes over the symlink target
 - [ ] auto-map 'exports' in dist package.json - if only one file in directory, use that
-- [ ] ability to add simple functional recipe-only features (condu) => condu.in('package').modifyPublishedPackageJson()
 - [ ] consider changing condu api to add prefixes e.g. `condu.in('package').file.create(...)`, `condu.packageJson.merge({...})`
 - [ ] support shorthand for filtering packages by name: `condu.in('package')`
-- [ ] why doesn't the correct TS project get loaded in .config/condu?
 - [ ] exclude generated files from TS build
-- [ ] feature to autogenerate 'exports' in package.json - both for published and non-published packages
 - [ ] add `repository`, `homepage` (fallback to repo) and `author`, `license` and `contributors` info to published package.json based on the root package.json
 - [ ] features that can be added multiple times need to have a way to be uniquely identified (feature id?) - update 'apply' to handle this. Question remains about initial peer context - I guess it needs to be empty and then peer merging can handle additions to peer context of that same feature. Maybe instead of feature ID, we only apply the first one, but we apply the peerContext for all of them - merging in like a reducer?
 - [ ] preset with my features and feature config pre-applied

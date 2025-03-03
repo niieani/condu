@@ -14,18 +14,20 @@ type Argument<T extends (arg: any) => any> = T extends (arg: infer P) => any
   : never;
 
 export const monorepo =
-  (configs: {
-    condu?: Partial<ConduConfig>;
-    gitignore?: Argument<typeof gitignore>;
-    typescript?: Argument<typeof typescript>;
-    conduPackages?: Argument<typeof conduPackages>;
-    moon?: Argument<typeof moon>;
-    moonCi?: Argument<typeof moonCi>;
-    eslint?: Argument<typeof eslint>;
-    pnpm?: Argument<typeof pnpm>;
-    vscode?: Argument<typeof vscode>;
-    releasePlease?: Argument<typeof releasePlease>;
-  }): ((pkg: ConduPackageEntry) => ConduConfig) =>
+  (
+    configs: {
+      condu?: Partial<ConduConfig>;
+      gitignore?: Argument<typeof gitignore>;
+      typescript?: Argument<typeof typescript>;
+      conduPackages?: Argument<typeof conduPackages>;
+      moon?: Argument<typeof moon>;
+      moonCi?: Argument<typeof moonCi>;
+      eslint?: Argument<typeof eslint>;
+      pnpm?: Argument<typeof pnpm>;
+      vscode?: Argument<typeof vscode>;
+      releasePlease?: Argument<typeof releasePlease>;
+    } = {},
+  ): ((pkg: ConduPackageEntry) => ConduConfig) =>
   (pkg) => ({
     ...configs.condu,
     projects: configs.condu?.projects ?? [

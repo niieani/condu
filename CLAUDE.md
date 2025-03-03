@@ -7,8 +7,8 @@ This project is a configuration management library that uses code-based configur
 - Build: `pnpm exec moon run :build`
 - Typecheck: `pnpm exec moon run :typecheck-typescript` or `pnpm exec tsc --noEmit`
 - Lint: `pnpm exec moon run :eslint`
-- Code test: `pnpm exec vitest`
-- Run single test: `pnpm exec vitest path/to/file.test.ts`
+- Code test: `pnpm exec vitest --watch=false`
+- Run single test: `pnpm exec vitest --watch=false path/to/file.test.ts`
 - Test: `pnpm exec moon run :test` (combines typecheck, eslint, prettier; for now excludes `vitest`)
 - Format: `pnpm exec moon run :format-prettier`
 - Clean: `pnpm exec moon run :clean`
@@ -38,6 +38,7 @@ This project is a configuration management library that uses code-based configur
   - Prefer nullish coalescing `??` operator when safe to use instead of `||`
   - Error Handling: Use Result types or async/await with try/catch
   - Source files: Source files are put in the package's folder, without an additional `src` subdirectory.
+  - When writing code as a string, use a template literal and prefix it with a comment indicating language, e.g.: `/* typescript */ `some.code('here')``
 - key places in the repo:
   - `packages/platform/condu/cli.ts`: CLI command are registered
   - `packages/platform/condu/commands`: Actual command implementation
