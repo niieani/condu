@@ -380,14 +380,11 @@ export async function releasePipeline({
       unselectedPackages
         .filter((pkg) => !pkg.manifest.private)
         .map((pkg) => {
-          pkg.addModification(
-            (pkg) => ({
-              ...pkg,
-              $internal$: true,
-              private: true,
-            }),
-            { featureName: "condu:release-pipeline" },
-          );
+          pkg.addInternalModification((pkg) => ({
+            ...pkg,
+            $internal$: true,
+            private: true,
+          }));
           return pkg.applyAndCommit();
         }),
     );

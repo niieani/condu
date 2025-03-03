@@ -23,6 +23,10 @@ export type ReadonlyConduPackageEntry<KindT extends PackageKind = PackageKind> =
       : K]: ConduPackageEntry<KindT>[K];
   };
 
+export type InternalModifier = (
+  pkg: ConduPackageJson,
+) => ConduPackageJson | Promise<ConduPackageJson>;
+
 export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
   implements Omit<IPackageEntry, "writeProjectManifest">
 {
@@ -39,6 +43,7 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
   readonly relPath: string;
   readonly absPath: string;
   readonly #writeProjectManifest: WriteManifestFn;
+  #internalModifications: InternalModifier[] = [];
   #pendingModifications: PackageJsonModification[] = [];
   #publishedModifications: PackageJsonModification[] = [];
   #managedByFeatures: CollectionContext[] = [];
@@ -55,6 +60,10 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
     this.absPath = data.absPath;
     this.#writeProjectManifest = data.writeProjectManifest;
     this.#manifest = data.manifest;
+  }
+
+  addInternalModification(modifier: InternalModifier) {
+    this.#internalModifications.push(modifier);
   }
 
   addModification(
@@ -80,6 +89,10 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
       // for now process sequentially in case the modifier does network calls
       // TODO: consider parallelizing with a cap
       this.#manifest = await modifier(this.#manifest, { globalRegistry });
+    }
+
+    for (const modifier of this.#internalModifications) {
+      this.#manifest = await modifier(this.#manifest);
     }
 
     this.#pendingModifications = [];
