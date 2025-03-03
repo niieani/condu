@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@condu/core": "workspace:^",
+    "@condu/package-manager-utils": "workspace:^",
     "@condu/schema-types": "workspace:^",
     "@condu/update-specifiers": "workspace:^",
     "@condu/workspace-utils": "workspace:^",

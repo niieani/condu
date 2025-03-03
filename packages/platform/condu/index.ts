@@ -5,6 +5,7 @@ export { defineFeature } from "./api/defineFeature.js";
 export * from "./constants.js";
 export * from "./cli.js";
 export * from "./getProjectGlobsFromMoonConfig.js";
+export * from "./packageManagerUtils.js";
 export type * from "@condu/workspace-utils/packageJsonTypes.js";
 export type * from "./commands/apply/conduApiTypes.js";
 export type * from "./commands/apply/CollectedState.js";

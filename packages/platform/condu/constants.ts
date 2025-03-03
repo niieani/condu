@@ -1,3 +1,5 @@
+import type { Task } from "./commands/apply/CollectedState.js";
+
 export const CORE_NAME = "condu";
 export const CONDU_CONFIG_FILE_NAME = `${CORE_NAME}.ts`;
 export const CONDU_CONFIG_DIR_NAME = `.config`;
@@ -25,3 +27,10 @@ export const IS_INTERACTIVE =
   process.env["npm_lifecycle_event"] !== "postinstall";
 export const FILE_STATE_PATH = `${CONDU_CONFIG_DIR_NAME}/.cache/files.json`;
 export const CURRENT_CACHE_VERSION = 1;
+export const BUILTIN_TASK_NAMES = new Set<string>([
+  "build",
+  "test",
+  "format",
+  "publish",
+  "start",
+] satisfies Task["type"][]);

@@ -4,6 +4,7 @@ import {
   type CollectedTask,
   type Task,
   type Conventions,
+  BUILTIN_TASK_NAMES,
 } from "condu";
 import type { GithubWorkflow } from "@condu/schema-types/schemas/githubWorkflow.gen.js";
 import type {
@@ -186,16 +187,8 @@ export const moonCi = (opts: {} = {}) =>
 
 type TasksByType = Record<Task["type"], CollectedTask[]>;
 
-const builtinTaskNames = new Set<string>([
-  "build",
-  "test",
-  "format",
-  "publish",
-  "start",
-] satisfies Task["type"][]);
-
 const getTaskName = (task: CollectedTask) =>
-  builtinTaskNames.has(task.taskDefinition.name)
+  BUILTIN_TASK_NAMES.has(task.taskDefinition.name)
     ? `${task.targetPackage.scopedName}-${task.taskDefinition.name}`
     : task.taskDefinition.name;
 

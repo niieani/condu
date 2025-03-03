@@ -19,10 +19,11 @@ This project is a configuration management library that uses code-based configur
 - TypeScript:
   - Strict mode
   - If a type exists, use it. Never use `any`, for external/unverified inputs use `unknown`.
-  - `verbatimModuleSyntax: true`, use `import type` or `import { type X }` whenever possible.
+  - `verbatimModuleSyntax: true`, use `import type` or `import { type X }` whenever possible
+  - prefer `satisfies` if possible, avoid casting using `as`
 - Package Manager: pnpm
 - monorepo: packages are created in respective directories:
-  - `packages/generic` - generic packages that are in this repo as they're dependencies of the project, but don't depend on the project
+  - `packages/generic` - generic packages that the project might depend on. These should never depend on any non-generic package.
   - `packages/platform` - the core packages related to the `condu` CLI tool
   - `packages/features` - `condu`'s individual features (plugins or extensions)
   - `packages/presets` - condu presets
@@ -41,11 +42,12 @@ This project is a configuration management library that uses code-based configur
   - Naming: camelCase for variables/functions/filenames, PascalCase for classes/types
   - Imports: ESM style, include `.js` extension even when importing `.ts` files, use package name for importing from internal monorepo packages
   - Node Builtins: use the `node:` prefix when importing, e.g. `node:fs` instead of `fs`.
-  - Prefer nullish coalescing `??` operator when safe to use instead of `||`
+  - Prefer nullish coalescing `??` operator instead of `||` when applicable
   - Error Handling: Use Result types or async/await with try/catch
-  - Source files: Source files are put in the package's folder, without an additional `src` subdirectory.
+  - Source files: Place them directly in the package's folder, without an additional `src` subdirectory
   - When writing code as a string, use a template literal and prefix it with a comment indicating language, e.g.: `/* typescript */ `some.code('here')``
-  - prefer `undefined` over `null` (e.g. `JSON.stringify(x, undefined, 2)`)
+  - Prefer `undefined` over `null` (e.g. `JSON.stringify(x, undefined, 2)`)
+  - Prefer single destructuring object as function arguments, or a crucial argument optional destructured options. Avoid creating functions with 3+ arguments.
 - key places in the repo:
   - `packages/platform/condu/cli.ts`: CLI command are registered
   - `packages/platform/condu/commands`: Actual command implementation

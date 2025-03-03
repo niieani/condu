@@ -112,7 +112,7 @@ export default configure((pkg) => ({
       },
     }),
     prettier({
-      ignore: ["**/.*.json"],
+      ignore: ["**/.*.json", "integration-tests"],
     }),
     vitest(),
     moon(),

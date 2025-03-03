@@ -371,11 +371,16 @@ importers:
 
   packages/generic/gitignore-matcher: {}
 
+  packages/generic/package-manager-utils: {}
+
   packages/platform/condu:
     dependencies:
       '@condu/core':
         specifier: workspace:^
         version: link:../core
+      '@condu/package-manager-utils':
+        specifier: workspace:^
+        version: link:../../generic/package-manager-utils
       '@condu/schema-types':
         specifier: workspace:^
         version: link:../schema-types

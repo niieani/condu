@@ -56,6 +56,11 @@
       "component": "@condu-feature/moon",
       "initial-version": "1.0.0"
     },
+    "packages/features/package-scripts": {
+      "release-type": "node",
+      "component": "@condu/feature-package-scripts",
+      "initial-version": "1.0.0"
+    },
     "packages/features/pnpm": {
       "release-type": "node",
       "component": "@condu-feature/pnpm",
@@ -94,6 +99,11 @@
     "packages/generic/gitignore-matcher": {
       "release-type": "node",
       "component": "gitignore-matcher",
+      "initial-version": "1.0.0"
+    },
+    "packages/generic/package-manager-utils": {
+      "release-type": "node",
+      "component": "@condu/package-manager-utils",
       "initial-version": "1.0.0"
     },
     "packages/platform/condu": {
