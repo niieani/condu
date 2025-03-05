@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { createTempDir, execCommand, initGitRepo } from "./test-utils.js";
+import { createTempDir, execCommand } from "./test-utils.js";
 
 describe("init command functionality", () => {
   let testDir: string;

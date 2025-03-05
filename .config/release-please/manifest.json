@@ -28,5 +28,6 @@
   "packages/presets/monorepo": "0.0.7",
   "packages/test/dummy-dep": "1.0.3",
   "packages/test/dummy": "1.0.3",
+  "packages/test/utils": "0.0.0",
   "packages/features/autolink": "0.0.1"
 }

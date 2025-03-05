@@ -6,12 +6,12 @@
   "type": "module",
   "dependencies": {
     "@condu/schema-types": "workspace:^",
-    "@pnpm/read-project-manifest": "^1000.0.5",
-    "@pnpm/types": "^1000.1.1",
-    "@pnpm/workspace.read-manifest": "^1000.0.2",
+    "@pnpm/read-project-manifest": "^1000.0.6",
+    "@pnpm/types": "^1000.2.0",
+    "@pnpm/workspace.read-manifest": "^1000.1.0",
     "fast-glob": "^3.3.3",
     "slash": "^5.1.0",
-    "sort-package-json": "^2.14.0",
+    "sort-package-json": "^3.0.0",
     "toposource": "^1.2.0",
     "yaml": "^2.7.0"
   }

@@ -1,16 +1,13 @@
 {
   "name": "@condu-test/utils",
   "version": "0.0.0",
-  "private": true,
   "type": "module",
   "dependencies": {
     "@condu/workspace-utils": "workspace:*",
     "@types/mock-fs": "^4.13.4",
     "condu": "workspace:*",
-    "mock-fs": "5.2.0",
-    "vitest": "^3.0.5"
+    "mock-fs": "^5.5.0",
+    "vitest": "^3.0.7"
   },
-  "devDependencies": {
-    "@condu-feature/editorconfig": "workspace:*"
-  }
+  "devDependencies": {}
 }

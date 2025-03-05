@@ -7,6 +7,6 @@
     "condu": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^20.11.25"
+    "@types/node": "^22.13.9"
   }
 }
