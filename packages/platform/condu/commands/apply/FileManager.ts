@@ -29,7 +29,10 @@ import type {
   GlobalFileAttributes,
 } from "../../extendable.js";
 
-// types
+export interface ApplyAndCommitArg extends FileManagerOptions {
+  collectedStateReadOnlyView: ConduReadonlyCollectedStateView;
+}
+
 export interface FileDestination {
   relPath: string;
   targetPackage: ConduPackageEntry;
@@ -255,17 +258,25 @@ export type ModifyGeneratedFileOptionsWithContext<
   context: CollectionContext;
 };
 
+export interface FileManagerOptions {
+  throwOnManualChanges?: boolean;
+}
+
 // implementation:
 export class FileManager {
   files = new UpsertMap<string, ConduFile<any>>();
   cacheFile: ConduFile<FilesJsonCacheFileVersion1>;
   rootPackage: WorkspaceRootPackage;
   packages: readonly WorkspaceSubPackage[];
+  throwOnManualChanges: boolean;
 
   constructor(
     rootPackage: WorkspaceRootPackage,
     packages: readonly WorkspaceSubPackage[],
+    { throwOnManualChanges = false }: FileManagerOptions = {},
   ) {
+    this.throwOnManualChanges = throwOnManualChanges;
+
     this.cacheFile = new ConduFile({
       relPath: FILE_STATE_PATH,
       targetPackage: rootPackage,
@@ -312,10 +323,14 @@ export class FileManager {
   async applyAllFiles(
     collectedStateReadOnlyView: ConduReadonlyCollectedStateView,
   ): Promise<void> {
+    const arg = {
+      collectedStateReadOnlyView,
+      throwOnManualChanges: this.throwOnManualChanges,
+    };
     const applyPromises: Promise<void>[] = Array.from(
       this.files.values(),
       (file) =>
-        file.applyAndCommit(collectedStateReadOnlyView).then(() => {
+        file.applyAndCommit(arg).then(() => {
           console.log(
             `${file.status} (${file.lastApplyKind}): ${file.relPath} [${file.managedByFeatures.map((f) => f.featureName).join(", ")}]`,
           );
@@ -327,7 +342,7 @@ export class FileManager {
       await file.askUserToWrite?.();
     }
     // write the updated cache file
-    await this.cacheFile.applyAndCommit(collectedStateReadOnlyView);
+    await this.cacheFile.applyAndCommit(arg);
   }
 
   async readCache(): Promise<void> {
@@ -603,9 +618,10 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
    * then updates the filesystem.
    * If the file is no longer managed, it will be deleted.
    */
-  async applyAndCommit(
-    collectedStateReadOnlyView: ConduReadonlyCollectedStateView,
-  ): Promise<void> {
+  async applyAndCommit({
+    collectedStateReadOnlyView,
+    throwOnManualChanges,
+  }: ApplyAndCommitArg): Promise<void> {
     if (!this.isManaged) {
       if (this.lastApply) {
         // no longer managed, delete the file
@@ -642,6 +658,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
 
       await this.attemptWriteToFileSystem(
         new SymlinkTarget(this.initialContent.symlinkTarget),
+        { throwOnManualChanges },
       );
       return;
     }
@@ -756,10 +773,10 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     }
 
     if (stringified) {
-      await this.attemptWriteToFileSystem(
-        stringified,
-        kind === "user-editable",
-      );
+      await this.attemptWriteToFileSystem(stringified, {
+        overwriteWithoutAsking: kind === "user-editable",
+        throwOnManualChanges,
+      });
     } else if (kind === "non-fs") {
       this.status = "skipped";
     }
@@ -830,7 +847,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
 
   async attemptWriteToFileSystem(
     newContent: string | SymlinkTarget,
-    overwriteWithoutAsking = false,
+    { overwriteWithoutAsking = false, throwOnManualChanges = false } = {},
   ): Promise<void> {
     const targetPath = this.absPath;
     const existingFile = await this.getFsFile();
@@ -878,12 +895,18 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       });
       this._fsState = this.lastApply;
       return;
-    } else if (!IS_INTERACTIVE) {
+    } else if (!IS_INTERACTIVE || throwOnManualChanges) {
       process.exitCode = 1;
       console.log(
         `Please resolve the conflict by running 'condu apply' interactively. Skipping: ${this.relPath}`,
       );
       this.status = "skipped";
+      // TODO:
+      // if (throwOnManualChanges) {
+      //   throw new Error(
+      //     `Manual changes present in ${this.relPath}, please resolve the conflict by running 'condu apply' interactively.`,
+      //   );
+      // }
       return;
     } else {
       this.status = "needs-user-input";

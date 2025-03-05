@@ -1,6 +1,6 @@
 import type { BaseContext } from "clipanion";
 import { createCommandContext } from "../createCommandContext.js";
-import { loadConduProject } from "../loadProject.js";
+import { loadConduConfigFnFromFs, loadConduProject } from "../loadProject.js";
 import type { ConduPackageEntry } from "./apply/ConduPackageEntry.js";
 import { getSingleMatch } from "../matchPackage.js";
 import { match } from "ts-pattern";
@@ -10,7 +10,6 @@ import { filter, find } from "remeda";
 import { safeFn } from "@condu/core/utils/safeFn.js";
 import { spawn } from "node:child_process";
 import which from "which";
-import { getPackage } from "@condu/workspace-utils/topo.js";
 import type { ConduProject } from "./apply/ConduProject.js";
 
 export async function execCommand(input: {
@@ -20,7 +19,8 @@ export async function execCommand(input: {
   args: string[];
   context: BaseContext;
 }) {
-  const project = await loadConduProject();
+  const projectLoadData = await loadConduConfigFnFromFs();
+  const project = await loadConduProject(projectLoadData);
   if (!project) {
     throw new Error(`Unable to load project`);
   }

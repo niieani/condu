@@ -5,7 +5,7 @@ This project is a configuration management library that uses code-based configur
 ## Build/Test/Lint Commands
 
 - Build: `pnpm exec moon run :build`
-- Typecheck: `pnpm exec moon run :typecheck-typescript` or `pnpm exec tsc --noEmit`
+- Typecheck: `pnpm exec moon run :typecheck-typescript` or `pnpm exec tsc --noEmit` (not possible to typecheck individual packages)
 - Lint: `pnpm exec moon run :eslint`
 - Code test: `pnpm exec vitest --watch=false`
 - Run single test: `pnpm exec vitest --watch=false path/to/file.test.ts`
@@ -21,6 +21,8 @@ This project is a configuration management library that uses code-based configur
   - If a type exists, use it. Never use `any`, for external/unverified inputs use `unknown`.
   - `verbatimModuleSyntax: true`, use `import type` or `import { type X }` whenever possible
   - prefer `satisfies` if possible, avoid casting using `as`
+  - when importing from a dependency that exists in the repo, ensure that it is installed in package.json and then run `pnpm i`
+  - when importing from an external dependency if it doesn't have types, try to install them via `pnpm i @types/dep` in the correct directory
 - Package Manager: pnpm
 - monorepo: packages are created in respective directories:
   - `packages/generic` - generic packages that the project might depend on. These should never depend on any non-generic package.
@@ -29,7 +31,8 @@ This project is a configuration management library that uses code-based configur
   - `packages/presets` - condu presets
   - `packages/test` - test packages and packages related to testing
 - package.json:
-  - dependencies: when one package requires another as an internal dependency, use `workspace:*` as its version, then run `pnpm i` to ensure it resolves. `devDependencies` that are reused for building/testing of many packages should be added to the root package.json of the monorepo, not to the individual package.
+  - dependencies: when one package requires another as an internal dependency, use `workspace:*` as its version, then run `pnpm i` to ensure it resolves.
+  - `devDependencies` that are reused for building/testing of many packages should be added to the root package.json of the monorepo, not to the individual package. For example, `vitest` should never be listed in package.json of individual packages.
   - scripts: Do not modify package.json scripts, global build/test/lint commands listed above can already do this for all and specific packages.
   - never define `main`, `exports`, `types` manually, omit these fields, as they are handled by condu.
 - Files: .ts source files, build outputs include .js/.cjs/.cts with maps into the `build` dir
@@ -48,6 +51,7 @@ This project is a configuration management library that uses code-based configur
   - When writing code as a string, use a template literal and prefix it with a comment indicating language, e.g.: `/* typescript */ `some.code('here')``
   - Prefer `undefined` over `null` (e.g. `JSON.stringify(x, undefined, 2)`)
   - Prefer single destructuring object as function arguments, or a crucial argument optional destructured options. Avoid creating functions with 3+ arguments.
+  - Use latest esnext features, like `Symbol.dispose` and `using` where appropriate
 - key places in the repo:
   - `packages/platform/condu/cli.ts`: CLI command are registered
   - `packages/platform/condu/commands`: Actual command implementation

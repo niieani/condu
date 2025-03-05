@@ -1,5 +1,8 @@
 import type { DefinedWorkspaceProjectConvention } from "../../api/configTypes.js";
-import { loadConduProject } from "../../loadProject.js";
+import {
+  loadConduConfigFnFromFs,
+  loadConduProject,
+} from "../../loadProject.js";
 import * as fs from "node:fs/promises";
 import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
 import { sortPackageJson } from "sort-package-json";
@@ -27,7 +30,8 @@ export async function createCommand({
   context,
   ...rest
 }: CreateOptions) {
-  const project = await loadConduProject();
+  const projectLoadData = await loadConduConfigFnFromFs();
+  const project = await loadConduProject(projectLoadData);
   if (!project) {
     throw new Error(`Unable to load project`);
   }

@@ -1,7 +1,10 @@
 import { ensureDependencyIn } from "../../ensureDependency.js";
 import type { LoadConfigOptions } from "../../api/configTypes.js";
 import type { ConduPackageEntry } from "./ConduPackageEntry.js";
-import { loadConduProject } from "../../loadProject.js";
+import {
+  loadConduConfigFnFromFs,
+  loadConduProject,
+} from "../../loadProject.js";
 import { isMatching } from "ts-pattern";
 import type {
   ConduApi,
@@ -18,6 +21,7 @@ import {
 import type { ConduProject } from "./ConduProject.js";
 import {
   FileManager,
+  type FileManagerOptions,
   type ModifyUserEditableFileOptions,
 } from "./FileManager.js";
 import type { PeerContext } from "../../extendable.js";
@@ -39,26 +43,27 @@ type AllPossiblePeerContexts = UnionToIntersection<
 export async function apply(
   options: LoadConfigOptions = {},
 ): Promise<ProjectAndCollectedState | undefined> {
-  const collected = await collectState(options);
-  if (!collected) {
+  const projectLoadData = await loadConduConfigFnFromFs(options);
+  const project = await loadConduProject(projectLoadData);
+  if (!project) {
     return;
   }
+  const collected = await collectState({ ...options, project });
 
   await applyAndCommitCollectedState(collected);
 
   return collected;
 }
 
-export async function collectState(
-  options: LoadConfigOptions = {},
-): Promise<ProjectAndCollectedState | undefined> {
-  // TODO: add a mutex file lock to prevent concurrent runs of apply
-  const { throwOnManualChanges } = options;
-  const project = await loadConduProject(options);
-  if (!project) {
-    return;
-  }
+interface CollectStateConfig extends FileManagerOptions {
+  project: ConduProject;
+}
 
+export async function collectState(
+  options: CollectStateConfig,
+): Promise<ProjectAndCollectedState> {
+  // TODO: add a mutex file lock to prevent concurrent runs of apply
+  const { project, ...fsOptions } = options;
   const { config } = project;
 
   // add autolink built-in feature if not disabled
@@ -152,6 +157,7 @@ export async function collectState(
   const fileManager = new FileManager(
     project.workspace,
     project.workspacePackages,
+    fsOptions,
   );
 
   // Create the object to collect changes
@@ -177,18 +183,18 @@ export async function collectState(
       collectedStateReadOnlyView,
     });
     if ("initialPeerContext" in feature) {
-      await feature.defineRecipe(
+      await feature.defineRecipe?.(
         conduApi,
         peerContext[feature.name] as AllPossiblePeerContexts,
       );
     } else {
-      await feature.defineRecipe(conduApi);
+      await feature.defineRecipe?.(conduApi);
     }
   }
   return {
-    collectedState: changesCollector,
     project,
     collectedStateReadOnlyView,
+    collectedState: changesCollector,
   };
 }
 
@@ -376,7 +382,7 @@ const createStateDeclarationApi = ({
   },
 });
 
-async function applyAndCommitCollectedState({
+export async function applyAndCommitCollectedState({
   collectedState,
   collectedStateReadOnlyView,
   project,

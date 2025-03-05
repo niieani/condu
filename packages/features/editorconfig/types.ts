@@ -11,7 +11,7 @@ export interface EditorConfig {
   /**
    * A record of sections, each containing a file pattern (e.g., `*`, `*.md`, `[Makefile]`) and its corresponding settings.
    */
-  sections: Record<string, EditorConfigSection>;
+  sections: Record<string, EditorConfigSection | undefined>;
 }
 
 /**

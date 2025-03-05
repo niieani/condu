@@ -10,8 +10,9 @@ import {
 } from "./constants.js";
 import type {
   ConduConfigWithInferredValues,
-  LoadConfigOptions,
+  LoadConduProjectData,
   ConduConfigDefaultExport,
+  LoadConfigOptions,
 } from "./api/configTypes.js";
 import {
   ConduPackageEntry,
@@ -25,9 +26,9 @@ import * as fs from "node:fs/promises";
 import { getManifestsPaths, getPackage } from "@condu/workspace-utils/topo.js";
 import { ConduProject } from "./commands/apply/ConduProject.js";
 
-export async function loadConduProject({
+export async function loadConduConfigFnFromFs({
   startDir = process.cwd(),
-}: LoadConfigOptions = {}): Promise<ConduProject | undefined> {
+}: LoadConfigOptions = {}): Promise<LoadConduProjectData> {
   const configDirPath = await findUp(
     async (file) => {
       if (file.name === CONDU_CONFIG_DIR_NAME) {
@@ -53,6 +54,32 @@ export async function loadConduProject({
     CONDU_CONFIG_DIR_NAME,
     CONDU_CONFIG_FILE_NAME,
   );
+  const importedConfigFile = await import(
+    /* webpackIgnore: true */
+    configFilePath
+  ).catch((error) => {
+    console.error(`Unable to load the ${CORE_NAME} config file:\n`, error);
+  });
+
+  const configOrFn: ConduConfigDefaultExport | undefined =
+    importedConfigFile?.default;
+
+  if (typeof configOrFn === "object" && "__configured__" in configOrFn) {
+    return { workspaceDir, getConfig: () => configOrFn };
+  }
+  if (!configOrFn || typeof configOrFn !== "function") {
+    throw new Error(
+      `Invalid configuration file. Make sure to use the configure function to export your configuration. Right now it is ${typeof configOrFn}`,
+    );
+  }
+
+  return { workspaceDir, getConfig: configOrFn };
+}
+
+export async function loadConduProject({
+  getConfig,
+  workspaceDir,
+}: LoadConduProjectData): Promise<ConduProject | undefined> {
   const workspacePackage = new ConduPackageEntry(
     await getPackage({
       workspaceRootDir: workspaceDir,
@@ -61,24 +88,7 @@ export async function loadConduProject({
     }),
   );
 
-  const importedConfigFile = await import(
-    /* webpackIgnore: true */
-    configFilePath
-  ).catch((error) => {
-    console.error(`Unable to load the ${CORE_NAME} config file:\n`, error);
-  });
-
-  const configFn: ConduConfigDefaultExport | undefined =
-    importedConfigFile?.default;
-
-  if (!configFn || typeof configFn !== "function") {
-    console.error(
-      `Invalid configuration file. Make sure to use the configure function to export your configuration. Right now it is ${typeof configFn}`,
-    );
-    return;
-  }
-
-  const config = await configFn(workspacePackage);
+  const config = await getConfig(workspacePackage);
 
   if (!config || !config[CONFIGURED]) {
     console.error(

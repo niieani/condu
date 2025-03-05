@@ -105,13 +105,13 @@ type FeatureDefinitionPeerContextDependentProps<
         project: ReadonlyConduProject,
         initialPeerContext: GetPeerContext<NameT>,
       ) => Promise<PeerContextReducer> | PeerContextReducer;
-      defineRecipe: (
+      defineRecipe?: (
         condu: ConduApi,
         peerContext: GetPeerContext<NameT>,
       ) => void | Promise<void>;
     }
   : {
-      defineRecipe: (condu: ConduApi) => void | Promise<void>;
+      defineRecipe?: (condu: ConduApi) => void | Promise<void>;
       modifyPeerContexts?: (
         project: ReadonlyConduProject,
       ) => Promise<PeerContextReducer> | PeerContextReducer;

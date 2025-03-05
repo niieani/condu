@@ -25,9 +25,11 @@ export const autolink = (config: AutoLinkConfig = {}) =>
       mapping: config.mapping ?? {},
     },
     async defineRecipe(condu, { ignore, mapping }) {
-      const entries = await fs.readdir(condu.project.config.configDir, {
-        withFileTypes: true,
-      });
+      const entries = await fs
+        .readdir(condu.project.config.configDir, {
+          withFileTypes: true,
+        })
+        .catch(() => []);
       const allIgnores = [CONDU_CONFIG_FILE_NAME, ...ignore];
       const filesToLink = entries
         .filter(

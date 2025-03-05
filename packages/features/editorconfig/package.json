@@ -6,6 +6,9 @@
   "peerDependencies": {
     "condu": "workspace:^"
   },
+  "devDependencies": {
+    "@condu-test/utils": "workspace:*"
+  },
   "publishConfig": {
     "access": "public"
   }

@@ -20,7 +20,7 @@ const defaultConfig: EditorConfig = {
 declare module "condu" {
   interface PeerContext {
     editorconfig: {
-      sections: Record<string, EditorConfigSection>;
+      sections: Record<string, EditorConfigSection | undefined>;
     };
   }
   interface FileNameToSerializedTypeMapping {
@@ -33,7 +33,7 @@ export const editorconfig = (config?: EditorConfig) =>
     initialPeerContext: {
       // TODO: perhaps add some basic properties to GlobalPeerContext
       //       and derive the section defaults from there
-      sections: config?.sections ?? defaultConfig.sections,
+      sections: { ...defaultConfig.sections, ...config?.sections },
     },
     defineRecipe(condu, { sections }) {
       condu.root.generateFile(".editorconfig", {

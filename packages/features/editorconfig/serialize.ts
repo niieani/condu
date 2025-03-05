@@ -18,6 +18,8 @@ export function serializeEditorConfig(config: EditorConfig): string {
   for (const [pattern, settings] of Object.entries(config.sections)) {
     result += `[${pattern}]\n`;
 
+    if (!settings) continue;
+
     for (const [key, value] of Object.entries(settings)) {
       if (value !== undefined) {
         result += `${key} = ${typeof value === "boolean" ? (value ? "true" : "false") : value}\n`;

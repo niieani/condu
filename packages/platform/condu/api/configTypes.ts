@@ -89,14 +89,22 @@ export type ConduConfigInput =
   | ((pkg: ConduPackageEntry) => ConduConfig)
   | ((pkg: ConduPackageEntry) => Promise<ConduConfig>);
 
-export type ConduConfigDefaultExport =
-  | ConfiguredConduConfig
+export type ConfiguredConduConfigFn =
   | ((pkg: ConduPackageEntry) => ConfiguredConduConfig)
   | ((pkg: ConduPackageEntry) => Promise<ConfiguredConduConfig>);
+
+export type ConduConfigDefaultExport =
+  | ConfiguredConduConfig
+  | ConfiguredConduConfigFn;
 
 export interface LoadConfigOptions {
   startDir?: string;
   throwOnManualChanges?: boolean;
+}
+
+export interface LoadConduProjectData {
+  workspaceDir: string;
+  getConfig: ConfiguredConduConfigFn;
 }
 
 export interface ProjectConventionConfig {
