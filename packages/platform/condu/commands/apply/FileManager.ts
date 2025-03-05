@@ -29,8 +29,9 @@ import type {
   GlobalFileAttributes,
 } from "../../extendable.js";
 
-export interface ApplyAndCommitArg extends FileManagerOptions {
+export interface ApplyAndCommitArg {
   collectedStateReadOnlyView: ConduReadonlyCollectedStateView;
+  overwriteWithoutAsking?: boolean;
 }
 
 export interface FileDestination {
@@ -105,9 +106,7 @@ export interface SymlinkTargetContent {
 }
 
 export type InitialContentWithContext<DeserializedT> = (
-  | {
-      content: InitialContent<DeserializedT>;
-    }
+  | { content: InitialContent<DeserializedT> }
   | SymlinkTargetContent
 ) & {
   context: CollectionContext;
@@ -323,10 +322,9 @@ export class FileManager {
   async applyAllFiles(
     collectedStateReadOnlyView: ConduReadonlyCollectedStateView,
   ): Promise<void> {
-    const arg = {
-      collectedStateReadOnlyView,
-      throwOnManualChanges: this.throwOnManualChanges,
-    };
+    const arg = { collectedStateReadOnlyView } as const;
+
+    // apply all files in parallel (TODO: limit concurrency)
     const applyPromises: Promise<void>[] = Array.from(
       this.files.values(),
       (file) =>
@@ -337,12 +335,31 @@ export class FileManager {
         }),
     );
     await Promise.all(applyPromises);
+
     for (const file of this.files.values()) {
       // any files that need user input/confirmation need to be handled sequentially
-      await file.askUserToWrite?.();
+      if (file.askUserToWrite) {
+        if (!IS_INTERACTIVE || this.throwOnManualChanges) {
+          process.exitCode = 1;
+          if (this.throwOnManualChanges) {
+            throw new Error(
+              `Manual changes present in ${file.relPath}, please resolve the conflict by running 'condu apply' interactively.`,
+            );
+          }
+          console.log(
+            `Please resolve the conflict by running 'condu apply' interactively. Skipping: ${file.relPath}`,
+          );
+          file.status = "skipped";
+        } else {
+          await file.askUserToWrite();
+        }
+      }
     }
     // write the updated cache file
-    await this.cacheFile.applyAndCommit(arg);
+    await this.cacheFile.applyAndCommit({
+      ...arg,
+      overwriteWithoutAsking: true,
+    });
   }
 
   async readCache(): Promise<void> {
@@ -620,7 +637,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
    */
   async applyAndCommit({
     collectedStateReadOnlyView,
-    throwOnManualChanges,
+    overwriteWithoutAsking,
   }: ApplyAndCommitArg): Promise<void> {
     if (!this.isManaged) {
       if (this.lastApply) {
@@ -658,7 +675,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
 
       await this.attemptWriteToFileSystem(
         new SymlinkTarget(this.initialContent.symlinkTarget),
-        { throwOnManualChanges },
+        { overwriteWithoutAsking },
       );
       return;
     }
@@ -774,8 +791,8 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
 
     if (stringified) {
       await this.attemptWriteToFileSystem(stringified, {
-        overwriteWithoutAsking: kind === "user-editable",
-        throwOnManualChanges,
+        overwriteWithoutAsking:
+          kind === "user-editable" || overwriteWithoutAsking,
       });
     } else if (kind === "non-fs") {
       this.status = "skipped";
@@ -847,7 +864,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
 
   async attemptWriteToFileSystem(
     newContent: string | SymlinkTarget,
-    { overwriteWithoutAsking = false, throwOnManualChanges = false } = {},
+    { overwriteWithoutAsking = false } = {},
   ): Promise<void> {
     const targetPath = this.absPath;
     const existingFile = await this.getFsFile();
@@ -894,19 +911,6 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
         content: newContent,
       });
       this._fsState = this.lastApply;
-      return;
-    } else if (!IS_INTERACTIVE || throwOnManualChanges) {
-      process.exitCode = 1;
-      console.log(
-        `Please resolve the conflict by running 'condu apply' interactively. Skipping: ${this.relPath}`,
-      );
-      this.status = "skipped";
-      // TODO:
-      // if (throwOnManualChanges) {
-      //   throw new Error(
-      //     `Manual changes present in ${this.relPath}, please resolve the conflict by running 'condu apply' interactively.`,
-      //   );
-      // }
       return;
     } else {
       this.status = "needs-user-input";
