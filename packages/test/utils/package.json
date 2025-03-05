@@ -9,5 +9,7 @@
     "mock-fs": "^5.5.0",
     "vitest": "^3.0.7"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@condu-feature/editorconfig": "workspace:*"
+  }
 }

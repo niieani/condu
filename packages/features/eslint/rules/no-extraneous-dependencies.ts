@@ -248,7 +248,7 @@ function reportIfMissing(
     sourcePath,
   }: { packageContent: PackageDeps; sourcePath: string | undefined },
   depsOptions: DepsOptions,
-  node: TSESTree.Node,
+  node: TSESTree.Node | TSESTree.Token,
   name: string,
   whitelist: Set<string> | undefined,
 ) {

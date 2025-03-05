@@ -5,7 +5,10 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@pnpm/fetching-types@npm:5.0.0': patch:@pnpm/fetching-types@npm%3A5.0.0#~/.config/patches/@pnpm-fetching-types-npm-5.0.0-d10b510b05.patch
+  '@typescript-eslint/utils': 8.26.0
+  '@typescript-eslint/parser': 8.26.0
+  '@typescript-eslint/eslint-plugin': 8.26.0
+  '@typescript-eslint/types': 8.26.0
 
 patchedDependencies:
   '@verdaccio/types@13.0.0-next-8.1':
@@ -77,10 +80,10 @@ importers:
         specifier: ^22.13.9
         version: 22.13.9
       '@typescript-eslint/eslint-plugin':
-        specifier: ^8.26.0
+        specifier: 8.26.0
         version: 8.26.0(@typescript-eslint/parser@8.26.0(eslint@9.21.0)(typescript@5.8.2))(eslint@9.21.0)(typescript@5.8.2)
       '@typescript-eslint/parser':
-        specifier: ^8.26.0
+        specifier: 8.26.0
         version: 8.26.0(eslint@9.21.0)(typescript@5.8.2)
       '@yarnpkg/types':
         specifier: ^4.0.1
@@ -183,10 +186,10 @@ importers:
         specifier: ^9.21.0
         version: 9.21.0
       '@typescript-eslint/eslint-plugin':
-        specifier: ^8.0.0
+        specifier: 8.26.0
         version: 8.26.0(@typescript-eslint/parser@8.26.0(eslint@9.21.0)(typescript@5.8.2))(eslint@9.21.0)(typescript@5.8.2)
       '@typescript-eslint/parser':
-        specifier: ^8.0.0
+        specifier: 8.26.0
         version: 8.26.0(eslint@9.21.0)(typescript@5.8.2)
       condu:
         specifier: workspace:^
@@ -630,6 +633,10 @@ importers:
       vitest:
         specifier: ^3.0.7
         version: 3.0.7(@types/node@22.13.9)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0)
+    devDependencies:
+      '@condu-feature/editorconfig':
+        specifier: workspace:*
+        version: link:../../features/editorconfig
 
 packages:
 
@@ -1567,7 +1574,7 @@ packages:
     resolution: {integrity: sha512-cLr1J6pe56zjKYajK6SSSre6nl1Gj6xDp1TY0trpgPzjVbgDwd09v2Ws37LABxzkicmUjhEeg/fAUjPJJB1v5Q==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
-      '@typescript-eslint/parser': ^8.0.0 || ^8.0.0-alpha.0
+      '@typescript-eslint/parser': 8.26.0
       eslint: ^8.57.0 || ^9.0.0
       typescript: '>=4.8.4 <5.9.0'
 
