@@ -10,6 +10,8 @@ import type {
   ConduApi,
   FeatureDefinition,
   PeerContextReducer,
+  PossibleFeatureNames,
+  RecipeFunction,
   StateDeclarationApi,
 } from "./conduApiTypes.js";
 import {
@@ -59,6 +61,26 @@ interface CollectStateConfig extends FileManagerOptions {
   project: ConduProject;
 }
 
+/**
+ * Converts recipe functions to feature definitions
+ *
+ * @param feature A feature definition or recipe function
+ * @returns A feature definition
+ */
+function mapInlineRecipeToFeature(
+  feature: RecipeFunction,
+): FeatureDefinition<string> {
+  // TODO: maybe fallback to sha of the recipe function.toString()?
+  const name =
+    feature.name || `recipe-${Math.random().toString(36).slice(2, 10)}`;
+  return {
+    name,
+    defineRecipe: feature,
+    stack:
+      new Error().stack?.split("\n").slice(2).join("\n") ?? import.meta.url,
+  };
+}
+
 export async function collectState(
   options: CollectStateConfig,
 ): Promise<ProjectAndCollectedState> {
@@ -66,16 +88,21 @@ export async function collectState(
   const { project, ...fsOptions } = options;
   const { config } = project;
 
+  // Process recipe functions into feature definitions
+  const processedFeatures = config.features.map((feature) =>
+    typeof feature === "function" ? mapInlineRecipeToFeature(feature) : feature,
+  );
+
   // add autolink built-in feature if not disabled
-  const features: FeatureDefinition<any>[] =
+  const features =
     config.autolink || !("autolink" in config)
       ? [
-          ...config.features,
+          ...processedFeatures,
           autolink(
             typeof config.autolink === "object" ? config.autolink : undefined,
           ),
         ]
-      : config.features;
+      : processedFeatures;
 
   // Deduplicate features by name, ensuring later features override earlier ones
   const deduplicatedFeaturesMap = new Map<string, FeatureDefinition<any>>();
@@ -97,9 +124,7 @@ export async function collectState(
 
   // Initialize the PeerContext
   let peerContext: Partial<Record<(string & {}) | keyof PeerContext, unknown>> =
-    {
-      global: config.globalPeerContext,
-    };
+    { global: config.globalPeerContext };
 
   // Collect initialPeerContext from features
   for (const feature of sortedFeatures) {

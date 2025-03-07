@@ -1,36 +1,30 @@
 ## MVP / alpha TODO List
 
-- [x] correct `init` command's generated monorepo config (right now it generates invalid condu config)
-- [x] why doesn't the correct TS project get loaded in .config/condu?
-  - because all dotfiles are ignored and have to be explicitly included by typescript, by adding `.config/**/*` to includes
-- [ ] Ability to add simple way to define recipe-only features, using a shorthand, functional-style, e.g. `(condu) => condu.in('package').modifyPublishedPackageJson(...)`. These features would not have a name (they can attempt to read Function's `name` property if it exist, but default to a generated ID). Because of this, these features also not be involved in peerContext merging, etc., but otherwise would get applied the same regular features.
-- [x] unlike `generateFile`'s content function, globalRegistry isn't available in PackageJsonModifier.
-- [x] Create a new feature called 'package-scripts' that could be used instead of 'moon', in conjunction with a package manager (e.g. pnpm, yarn, npm or bun) to run the Tasks defined in features as package scripts. It should work both in single repo and monorepo contexts (but in a monorepo you'd expect the package manager to take the role of the script runner for all the scripts). The root-level scripts would use the package manager's feature to recursively run all scripts of a given kind/type, e.g. `pnpm -r run test`. You can see how moon is currently implemented in packages/features/moon/moon.ts. Currently CollectedState's `Task` type uses moonrepo's `PartialTaskConfig`, but we'll probably only support a subset of that type. See notes/tasks-config.ts for definition.
-- [ ] come up with a way to unit test applying features. like in the integration/basic.test.ts, we want to be able to load a feature (or multiple) with a given configuration, and test out what it writes. But we don't want it to be a full-on integration test, so it would have to perhaps run collectState (from packages/platform/condu/commands/apply/apply.ts) with a mock `project`, using 'mock-fs@5.5.0' to mock FS (based on the test's requirements), then run `await applyAndCommitCollectedState(collectedState)` and add snapshot tests on the new FS content. Write the test utilities in a new package under `packages/test/utils` and create a basic test for the `editorconfig` condu feature.
+- [ ] package-scripts must track which scripts are managed by condu
 - [ ] come up with a linter for tags (to define which packages should never depend on another one)
 - [ ] feature to autogenerate 'exports' in package.json - both for published and non-published packages
   - include adding a custom condition which is the name of the package, that points to the source ts
+  - auto-map 'exports' in published/dist package.json - if only one file in directory, use that
 - [ ] in monorepo preset allow passing `false` for each feature to disable it
-- [ ] perhaps merge object (for package json) by default ([see](https://youtu.be/Pmieyp75SrA?t=491)), rather than replacing it, set undefined if you want to remove keys explicitly
+- [ ] consider changing condu api to add prefixes e.g. `condu.in('package').file.create(...)`, `condu.packageJson.merge({...})`
+- [ ] perhaps merge object (for package json) by default ([see](https://youtu.be/Pmieyp75SrA?t=491)), rather than replacing it, set undefined if you want to remove keys explicitly, perhaps unless `$replace({...})` is used, which internally adds a `Symbol.for('replace')` property into the object, and that's how we know to avoid merging.
 - [ ] consider using `dependencies` and `prepare` [lifecycle scripts](https://docs.npmjs.com/cli/v11/using-npm/scripts#life-cycle-scripts) to run `condu apply`
 - [ ] when a symlink already exists and we say to overwrite, it should remove the symlink first, otherwise for some reason it writes over the symlink target
-- [ ] auto-map 'exports' in dist package.json - if only one file in directory, use that
-- [ ] consider changing condu api to add prefixes e.g. `condu.in('package').file.create(...)`, `condu.packageJson.merge({...})`
 - [ ] support shorthand for filtering packages by name: `condu.in('package')`
 - [ ] exclude generated files from TS build
 - [ ] add `repository`, `homepage` (fallback to repo) and `author`, `license` and `contributors` info to published package.json based on the root package.json
-- [ ] features that can be added multiple times need to have a way to be uniquely identified (feature id?) - update 'apply' to handle this. Question remains about initial peer context - I guess it needs to be empty and then peer merging can handle additions to peer context of that same feature. Maybe instead of feature ID, we only apply the first one, but we apply the peerContext for all of them - merging in like a reducer?
+- [ ] features that can be added multiple times (e.g. because they're applied to multiple packages) need to have a way to be uniquely identified (feature id?) - update 'apply' to handle this. Question remains about initial peer context - I guess it needs to be empty and then peer merging can handle additions to peer context of that same feature. Maybe instead of feature ID, we only apply the first one, but we apply the peerContext for all of them - merging in like a reducer?
 - [ ] preset with my features and feature config pre-applied
 - [ ] test it out in an existing project
   - [ ] add condu to `mockify` and publish the packages
-- [ ] 'init' command:
+- [ ] 'init' command improvements:
   - [ ] support converting a single-repo to a monorepo
   - [ ] auto-create the initial packages/ directory
   - [ ] maybe you can specify which preset to use and there are additional steps taken?
   - [ ] by default 'tsx' is missing from eslint apply, since bun always uses 'source' version its always needed
 - [ ] use non-composite projects by default (composite support might need more work - adding references based on dependencies)
 - [ ] 'apply' command:
-  - [ ] when applying is done for the first time, and files exist, make sure to prompt for overwrite and post-apply should remove these files from git using git rm --cached if they're gitignored - this can be verified with `git ls-files --cached -- <file>`
+  - [ ] when applying is done for the first time, and files exist, make sure to prompt for overwrite and post-apply should remove these files from git using `git rm --cached` if they're gitignored - this can be verified with `git ls-files --cached -- <file>`
 - [ ] something is still broken with figuring out default branch
 - [ ] if we had a wrapper on the tool (pnpm/yarn/bun), could maybe symlink the workspace (and even lock) files? although maybe best not to move the lockfile in case it's used by other tools that do static analysis (like Snyk) and depend on it being in the root
 - [ ] add a command to update/set the package manager and node version in the root package.json

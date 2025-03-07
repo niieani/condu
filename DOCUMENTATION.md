@@ -132,6 +132,10 @@ The key part of the feature is a _recipe_.
 It's a list of changes that should be made whenever `condu apply` is run.
 If you've ever used react, you can think of the calls to any of the condu recipe APIs similarly to calling a component hook.
 
+### `defineFeature(name, definition)`
+
+Most reusable features should use the `defineFeature` approach:
+
 ```typescript
 import { defineFeature } from "condu";
 
@@ -205,6 +209,45 @@ export const myFeature = (options = {}) =>
     },
   });
 ```
+
+### Inline Features (Recipe-Only Shorthand Approach)
+
+For simple features that don't need to share state or interact with other features, you can define the feature inline by using the shorthand, recipe-only approach, directly in your config file:
+
+```typescript
+import { configure } from "condu";
+import { typescript } from "@condu-feature/typescript";
+
+export default configure({
+  features: [
+    typescript(),
+
+    // Recipe-only features can be define using an arrow function:
+    (condu) => {
+      condu.in({ kind: "package" }).modifyPublishedPackageJson((pkg) => ({
+        ...pkg,
+        // Add sideEffects: false to all packages for better tree-shaking
+        sideEffects: false,
+      }));
+    },
+
+    // Named functions will use its name as the feature name:
+    function addLicense(condu) {
+      condu.root.generateFile("LICENSE", {
+        content: `MIT License\n\nCopyright (c) ${new Date().getFullYear()} My Organization\n\n...`,
+      });
+    },
+  ],
+});
+```
+
+Recipe-only features:
+
+- Are defined as simple functions that receive the `condu` API
+- Can be named functions (the function name will be used as feature name) or anonymous
+- Don't participate in the `PeerContext` system
+- Are applied in the order they appear in the features array
+- Are perfect for quick, one-off configurations
 
 ## PeerContext System
 

@@ -134,6 +134,8 @@ export type FeatureDefinition<
   NameT extends PossibleFeatureNames = PossibleFeatureNames,
 > = FeatureDefinitionInput<NameT> & FeatureDefinitionMeta<NameT>;
 
+export type RecipeFunction = (condu: ConduApi) => void | Promise<void>;
+
 export type FeatureActionFn = <NameT extends PossibleFeatureNames>(
   name: NameT,
   definition: FeatureDefinitionInput<NameT>,

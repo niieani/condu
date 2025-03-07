@@ -1,5 +1,8 @@
 import type { CONFIGURED } from "./configure.js";
-import type { FeatureDefinition } from "../commands/apply/conduApiTypes.js";
+import type { 
+  FeatureDefinition, 
+  RecipeFunction 
+} from "../commands/apply/conduApiTypes.js";
 import type { ConduPackageEntry } from "../commands/apply/ConduPackageEntry.js";
 import type { GlobalPeerContext, PeerContext } from "../extendable.js";
 import type { AutoLinkConfig } from "../builtin-features/autolink.js";
@@ -43,6 +46,7 @@ export interface NpmPublishConfig {
 }
 
 type PeerContexts = keyof PeerContext;
+
 type UnionOfFeatureDefinitions =
   | {
       [K in PeerContexts]: FeatureDefinition<K>;
@@ -55,7 +59,7 @@ export interface ConduConfig {
   node?: NodeConfig;
   publish?: NpmPublishConfig;
   git?: GitConfig;
-  features: UnionOfFeatureDefinitions[];
+  features: (UnionOfFeatureDefinitions | RecipeFunction)[];
   /** automatically links any config file inside .config/ folder to the root directory and makes it invisible */
   autolink?: boolean | AutoLinkConfig;
   /** when present, assumes monorepo */
