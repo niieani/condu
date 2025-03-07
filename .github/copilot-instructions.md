@@ -31,10 +31,11 @@ This project is a configuration management library that uses code-based configur
   - `packages/presets` - condu presets
   - `packages/test` - test packages and packages related to testing
 - package.json:
-  - dependencies: when one package requires another as an internal dependency, use `workspace:*` as its version, then run `pnpm i` to ensure it resolves.
-  - `devDependencies` that are reused for building/testing of many packages should be added to the root package.json of the monorepo, not to the individual package. For example, `vitest` should never be listed in package.json of individual packages.
-  - scripts: Do not modify package.json scripts, global build/test/lint commands listed above can already do this for all and specific packages.
-  - never define `main`, `exports`, `types` manually, omit these fields, as they are handled by condu.
+  - add both external and internal dependencies using `pnpm`, never modify the "dependencies" property directly
+  - for internal dependencies, always use `workspace:*` as the version, e.g. `pnpm i "@condu-test/utils@workspace:*" -D`
+  - external `devDependencies` that are reused for building/testing of many packages should be added to the workspace root of the monorepo, not to the individual package. For example, `vitest` should never be listed in package.json of individual packages.
+  - scripts: Do not modify package.json scripts, global build/test/lint commands listed above can already do this for all and specific packages
+  - never define `main`, `exports`, `types` manually, omit these fields, as they are auto-added during publish
 - Files: .ts source files, build outputs include .js/.cjs/.cts with maps into the `build` dir
 - Configuration management: project dog-foods itself as the configuration manager, so all config files for all tools are managed inside of `.config` and never committed to git. Specifically, `.config/condu.ts` configures things like TypeScript, eslint, pnpm, Github Action workflows, etc. Running `pnpm exec condu apply` re-generates config files based on the config.
 - Project management: the project keeps track of TODOs and remaining work to be done in `TODO.md`

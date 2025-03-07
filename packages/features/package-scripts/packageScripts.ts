@@ -7,11 +7,9 @@ import {
 } from "condu";
 import type {
   CollectedTask,
-  ConduReadonlyCollectedStateView,
   Task,
 } from "condu/commands/apply/CollectedState.js";
 import type { PackageJsonModifier } from "condu/commands/apply/ConduPackageEntry.js";
-import type { PackageJson } from "@condu/schema-types/schemas/packageJson.gen.js";
 
 /**
  * A feature that generates package.json scripts for tasks defined in features

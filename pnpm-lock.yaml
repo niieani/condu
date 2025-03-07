@@ -290,6 +290,9 @@ importers:
         specifier: workspace:*
         version: link:../../platform/condu
     devDependencies:
+      '@condu-test/utils':
+        specifier: workspace:*
+        version: link:../../test/utils
       '@types/node':
         specifier: ^22.13.9
         version: 22.13.9
