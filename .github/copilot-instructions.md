@@ -1,4 +1,4 @@
-# CLAUDE.md - Quick Reference for condu
+# Quick Reference for condu
 
 This project is a configuration management library that uses code-based configuration to manage projects (predominantly JavaScript/TypeScript ones).
 
