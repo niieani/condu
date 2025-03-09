@@ -1,17 +1,17 @@
 ## MVP / alpha TODO List
 
-- [ ] package-scripts feature should track which scripts are managed by condu. It should do it by storing managedScripts in the package.json's condu section (see similar `managedDependencies` section in packageJsonTypes.ts and how its used). This tracking should be used to remove scripts that are no longer managed. So for e.g. if I run condu apply and a vitest feature generates a script "test:vitest", and then I remove/disable the vitest feature and run `condu apply` again, the "test:vitest" script should be cleaned up.
-- [ ] come up with a linter for tags (to define which packages should never depend on another one)
-- [ ] feature to autogenerate 'exports' in package.json - both for published and non-published packages
+- [x] package-scripts feature should track which scripts are managed by condu. It should do it by storing managedScripts in the package.json's condu section (see similar `managedDependencies` section in packageJsonTypes.ts and how its used). This tracking should be used to remove scripts that are no longer managed. So for e.g. if I run condu apply and a vitest feature generates a script "test:vitest", and then I remove/disable the vitest feature and run `condu apply` again, the "test:vitest" script should be cleaned up.
+- [x] when a symlink already exists and we say to overwrite it with file contents, it should remove the symlink first, otherwise for some reason it writes over the symlink target
+- [ ] extract 'generatedEntrySources' to a feature which autogenerates 'exports' in package.json - both for published and non-published packages
   - include adding a custom condition which is the name of the package, that points to the source ts
   - auto-map 'exports' in published/dist package.json - if only one file in directory, use that
-- [ ] in monorepo preset allow passing `false` for each feature to disable it
-- [ ] consider changing condu api to add prefixes e.g. `condu.in('package').file.create(...)`, `condu.packageJson.merge({...})`
-- [ ] perhaps merge object (for package json) by default ([see](https://youtu.be/Pmieyp75SrA?t=491)), rather than replacing it, set undefined if you want to remove keys explicitly, perhaps unless `$replace({...})` is used, which internally adds a `Symbol.for('replace')` property into the object, and that's how we know to avoid merging.
+- [ ] update the monorepo preset to allow passing `false` for each feature config to disable it
+- [ ] consider changing condu api to add prefixes e.g. `condu.in('package').file.create(...)`, `condu.root.packageJson.merge({...})`
+- [ ] perhaps merge object (for package json) by default ([see](https://youtu.be/Pmieyp75SrA?t=491)), rather than replacing it, set undefined if you want to remove keys explicitly, perhaps unless a helper function `$replace({...})` is used, which internally adds a `Symbol.for('replace')` property into the object, and that's how we know to avoid merging.
 - [ ] consider using `dependencies` and `prepare` [lifecycle scripts](https://docs.npmjs.com/cli/v11/using-npm/scripts#life-cycle-scripts) to run `condu apply`
-- [ ] when a symlink already exists and we say to overwrite, it should remove the symlink first, otherwise for some reason it writes over the symlink target
 - [ ] support shorthand for filtering packages by name: `condu.in('package')`
-- [ ] exclude generated files from TS build
+- [ ] exclude generated files from TS build (add file flag for typescript exclude, and inherit gitignore)
+- [ ] add a command to define a file flag's behavior (e.g. to inherit another flag, like the gitignore flag)
 - [ ] add `repository`, `homepage` (fallback to repo) and `author`, `license` and `contributors` info to published package.json based on the root package.json
 - [ ] features that can be added multiple times (e.g. because they're applied to multiple packages) need to have a way to be uniquely identified (feature id?) - update 'apply' to handle this. Question remains about initial peer context - I guess it needs to be empty and then peer merging can handle additions to peer context of that same feature. Maybe instead of feature ID, we only apply the first one, but we apply the peerContext for all of them - merging in like a reducer?
 - [ ] preset with my features and feature config pre-applied
@@ -22,9 +22,10 @@
   - [ ] auto-create the initial packages/ directory
   - [ ] maybe you can specify which preset to use and there are additional steps taken?
   - [ ] by default 'tsx' is missing from eslint apply, since bun always uses 'source' version its always needed
-- [ ] use non-composite projects by default (composite support might need more work - adding references based on dependencies)
+- [ ] use TS non-composite projects by default (composite support might need more work - adding references based on dependencies)
 - [ ] 'apply' command:
-  - [ ] when applying is done for the first time, and files exist, make sure to prompt for overwrite and post-apply should remove these files from git using `git rm --cached` if they're gitignored - this can be verified with `git ls-files --cached -- <file>`
+  - [ ] verify that we prompt before overwriting files that were never managed by condu before
+  - [ ] when applying is done, and newly created files where previously committed, but now are managed by condu and would be gitignored, condu should remove these files from git using `git rm --cached` if they're gitignored - this can be verified with `git ls-files --cached -- <file>`
 - [ ] something is still broken with figuring out default branch
 - [ ] if we had a wrapper on the tool (pnpm/yarn/bun), could maybe symlink the workspace (and even lock) files? although maybe best not to move the lockfile in case it's used by other tools that do static analysis (like Snyk) and depend on it being in the root
 - [ ] add a command to update/set the package manager and node version in the root package.json
@@ -36,11 +37,13 @@
 ## Later:
 
 - [ ] share on https://peerlist.io/
-- [ ] vscode extensions that runs apply on .config/condu.ts change
+- [ ] consider whether features should have a version field
+- [ ] come up with a linter for tags (to define which packages should never depend on another one)
+- [ ] vscode extension that runs apply on .config/condu.ts change
 - [ ] better logger (potentially https://github.com/unjs/consola)
 - [ ] `condu init` can be used to apply changes to an existing project, in which case it will infer certain things from the existing project, like the package manager
 - [ ] maybe even basic config like 'node' in ConduConfig should be its own feature with peerContext?
-- [ ] when using conventional commits, set set `github.copilot.chat.commitMessageGeneration.instructions`
+- [ ] when using conventional commits, set `github.copilot.chat.commitMessageGeneration.instructions`
 - [ ] solve development mode linking? https://devblogs.microsoft.com/typescript/announcing-typescript-5-7/#path-rewriting-for-relative-paths
 - [ ] perhaps bake-in a test tsconfig configuration using project references? see [this section](https://devblogs.microsoft.com/typescript/announcing-typescript-5-7/#searching-ancestor-configuration-files-for-project-ownership) of the article
 - [ ] auto-deprecate packages that have been removed from the repo
