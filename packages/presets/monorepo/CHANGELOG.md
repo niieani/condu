@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.0.8](https://github.com/niieani/condu/compare/@condu-preset/monorepo@0.0.7...@condu-preset/monorepo@0.0.8) (2025-03-09)
+
+
+### Features
+
+* correct 'init' command ([47031b5](https://github.com/niieani/condu/commit/47031b50bce48a2cdbb8725a397f3f09235d76b3))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu-feature/ci-github-actions bumped to 0.1.11
+    * @condu-feature/condu-packages bumped to 0.1.11
+    * @condu-feature/eslint bumped to 0.1.11
+    * @condu-feature/gitignore bumped to 0.1.11
+    * @condu-feature/moon bumped to 0.1.11
+    * @condu-feature/pnpm bumped to 0.0.9
+    * @condu-feature/release-please bumped to 0.1.11
+    * @condu-feature/typescript bumped to 0.1.11
+    * @condu-feature/vscode bumped to 0.1.11
+  * peerDependencies
+    * condu bumped to 0.1.11
+
 ## [0.0.7](https://github.com/niieani/condu/compare/@condu-preset/monorepo@0.0.6...@condu-preset/monorepo@0.0.7) (2024-12-21)
 
 
