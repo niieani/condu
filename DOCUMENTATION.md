@@ -170,7 +170,7 @@ export const myFeature = (options = {}) =>
       }),
     }),
 
-    // The actual configuration recipe
+    // The main configuration recipe that runs during the main phase
     defineRecipe(condu, peerContext) {
       // Generate or modify files
       condu.root.generateFile("my-config.json", {
@@ -207,8 +207,44 @@ export const myFeature = (options = {}) =>
         },
       }));
     },
+
+    // An optional finalization recipe that runs after all features' main recipes have completed
+    defineGarnish(condu, peerContext) {
+      // Access the complete state after all features have run their recipes
+      const allTasks = condu.globalRegistry.tasks;
+
+      // Perform final adjustments based on the complete configuration state
+      condu.root.modifyPackageJson((pkg) => {
+        // Generate aggregated scripts based on tasks defined by other features
+        const scripts = { ...pkg.scripts };
+
+        // Add scripts that depend on tasks from multiple features
+        for (const task of allTasks) {
+          if (task.taskDefinition.type === "build") {
+            scripts[`build:${task.taskDefinition.name}`] =
+              `special-command for ${task.taskDefinition.name}`;
+          }
+        }
+
+        return { ...pkg, scripts };
+      });
+    },
   });
 ```
+
+Features can define two types of recipes:
+
+1. **`defineRecipe`**: The main recipe that runs during the initial phase of configuration application. Use this for most configuration tasks.
+
+2. **`defineGarnish`**: A finalization recipe that runs after all features have completed their main recipes. This is useful for:
+   - Generating aggregated configurations based on what other features defined
+   - Adding final touches that depend on complete state
+   - Creating scripts or tasks that reference entities created by other features
+   - Post-processing of configuration files
+
+The `defineGarnish` function receives the `condu` API with an additional `globalRegistry` property that provides read access to all the tasks, dependencies, and files defined by all features during their `defineRecipe` phase.
+
+For example, the `packageScripts` feature uses `defineGarnish` to automatically generate package.json scripts for all tasks defined by other features, since it needs to know the complete list of tasks that were defined.
 
 ### Inline Features (Recipe-Only Shorthand Approach)
 
