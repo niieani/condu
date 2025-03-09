@@ -140,10 +140,10 @@ export default configure((pkg) => ({
         "explorer.sortOrder": "foldersNestsFiles",
       },
     }),
-    gptSummarizer({
-      ignore: ["TODO.md", "CHANGELOG.md"],
-      removeComments: true,
-    }),
+    // gptSummarizer({
+    //   ignore: ["TODO.md", "CHANGELOG.md"],
+    //   removeComments: true,
+    // }),
     gitignore({ ignore: [".swc/", ".idea/", ".env", ".env.*", "/brand/"] }),
   ],
 }));

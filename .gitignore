@@ -26,8 +26,6 @@ moon.yml
 /moon.yml
 # vscode:
 /.vscode/settings.json
-# gptSummarizer:
-/about-the-projects-and-its-source-code.md
 # autolink:
 /.env
 /vitest.config.ts
