@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.1.11](https://github.com/niieani/condu/compare/condu@0.1.10...condu@0.1.11) (2025-03-09)
+
+
+### Features
+
+* add support for inline features ([a7c131c](https://github.com/niieani/condu/commit/a7c131cfeafbc35560b4806a6ce07307678f542d))
+* correct 'init' command ([47031b5](https://github.com/niieani/condu/commit/47031b50bce48a2cdbb8725a397f3f09235d76b3))
+* expose globalRegistry in manifest modifications ([553c5fa](https://github.com/niieani/condu/commit/553c5fad6004064770d823830fad1a19b31177b0))
+* implement feature testing utility ([eda0726](https://github.com/niieani/condu/commit/eda072696fe04953c9e01d8689962dd6df1f4657))
+* implement package-scripts feature ([e123329](https://github.com/niieani/condu/commit/e123329374b28be0fa337598a3b454c83f241e01))
+* implement packageScripts feature ([2297655](https://github.com/niieani/condu/commit/22976552c6f33cb0e30ebcb13d4690f80bc8c611))
+* implement project.hasFeature() ([3588d19](https://github.com/niieani/condu/commit/3588d192b124fd25a19bb44d9e0a5d4c0af45569))
+
+
+### Bug Fixes
+
+* move throwOnManualChanges logic into FileManager ([ce3ef59](https://github.com/niieani/condu/commit/ce3ef59a3095a8681b97c0529c9c0393b3e4197b))
+* support internal manifest modifiers ([6feac0b](https://github.com/niieani/condu/commit/6feac0bfb298b4c5b4b80318510ce2990d9a867c))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 0.1.8
+    * @condu/package-manager-utils bumped to 1.0.0
+    * @condu/update-specifiers bumped to 0.1.8
+
 ## [0.1.10](https://github.com/niieani/condu/compare/condu@0.1.9...condu@0.1.10) (2024-12-21)
 
 
