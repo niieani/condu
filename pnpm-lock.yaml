@@ -191,6 +191,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: 8.26.0
         version: 8.26.0(eslint@9.21.0)(typescript@5.8.2)
+      '@typescript-eslint/utils':
+        specifier: 8.26.0
+        version: 8.26.0(eslint@9.21.0)(typescript@5.8.2)
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
