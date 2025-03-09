@@ -1,7 +1,7 @@
 import type { CONFIGURED } from "./configure.js";
-import type { 
-  FeatureDefinition, 
-  RecipeFunction 
+import type {
+  FeatureDefinition,
+  RecipeFunction,
 } from "../commands/apply/conduApiTypes.js";
 import type { ConduPackageEntry } from "../commands/apply/ConduPackageEntry.js";
 import type { GlobalPeerContext, PeerContext } from "../extendable.js";
@@ -72,7 +72,10 @@ export interface ConfiguredConduConfig extends ConduConfig {
   [CONFIGURED]: true;
 }
 
-export interface ConduConfigWithInferredValues extends ConfiguredConduConfig {
+export interface ConduConfigWithInferredValues
+  extends Omit<ConfiguredConduConfig, "features"> {
+  /** preprocessed, topologically ordered features */
+  features: FeatureDefinition[];
   /** absolute path to the workspace */
   workspaceDir: string;
   /** absolute path to the config directory */

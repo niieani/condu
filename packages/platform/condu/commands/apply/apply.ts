@@ -10,8 +10,6 @@ import type {
   ConduApi,
   FeatureDefinition,
   PeerContextReducer,
-  PossibleFeatureNames,
-  RecipeFunction,
   ScopedRecipeApi,
 } from "./conduApiTypes.js";
 import {
@@ -28,10 +26,9 @@ import {
   type ModifyUserEditableFileOptions,
 } from "./FileManager.js";
 import type { PeerContext } from "../../extendable.js";
-import { autolink } from "../../builtin-features/autolink.js";
 import { UpsertMap } from "@condu/core/utils/UpsertMap.js";
-import { topologicalSortFeatures } from "./topologicalSortFeatures.js";
 import type { UnionToIntersection } from "type-fest";
+import { preprocessFeatures } from "./preprocessFeatures.js";
 
 export interface ProjectAndCollectedState {
   project: ConduProject;
@@ -62,73 +59,20 @@ interface CollectStateConfig extends FileManagerOptions {
   project: ConduProject;
 }
 
-/**
- * Converts recipe functions to feature definitions
- *
- * @param feature A feature definition or recipe function
- * @returns A feature definition
- */
-function mapInlineRecipeToFeature(
-  feature: RecipeFunction,
-): FeatureDefinition<string> {
-  // TODO: maybe fallback to sha of the recipe function.toString()?
-  const name =
-    feature.name || `recipe-${Math.random().toString(36).slice(2, 10)}`;
-  return {
-    name,
-    defineRecipe: feature,
-    stack:
-      new Error().stack?.split("\n").slice(2).join("\n") ?? import.meta.url,
-  };
-}
-
 export async function collectState(
   options: CollectStateConfig,
 ): Promise<ProjectAndCollectedState> {
   // TODO: add a mutex file lock to prevent concurrent runs of apply
   const { project, ...fsOptions } = options;
   const { config } = project;
-
-  // Process recipe functions into feature definitions
-  const processedFeatures = config.features.map((feature) =>
-    typeof feature === "function" ? mapInlineRecipeToFeature(feature) : feature,
-  );
-
-  // add autolink built-in feature if not disabled
-  const features =
-    config.autolink || !("autolink" in config)
-      ? [
-          ...processedFeatures,
-          autolink(
-            typeof config.autolink === "object" ? config.autolink : undefined,
-          ),
-        ]
-      : processedFeatures;
-
-  // Deduplicate features by name, ensuring later features override earlier ones
-  const deduplicatedFeaturesMap = new Map<string, FeatureDefinition<any>>();
-
-  for (const feature of features) {
-    if (deduplicatedFeaturesMap.has(feature.name)) {
-      console.warn(
-        `Duplicate feature found: ${feature.name}. The first definition will be used.`,
-      );
-    } else {
-      deduplicatedFeaturesMap.set(feature.name, feature);
-    }
-  }
-
-  const deduplicatedFeatures = Array.from(deduplicatedFeaturesMap.values());
-
-  // Topologically sort the deduplicated features
-  const sortedFeatures = topologicalSortFeatures(deduplicatedFeatures);
+  const { features } = config;
 
   // Initialize the PeerContext
   let peerContext: Partial<Record<(string & {}) | keyof PeerContext, unknown>> =
     { global: config.globalPeerContext };
 
   // Collect initialPeerContext from features
-  for (const feature of sortedFeatures) {
+  for (const feature of features) {
     if ("initialPeerContext" in feature && feature.initialPeerContext) {
       if (feature.name === "global") {
         throw new Error(
@@ -149,7 +93,7 @@ export async function collectState(
   ][] = [];
 
   // Run modifyPeerContexts functions
-  for (const feature of sortedFeatures) {
+  for (const feature of features) {
     if (feature.modifyPeerContexts) {
       const reducers = await feature.modifyPeerContexts(
         project,
@@ -203,7 +147,7 @@ export async function collectState(
 
   const conduApiPerFeature: Array<[FeatureDefinition, ConduApi]> = [];
   // Run apply functions in topological order
-  for (const feature of sortedFeatures) {
+  for (const feature of features) {
     const conduApi = createConduApi({
       project,
       collectionContext: { featureName: feature.name },

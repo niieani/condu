@@ -29,6 +29,10 @@ export class ConduProject {
     this.allPackages = [workspacePackage, ...workspacePackages];
   }
 
+  hasFeature(name: string) {
+    return this.config.features.some((feature) => feature.name === name);
+  }
+
   get workspace(): ConduPackageEntry<"workspace"> {
     return this.#workspacePackage;
   }

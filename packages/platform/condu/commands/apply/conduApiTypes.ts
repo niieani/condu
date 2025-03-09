@@ -42,6 +42,7 @@ export type ReadonlyConduProject = Omit<
   ConduProject,
   "applyAndCommit" | "allPackages" | "workspace" | "workspacePackages"
 > & {
+  // override with narrowed-down readonly types for the workspace and packages
   readonly allPackages: readonly ReadonlyConduPackageEntry[];
   readonly workspace: ReadonlyConduPackageEntry<"workspace">;
   readonly workspacePackages: readonly ReadonlyConduPackageEntry<"package">[];

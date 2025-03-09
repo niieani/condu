@@ -25,6 +25,7 @@ import { findUp } from "@condu/core/utils/findUp.js";
 import * as fs from "node:fs/promises";
 import { getManifestsPaths, getPackage } from "@condu/workspace-utils/topo.js";
 import { ConduProject } from "./commands/apply/ConduProject.js";
+import { preprocessFeatures } from "./commands/apply/preprocessFeatures.js";
 
 export async function loadConduConfigFnFromFs({
   startDir = process.cwd(),
@@ -110,8 +111,11 @@ export async function loadConduProject({
     packageManager?.split("@") ?? [];
   const nodeVersion = engines?.node ?? DEFAULT_NODE_VERSION;
 
+  const sortedAndProcessedFeatures = preprocessFeatures(config);
+
   const configWithInferredValues: ConduConfigWithInferredValues = {
     ...config,
+    features: sortedAndProcessedFeatures,
     engine: "bun",
     git: {
       ...config.git,

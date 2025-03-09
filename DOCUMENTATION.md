@@ -128,127 +128,11 @@ export default configure({
 
 You can create custom features to encapsulate your own configuration logic.
 
-The key part of the feature is a _recipe_.
-It's a list of changes that should be made whenever `condu apply` is run.
-If you've ever used react, you can think of the calls to any of the condu recipe APIs similarly to calling a component hook.
+A feature's primary purpose is to define a _recipe_ - a list of changes that should be made whenever `condu apply` is run. Think of the calls to condu recipe APIs similar to React component hooks.
 
-### `defineFeature(name, definition)`
+### Inline Features (Simplest Approach)
 
-Most reusable features should use the `defineFeature` approach:
-
-```typescript
-import { defineFeature } from "condu";
-
-// Declare the peer context for TypeScript support
-declare module "condu" {
-  interface PeerContext {
-    myFeature: {
-      config: { option1: string; option2: boolean };
-    };
-  }
-}
-
-export const myFeature = (options = {}) =>
-  defineFeature("myFeature", {
-    // Initial context for this feature
-    initialPeerContext: {
-      config: {
-        option1: options.option1 || "default",
-        option2: options.option2 || false,
-      },
-    },
-
-    // How this feature affects other features' contexts
-    modifyPeerContexts: (project, initialContext) => ({
-      // Modify the eslint context
-      eslint: (current) => ({
-        ...current,
-        defaultRules: {
-          ...current.defaultRules,
-          "my-rule": "error",
-        },
-      }),
-    }),
-
-    // The main configuration recipe that runs during the main phase
-    defineRecipe(condu, peerContext) {
-      // Generate or modify files
-      condu.root.generateFile("my-config.json", {
-        content: peerContext.config,
-        stringify: JSON.stringify,
-      });
-
-      // Ensure dependencies
-      condu.root.ensureDependency("my-package", { dev: true });
-
-      // Modify package.json
-      condu.root.modifyPackageJson((pkg) => ({
-        ...pkg,
-        scripts: {
-          ...pkg.scripts,
-          "my-script": "my-command",
-        },
-      }));
-
-      // In a monorepo you can target specific packages with the `in` method:
-      // Apply to all packages
-      condu.in({ kind: "package" }).generateFile("some-config.json", {
-        content: {
-          /* ... */
-        },
-      });
-
-      // Apply only to a specific package
-      condu.in({ name: "my-package" }).modifyPackageJson((pkg) => ({
-        ...pkg,
-        scripts: {
-          ...pkg.scripts,
-          build: "special-build-command",
-        },
-      }));
-    },
-
-    // An optional finalization recipe that runs after all features' main recipes have completed
-    defineGarnish(condu, peerContext) {
-      // Access the complete state after all features have run their recipes
-      const allTasks = condu.globalRegistry.tasks;
-
-      // Perform final adjustments based on the complete configuration state
-      condu.root.modifyPackageJson((pkg) => {
-        // Generate aggregated scripts based on tasks defined by other features
-        const scripts = { ...pkg.scripts };
-
-        // Add scripts that depend on tasks from multiple features
-        for (const task of allTasks) {
-          if (task.taskDefinition.type === "build") {
-            scripts[`build:${task.taskDefinition.name}`] =
-              `special-command for ${task.taskDefinition.name}`;
-          }
-        }
-
-        return { ...pkg, scripts };
-      });
-    },
-  });
-```
-
-Features can define two types of recipes:
-
-1. **`defineRecipe`**: The main recipe that runs during the initial phase of configuration application. Use this for most configuration tasks.
-
-2. **`defineGarnish`**: A finalization recipe that runs after all features have completed their main recipes. This is useful for:
-   - Generating aggregated configurations based on what other features defined
-   - Adding final touches that depend on complete state
-   - Creating scripts or tasks that reference entities created by other features
-   - Post-processing of configuration files
-
-The `defineGarnish` function receives the `condu` API with an additional `globalRegistry` property that provides read access to all the tasks, dependencies, and files defined by all features during their `defineRecipe` phase.
-
-For example, the `packageScripts` feature uses `defineGarnish` to automatically generate package.json scripts for all tasks defined by other features, since it needs to know the complete list of tasks that were defined.
-
-### Inline Features (Recipe-Only Shorthand Approach)
-
-For simple features that don't need to share state or interact with other features, you can define the feature inline by using the shorthand, recipe-only approach, directly in your config file:
+For one-off or simple modifications, you can define features inline directly in your config file:
 
 ```typescript
 import { configure } from "condu";
@@ -258,7 +142,7 @@ export default configure({
   features: [
     typescript(),
 
-    // Recipe-only features can be define using an arrow function:
+    // Anonymous arrow function feature
     (condu) => {
       condu.in({ kind: "package" }).modifyPublishedPackageJson((pkg) => ({
         ...pkg,
@@ -267,7 +151,7 @@ export default configure({
       }));
     },
 
-    // Named functions will use its name as the feature name:
+    // Named functions will use their name as the feature name
     function addLicense(condu) {
       condu.root.generateFile("LICENSE", {
         content: `MIT License\n\nCopyright (c) ${new Date().getFullYear()} My Organization\n\n...`,
@@ -277,15 +161,246 @@ export default configure({
 });
 ```
 
-Recipe-only features:
+Inline features:
 
-- Are defined as simple functions that receive the `condu` API
-- Can be named functions (the function name will be used as feature name) or anonymous
-- Don't participate in the `PeerContext` system
+- Are perfect for quick, project-specific configurations
+- Don't participate in the PeerContext system
 - Are applied in the order they appear in the features array
-- Are perfect for quick, one-off configurations
 
-## PeerContext System
+### Reusable Features with `defineFeature`
+
+For creating proper reusable features, use the `defineFeature` function:
+
+```typescript
+import { defineFeature } from "condu";
+
+export const myFeature = (options = {}) =>
+  defineFeature("myFeature", {
+    // The main recipe that runs during configuration application
+    defineRecipe(condu) {
+      // Generate a configuration file
+      condu.root.generateFile("my-config.json", {
+        content: {
+          enabled: options.enabled ?? true,
+          settings: options.settings ?? {},
+        },
+        stringify: JSON.stringify,
+      });
+
+      // Add required dependencies
+      condu.root.ensureDependency("my-library");
+
+      // Target specific packages in a monorepo
+      condu.in({ kind: "package" }).modifyPackageJson((pkg) => ({
+        ...pkg,
+        scripts: {
+          ...pkg.scripts,
+          "my-script": "my-command",
+        },
+      }));
+    },
+  });
+```
+
+### Using PeerContext for Feature Coordination
+
+When you want features to influence each other, use the PeerContext system.
+For example, the TypeScript feature could automatically enable TypeScript-specific ESLint rules as in the example below:
+
+```typescript
+// ESLint feature definition
+declare module "condu" {
+  interface PeerContext {
+    eslint: {
+      rules: Record<string, unknown>;
+      plugins: string[];
+      extends: string[];
+    };
+  }
+}
+
+export const eslint = (options = {}) =>
+  defineFeature("eslint", {
+    initialPeerContext: {
+      rules: {
+        "no-unused-vars": "error",
+      },
+      plugins: [],
+      extends: ["eslint:recommended"],
+    },
+
+    defineRecipe(condu, peerContext) {
+      // Generate eslint config using the final peer context
+      // which may have been modified by other features
+      condu.root.generateFile(".eslintrc.js", {
+        content: `module.exports = {
+          extends: ${JSON.stringify(peerContext.extends)},
+          plugins: ${JSON.stringify(peerContext.plugins)},
+          rules: ${JSON.stringify(peerContext.rules, null, 2)}
+        }`,
+      });
+
+      // Ensure ESLint dependency
+      condu.root.ensureDependency("eslint");
+
+      // Ensure any plugins are installed
+      for (const plugin of peerContext.plugins) {
+        condu.root.ensureDependency(`eslint-plugin-${plugin}`);
+      }
+    },
+  });
+
+// TypeScript feature that influences ESLint
+export const typescript = (options = {}) =>
+  defineFeature("typescript", {
+    initialPeerContext: {
+      // TypeScript-specific context
+      config: {
+        strict: true,
+        // ...other TypeScript options
+      },
+    },
+
+    // Here TypeScript feature modifies ESLint's context
+    modifyPeerContexts: (project, initialContext) => ({
+      eslint: (current) => ({
+        ...current,
+        // Add TypeScript ESLint plugin
+        plugins: [...current.plugins, "typescript"],
+        // Add TypeScript ESLint config
+        extends: [...current.extends, "plugin:@typescript-eslint/recommended"],
+        // Add/modify TypeScript-specific rules
+        rules: {
+          ...current.rules,
+          "@typescript-eslint/no-explicit-any": "error",
+          "@typescript-eslint/explicit-function-return-type": "warn",
+          // Disable the base ESLint rule in favor of TypeScript-specific one
+          "no-unused-vars": "off",
+          "@typescript-eslint/no-unused-vars": "error",
+        },
+      }),
+    }),
+
+    defineRecipe(condu, peerContext) {
+      // Generate tsconfig.json
+      condu.root.generateFile("tsconfig.json", {
+        content: {
+          compilerOptions: peerContext.config,
+        },
+        stringify: (obj) => JSON.stringify(obj, null, 2),
+      });
+
+      // Ensure TypeScript dependencies
+      condu.root.ensureDependency("typescript");
+
+      // Also add TypeScript ESLint dependencies if ESLint is used
+      if (condu.project.hasFeature("eslint")) {
+        condu.root.ensureDependency("@typescript-eslint/parser");
+        condu.root.ensureDependency("@typescript-eslint/eslint-plugin");
+      }
+    },
+  });
+```
+
+With this setup:
+
+1. The ESLint feature defines its initial rules and plugin configuration
+2. The TypeScript feature enhances ESLint configuration with TypeScript-specific rules
+3. When both features are used together, you automatically get TypeScript-aware linting
+
+### Advanced Usage: `defineGarnish` for Post-Processing
+
+For final adjustments after all features have run their main recipes, use `defineGarnish`:
+
+```typescript
+import { defineFeature } from "condu";
+
+export const packageScripts = () =>
+  defineFeature("packageScripts", {
+    // Standard recipe for basic setup
+    defineRecipe(condu) {
+      // Basic script setup
+      condu.root.modifyPackageJson((pkg) => ({
+        ...pkg,
+        scripts: {
+          ...pkg.scripts,
+          start: "node index.js",
+        },
+      }));
+    },
+
+    // Garnish runs after all other features have applied their recipes
+    defineGarnish(condu) {
+      // Access the complete state after all features have run
+      const allTasks = condu.globalRegistry.tasks;
+
+      // Generate scripts based on tasks defined by other features
+      condu.root.modifyPackageJson((pkg) => {
+        const scripts = { ...pkg.scripts };
+
+        // Create aggregate scripts based on task types
+        const buildTasks = allTasks.filter(
+          (task) => task.taskDefinition.type === "build",
+        );
+
+        if (buildTasks.length > 0) {
+          scripts["build:all"] = buildTasks
+            .map((t) => `npm run build:${t.taskDefinition.name}`)
+            .join(" && ");
+
+          // Add individual build scripts for each task
+          for (const task of buildTasks) {
+            scripts[`build:${task.taskDefinition.name}`] =
+              task.taskDefinition.command;
+          }
+        }
+
+        // Create test scripts for all test tasks
+        const testTasks = allTasks.filter(
+          (task) => task.taskDefinition.type === "test",
+        );
+
+        if (testTasks.length > 0) {
+          scripts["test:all"] = testTasks
+            .map((t) => `npm run test:${t.taskDefinition.name}`)
+            .join(" && ");
+        }
+
+        return { ...pkg, scripts };
+      });
+    },
+  });
+```
+
+The `defineGarnish` function:
+
+- Runs after all features have completed their main recipes
+- Has access to `globalRegistry` with information about all tasks, dependencies, and files
+- Is perfect for generating aggregate configurations or scripts that depend on what other features defined
+- Enables post-processing of files or configurations
+
+## API Reference
+
+### ConduApi
+
+The main API available in feature recipes:
+
+- `condu.project`: Information about the project
+- `condu.root`: Operations on the root package
+- `condu.in(criteria)`: Target specific packages
+
+### StateDeclarationApi
+
+Methods for declaring configuration changes:
+
+- `generateFile(path, options)`: Create a new file
+- `modifyGeneratedFile(path, options)`: Modify a generated file
+- `modifyUserEditableFile(path, options)`: Modify a user-editable file
+- `ensureDependency(name, options)`: Ensure a dependency exists
+- `modifyPackageJson(modifier)`: Modify package.json
+- `defineTask(name, definition)`: Define a task
+
+### PeerContext System
 
 The PeerContext system enables features to share information and coordinate with each other:
 
@@ -332,26 +447,7 @@ defineRecipe(condu, peerContext) {
 
 This system enables powerful coordination between features without tight coupling.
 
-## API Reference
-
-### ConduApi
-
-The main API available in feature recipes:
-
-- `condu.project`: Information about the project
-- `condu.root`: Operations on the root package
-- `condu.in(criteria)`: Target specific packages
-
-### StateDeclarationApi
-
-Methods for declaring configuration changes:
-
-- `generateFile(path, options)`: Create a new file
-- `modifyGeneratedFile(path, options)`: Modify a generated file
-- `modifyUserEditableFile(path, options)`: Modify a user-editable file
-- `ensureDependency(name, options)`: Ensure a dependency exists
-- `modifyPackageJson(modifier)`: Modify package.json
-- `defineTask(name, definition)`: Define a task
+To resolve any type-system issues when building a feature that might influence others, be sure to include the peer features as an optional peerDependency, with a broad version requirement (such as `*` or `>=1.0.0`).
 
 ## CLI Reference
 
