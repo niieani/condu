@@ -12,6 +12,8 @@ import type { GlobalFileAttributes, PeerContext } from "../../extendable.js";
 import type { Immutable } from "../../tsUtils.js";
 import type { PartialTaskConfig } from "@moonrepo/types";
 
+export type CollectionStage = "fresh" | "recipes-defined" | "garnish-defined";
+
 export interface CollectedState {
   fileManager: FileManager;
   tasks: CollectedTask[];
@@ -22,6 +24,7 @@ export interface CollectedState {
   packageJsonModifications: PackageJsonModificationWithPackage[];
   releasePackageJsonModifications: PackageJsonModificationWithPackage[];
   peerContext: PeerContext;
+  stage: CollectionStage;
 }
 
 export interface CollectionContext {

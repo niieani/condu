@@ -12,13 +12,14 @@ import type {
   PeerContextReducer,
   PossibleFeatureNames,
   RecipeFunction,
-  StateDeclarationApi,
+  ScopedRecipeApi,
 } from "./conduApiTypes.js";
 import {
   type CollectedState,
   type CollectionContext,
   ConduReadonlyCollectedStateView,
   type CollectedDependency,
+  type CollectionStage,
 } from "./CollectedState.js";
 import type { ConduProject } from "./ConduProject.js";
 import {
@@ -187,6 +188,7 @@ export async function collectState(
 
   // Create the object to collect changes
   const changesCollector: CollectedState = {
+    stage: "fresh",
     fileManager,
     dependencies: [],
     resolutions: {},
@@ -199,6 +201,7 @@ export async function collectState(
     changesCollector,
   );
 
+  const conduApiPerFeature: Array<[FeatureDefinition, ConduApi]> = [];
   // Run apply functions in topological order
   for (const feature of sortedFeatures) {
     const conduApi = createConduApi({
@@ -207,6 +210,8 @@ export async function collectState(
       changesCollector,
       collectedStateReadOnlyView,
     });
+    conduApiPerFeature.push([feature, conduApi]);
+
     if ("initialPeerContext" in feature) {
       await feature.defineRecipe?.(
         conduApi,
@@ -216,6 +221,26 @@ export async function collectState(
       await feature.defineRecipe?.(conduApi);
     }
   }
+
+  changesCollector.stage = "recipes-defined";
+
+  for (const [feature, conduApi] of conduApiPerFeature) {
+    const garnishApi = {
+      ...conduApi,
+      globalRegistry: collectedStateReadOnlyView,
+    };
+    if ("initialPeerContext" in feature) {
+      await feature.defineGarnish?.(
+        garnishApi,
+        peerContext[feature.name] as AllPossiblePeerContexts,
+      );
+    } else {
+      await feature.defineGarnish?.(garnishApi);
+    }
+  }
+
+  changesCollector.stage = "garnish-defined";
+
   return {
     project,
     collectedStateReadOnlyView,
@@ -254,11 +279,10 @@ const createConduApi = ({
       ? project.workspacePackages
       : project.allPackages.filter((pkg) => matchPackageFn(pkg));
 
-    const matchesAllWorkspacePackages =
-      matchingPackages.length === project.workspacePackages.length;
-
     // TODO: when matching all packages, we can optimize the gitignore output
     // by using the project.projectConventions[*].glob instead of the package's path
+    const matchesAllWorkspacePackages =
+      matchingPackages.length === project.workspacePackages.length;
 
     return createStateDeclarationApi({
       matchingPackages,
@@ -282,8 +306,10 @@ const createStateDeclarationApi = ({
   collectionContext: CollectionContext;
   collectedStateReadOnlyView: ConduReadonlyCollectedStateView;
   matchesAllWorkspacePackages: boolean;
-}): StateDeclarationApi => ({
+}): ScopedRecipeApi => ({
   ignoreFile(relPath, options) {
+    assertFreshCollectorState(changesCollector, collectionContext, ["fresh"]);
+
     for (const pkg of matchingPackages) {
       changesCollector.fileManager
         .manageFile({
@@ -298,6 +324,11 @@ const createStateDeclarationApi = ({
     return this;
   },
   generateFile(relPath, options) {
+    assertFreshCollectorState(changesCollector, collectionContext, [
+      "fresh",
+      "recipes-defined",
+    ]);
+
     for (const pkg of matchingPackages) {
       changesCollector.fileManager
         .manageFile({
@@ -318,6 +349,11 @@ const createStateDeclarationApi = ({
     return this;
   },
   modifyGeneratedFile(relPath, options) {
+    assertFreshCollectorState(changesCollector, collectionContext, [
+      "fresh",
+      "recipes-defined",
+    ]);
+
     for (const pkg of matchingPackages) {
       changesCollector.fileManager
         .manageFile({
@@ -338,6 +374,11 @@ const createStateDeclarationApi = ({
     return this;
   },
   modifyUserEditableFile(relPath, options: ModifyUserEditableFileOptions<any>) {
+    assertFreshCollectorState(changesCollector, collectionContext, [
+      "fresh",
+      "recipes-defined",
+    ]);
+
     for (const pkg of matchingPackages) {
       changesCollector.fileManager
         .manageFile({
@@ -358,6 +399,11 @@ const createStateDeclarationApi = ({
     return this;
   },
   ensureDependency(name, dependencyDef) {
+    assertFreshCollectorState(changesCollector, collectionContext, [
+      "fresh",
+      "recipes-defined",
+    ]);
+
     for (const pkg of matchingPackages) {
       changesCollector.dependencies.push({
         targetPackage: pkg,
@@ -368,10 +414,20 @@ const createStateDeclarationApi = ({
     return this;
   },
   setDependencyResolutions(resolutions) {
+    assertFreshCollectorState(changesCollector, collectionContext, [
+      "fresh",
+      "recipes-defined",
+    ]);
+
     Object.assign(changesCollector.resolutions, resolutions);
     return this;
   },
   modifyPackageJson(modifier) {
+    assertFreshCollectorState(changesCollector, collectionContext, [
+      "fresh",
+      "recipes-defined",
+    ]);
+
     for (const pkg of matchingPackages) {
       changesCollector.packageJsonModifications.push({
         targetPackage: pkg,
@@ -379,11 +435,15 @@ const createStateDeclarationApi = ({
         modifier,
         context: collectionContext,
       });
-      // pkg.addModification(modifier, collectionContext);
     }
     return this;
   },
   modifyPublishedPackageJson(modifier) {
+    assertFreshCollectorState(changesCollector, collectionContext, [
+      "fresh",
+      "recipes-defined",
+    ]);
+
     for (const pkg of matchingPackages) {
       changesCollector.releasePackageJsonModifications.push({
         targetPackage: pkg,
@@ -396,6 +456,8 @@ const createStateDeclarationApi = ({
     return this;
   },
   defineTask(name, task) {
+    assertFreshCollectorState(changesCollector, collectionContext, ["fresh"]);
+
     for (const pkg of matchingPackages) {
       changesCollector.tasks.push({
         targetPackage: pkg,
@@ -406,6 +468,18 @@ const createStateDeclarationApi = ({
     return this;
   },
 });
+
+function assertFreshCollectorState(
+  changesCollector: CollectedState,
+  collectionContext: CollectionContext,
+  allowedInStates: CollectionStage[],
+) {
+  if (!allowedInStates.includes(changesCollector.stage)) {
+    throw new Error(
+      `condu's APIs cannot be used after the recipe function has been executed. Please check ${collectionContext.featureName}'s recipe functions for issues.`,
+    );
+  }
+}
 
 export async function applyAndCommitCollectedState({
   collectedState,

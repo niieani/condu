@@ -14,6 +14,7 @@ import type {
   WriteManifestFn,
   IPackageEntryWithWriteManifest,
 } from "@condu/workspace-utils/packageJsonTypes.js";
+import type { PostRecipeState } from "./conduApiTypes.js";
 
 // only properties, exclude any functions:
 export type ReadonlyConduPackageEntry<KindT extends PackageKind = PackageKind> =
@@ -244,14 +245,13 @@ function getReleaseDependencies(manifest: PackageJson) {
 
 export type PackageJsonModifier = (
   pkg: ConduPackageJson,
-  { globalRegistry }: { globalRegistry: ConduReadonlyCollectedStateView },
+  { globalRegistry }: PostRecipeState,
 ) => ConduPackageJson | Promise<ConduPackageJson>;
 
 // internal type for storing pending modifications
-export interface PackageJsonModification {
+export interface PackageJsonModification extends PostRecipeState {
   modifier: PackageJsonModifier;
   context: CollectionContext;
-  globalRegistry: ConduReadonlyCollectedStateView;
 }
 
 export type MatchPackage =

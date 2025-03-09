@@ -12,6 +12,7 @@ import type FileSystem from "mock-fs/lib/filesystem.js";
 import fs from "node:fs";
 import { loadConduProject } from "condu/loadProject.js";
 import path from "node:path";
+import type { ConduProject } from "condu/commands/apply/ConduProject.js";
 
 interface DirectoryItems {
   [name: string]: string | DirectoryItems;
@@ -36,6 +37,7 @@ export async function testApplyFeatures({
   getMockState: () => Promise<Record<string, string | Buffer | DirectoryItems>>;
   [Symbol.dispose]: () => void;
   bypassMockFs: (typeof mockFs)["bypass"];
+  project: ConduProject;
 }> {
   const defaultPackageJson = {
     name: "mock-project",
@@ -54,7 +56,7 @@ export async function testApplyFeatures({
     "/mock-project": mockProjectFs,
   });
 
-  const project = await loadConduProject({
+  let project = await loadConduProject({
     workspaceDir: "/mock-project",
     getConfig: configure(config),
   });
@@ -69,7 +71,15 @@ export async function testApplyFeatures({
   await applyAndCommitCollectedState(collected);
   const { collectedState } = collected;
 
+  // reload the project so it can be used to make assertions
+  project =
+    (await loadConduProject({
+      workspaceDir: "/mock-project",
+      getConfig: configure(config),
+    })) ?? project;
+
   return {
+    project,
     collectedState,
     getFileContents: async (path: string): Promise<string> => {
       try {

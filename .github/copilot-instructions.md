@@ -58,6 +58,7 @@ This project is a configuration management library that uses code-based configur
   - `packages/platform/condu/commands`: Actual command implementation
   - `packages/platform/condu/commands/apply/*`: everything related to `apply`ing the features' recipes - generating and modifying files, adding dependencies, etc.
   - `packages/platform/condu/commands/apply/conduApiTypes.ts`: condu's feature API capabilities
+  - when calling functions, prefer inlining arguments `fn({ someArg: true })` over separate definition `const opts = {someArg: true}; fn(opts)`
 - Refer to `DOCUMENTATION.md` and update it when necessary
 
 When building or editing condu features:
