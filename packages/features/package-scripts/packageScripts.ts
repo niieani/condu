@@ -158,10 +158,32 @@ export const packageScripts = (
         // Update the package.json for this package
         if (Object.keys(packageScripts).length > 0) {
           condu.in({ absPath: pkgPath }).modifyPackageJson((manifest) => {
+            // Track previously managed scripts that need to be removed
+            const previousManagedScripts = manifest.condu?.managedScripts || [];
+            const newManagedScripts = Object.keys(packageScripts);
+
+            // Remove scripts that were previously managed but are no longer needed
+            if (manifest.scripts) {
+              for (const scriptName of previousManagedScripts) {
+                if (
+                  !newManagedScripts.includes(scriptName) &&
+                  manifest.scripts[scriptName]
+                ) {
+                  delete manifest.scripts[scriptName];
+                }
+              }
+            }
+
+            // Add new scripts
             manifest.scripts = {
               ...manifest.scripts,
               ...packageScripts,
             };
+
+            // Update the list of managed scripts
+            manifest.condu ??= {};
+            manifest.condu.managedScripts = newManagedScripts;
+
             return manifest;
           });
         }
@@ -274,10 +296,34 @@ export const packageScripts = (
         // Add all root package scripts
         if (Object.keys(rootPackageScripts).length > 0) {
           condu.root.modifyPackageJson((manifest) => {
+            // Track previously managed scripts that need to be removed
+            const previousManagedScripts = manifest.condu?.managedScripts || [];
+            const newManagedScripts = Object.keys(rootPackageScripts);
+
+            // Remove scripts that were previously managed but are no longer needed
+            if (manifest.scripts) {
+              for (const scriptName of previousManagedScripts) {
+                if (
+                  !newManagedScripts.includes(scriptName) &&
+                  manifest.scripts[scriptName]
+                ) {
+                  delete manifest.scripts[scriptName];
+                }
+              }
+            }
+
+            // Add new scripts
             manifest.scripts = {
               ...manifest.scripts,
               ...rootPackageScripts,
             };
+
+            // Update the list of managed scripts
+            if (!manifest.condu) {
+              manifest.condu = {};
+            }
+            manifest.condu.managedScripts = newManagedScripts;
+
             return manifest;
           });
         }

@@ -232,3 +232,98 @@ test("packageScripts feature should filter tasks with custom filter", async () =
   // Verify excluded script
   expect(packageJson.scripts?.["build:typescript-dev"]).toBeUndefined();
 });
+
+test("packageScripts feature should track and clean up managed scripts", async () => {
+  // First apply with tasks that add scripts
+  const initialTasksFeature = defineFeature("tasksFeature", {
+    defineRecipe(condu) {
+      condu.root.defineTask("typescript", {
+        type: "build",
+        definition: {
+          command: "tsc",
+        },
+      });
+
+      condu.root.defineTask("vitest", {
+        type: "test",
+        definition: {
+          command: "vitest",
+        },
+      });
+    },
+  });
+
+  using initialUtils = await testApplyFeatures({
+    config: { features: [initialTasksFeature, packageScripts()] },
+    initialFs: {
+      "package.json": JSON.stringify({
+        name: "test-project",
+        version: "1.0.0",
+        scripts: {
+          "user-script": "echo user script that should not be touched",
+        },
+      }),
+    },
+  });
+
+  // Verify scripts were added and tracked
+  const firstPackageJson = initialUtils.project.manifest;
+  initialUtils.bypassMockFs(() => {
+    expect(firstPackageJson.scripts).toMatchObject({
+      "user-script": "echo user script that should not be touched",
+      "build:typescript": "tsc",
+      "test:vitest": "vitest",
+      "build": expect.any(String),
+      "test": expect.any(String),
+    });
+
+    // Check that the scripts are tracked in condu section
+    expect(firstPackageJson.condu?.managedScripts).toEqual([
+      "build:typescript", 
+      "test:vitest", 
+      "build", 
+      "test"
+    ]);
+  });
+
+  // Now simulate removing the vitest task
+  const updatedTasksFeature = defineFeature("tasksFeature", {
+    defineRecipe(condu) {
+      // Only typescript task remains
+      condu.root.defineTask("typescript", {
+        type: "build",
+        definition: {
+          command: "tsc",
+        },
+      });
+      // vitest task removed
+    },
+  });
+
+  // Re-apply with the updated feature
+  // Get the current filesystem state to use as the initial state for the next test
+  const currentFs = await initialUtils.getMockState();
+  
+  using updatedUtils = await testApplyFeatures({
+    config: { features: [updatedTasksFeature, packageScripts()] },
+    // Start from the state after the first apply
+    initialFs: currentFs,
+  });
+
+  const updatedPackageJson = updatedUtils.project.manifest;
+  updatedUtils.bypassMockFs(() => {
+    // Verify that build scripts remain
+    expect(updatedPackageJson.scripts?.["build:typescript"]).toBe("tsc");
+    expect(updatedPackageJson.scripts?.["build"]).toBeDefined();
+    
+    // These scripts should be removed
+    expect(updatedPackageJson.scripts?.["test:vitest"]).toBeUndefined();
+    expect(updatedPackageJson.scripts?.["test"]).toBeUndefined();
+
+    // The managedScripts list should be updated
+    expect(updatedPackageJson.condu?.managedScripts).toContain("build:typescript");
+    expect(updatedPackageJson.condu?.managedScripts).toContain("build");
+    expect(updatedPackageJson.condu?.managedScripts).not.toContain("test:vitest");
+    expect(updatedPackageJson.condu?.managedScripts).not.toContain("test");
+  });
+});

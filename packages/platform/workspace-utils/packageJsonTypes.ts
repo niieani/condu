@@ -59,6 +59,7 @@ export interface PackageJsonConduSection
   > {
   initialDevelopment?: boolean;
   managedDependencies?: Record<string, ManagedDependencyConfig>;
+  managedScripts?: string[];
   defaultScope?: string;
 }
 

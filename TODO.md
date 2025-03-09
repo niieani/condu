@@ -1,6 +1,6 @@
 ## MVP / alpha TODO List
 
-- [ ] package-scripts must track which scripts are managed by condu
+- [ ] package-scripts feature should track which scripts are managed by condu. It should do it by storing managedScripts in the package.json's condu section (see similar `managedDependencies` section in packageJsonTypes.ts and how its used). This tracking should be used to remove scripts that are no longer managed. So for e.g. if I run condu apply and a vitest feature generates a script "test:vitest", and then I remove/disable the vitest feature and run `condu apply` again, the "test:vitest" script should be cleaned up.
 - [ ] come up with a linter for tags (to define which packages should never depend on another one)
 - [ ] feature to autogenerate 'exports' in package.json - both for published and non-published packages
   - include adding a custom condition which is the name of the package, that points to the source ts
