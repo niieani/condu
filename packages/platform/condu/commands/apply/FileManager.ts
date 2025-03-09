@@ -518,7 +518,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     ModifyUserEditableFileOptionsWithContext<DeserializedT>
   > = [];
 
-  // defaults to stringify based on file extension
+  // defaults to stringify based on file name/extension
   private stringify: (content: DeserializedT) => string;
 
   constructor({ relPath, targetPackage }: FileDestination) {
@@ -877,6 +877,19 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       this.lastApply = existingFile;
       // already up to date
       return;
+    }
+
+    // Check if we're replacing a symlink with a regular file
+    if (
+      existingFile &&
+      existingFile.content instanceof SymlinkTarget &&
+      !(newContent instanceof SymlinkTarget)
+    ) {
+      // Need to unlink the symlink before writing regular file content
+      console.log(
+        `Unlinking symlink before writing file content: ${this.relPath}`,
+      );
+      await fs.unlink(targetPath);
     }
 
     if (newContent instanceof SymlinkTarget) {
