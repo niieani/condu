@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.8](https://github.com/niieani/condu/compare/@condu/core@0.1.7...@condu/core@0.1.8) (2025-03-10)
+
+
+### Features
+
+* implement integration testing framework ([52b0271](https://github.com/niieani/condu/commit/52b0271d514ff1fe62822a6efa7c3d0b29ecace5))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/workspace-utils bumped to 0.1.8
+
 ## [0.1.7](https://github.com/niieani/condu/compare/@condu/core@0.1.6...@condu/core@0.1.7) (2024-12-21)
 
 

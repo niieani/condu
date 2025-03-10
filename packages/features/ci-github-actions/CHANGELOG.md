@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.11](https://github.com/niieani/condu/compare/@condu-feature/ci-github-actions@0.1.10...@condu-feature/ci-github-actions@0.1.11) (2025-03-10)
+
+
+### Features
+
+* implement package-scripts feature ([e123329](https://github.com/niieani/condu/commit/e123329374b28be0fa337598a3b454c83f241e01))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * peerDependencies
+    * condu bumped to 0.1.11
+
 ## [0.1.10](https://github.com/niieani/condu/compare/@condu-feature/ci-github-actions@0.1.9...@condu-feature/ci-github-actions@0.1.10) (2024-12-21)
 
 
