@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.8](https://github.com/niieani/condu/compare/@condu/workspace-utils@0.1.7...@condu/workspace-utils@0.1.8) (2025-03-10)
+
+
+### Features
+
+* track managed scripts ([71af7a6](https://github.com/niieani/condu/commit/71af7a670a0a5b0b79e325380cfc9d38734b309e))
+
 ## [0.1.7](https://github.com/niieani/condu/compare/@condu/workspace-utils@0.1.6...@condu/workspace-utils@0.1.7) (2024-12-21)
 
 

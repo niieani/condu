@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.11](https://github.com/niieani/condu/compare/@condu-feature/eslint@0.1.10...@condu-feature/eslint@0.1.11) (2025-03-10)
+
+
+### Bug Fixes
+
+* add missing peerDependency ([fe217f5](https://github.com/niieani/condu/commit/fe217f57ab836e0c41fc15bbba7b2d09adbc179f))
+* lock ts versions ([10576eb](https://github.com/niieani/condu/commit/10576eb5b857e263674f7078af03ea296b3b51c6))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * peerDependencies
+    * condu bumped to 0.1.11
+
 ## [0.1.10](https://github.com/niieani/condu/compare/@condu-feature/eslint@0.1.9...@condu-feature/eslint@0.1.10) (2024-12-21)
 
 

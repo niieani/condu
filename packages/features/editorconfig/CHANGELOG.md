@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.0.6](https://github.com/niieani/condu/compare/@condu-feature/editorconfig@0.0.5...@condu-feature/editorconfig@0.0.6) (2025-03-10)
+
+
+### Features
+
+* implement feature testing utility ([eda0726](https://github.com/niieani/condu/commit/eda072696fe04953c9e01d8689962dd6df1f4657))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @condu-test/utils bumped to 1.0.0
+  * peerDependencies
+    * condu bumped to 0.1.11
+
 ## [0.0.5](https://github.com/niieani/condu/compare/@condu-feature/editorconfig@0.0.4...@condu-feature/editorconfig@0.0.5) (2024-12-21)
 
 

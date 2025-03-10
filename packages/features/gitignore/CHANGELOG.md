@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.11](https://github.com/niieani/condu/compare/@condu-feature/gitignore@0.1.10...@condu-feature/gitignore@0.1.11) (2025-03-10)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * peerDependencies
+    * condu bumped to 0.1.11
+
 ## [0.1.10](https://github.com/niieani/condu/compare/@condu-feature/gitignore@0.1.9...@condu-feature/gitignore@0.1.10) (2024-12-21)
 
 
