@@ -4,30 +4,31 @@ import {
   buildRemappedProject,
   type TypeScriptPipelinePreset,
 } from "@condu/update-specifiers/main.js";
-import { apply } from "./apply/apply.js";
+import type { ConduProject } from "./apply/ConduProject.js";
 
 export async function buildTypeScriptPipeline(input: {
-  project?: string;
+  tsConfigFilePath?: string;
+  project: ConduProject;
   preset?: TypeScriptPipelinePreset;
 }) {
-  const applyResult = await apply({ throwOnManualChanges: true });
-  if (!applyResult) {
-    throw new Error(`Unable to find a condu project in the current directory`);
-  }
-  const { project } = applyResult;
+  const { project } = input;
   const { config } = project;
   // TODO: make conventions non-optional in a loaded project
   const buildDirName = config.conventions.buildDir;
   const absBuildDir = path.join(project.absPath, buildDirName);
 
-  await correctSourceMaps({ buildDir: absBuildDir });
+  try {
+    await correctSourceMaps({ buildDir: absBuildDir });
+  } catch (error) {
+    console.error(`Error correcting source maps in ${absBuildDir}:\n${error}`);
+  }
 
   if (!input.preset) return;
 
   // TODO: just run the command in parallel during build?
   console.log(`Building remapped project (${input.preset})...`);
   await buildRemappedProject({
-    tsConfigFilePath: input.project ?? "tsconfig.json",
+    tsConfigFilePath: input.tsConfigFilePath ?? "tsconfig.json",
     mappingPreset: input.preset === "ts-to-mts" ? "ts-to-mts" : "ts-to-cts",
   });
 }

@@ -79,6 +79,7 @@ export async function prepareAndReleaseDirectoryPackages({
     void (await copyFiles({
       sourceDir: packageSourceDir,
       targetDir: packageBuildDir,
+      overwrite: true,
       keep: ({ entry, directoryPath }) => {
         const isDotFile = entry.name.startsWith(".");
         if (entry.isDirectory()) {
@@ -184,6 +185,10 @@ export async function prepareAndReleaseDirectoryPackages({
         readmeFile: existingReadmeNames[0],
       },
     );
+
+    // ensure at least an empty scripts field so NPM publish doesn't complain
+    exportablePackageJson.scripts ??= {};
+
     // save new package.json:
     await fs.writeFile(
       path.join(packageBuildDir, "package.json"),
@@ -230,23 +235,46 @@ export async function prepareAndReleaseDirectoryPackages({
 
     // publish:
     if (npmTag) {
+      const registryParams = publishManifest.publishConfig?.registry
+        ? [`--registry`, publishManifest.publishConfig.registry]
+        : [];
       // check for existing version on npm
       const existingLatestVersion = await executeNpmCommand({
         npmArgs: [
-          "show",
+          "view",
           "--json",
           `${publishManifest.name}@${npmTag}`,
           "version",
+          ...registryParams,
         ],
         packageBuildDir,
         parseJson: "always",
+        printOutput: false,
       });
 
+      if (
+        typeof existingLatestVersion.json === "object" &&
+        "error" in existingLatestVersion.json &&
+        typeof existingLatestVersion.json.error === "object" &&
+        existingLatestVersion.json.error &&
+        "code" in existingLatestVersion.json.error
+      ) {
+        if (existingLatestVersion.json.error.code !== "E404") {
+          console.warn(
+            `Failed to check for existing version of ${publishManifest.name}:\n${JSON.stringify(
+              existingLatestVersion.json.error,
+            )}`,
+          );
+        }
+        // package not found, we can publish it
+      }
+
+      // TODO: more comprehensive check by semver - if newer version exists, throw an error
       if (existingLatestVersion.json === publishManifest.version) {
         console.log(
           `${publishManifest.name}@${publishManifest.version} previously published to npm, skipping...`,
         );
-        // TODO: check if the published version is exactly the same, otherwise throw an error
+        // TODO: check if the published version has exactly the same hash and if yes skip, otherwise throw an error
         continue;
       }
 
@@ -291,10 +319,12 @@ async function executeNpmCommand({
   npmArgs,
   packageBuildDir,
   parseJson = "on-error",
+  printOutput = true,
 }: {
   npmArgs: string[];
   packageBuildDir: string;
   parseJson?: "always" | "on-error" | "never";
+  printOutput?: boolean;
 }) {
   const publishProcess = spawn("npm", npmArgs, { cwd: packageBuildDir });
   let stdout = "";
@@ -305,8 +335,10 @@ async function executeNpmCommand({
   publishProcess.stderr.on("data", (data) => {
     stderr += data;
   });
-  publishProcess.stdout.pipe(process.stdout);
-  publishProcess.stderr.pipe(process.stderr);
+  if (printOutput) {
+    publishProcess.stdout.pipe(process.stdout);
+    publishProcess.stderr.pipe(process.stderr);
+  }
   const exitCode = await new Promise<number>((resolve) =>
     publishProcess.on("exit", resolve),
   );

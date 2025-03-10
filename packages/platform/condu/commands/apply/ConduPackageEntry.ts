@@ -108,18 +108,18 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
     entrySources: EntrySources;
     project: ConduProject;
   }): Promise<ConduPackageJson> {
-    let publishManifest = this.#manifest;
+    const currentManifest = this.#manifest;
 
-    const dependencyManifestOverride = getReleaseDependencies(publishManifest);
+    const dependencyManifestOverride = getReleaseDependencies(currentManifest);
 
     // omit 'directory' from publishConfig in the published package.json
     const { directory: _, ...publishConfig } =
-      publishManifest.publishConfig ?? {};
+      currentManifest.publishConfig ?? {};
 
-    const newPackageJson: ConduPackageJson = {
-      ...publishManifest,
+    let newPackageJson: ConduPackageJson = {
+      ...currentManifest,
       ...dependencyManifestOverride,
-      version: publishManifest.version ?? "0.0.0",
+      version: currentManifest.version ?? "0.0.0",
       publishConfig: {
         access: "public",
         ...project.config.publish,
@@ -128,14 +128,14 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
       },
       // if we're in Github Actions, let's set the repository based on the environment vars:
       repository:
-        publishManifest.repository ??
+        currentManifest.repository ??
         (process.env["GITHUB_REPOSITORY"]
           ? {
               type: "git",
               url: `git+${process.env["GITHUB_SERVER_URL"]}/${process.env["GITHUB_REPOSITORY"]}.git`,
               directory: this.relPath,
             }
-          : publishManifest.repository),
+          : currentManifest.repository),
       exports: {
         ...entrySources,
         "./*.json": "./*.json",
@@ -146,15 +146,13 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
           require: `./*.cjs`,
           default: `./*.js`,
         },
-        ...(typeof publishManifest.exports === "object"
-          ? publishManifest.exports
+        ...(typeof currentManifest.exports === "object"
+          ? currentManifest.exports
           : {}),
       },
       main: entrySources["."]?.require,
       module: entrySources["."]?.import,
       source: entrySources["."]?.source,
-      // ensure there's a scripts field so npm doesn't complain with a warning about an invalid package.json
-      scripts: publishManifest.scripts ?? {},
       // NOTE: types is unnecessary because of adjacent .d.ts files
       // types: entrySources["."]?.types,
       // TODO: funding
@@ -168,9 +166,6 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
       // main: "dist/index.js",
       // types: "dist/index.d.ts",
       // files: ["dist"],
-      // publishConfig: {
-      //   access: "public",
-      // },
       // repository: {
       //   type: "git",
       //   url: "",
@@ -178,11 +173,12 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
     };
 
     // process this.#publishedModifications sequentially:
-    for (const { modifier, globalRegistry } of this.#publishedModifications) {
-      publishManifest = await modifier(newPackageJson, { globalRegistry });
+    for (const { modifier, globalRegistry, context } of this
+      .#publishedModifications) {
+      newPackageJson = await modifier(newPackageJson, { globalRegistry });
     }
 
-    return publishManifest;
+    return newPackageJson;
   }
 }
 

@@ -42,6 +42,7 @@ export const pnpm = (config: PnpmFeatureConfig = {}) =>
             return {
               // apply some defaults
               "patches-dir": `${CONDU_CONFIG_DIR_NAME}/patches`,
+              registry: condu.project.config.publish?.registry,
               ...content,
               ...npmrc,
             };

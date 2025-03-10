@@ -605,12 +605,18 @@ importers:
 
   packages/test/integration:
     dependencies:
+      '@condu-test/utils':
+        specifier: workspace:*
+        version: link:../utils
       '@condu/core':
         specifier: workspace:*
         version: link:../../platform/core
       '@verdaccio/types':
         specifier: 13.0.0-next-8.1
         version: 13.0.0-next-8.1(patch_hash=317de6718365e092a00080a8c1788b6bf95c3aefaf9948d4be1c5bcc71a0a4c4)
+      get-port:
+        specifier: ^7.1.0
+        version: 7.1.0
       verdaccio:
         specifier: ^6.0.5
         version: 6.0.5(typanion@3.14.0)
@@ -624,6 +630,9 @@ importers:
 
   packages/test/utils:
     dependencies:
+      '@condu-test/utils':
+        specifier: workspace:*
+        version: 'link:'
       '@condu/workspace-utils':
         specifier: workspace:*
         version: link:../../platform/workspace-utils
@@ -2852,6 +2861,10 @@ packages:
   get-intrinsic@1.2.7:
     resolution: {integrity: sha512-VW6Pxhsrk0KAOqs3WEd0klDiF/+V7gQOpAvY1jVU/LHmaD/kQO4523aiJuikX/QAKYiW6x8Jh+RJej1almdtCA==}
     engines: {node: '>= 0.4'}
+
+  get-port@7.1.0:
+    resolution: {integrity: sha512-QB9NKEeDg3xxVwCCwJQ9+xycaz6pBB6iQ76wiWMl1927n0Kir6alPiP+yuiICLLU4jpMe08dXfpebuQppFA2zw==}
+    engines: {node: '>=16'}
 
   get-proto@1.0.1:
     resolution: {integrity: sha512-sTSfBjoXBp89JvIKIefqw7U2CCebsc74kiY6awiGogKtoSGbgjYE/G/+l9sF3MWFPNc9IcoOC4ODfKHfxFmp0g==}
@@ -7336,6 +7349,8 @@ snapshots:
       has-symbols: 1.1.0
       hasown: 2.0.2
       math-intrinsics: 1.1.0
+
+  get-port@7.1.0: {}
 
   get-proto@1.0.1:
     dependencies:

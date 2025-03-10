@@ -11,12 +11,11 @@ import mockFs from "mock-fs";
 import type FileSystem from "mock-fs/lib/filesystem.js";
 import fs from "node:fs";
 import { loadConduProject } from "condu/loadProject.js";
-import path from "node:path";
 import type { ConduProject } from "condu/commands/apply/ConduProject.js";
-
-interface DirectoryItems {
-  [name: string]: string | DirectoryItems;
-}
+import {
+  getDirectoryStructureAndContentsRecursively,
+  type DirectoryItems,
+} from "./getDirectoryStructureAndContentsRecursively.js";
 
 interface FeatureTestOptions {
   /** Features and other configuration options */
@@ -109,46 +108,11 @@ export async function testApplyFeatures({
     },
     getMockState: async () => {
       try {
-        // Get a snapshot of the full mock filesystem
-        const walkDir = async (
-          dirPath: string,
-          directoryItems: DirectoryItems = {},
-          ignore: string[] = [],
-        ): Promise<DirectoryItems> => {
-          const result = directoryItems;
-          const files = await fs.promises.readdir(dirPath, {
-            withFileTypes: true,
-          });
-
-          for (const file of files) {
-            if (ignore.includes(file.name)) {
-              continue;
-            }
-            const fullPath = path.join(dirPath, file.name);
-
-            if (file.isDirectory()) {
-              result[file.name] ??= await walkDir(fullPath, {}, ignore);
-            } else if (file.isFile()) {
-              try {
-                result[file.name] = await fs.promises.readFile(
-                  fullPath,
-                  "utf-8",
-                );
-              } catch (e) {
-                result[file.name] = String(e);
-              }
-            } else if (file.isSymbolicLink()) {
-              result[file.name] =
-                `symlink to: ${await fs.promises.readlink(fullPath)}`;
-            } else {
-              result[file.name] = `unknown file type`;
-            }
-          }
-
-          return result;
-        };
-
-        return await walkDir("/mock-project", {}, [".git", ".cache"]);
+        return await getDirectoryStructureAndContentsRecursively(
+          "/mock-project",
+          {},
+          [".git", ".cache"],
+        );
       } catch (error) {
         const err = error as Error;
         err.message = `Failed to get mock filesystem state: ${err.message}`;

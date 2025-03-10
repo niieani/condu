@@ -2,29 +2,62 @@ import { runServer as _runServer } from "verdaccio";
 import type { AuthHtpasswd, Config } from "@verdaccio/types";
 import type { Application } from "express";
 import path from "node:path";
+import fs from "node:fs/promises";
 import type { IncomingMessage, Server, ServerResponse } from "node:http";
 
 const runServer = _runServer as any as (
   config: Omit<Config, "security" | "secret" | "server_id">,
 ) => Promise<Application>;
 const __dirname = new URL(".", import.meta.url).pathname;
-const selfPath = path.join(__dirname, ".cache");
+const fullStoragePath = path.resolve(path.join(__dirname, ".cache"));
+const configPath = path.resolve(path.join(fullStoragePath, ".config"));
 
-export const runVerdaccio = async ({ port }: { port: number }) => {
+const cleanupStorage = async () => {
+  try {
+    await fs.rm(fullStoragePath, { recursive: true, force: true });
+  } catch (error) {
+    // Directory might not exist yet, which is fine
+  }
+
+  // Ensure the storage directory exists
+  await fs.mkdir(fullStoragePath, { recursive: true });
+  await fs.mkdir(configPath, { recursive: true });
+};
+
+export const runVerdaccio = async ({
+  port,
+  proxyNpm = false,
+}: {
+  port: number;
+  proxyNpm?: boolean;
+}) => {
+  // Clean up storage before starting
+  await cleanupStorage();
+
   const app = await runServer({
-    self_path: selfPath,
-    storage: "./storage",
+    configPath: configPath,
+    self_path: configPath,
+    storage: fullStoragePath,
     web: {
       enable: true,
       title: "Verdaccio",
       primaryColor: "#4b5e40",
     },
     auth: {
-      htpasswd: { file: "./htpasswd" } satisfies Partial<AuthHtpasswd>,
+      htpasswd: {
+        file: "./htpasswd",
+        algorithm: "bcrypt",
+      } satisfies Partial<AuthHtpasswd> & {
+        algorithm?: "bcrypt" | "md5" | "sha1" | "crypt";
+      },
     },
-    uplinks: {
-      npmjs: { url: "https://registry.npmjs.org/" },
-    },
+    ...(proxyNpm
+      ? {
+          uplinks: {
+            npmjs: { url: "https://registry.npmjs.org/" },
+          },
+        }
+      : {}),
     packages: {
       "@*/*": {
         access: ["$all"],
@@ -62,8 +95,8 @@ export const runVerdaccio = async ({ port }: { port: number }) => {
   return {
     app,
     server,
-    close: () =>
-      new Promise<void>((resolve, reject) => {
+    close: async () => {
+      await new Promise<void>((resolve, reject) => {
         server.close((err) => {
           if (err) {
             reject(err);
@@ -71,6 +104,10 @@ export const runVerdaccio = async ({ port }: { port: number }) => {
             resolve();
           }
         });
-      }),
+      });
+
+      // Clean up storage after closing server
+      await cleanupStorage();
+    },
   };
 };

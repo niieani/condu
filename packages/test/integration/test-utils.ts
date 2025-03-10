@@ -5,6 +5,7 @@ import os from "node:os";
 import { createPackageOverridesForLinking } from "@condu/core/utils/createPackageOverridesForLinking.js";
 import { fileURLToPath } from "node:url";
 import type { ConduPackageJson } from "condu";
+import type { DirectoryItems } from "@condu-test/utils/getDirectoryStructureAndContentsRecursively.js";
 
 /**
  * Creates a temporary directory for testing
@@ -25,37 +26,78 @@ export async function initGitRepo(dir: string): Promise<void> {
 /**
  * Creates a package.json file in the given directory
  */
-export async function createPackageJson(
+export async function createRootPackageJson(
   dir: string,
-  data: Record<string, any> = {},
+  data: Partial<ConduPackageJson> = {},
   conduRoot?: string,
 ): Promise<ConduPackageJson> {
-  const defaultData: ConduPackageJson = {
+  const packageJson: ConduPackageJson = {
     name: "condu-test-project",
     version: "0.0.0",
     private: true,
     type: "module",
+    scripts: { postinstall: "condu apply", ...data.scripts },
+    ...data,
   };
 
-  const packageJson = { ...defaultData, ...data };
-
-  // Add pnpm overrides if monorepoRoot is provided
+  // Add pnpm overrides if conduRoot is provided
   if (conduRoot) {
     try {
+      const pnpmOverrides: Record<string, string> = {};
+
+      // Add overrides from condu's own node_modules directory to avoid remote fetches in tests
+      const nodeModulesDir = path.join(conduRoot, "node_modules");
+      try {
+        const entries = await fs.readdir(nodeModulesDir, {
+          withFileTypes: true,
+        });
+
+        for (const entry of entries) {
+          if (
+            (entry.isDirectory() || entry.isSymbolicLink()) &&
+            !entry.name.startsWith(".")
+          ) {
+            if (entry.name.startsWith("@")) {
+              // Handle scoped packages - go one level deeper
+              const scopeDir = path.join(nodeModulesDir, entry.name);
+              const scopedEntries = await fs.readdir(scopeDir, {
+                withFileTypes: true,
+              });
+
+              for (const scopedEntry of scopedEntries) {
+                if (
+                  (scopedEntry.isDirectory() || scopedEntry.isSymbolicLink()) &&
+                  !scopedEntry.name.startsWith(".")
+                ) {
+                  const packageName = `${entry.name}/${scopedEntry.name}`;
+                  const packagePath = path.join(nodeModulesDir, packageName);
+                  pnpmOverrides[packageName] = `link:${packagePath}`;
+                }
+              }
+            } else {
+              // Regular package
+              pnpmOverrides[entry.name] =
+                `link:${path.join(nodeModulesDir, entry.name)}`;
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Failed to process node_modules directory:", error);
+      }
+
       const overrides = await createPackageOverridesForLinking({
         linkedProjectDir: conduRoot,
         targetPackageDir: dir,
       });
 
       // Convert overrides to pnpm format
-      const pnpmOverrides: Record<string, string> = {};
       for (const [pkgName, pkgPath] of overrides) {
         pnpmOverrides[pkgName] = pkgPath;
       }
 
       // Add overrides to package.json
       packageJson.pnpm = {
-        ...(packageJson.pnpm || {}),
+        ...packageJson.pnpm,
         overrides: pnpmOverrides,
       };
     } catch (error) {
@@ -88,34 +130,57 @@ export async function createConduConfig(
  */
 export async function execCommand(
   command: string,
-  options: { cwd: string },
+  options: { cwd: string; stdin?: string },
 ): Promise<{ stdout: string; stderr: string; code: number | null }> {
   return new Promise((resolve) => {
-    const child = childProcess.exec(
-      command,
-      { cwd: options.cwd },
-      (error, stdout, stderr) => {
+    if (process.env["NODE_ENV"] === "test" || options.stdin) {
+      const child = childProcess.exec(
+        command,
+        { cwd: options.cwd },
+        (error, stdout, stderr) => {
+          resolve({
+            stdout,
+            stderr,
+            code: error ? (error.code ?? 0) : 0,
+          });
+        },
+      );
+
+      if (options.stdin) {
+        child.stdin?.write(options.stdin);
+        child.stdin?.end();
+      }
+    } else {
+      // used in manual debugging
+      const child = childProcess.spawn(command, {
+        shell: true,
+        cwd: options.cwd,
+        stdio: "inherit",
+      });
+
+      child.on("close", (code) => {
         resolve({
-          stdout,
-          stderr,
-          code: error ? (error.code ?? 0) : 0,
+          stdout: "",
+          stderr: "",
+          code,
         });
-      },
-    );
+      });
+    }
   });
 }
 
 /**
  * Runs pnpm install in the specified directory
  */
-export async function runPnpmInstall(dir: string): Promise<void> {
-  const result = await execCommand("pnpm install", { cwd: dir });
+export async function runPnpmInstall(dir: string) {
+  const result = await execCommand("pnpm i", { cwd: dir });
   if (result.code !== 0) {
     throw new Error(`pnpm install failed: ${result.stderr || result.stdout}`);
   }
   if (result.stdout.includes("WARN")) {
     console.log(result.stdout);
   }
+  return result;
 }
 
 /**
@@ -134,9 +199,11 @@ export async function runConduApply(dir: string): Promise<void> {
 export async function createBasicConduProject(
   conduConfig: string,
   packageJson: Record<string, any> = {},
+  directoryStructure?: DirectoryItems,
+  tempDir?: string,
 ): Promise<{ dir: string; cleanup: () => Promise<void> }> {
-  // Create temporary directory
-  const dir = await createTempDir();
+  // Use provided tempDir or create a new one
+  const dir = tempDir ?? (await createTempDir());
 
   // Initialize git repository
   await initGitRepo(dir);
@@ -144,11 +211,22 @@ export async function createBasicConduProject(
   // Get monorepo root for linking packages
   const conduRoot = getConduRoot();
 
-  // Create package.json with monorepo links
-  await createPackageJson(dir, packageJson, conduRoot);
+  // Create package.json for the root package
+  await createRootPackageJson(dir, packageJson, conduRoot);
 
   // Create condu config
   await createConduConfig(dir, conduConfig);
+
+  // Create directory structure and contents if provided
+  if (directoryStructure) {
+    await createDirectoryStructureAndContents(dir, directoryStructure);
+  }
+
+  // Install dependencies and run condu apply (postinstall)
+  await runPnpmInstall(dir);
+
+  // TODO: for now we need to run this twice, because `pnpm install` runs `condu apply` which adds `pnpm-workspace.yaml`, which needs another `pnpm install`
+  await runPnpmInstall(dir);
 
   // Return dir and cleanup function
   return {
@@ -157,6 +235,27 @@ export async function createBasicConduProject(
       await fs.rm(dir, { recursive: true, force: true });
     },
   };
+}
+
+/**
+ * Creates files and directories recursively based on the provided structure
+ */
+export async function createDirectoryStructureAndContents(
+  rootDir: string,
+  structure: DirectoryItems,
+): Promise<void> {
+  for (const [name, content] of Object.entries(structure)) {
+    const itemPath = path.join(rootDir, name);
+
+    if (typeof content === "string") {
+      // It's a file, write the content
+      await fs.writeFile(itemPath, content);
+    } else {
+      // It's a directory, create it and recurse
+      await fs.mkdir(itemPath, { recursive: true });
+      await createDirectoryStructureAndContents(itemPath, content);
+    }
+  }
 }
 
 /**

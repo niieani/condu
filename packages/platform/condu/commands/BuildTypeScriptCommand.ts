@@ -1,6 +1,9 @@
 import type { TypeScriptPipelinePreset } from "@condu/update-specifiers/main.js";
 import { Command, Option } from "clipanion";
 import childProcess from "node:child_process";
+import { apply } from "./apply/apply.js";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 export class BuildTypeScriptCommand extends Command {
   static override paths = [["tsc"]];
@@ -13,7 +16,7 @@ export class BuildTypeScriptCommand extends Command {
   opts = Option.Proxy();
 
   async execute() {
-    let project: string | undefined;
+    let tsProject: string | undefined;
     let preset: TypeScriptPipelinePreset | undefined;
     let next: "project" | "preset" | undefined;
     const tscOpts = [];
@@ -36,11 +39,24 @@ export class BuildTypeScriptCommand extends Command {
         continue;
       }
       if (next === "project") {
-        project = opt;
+        tsProject = opt;
         next = undefined;
         continue;
       }
     }
+
+    const applyResult = await apply({ throwOnManualChanges: true });
+    if (!applyResult) {
+      throw new Error(
+        `Unable to find a condu project in the current directory`,
+      );
+    }
+
+    const { project } = applyResult;
+    await fs.mkdir(
+      path.join(project.absPath, project.config.conventions.buildDir),
+      { recursive: true },
+    );
 
     const tsc = childProcess.spawnSync(`tsc ${tscOpts.join(" ")}`, {
       stdio: "inherit",
@@ -53,7 +69,11 @@ export class BuildTypeScriptCommand extends Command {
     }
     console.log("tsc built");
     const { buildTypeScriptPipeline } = await import("./buildTypeScript.js");
-    await buildTypeScriptPipeline({ project, preset });
+    await buildTypeScriptPipeline({
+      tsConfigFilePath: tsProject,
+      preset,
+      project: project,
+    });
     return 0;
   }
 }
