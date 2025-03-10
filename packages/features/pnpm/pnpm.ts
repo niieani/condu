@@ -50,8 +50,15 @@ export const pnpm = (config: PnpmFeatureConfig = {}) =>
           ifNotExists: "create",
           parse: (content): PnpmConfig =>
             parse(content, { bracketedArray: true }),
-          stringify: (content) => stringify(content, { bracketedArray: true }),
+          stringify: (content) =>
+            stringify(removeUndefinedValues(content), { bracketedArray: true }),
         });
       }
     },
   });
+
+function removeUndefinedValues<T extends object>(obj: T): T {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([_, value]) => value !== undefined),
+  ) as T;
+}
