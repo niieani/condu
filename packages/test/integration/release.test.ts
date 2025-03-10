@@ -3,17 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { runVerdaccio } from "./verdaccio.js";
 import getPort from "get-port";
-import {
-  checkFile,
-  createBasicConduProject,
-  createRootPackageJson,
-  createTempDir,
-  execCommand,
-  initGitRepo,
-  runConduApply,
-  runPnpmInstall,
-} from "./test-utils.js";
-import { getDirectoryStructureAndContentsRecursively } from "@condu-test/utils/getDirectoryStructureAndContentsRecursively.js";
+import { createBasicConduProject, execCommand } from "./test-utils.js";
 
 describe("release command integration", () => {
   let verdaccio: Awaited<ReturnType<typeof runVerdaccio>>;

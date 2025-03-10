@@ -56,7 +56,7 @@ describe("init command functionality", () => {
 
       // Check that the config file contains import for monorepo preset
       expect(configContent).toContain(
-        /* typescript */ `import { monorepo } from "@condu-preset/monorepo"`,
+        `import { monorepo } from "@condu-preset/monorepo"`,
       );
 
       // Check that the config uses the monorepo preset correctly

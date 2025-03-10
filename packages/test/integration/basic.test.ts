@@ -1,10 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import {
-  createBasicConduProject,
-  runPnpmInstall,
-  runConduApply,
-  checkFile,
-} from "./test-utils.js";
+import { createBasicConduProject, checkFile } from "./test-utils.js";
 
 describe("basic condu functionality", () => {
   let testProject: Awaited<ReturnType<typeof createBasicConduProject>>;
@@ -49,12 +44,6 @@ export default configure({
 
     // Create the test project
     testProject = await createBasicConduProject(conduConfig, packageJson);
-
-    // Install dependencies
-    await runPnpmInstall(testProject.dir);
-
-    // Run condu apply
-    await runConduApply(testProject.dir);
 
     // Check that the expected files were generated
     const tsConfigExists = await checkFile(
