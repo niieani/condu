@@ -1,11 +1,8 @@
 ## MVP / alpha TODO List
 
-- [x] package-scripts feature should track which scripts are managed by condu. It should do it by storing managedScripts in the package.json's condu section (see similar `managedDependencies` section in packageJsonTypes.ts and how its used). This tracking should be used to remove scripts that are no longer managed. So for e.g. if I run condu apply and a vitest feature generates a script "test:vitest", and then I remove/disable the vitest feature and run `condu apply` again, the "test:vitest" script should be cleaned up.
-- [x] when a symlink already exists and we say to overwrite it with file contents, it should remove the symlink first, otherwise for some reason it writes over the symlink target
-- [x] Troubleshoot the integration test for the release command - release.test.ts. Reference other integration tests in test/integration/ and the release.ts file. We want it to create a mock project with some typescript files, and the typescript condu feature. We'll need a test for both a monorepo setup and a non-monorepo setup, and use the publish.registry config setting to make the publishing utilize the local veradiccio npm server (see `configTypes.ts` and `.condu/condu.ts`). The test shouldn't be running npm publish, as 'condu release' command will do that under the hood. The test shouldn't be changing any files in the build folder - this is condu's job, and that's what the test is testing! no need to create .npmrc, as the release command should set publish.registry in the `build` package.json's - this part is currently broken and we need the test to assert this and then start finding where the issue lies. We have full control over the NPM server, and when we start the server it's always a clean server without any packages published.
+- [ ] revamped logging / output
 - [ ] pnpm install runs `condu apply` which adds pnpm-workspace, which need another pnpm install... how do we solve this?
-- [ ] [disallow-workspace-cycles](https://pnpm.io/npmrc#disallow-workspace-cycles) in pnpm when typescript references are enabled
-- [ ] `condu release` should be okay with overwriting files? or run the build
+- [ ] `condu release` should maybe run the build?
 - [ ] Fix monorepo integration test for release to properly handle workspace dependencies
 - [ ] extract 'generatedEntrySources' to a feature which autogenerates 'exports' in package.json - both for published and non-published packages
   - include adding a custom condition which is the name of the package, that points to the source ts
@@ -16,9 +13,9 @@
 - [ ] consider using `dependencies` and `prepare` [lifecycle scripts](https://docs.npmjs.com/cli/v11/using-npm/scripts#life-cycle-scripts) to run `condu apply`
 - [ ] support shorthand for filtering packages by name: `condu.in('package')`
 - [ ] exclude generated files from TS build (add file flag for typescript exclude, and inherit gitignore)
-- [ ] add a command to define a file flag's behavior (e.g. to inherit another flag, like the gitignore flag)
+- [ ] add condu api to define a file flag's behavior (e.g. to inherit another flag, like the gitignore flag)
 - [ ] add `repository`, `homepage` (fallback to repo) and `author`, `license` and `contributors` info to published package.json based on the root package.json
-- [ ] features that can be added multiple times (e.g. because they're applied to multiple packages) need to have a way to be uniquely identified (feature id?) - update 'apply' to handle this. Question remains about initial peer context - I guess it needs to be empty and then peer merging can handle additions to peer context of that same feature. Maybe instead of feature ID, we only apply the first one, but we apply the peerContext for all of them - merging in like a reducer?
+- [ ] features that can be added multiple times (e.g. because they're applied to multiple packages, like webpack build) need to have a way to be uniquely identified (feature id?) - update 'apply' to handle this. Question remains about initial peer context - I guess it needs to be empty and then peer merging can handle additions to peer context of that same feature. Maybe instead of feature ID, we only apply the first one, but we apply the peerContext for all of them - like a reducer? Though what about situations in which you configure separately targeting different packages?
 - [ ] preset with my features and feature config pre-applied
 - [ ] test it out in an existing project
   - [ ] add condu to `mockify` and publish the packages
@@ -28,6 +25,7 @@
   - [ ] maybe you can specify which preset to use and there are additional steps taken?
   - [ ] by default 'tsx' is missing from eslint apply, since bun always uses 'source' version its always needed
 - [ ] use TS non-composite projects by default (composite support might need more work - adding references based on dependencies)
+  - [ ] [disallow-workspace-cycles](https://pnpm.io/npmrc#disallow-workspace-cycles) in pnpm when typescript references are enabled
 - [ ] 'apply' command:
   - [ ] verify that we prompt before overwriting files that were never managed by condu before
   - [ ] when applying is done, and newly created files where previously committed, but now are managed by condu and would be gitignored, condu should remove these files from git using `git rm --cached` if they're gitignored - this can be verified with `git ls-files --cached -- <file>`
@@ -41,7 +39,10 @@
 
 ## Later:
 
+- [ ] create a philosophy page (like [here](https://tanstack.com/form/latest/docs/philosophy))
 - [ ] share on https://peerlist.io/
+- [ ] @shadcn/ui feature
+- [ ] vscode feature: translate condu tasks to vscode tasks.json
 - [ ] consider whether features should have a version field
 - [ ] come up with a linter for tags (to define which packages should never depend on another one)
 - [ ] vscode extension that runs apply on .config/condu.ts change
