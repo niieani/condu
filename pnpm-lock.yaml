@@ -630,9 +630,6 @@ importers:
 
   packages/test/utils:
     dependencies:
-      '@condu-test/utils':
-        specifier: workspace:*
-        version: 'link:'
       '@condu/workspace-utils':
         specifier: workspace:*
         version: link:../../platform/workspace-utils

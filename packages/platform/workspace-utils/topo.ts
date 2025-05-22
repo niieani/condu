@@ -1,5 +1,6 @@
 import { basename, dirname, join, relative, resolve } from "node:path";
-import { glob } from "fast-glob";
+// eslint-disable-next-line import-x/no-named-as-default
+import glob from "fast-glob";
 import { analyze, type TTopoResult } from "toposource";
 import slash from "slash";
 import { readWorkspaceManifest } from "@pnpm/workspace.read-manifest";
