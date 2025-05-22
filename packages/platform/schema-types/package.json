@@ -3,7 +3,7 @@
   "version": "0.0.4",
   "type": "module",
   "devDependencies": {
-    "@apidevtools/json-schema-ref-parser": "^11.9.3",
+    "@apidevtools/json-schema-ref-parser": "^12.0.2",
     "json-schema-to-typescript": "^15.0.4"
   }
 }

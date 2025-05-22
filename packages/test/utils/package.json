@@ -7,6 +7,6 @@
     "@types/mock-fs": "^4.13.4",
     "condu": "workspace:*",
     "mock-fs": "^5.5.0",
-    "vitest": "^3.0.7"
+    "vitest": "^3.1.4"
   }
 }

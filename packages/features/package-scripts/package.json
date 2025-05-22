@@ -7,7 +7,7 @@
     "condu": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^22.13.9",
-    "@condu-test/utils": "workspace:*"
+    "@condu-test/utils": "workspace:*",
+    "@types/node": "^22.15.21"
   }
 }

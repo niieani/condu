@@ -5,14 +5,14 @@
   "sideEffects": false,
   "type": "module",
   "devDependencies": {
-    "@pnpm/workspace.read-manifest": "^1000.1.0"
+    "@pnpm/workspace.read-manifest": "^1000.1.5"
   },
   "peerDependencies": {
     "condu": "workspace:^"
   },
   "dependencies": {
-    "@pnpm/config": "^1002.4.1",
-    "@pnpm/logger": "^1000.0.0",
+    "@pnpm/config": "^1003.1.0",
+    "@pnpm/logger": "^1001.0.0",
     "@types/ini": "^4.1.1",
     "ini": "^5.0.0"
   }
