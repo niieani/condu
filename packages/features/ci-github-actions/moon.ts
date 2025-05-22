@@ -1,25 +1,11 @@
-import {
-  defineFeature,
-  getYamlParseAndStringify,
-  type CollectedTask,
-  type Task,
-  type Conventions,
-  BUILTIN_TASK_NAMES,
-} from "condu";
+import { defineFeature, getYamlParseAndStringify } from "condu";
 import type { GithubWorkflow } from "@condu/schema-types/schemas/githubWorkflow.gen.js";
-import type {
-  PartialTaskConfig as MoonTask,
-  PartialProjectConfig as MoonProject,
-} from "@moonrepo/types";
-import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
-import { mapValues } from "remeda";
 import type { GithubAction } from "@condu/schema-types/schemas/githubAction.gen.js";
 
 declare module "condu" {
   interface FileNameToSerializedTypeMapping {
     ".github/actions/moon-ci-setup/action.yml": GithubAction;
     ".github/workflows/moon-ci.yml": GithubWorkflow;
-    "moon.yml": MoonProject;
   }
 }
 
@@ -127,117 +113,5 @@ export const moonCi = (opts: {} = {}) =>
           },
         },
       });
-
-      condu.in({ kind: "package" }).generateFile("moon.yml", {
-        ...getYamlParseAndStringify<MoonProject>(),
-        content: ({ targetPackage, globalRegistry }) => {
-          const tasksForPackage = Array.from(
-            globalRegistry.getTasksMatchingPackage(targetPackage),
-            (task) =>
-              [getTaskName(task), task.taskDefinition.definition] as const,
-          );
-          const tasks = Object.fromEntries(tasksForPackage) as Record<
-            string,
-            MoonTask
-          >;
-
-          if (!tasksForPackage.length) {
-            return undefined;
-          }
-
-          return {
-            $schema: schemas.project,
-            tasks,
-          };
-        },
-      });
-
-      // add in type-tasks:
-      condu.root.generateFile("moon.yml", {
-        ...getYamlParseAndStringify<MoonProject>(),
-        content: ({ targetPackage, globalRegistry }) => {
-          // also add in the tasks defined for the workspace package:
-          const tasksForPackage = Array.from(
-            globalRegistry.getTasksMatchingPackage(targetPackage),
-            (task) =>
-              [
-                task.taskDefinition.name,
-                task.taskDefinition.definition,
-              ] as const,
-          );
-          const tasks = Object.fromEntries(tasksForPackage) as Record<
-            string,
-            MoonTask
-          >;
-
-          return {
-            $schema: schemas.project,
-            tasks: {
-              ...tasks,
-              ...getWorkspaceTasks({
-                tasks: globalRegistry.tasks,
-                conventions: config.conventions,
-              }),
-            },
-          };
-        },
-      });
     },
   });
-
-type TasksByType = Record<Task["type"], CollectedTask[]>;
-
-const getTaskName = (task: CollectedTask) =>
-  BUILTIN_TASK_NAMES.has(task.taskDefinition.name)
-    ? `${task.targetPackage.scopedName}-${task.taskDefinition.name}`
-    : task.taskDefinition.name;
-
-function getWorkspaceTasks({
-  tasks,
-  conventions,
-}: {
-  tasks: readonly CollectedTask[];
-  conventions: Required<Conventions>;
-}): Record<string, MoonTask> {
-  const tasksByType: TasksByType = {
-    build: [],
-    test: [],
-    format: [],
-    publish: [],
-    start: [],
-  };
-
-  for (const task of tasks) {
-    tasksByType[task.taskDefinition.type].push(task);
-  }
-
-  const taskDefinitions = mapValues(
-    tasksByType,
-    (tasks, type): MoonTask =>
-      // this groups all the tasks of the same type into a single task
-      // so that all the features implementing the same task type (e.g. 'test') can be run in parallel
-      ({
-        // ~ is self-referencing task: https://moonrepo.dev/docs/concepts/target#self-
-        deps: tasks.map(
-          (task) => `${task.targetPackage.name}:${getTaskName(task)}`,
-        ),
-        inputs: [],
-        ...(type === "publish" && { options: { runDepsInParallel: false } }),
-        ...(type === "format" && { options: { runInCI: false } }),
-      }),
-  );
-
-  return {
-    ...taskDefinitions,
-    // "build-tasks": tasks.build,
-    clean: {
-      command: `rm -rf ${conventions.buildDir} .moon/cache/states`,
-      options: { cache: false, runInCI: false },
-    },
-    // build: {
-    //   deps: ["~:clean", "~:build-tasks"],
-    //   inputs: [],
-    //   options: { runDepsInParallel: false },
-    // },
-  };
-}

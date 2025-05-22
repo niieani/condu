@@ -20,7 +20,11 @@ const { resolveFromNpm } = createNpmResolver(
   // (uri) => {
   //   return undefined;
   // },
-  { offline: false, cacheDir: getCacheDir(process) },
+  {
+    offline: false,
+    cacheDir: getCacheDir(process),
+    registries: { default: registry },
+  },
 );
 
 /**
@@ -60,7 +64,7 @@ export async function ensureDependencyIn(
       ? { manifest: { name, version: existingVersion } }
       : "version" in opts && opts.version
         ? { manifest: { name, version: opts.version } }
-        : await resolveFromNpm({ alias: name, pref: opts.tag }, { registry });
+        : await resolveFromNpm({ alias: name, bareSpecifier: opts.tag }, {});
 
   if (!dependency?.manifest) {
     throw new Error(`no ${name} dependency found in the NPM registry`);

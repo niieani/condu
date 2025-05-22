@@ -283,6 +283,9 @@ importers:
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
+      remeda:
+        specifier: ^2.21.8
+        version: 2.21.8
 
   packages/features/package-scripts:
     dependencies:

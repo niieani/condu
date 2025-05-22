@@ -1,6 +1,8 @@
 ## MVP / alpha TODO List
 
+- [ ] validate NPM task system without moonrepo
 - [ ] revamped logging / output
+- [ ] implement TS references sync
 - [ ] pnpm install runs `condu apply` which adds pnpm-workspace, which need another pnpm install... how do we solve this?
 - [ ] `condu release` should maybe run the build?
 - [ ] Fix monorepo integration test for release to properly handle workspace dependencies
