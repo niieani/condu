@@ -11,10 +11,11 @@ export interface AutoPackageExportsOptions {
    * Custom exports condition to add (using the package name)
    * that points to the source TypeScript files
    */
-  customExportsCondition?: boolean;
+  customExportsCondition?: boolean | string;
 
   /**
    * Automatically use a single file in a directory if it's the only one
+   * and its basename is semantically equivalent to the directory name (insensitive to snake_case vs camelCase, etc.)
    * @default true
    */
   useSingleFileInDirectory?: boolean;
@@ -41,14 +42,14 @@ export function autoPackageExports(options: AutoPackageExportsOptions = {}) {
   });
 }
 
-/**
- * Creates a modifier function that adds exports to package.json
- */
 // Function to normalize file paths for comparison
 function toCompareCase(str: string): string {
   return str.replace(/[^\dA-Za-z]/g, "").toLowerCase();
 }
 
+/**
+ * Creates a modifier function that adds exports to package.json
+ */
 function createExportsModifier({
   customExportsCondition,
   useSingleFileInDirectory,
@@ -58,7 +59,7 @@ function createExportsModifier({
 }): PackageJsonPublishModifier {
   return async (
     pkg: ConduPackageJson,
-    { globalRegistry, targetPackage, publishableSourceFiles },
+    { targetPackage, publishableSourceFiles },
   ) => {
     // Safely access config and conventions
     const config = project.config || {};
@@ -73,121 +74,89 @@ function createExportsModifier({
     // Map to store preferred entry points for each directory
     const preferredDirectoryEntries = new Map<string, string>();
 
-    try {
-      // Scan the source directory to find entry points
-      const { readdir } = await import("node:fs/promises");
+    // Process publishable source files
+    const filesByDirectory = new Map<string, string[]>();
 
-      // Recursive function to scan directories
-      async function scanDirectory(dirPath: string) {
-        try {
-          const entries = await readdir(dirPath, { withFileTypes: true });
+    // Group files by their directory
+    for (const relativePath of publishableSourceFiles) {
+      const dir = path.dirname(relativePath);
+      const fileName = path.basename(relativePath);
 
-          // First, handle directories
-          for (const entry of entries.filter((e) => e.isDirectory())) {
-            if (entry.name === "node_modules" || entry.name.startsWith(".")) {
-              continue;
-            }
-            await scanDirectory(path.join(dirPath, entry.name));
-          }
+      const dirFiles = filesByDirectory.get(dir) ?? [];
+      dirFiles.push(fileName);
+      filesByDirectory.set(dir, dirFiles);
+    }
 
-          // Then, handle files
-          const files = entries.filter((e) => !e.isDirectory());
+    // Process each directory
+    for (const [dirPath, files] of filesByDirectory.entries()) {
+      if (files.length === 0) continue;
 
-          // If there's only one file in the directory and useSingleFileInDirectory is true
-          if (useSingleFileInDirectory && files.length === 1) {
-            const entry = files[0];
-            if (entry && !shouldSkipFile(entry.name)) {
-              // Only use the single file if its basename matches the directory name
-              const directoryName = path.basename(dirPath);
-              const fileBaseName = path.basename(
-                entry.name,
-                path.extname(entry.name),
-              );
+      // If there's only one file in the directory and useSingleFileInDirectory is true
+      if (useSingleFileInDirectory && files.length === 1) {
+        const fileName = files[0]!;
 
-              if (fileBaseName === directoryName) {
-                preferredDirectoryEntries.set(dirPath, entry.name);
-              }
-            }
-            return;
-          }
+        // Only use the single file if its basename matches the directory name
+        const directoryName = path.basename(dirPath);
+        const fileBaseName = path.basename(fileName, path.extname(fileName));
 
-          // Otherwise, look for preferred entry points
-          for (const entry of files) {
-            if (shouldSkipFile(entry.name)) {
-              continue;
-            }
-
-            const directoryBaseName = path.basename(dirPath);
-            const basename = path.basename(
-              entry.name,
-              path.extname(entry.name),
-            );
-            const existingPreference = preferredDirectoryEntries.get(dirPath);
-
-            if (
-              basename === "index" ||
-              (basename === "main" &&
-                !existingPreference?.startsWith("index")) ||
-              (!existingPreference &&
-                (basename === directoryBaseName ||
-                  toCompareCase(basename) === toCompareCase(directoryBaseName)))
-            ) {
-              preferredDirectoryEntries.set(dirPath, entry.name);
-            }
-          }
-        } catch (error) {
-          // Directory might not exist, just continue
+        if (fileBaseName === directoryName) {
+          preferredDirectoryEntries.set(dirPath, fileName);
         }
       }
 
-      await scanDirectory(packageSourceDir);
-    } catch (error) {
-      // If there's an error reading the directory, just return the original package
-      return pkg;
+      // Otherwise, look for preferred entry points
+      for (const fileName of files) {
+        const directoryBaseName =
+          dirPath === "." ? targetPackage.scopedName : path.basename(dirPath);
+
+        const basename = path.basename(fileName, path.extname(fileName));
+        const existingPreference = preferredDirectoryEntries.get(dirPath);
+
+        if (
+          basename === "index" ||
+          (basename === "main" && !existingPreference?.startsWith("index")) ||
+          (!existingPreference &&
+            (basename === directoryBaseName ||
+              toCompareCase(basename) === toCompareCase(directoryBaseName)))
+        ) {
+          preferredDirectoryEntries.set(dirPath, fileName);
+        }
+      }
     }
 
     // Generate exports entries
     const generatedExports = Object.fromEntries(
-      [...preferredDirectoryEntries]
-        .map(([dir, entry]) => {
-          // Get the path relative to the package source directory
-          const pathToDir = path.relative(packageSourceDir, dir);
-          const basename = path.basename(entry, path.extname(entry));
-          const suffixedPath = pathToDir === "" ? pathToDir : `${pathToDir}/`;
+      [...preferredDirectoryEntries].map(([dir, entry]) => {
+        const basename = path.basename(entry, path.extname(entry));
+        const exportsPath = dir === "." ? dir : `${dir}/`;
 
-          // Make sure we're only including paths within this package
-          if (pathToDir.startsWith("..")) {
-            return undefined; // Skip this entry as it's outside the package
-          }
+        const exportEntry: Record<string, string> = {};
 
-          const exportEntry: Record<string, string> = {
-            source: `./${suffixedPath}${entry}`,
-            bun: `./${suffixedPath}${entry}`,
-            import: `./${suffixedPath}${basename}.js`,
-            require: `./${suffixedPath}${basename}.cjs`,
-            default: `./${suffixedPath}${basename}.js`,
-          };
+        // Add custom exports condition if enabled
+        if (customExportsCondition && pkg.name) {
+          // Use the package name or scope (if present) as the condition name
+          const conditionName =
+            typeof customExportsCondition === "string"
+              ? customExportsCondition
+              : (targetPackage.scope ?? targetPackage.scopedName);
+          exportEntry[conditionName] = `./${exportsPath}${entry}`;
+        }
 
-          // Add custom exports condition if enabled
-          if (customExportsCondition && pkg["name"]) {
-            // Use the package name (without scope) as the condition name
-            const conditionName = pkg["name"].split("/").pop() || pkg["name"];
-            exportEntry[conditionName] = `./${suffixedPath}${entry}`;
-          }
+        // object order is significant for node exports
+        exportEntry["source"] = `./${exportsPath}${entry}`;
+        exportEntry["bun"] = `./${exportsPath}${entry}`;
+        exportEntry["import"] = `./${exportsPath}${basename}.js`;
+        exportEntry["require"] = `./${exportsPath}${basename}.cjs`;
+        exportEntry["default"] = `./${exportsPath}${basename}.js`;
 
-          return [pathToDir === "" ? "." : `./${pathToDir}`, exportEntry];
-        })
-        // Filter out undefined entries
-        .filter(
-          (entry): entry is [string, Record<string, string>] =>
-            entry !== undefined,
-        ),
+        return [dir === "." ? "." : `./${dir}`, exportEntry];
+      }),
     );
 
     // Merge with existing exports
     return {
       ...pkg,
-      ["exports"]: {
+      exports: {
         ...generatedExports,
         "./*.json": "./*.json",
         "./*.js": {
@@ -196,24 +165,9 @@ function createExportsModifier({
           require: "./*.cjs",
           default: "./*.js",
         },
-        ...(typeof pkg["exports"] === "object" ? pkg["exports"] : {}),
+        // existing export overrides:
+        ...(typeof pkg.exports === "object" ? pkg.exports : {}),
       },
-      // Set type to module if not already set
-      ["type"]: pkg["type"] || "module",
     };
   };
-}
-
-/**
- * Determines if a file should be skipped when generating exports
- */
-function shouldSkipFile(filename: string): boolean {
-  return (
-    filename.includes(".test.") ||
-    filename.includes(".fixture.") ||
-    /\.d\.[cm]?ts$/.test(filename) ||
-    /tsconfig\..*\.json$/.test(filename) ||
-    filename.includes(".gen.") ||
-    filename.includes(".generated.")
-  );
 }

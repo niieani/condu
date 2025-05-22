@@ -233,6 +233,7 @@ export interface PackageJsonModifierMeta extends PostRecipeState {
 
 export interface PackageJsonPublishModifierMeta extends PostRecipeState {
   targetPackage: IPackageEntry;
+  /** relative paths of all publishable source files in this package */
   publishableSourceFiles: string[];
 }
 

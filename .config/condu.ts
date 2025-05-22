@@ -147,7 +147,6 @@ export default configure((pkg) => ({
     // }),
     autoPackageExports({
       customExportsCondition: true,
-      useSingleFileInDirectory: true,
     }),
     gitignore({ ignore: [".swc/", ".idea/", ".env", ".env.*", "/brand/"] }),
   ],

@@ -129,7 +129,7 @@ export async function prepareAndReleaseDirectoryPackages({
     console.log(`Preparing ${pkg.name} for release`);
 
     const publishableSourceFiles = copiedFiles.flatMap((f) =>
-      f.success ? [f.target] : [],
+      f.success ? [path.relative(packageBuildDir, f.target)] : [],
     );
 
     const publishManifest = await pkg.generatePublishManifest({

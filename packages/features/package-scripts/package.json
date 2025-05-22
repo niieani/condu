@@ -1,5 +1,5 @@
 {
-  "name": "@condu/feature-package-scripts",
+  "name": "@condu-feature/package-scripts",
   "version": "0.1.0",
   "type": "module",
   "dependencies": {

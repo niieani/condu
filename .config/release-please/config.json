@@ -63,7 +63,7 @@
     },
     "packages/features/package-scripts": {
       "release-type": "node",
-      "component": "@condu/feature-package-scripts",
+      "component": "@condu-feature/package-scripts",
       "initial-version": "1.0.0"
     },
     "packages/features/pnpm": {
