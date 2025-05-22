@@ -22,9 +22,33 @@ import { otherSchemas as schemas } from "@condu/schema-types/utils/schemas.js";
 import { defaultToolchain } from "./defaultToolchain.js";
 
 declare module "@moonrepo/types" {
+  // https://github.com/moonrepo/plugins/blob/42813ea5ca07582a45af52fb5ce321f2595bfc29/toolchains/typescript/src/config.rs#L8
+  interface PartialTypeScriptConfig {
+    /** When `syncProjectReferences` is enabled, will create a `tsconfig.json` in referenced projects if it does not exist. */
+    createMissingConfig?: boolean;
+    /** Appends sources of project reference to `include` in `tsconfig.json`, for each project. */
+    includeProjectReferenceSources?: boolean;
+    /** Appends shared types to `include` in `tsconfig.json`, for each project. */
+    includeSharedTypes?: boolean;
+    /** Name of the `tsconfig.json` file within each project. */
+    projectConfigFileName?: string;
+    /** The relative root to the TypeScript root. Primarily used for resolving project references. */
+    root?: string;
+    /** Name of the `tsconfig.json` file at the workspace root. */
+    rootConfigFileName?: string;
+    /** Name of the shared compiler options `tsconfig.json` file at the workspace root. */
+    rootOptionsConfigFileName?: string;
+    /** Updates and routes `outDir` in `tsconfig.json` to moon's cache, for each project. */
+    routeOutDirToCache?: boolean;
+    /** Syncs all project dependencies as `references` in `tsconfig.json`, for each project. */
+    syncProjectReferences?: boolean;
+    /** Syncs all project dependencies as `paths` in `tsconfig.json`, for each project. */
+    syncProjectReferencesToPaths?: boolean;
+  }
+
   interface PartialProjectToolchainConfig {
     // typescript is on by default, but it's a plugin
-    typescript?: false;
+    typescript?: PartialTypeScriptConfig | null;
   }
 }
 
@@ -42,6 +66,7 @@ declare module "condu" {
 
 interface MoonPeerContext {
   toolchain: Toolchain;
+  project: MoonProject;
   workspace: Omit<Workspace, "projects" | "vcs"> & {
     /** projects should be defined in the top-level config */
     projects?: never;
@@ -58,11 +83,14 @@ export const moon = (config: MoonConfig = {}) =>
         ...defaultToolchain,
         ...config.toolchain,
       },
+      project: {
+        ...config.project,
+      },
       workspace: {
         ...config.workspace,
       },
     },
-    defineRecipe(condu, { toolchain, workspace }) {
+    defineRecipe(condu, { toolchain, workspace, project: moonProject }) {
       const config = condu.project.config;
       const moonWorkspaceProjects =
         getMoonWorkspaceProjectsFromConventionConfig(config.projects);
@@ -186,15 +214,18 @@ export const moon = (config: MoonConfig = {}) =>
 
           return {
             $schema: schemas.project,
+            ...moonProject,
             tasks: {
               ...tasks,
               ...getWorkspaceTasks({
                 tasks: globalRegistry.tasks,
                 conventions: config.conventions,
               }),
+              ...moonProject.tasks,
             },
             toolchain: {
-              typescript: false,
+              ...moonProject.toolchain,
+              typescript: moonProject.toolchain?.typescript ?? null,
             },
           };
         },
