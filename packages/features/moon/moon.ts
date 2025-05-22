@@ -225,6 +225,7 @@ export const moon = (config: MoonConfig = {}) =>
             },
             toolchain: {
               ...moonProject.toolchain,
+              // eslint-disable-next-line unicorn/no-null
               typescript: moonProject.toolchain?.typescript ?? null,
             },
           };
