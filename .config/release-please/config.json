@@ -6,6 +6,11 @@
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
   "packages": {
+    "packages/features/auto-package-exports": {
+      "release-type": "node",
+      "component": "@condu-feature/auto-package-exports",
+      "initial-version": "1.0.0"
+    },
     "packages/features/ci-github-actions": {
       "release-type": "node",
       "component": "@condu-feature/ci-github-actions",

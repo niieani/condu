@@ -28,7 +28,6 @@ import {
 import type { PeerContext } from "../../extendable.js";
 import { UpsertMap } from "@condu/core/utils/UpsertMap.js";
 import type { UnionToIntersection } from "type-fest";
-import { preprocessFeatures } from "./preprocessFeatures.js";
 
 export interface ProjectAndCollectedState {
   project: ConduProject;

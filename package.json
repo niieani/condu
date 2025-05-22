@@ -36,6 +36,7 @@
     "@typescript-eslint/types": "8.32.1"
   },
   "devDependencies": {
+    "@condu-feature/auto-package-exports": "workspace:*",
     "@condu-feature/ci-github-actions": "workspace:*",
     "@condu-feature/condu-packages": "workspace:*",
     "@condu-feature/editorconfig": "workspace:*",

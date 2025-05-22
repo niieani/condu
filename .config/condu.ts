@@ -12,6 +12,7 @@ import { editorconfig } from "@condu-feature/editorconfig/editorconfig.js";
 import { prettier } from "@condu-feature/prettier/prettier.js";
 import { gptSummarizer } from "@condu-feature/gpt-summarizer/gptSummarizer.js";
 import { releasePlease } from "@condu-feature/release-please/release-please.js";
+import { autoPackageExports } from "@condu-feature/auto-package-exports/autoPackageExports.js";
 import { configure, defineFeature } from "condu";
 
 export default configure((pkg) => ({
@@ -144,6 +145,10 @@ export default configure((pkg) => ({
     //   ignore: ["TODO.md", "CHANGELOG.md"],
     //   removeComments: true,
     // }),
+    autoPackageExports({
+      customExportsCondition: true,
+      useSingleFileInDirectory: true,
+    }),
     gitignore({ ignore: [".swc/", ".idea/", ".env", ".env.*", "/brand/"] }),
   ],
 }));

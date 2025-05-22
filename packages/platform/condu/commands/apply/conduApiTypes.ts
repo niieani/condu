@@ -7,6 +7,7 @@ import type {
   PackageJsonModifier,
   ReadonlyConduPackageEntry,
   MatchPackage,
+  PackageJsonPublishModifier,
 } from "./ConduPackageEntry.js";
 import type { PeerContext } from "../../extendable.js";
 import type {
@@ -78,7 +79,9 @@ export interface ScopedRecipeApiCore {
     resolutions: Record<string, string>,
   ): ScopedRecipeApi;
   modifyPackageJson(modifier: PackageJsonModifier): ScopedRecipeApi;
-  modifyPublishedPackageJson(modifier: PackageJsonModifier): ScopedRecipeApi;
+  modifyPublishedPackageJson(
+    modifier: PackageJsonPublishModifier,
+  ): ScopedRecipeApi;
 }
 
 export interface ScopedRecipeApi extends ScopedRecipeApiCore {

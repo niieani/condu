@@ -73,10 +73,9 @@ export async function prepareAndReleaseDirectoryPackages({
     console.log(`Copying ${packageDir} for ${pkg.name} to ${buildDirName}`);
     const existingLicensePaths = new Set<string>();
     const existingReadmeNames: Array<string> = [];
-    const preferredDirectoryEntries = new Map<string, string>();
     // copy all the project files that haven't been copied by tsc
     // this includes all source files, but also other files like README.md, LICENSE, etc.
-    void (await copyFiles({
+    const copiedFiles = await copyFiles({
       sourceDir: packageSourceDir,
       targetDir: packageBuildDir,
       overwrite: true,
@@ -104,15 +103,6 @@ export async function prepareAndReleaseDirectoryPackages({
         const isGeneratedConfigFile =
           configFileAbsolutePaths.includes(fullPath);
 
-        if (isPkgRootDir) {
-          if (/^license\..*/i.test(entry.name)) {
-            existingLicensePaths.add(fullPath);
-          }
-          if (/^readme\..*/i.test(entry.name)) {
-            existingReadmeNames.push(entry.name);
-          }
-        }
-
         // TODO: respect 'files' field in package.json and .npmignore/.gitignore
         const isPublishableFile =
           !isTestFile &&
@@ -123,52 +113,28 @@ export async function prepareAndReleaseDirectoryPackages({
           !isGeneratedConfigFile &&
           !isDotFile;
 
-        if (isPublishableFile && /\.[cm]?[jt]s$/.test(entry.name)) {
-          const directoryBaseName = path.basename(directoryPath);
-          const basename = path.basename(entry.name, path.extname(entry.name));
-          const existingPreference =
-            preferredDirectoryEntries.get(directoryPath);
-          if (
-            basename === "index" ||
-            (basename === "main" && !existingPreference?.startsWith("index")) ||
-            (!existingPreference &&
-              (basename === directoryBaseName ||
-                toCompareCase(basename) === toCompareCase(directoryBaseName)))
-          ) {
-            preferredDirectoryEntries.set(directoryPath, entry.name);
+        if (isPkgRootDir) {
+          if (/^license\..*/i.test(entry.name)) {
+            existingLicensePaths.add(fullPath);
+          }
+          if (/^readme\..*/i.test(entry.name)) {
+            existingReadmeNames.push(entry.name);
           }
         }
 
         return isPublishableFile;
       },
-    }));
+    });
 
     console.log(`Preparing ${pkg.name} for release`);
 
-    const generatedEntrySources = Object.fromEntries(
-      [...preferredDirectoryEntries].map(([dir, entry]) => {
-        const pathToDir = path.relative(packageSourceDir, dir);
-        const basename = path.basename(entry, path.extname(entry));
-        const suffixedPath = pathToDir === "" ? pathToDir : `${pathToDir}/`;
-
-        return [
-          pathToDir === "" ? "." : `./${pathToDir}`,
-          {
-            // types: `./${suffixedPath}${basename}.d.ts`,
-            source: `./${suffixedPath}${entry}`,
-            bun: `./${suffixedPath}${entry}`,
-            import: `./${suffixedPath}${basename}.js`,
-            // TODO: support CJS-first projects (i.e. 'js' is CJS, '.mjs' is ESM)
-            require: `./${suffixedPath}${basename}.cjs`,
-            default: `./${suffixedPath}${basename}.js`,
-          },
-        ];
-      }),
+    const publishableSourceFiles = copiedFiles.flatMap((f) =>
+      f.success ? [f.target] : [],
     );
 
     const publishManifest = await pkg.generatePublishManifest({
-      entrySources: generatedEntrySources,
       project,
+      publishableSourceFiles,
     });
 
     // should we just use the whole pack pipeline from pnpm?

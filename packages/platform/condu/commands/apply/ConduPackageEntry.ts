@@ -46,7 +46,7 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
   readonly #writeProjectManifest: WriteManifestFn;
   #internalModifications: InternalModifier[] = [];
   #pendingModifications: PackageJsonModification[] = [];
-  #publishedModifications: PackageJsonModification[] = [];
+  #publishedModifications: PackageJsonPublishModification[] = [];
   #managedByFeatures: CollectionContext[] = [];
   #publishedManagedByFeatures: CollectionContext[] = [];
 
@@ -77,7 +77,7 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
   }
 
   addPublishedModification(
-    modifier: PackageJsonModifier,
+    modifier: PackageJsonPublishModifier,
     context: CollectionContext,
     globalRegistry: ConduReadonlyCollectedStateView,
   ) {
@@ -89,7 +89,10 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
     for (const { modifier, globalRegistry } of this.#pendingModifications) {
       // for now process sequentially in case the modifier does network calls
       // TODO: consider parallelizing with a cap
-      this.#manifest = await modifier(this.#manifest, { globalRegistry });
+      this.#manifest = await modifier(this.#manifest, {
+        globalRegistry,
+        targetPackage: this,
+      });
     }
 
     for (const modifier of this.#internalModifications) {
@@ -102,11 +105,11 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
   }
 
   async generatePublishManifest({
-    entrySources,
     project,
+    publishableSourceFiles,
   }: {
-    entrySources: EntrySources;
     project: ConduProject;
+    publishableSourceFiles: string[];
   }): Promise<ConduPackageJson> {
     const currentManifest = this.#manifest;
 
@@ -136,25 +139,6 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
               directory: this.relPath,
             }
           : currentManifest.repository),
-      exports: {
-        ...entrySources,
-        "./*.json": "./*.json",
-        "./*.js": {
-          // types: `./*.d.ts`,
-          bun: `./*.ts`,
-          import: `./*.js`,
-          require: `./*.cjs`,
-          default: `./*.js`,
-        },
-        ...(typeof currentManifest.exports === "object"
-          ? currentManifest.exports
-          : {}),
-      },
-      main: entrySources["."]?.require,
-      module: entrySources["."]?.import,
-      source: entrySources["."]?.source,
-      // NOTE: types is unnecessary because of adjacent .d.ts files
-      // types: entrySources["."]?.types,
       // TODO: funding
       // TODO: support CJS-first projects (maybe?)
       type: "module",
@@ -175,7 +159,11 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
     // process this.#publishedModifications sequentially:
     for (const { modifier, globalRegistry, context } of this
       .#publishedModifications) {
-      newPackageJson = await modifier(newPackageJson, { globalRegistry });
+      newPackageJson = await modifier(newPackageJson, {
+        globalRegistry,
+        targetPackage: this,
+        publishableSourceFiles,
+      });
     }
 
     return newPackageJson;
@@ -239,14 +227,37 @@ function getReleaseDependencies(manifest: PackageJson) {
   return dependencyManifestOverride;
 }
 
+export interface PackageJsonModifierMeta extends PostRecipeState {
+  targetPackage: IPackageEntry;
+}
+
+export interface PackageJsonPublishModifierMeta extends PostRecipeState {
+  targetPackage: IPackageEntry;
+  publishableSourceFiles: string[];
+}
+
 export type PackageJsonModifier = (
   pkg: ConduPackageJson,
-  { globalRegistry }: PostRecipeState,
+  { globalRegistry, targetPackage }: PackageJsonModifierMeta,
+) => ConduPackageJson | Promise<ConduPackageJson>;
+
+export type PackageJsonPublishModifier = (
+  pkg: ConduPackageJson,
+  {
+    globalRegistry,
+    targetPackage,
+    publishableSourceFiles,
+  }: PackageJsonPublishModifierMeta,
 ) => ConduPackageJson | Promise<ConduPackageJson>;
 
 // internal type for storing pending modifications
 export interface PackageJsonModification extends PostRecipeState {
   modifier: PackageJsonModifier;
+  context: CollectionContext;
+}
+
+export interface PackageJsonPublishModification extends PostRecipeState {
+  modifier: PackageJsonPublishModifier;
   context: CollectionContext;
 }
 
