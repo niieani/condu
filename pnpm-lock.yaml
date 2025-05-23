@@ -241,6 +241,9 @@ importers:
       condu:
         specifier: workspace:^
         version: link:../../platform/condu
+      gitignore-matcher:
+        specifier: workspace:^
+        version: link:../../generic/gitignore-matcher
       remeda:
         specifier: ^2.21.9
         version: 2.21.9

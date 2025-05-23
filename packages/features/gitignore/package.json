@@ -3,7 +3,8 @@
   "version": "0.1.10",
   "type": "module",
   "dependencies": {
-    "remeda": "^2.21.9"
+    "remeda": "^2.21.9",
+    "gitignore-matcher": "workspace:^"
   },
   "peerDependencies": {
     "condu": "workspace:^"

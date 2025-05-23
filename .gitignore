@@ -26,7 +26,6 @@ moon.yml
 # vscode:
 /.vscode/settings.json
 # autolink:
-/.env
 /vitest.config.ts
 # custom ignore patterns:
 .swc/

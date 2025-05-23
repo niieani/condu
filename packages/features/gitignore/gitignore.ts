@@ -1,5 +1,6 @@
 import { defineFeature, CONDU_CONFIG_DIR_NAME } from "condu";
 import { groupBy, unique } from "remeda";
+import { GitIgnore } from "gitignore-matcher/gitignore-matcher.js";
 
 export interface IgnoreConfig {
   ignore?: string[];
@@ -33,14 +34,22 @@ export const gitignore = (opts: IgnoreConfig = {}) =>
             ([_path, file]) =>
               file.managedByFeatures[0]?.featureName ?? "unmanaged",
           );
+          const userIgnored = new GitIgnore(ignore.join("\n"));
           const entriesFromFeatures = Object.entries(filesByFeature).flatMap(
             ([featureName, files]) => {
               if (featureName === "gitignore") return [];
               return [
                 `# ${featureName}:`,
-                ...files.map(([p, f]) =>
-                  f.attributes.inAllPackages ? f.relPath : `/${p}`,
-                ),
+                ...files.flatMap(([p, f]) => {
+                  const result = f.attributes.inAllPackages
+                    ? f.relPath
+                    : `/${p}`;
+                  if (userIgnored.isIgnored(result)) {
+                    // already ignored by user, do not add again
+                    return [];
+                  }
+                  return [result];
+                }),
               ];
             },
           );
