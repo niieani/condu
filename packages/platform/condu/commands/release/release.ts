@@ -57,7 +57,9 @@ export async function prepareAndReleaseDirectoryPackages({
     collectedState.fileManager.files.keys(),
   ).map((filePath) => path.join(workspaceDirAbs, filePath));
 
-  const pnpmWorkspaceManifest = await readWorkspaceManifest(project.absPath);
+  const pnpmWorkspaceManifest = await readWorkspaceManifest(
+    project.absPath,
+  ).catch(() => undefined);
   const catalogs = getCatalogsFromWorkspaceManifest(pnpmWorkspaceManifest);
 
   const { queue } = topo(packagesToPrepare);
@@ -70,7 +72,9 @@ export async function prepareAndReleaseDirectoryPackages({
     const { relPath: packageDir } = pkg;
     const packageBuildDir = path.join(absBuildDir, packageDir);
     const packageSourceDir = path.join(workspaceDirAbs, packageDir, srcDirName);
-    console.log(`Copying ${packageDir} for ${pkg.name} to ${buildDirName}`);
+    console.log(
+      `Copying ${packageDir} for package '${pkg.name}' to '${buildDirName}'`,
+    );
     const existingLicensePaths = new Set<string>();
     const existingReadmeNames: Array<string> = [];
     // copy all the project files that haven't been copied by tsc
@@ -132,11 +136,13 @@ export async function prepareAndReleaseDirectoryPackages({
       f.success ? [path.relative(packageBuildDir, f.target)] : [],
     );
 
+    console.log(`Generating publish manifest for ${pkg.name}`);
     const publishManifest = await pkg.generatePublishManifest({
       project,
       publishableSourceFiles,
     });
 
+    console.log(`Generating exportable manifest for ${pkg.name}`);
     // should we just use the whole pack pipeline from pnpm?
     // see https://github.com/pnpm/pnpm/blob/07a7ac4a93505fc75fa397cd4a3965295d76a689/releasing/plugin-commands-publishing/src/pack.ts#L61
     const exportablePackageJson = await createExportableManifest(
@@ -277,9 +283,6 @@ export async function prepareAndReleaseDirectoryPackages({
     }
   }
 }
-
-const toCompareCase = (str: string) =>
-  str.replace(/[^\dA-Za-z]/g, "").toLowerCase();
 
 async function executeNpmCommand({
   npmArgs,

@@ -35,7 +35,6 @@ export function autoPackageExports(options: AutoPackageExportsOptions = {}) {
         createExportsModifier({
           customExportsCondition,
           useSingleFileInDirectory,
-          project: condu.project,
         }),
       );
     },
@@ -53,24 +52,11 @@ function toCompareCase(str: string): string {
 function createExportsModifier({
   customExportsCondition,
   useSingleFileInDirectory,
-  project,
-}: AutoPackageExportsOptions & {
-  project: ReadonlyConduProject;
-}): PackageJsonPublishModifier {
+}: AutoPackageExportsOptions): PackageJsonPublishModifier {
   return async (
     pkg: ConduPackageJson,
     { targetPackage, publishableSourceFiles },
   ) => {
-    // Safely access config and conventions
-    const config = project.config || {};
-    const conventions = config.conventions || {};
-    const sourceDir = conventions.sourceDir || ".";
-
-    const { absPath: packagePath } = targetPackage;
-
-    // Determine the source directory for this package
-    const packageSourceDir = path.join(packagePath, sourceDir);
-
     // Map to store preferred entry points for each directory
     const preferredDirectoryEntries = new Map<string, string>();
 
@@ -158,6 +144,8 @@ function createExportsModifier({
       ...pkg,
       exports: {
         ...generatedExports,
+        // existing export always override:
+        ...(typeof pkg.exports === "object" ? pkg.exports : {}),
         "./*.json": "./*.json",
         "./*.js": {
           bun: "./*.ts",
@@ -165,8 +153,6 @@ function createExportsModifier({
           require: "./*.cjs",
           default: "./*.js",
         },
-        // existing export overrides:
-        ...(typeof pkg.exports === "object" ? pkg.exports : {}),
       },
     };
   };

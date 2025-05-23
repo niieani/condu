@@ -30,46 +30,54 @@ export const copyFiles = async ({
 
   await fs.mkdir(targetDir, { recursive: true });
 
-  for await (const {
-    directoryPath,
-    entry: { name: fileName },
-  } of walkDirectoryRecursively(sourceDir, keep)) {
-    const relativePathToDir = path.relative(sourceDir, directoryPath);
-    const thisTargetDir = path.join(targetDir, relativePathToDir);
-    const targetFilePath = path.join(thisTargetDir, fileName);
-    const sourceFilePath = path.join(directoryPath, fileName);
+  try {
+    for await (const {
+      directoryPath,
+      entry: { name: fileName },
+    } of walkDirectoryRecursively(sourceDir, keep)) {
+      const relativePathToDir = path.relative(sourceDir, directoryPath);
+      const thisTargetDir = path.join(targetDir, relativePathToDir);
+      const targetFilePath = path.join(thisTargetDir, fileName);
+      const sourceFilePath = path.join(directoryPath, fileName);
 
-    work.push(
-      (async (): Promise<CopyResult> => {
-        if (!createdDirectories.has(thisTargetDir)) {
-          // recursive shouldn't be necessary since we're walking directories in order
-          await fs.mkdir(thisTargetDir, { recursive: true });
-          createdDirectories.add(thisTargetDir);
-        }
-        await fs.copyFile(
-          sourceFilePath,
-          targetFilePath,
-          // use copy-on-write strategy for performance if supported
-          fs.constants.COPYFILE_FICLONE |
-            // and overwrite only if specified
-            (overwrite ? 0 : fs.constants.COPYFILE_EXCL),
-        );
-        // TODO: if debug
-        // console.log(`Copied ${targetFilePath}`);
-        return {
-          source: sourceFilePath,
-          target: targetFilePath,
-          success: true,
-        };
-      })().catch((error) => {
-        console.error(`Error copying ${targetFilePath}:\n${error.message}`);
-        return {
-          source: sourceFilePath,
-          target: targetFilePath,
-          success: false,
-        };
-      }),
+      work.push(
+        (async (): Promise<CopyResult> => {
+          if (!createdDirectories.has(thisTargetDir)) {
+            // recursive shouldn't be necessary since we're walking directories in order
+            await fs.mkdir(thisTargetDir, { recursive: true });
+            createdDirectories.add(thisTargetDir);
+          }
+          await fs.copyFile(
+            sourceFilePath,
+            targetFilePath,
+            // use copy-on-write strategy for performance if supported
+            fs.constants.COPYFILE_FICLONE |
+              // and overwrite only if specified
+              (overwrite ? 0 : fs.constants.COPYFILE_EXCL),
+          );
+          // TODO: if debug
+          // console.log(`Copied ${targetFilePath}`);
+          return {
+            source: sourceFilePath,
+            target: targetFilePath,
+            success: true,
+          };
+        })().catch((error) => {
+          console.error(`Error copying ${targetFilePath}:\n${error.message}`);
+          return {
+            source: sourceFilePath,
+            target: targetFilePath,
+            success: false,
+          };
+        }),
+      );
+    }
+  } catch (error) {
+    console.error(
+      `Error copying files from ${sourceDir} to ${targetDir}:`,
+      error,
     );
+    return Promise.reject(error);
   }
 
   // TODO: could show progress bar

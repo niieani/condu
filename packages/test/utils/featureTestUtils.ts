@@ -16,6 +16,8 @@ import {
   getDirectoryStructureAndContentsRecursively,
   type DirectoryItems,
 } from "./getDirectoryStructureAndContentsRecursively.js";
+import { prepareAndReleaseDirectoryPackages } from "condu/commands/release/release.js";
+import path from "node:path";
 
 interface FeatureTestOptions {
   /** Features and other configuration options */
@@ -33,10 +35,11 @@ export async function testApplyFeatures({
 }: FeatureTestOptions): Promise<{
   getFileContents: (path: string) => Promise<string>;
   collectedState: CollectedState;
+  testRelease: () => Promise<void>;
   getMockState: () => Promise<Record<string, string | Buffer | DirectoryItems>>;
-  [Symbol.dispose]: () => void;
   bypassMockFs: (typeof mockFs)["bypass"];
   project: ConduProject;
+  [Symbol.dispose]: () => void;
 }> {
   const defaultPackageJson = {
     name: "mock-project",
@@ -80,6 +83,24 @@ export async function testApplyFeatures({
   return {
     project,
     collectedState,
+    testRelease: async () => {
+      await prepareAndReleaseDirectoryPackages({
+        workspaceDirAbs: project.absPath,
+        packagesToPrepare:
+          project.workspacePackages.length > 0
+            ? project.workspacePackages
+            : project.allPackages,
+        absBuildDir: path.join(
+          project.absPath,
+          project.config.conventions.buildDir,
+        ),
+        srcDirName: project.config.conventions.sourceDir,
+        buildDirName: project.config.conventions.buildDir,
+        project,
+        collectedState,
+        dryRun: true,
+      });
+    },
     getFileContents: async (path: string): Promise<string> => {
       try {
         // Try to get the file directly from the fileManager first
