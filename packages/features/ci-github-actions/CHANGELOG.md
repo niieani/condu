@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.1.11](https://github.com/niieani/condu/compare/@condu-feature/ci-github-actions@0.1.10...@condu-feature/ci-github-actions@0.1.11) (2025-05-23)
+
+
+### Features
+
+* implement package-scripts feature ([e123329](https://github.com/niieani/condu/commit/e123329374b28be0fa337598a3b454c83f241e01))
+
+
+### Bug Fixes
+
+* bump remeda and node packages ([f009721](https://github.com/niieani/condu/commit/f00972173947c48e22a816c67b1b6b9406a39b29))
+* fixes from dependency bump ([66b22ea](https://github.com/niieani/condu/commit/66b22ea2ec08ab5440079053a720033637c41a6a))
+* update moon CI setup to use pnpm action and improve conflict resolution handling ([742635d](https://github.com/niieani/condu/commit/742635d56c57644939e8c241db178419c34328e8))
+* upgrade dependencies ([37f4e2b](https://github.com/niieani/condu/commit/37f4e2babd29a9be1c69427ee13bcd08b8bbe25a))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/schema-types bumped to 0.0.5
+  * peerDependencies
+    * condu bumped to 0.1.11
+
 ## [0.1.10](https://github.com/niieani/condu/compare/@condu-feature/ci-github-actions@0.1.9...@condu-feature/ci-github-actions@0.1.10) (2024-12-21)
 
 
