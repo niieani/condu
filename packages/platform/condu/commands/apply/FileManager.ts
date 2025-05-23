@@ -338,7 +338,7 @@ export class FileManager {
 
     for (const file of this.files.values()) {
       // any files that need user input/confirmation need to be handled sequentially
-      if (file.askUserToWrite) {
+      if (file.manualConflictResolution) {
         if (!IS_INTERACTIVE || this.throwOnManualChanges) {
           process.exitCode = 1;
           if (this.throwOnManualChanges) {
@@ -347,11 +347,12 @@ export class FileManager {
             );
           }
           console.log(
-            `Please resolve the conflict by running 'condu apply' interactively. Skipping: ${file.relPath}`,
+            `Please resolve the conflict in '${file.relPath}' by running 'condu apply' interactively. Skipping due to diff:`,
           );
+          file.manualConflictResolution.printDiff();
           file.status = "skipped";
         } else {
-          await file.askUserToWrite();
+          await file.manualConflictResolution.promptUserInteractively();
         }
       }
     }
@@ -478,7 +479,9 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
   // TODO: add featureExecutionOrder
   managedByFeatures: CollectionContext[] = [];
   status: "pending" | "applied" | "skipped" | "needs-user-input" = "pending";
-  askUserToWrite?: (() => Promise<void>) | undefined;
+  manualConflictResolution?:
+    | { printDiff: () => void; promptUserInteractively: () => Promise<void> }
+    | undefined;
   lastApplyKind?: FileKind;
   get isManaged(): boolean {
     return this.managedByFeatures.length > 0;
@@ -927,9 +930,8 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       return;
     } else {
       this.status = "needs-user-input";
-      // return a function for interactive overwrite
-      // this needs to happen sequentially, because we're prompting the user for input:
-      this.askUserToWrite = async () => {
+
+      const printDiff = () => {
         console.log(
           `[${this.managedByFeatures.map((f) => f.featureName).join(", ")}] Manual changes present in ${this.relPath}`,
         );
@@ -938,35 +940,43 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
           newContent,
           process.stdout,
         );
+      };
 
-        const rl = readline.createInterface({
-          input: process.stdin,
-          output: process.stdout,
-        });
-        const rawAnswer = await rl.question(
-          "Do you want to overwrite the file? (y/n)",
-        );
-        rl.close();
-        const shouldOverwrite = match(rawAnswer)
-          .with(P.union("y", "Y", P.string.regex(/yes/i)), () => true)
-          .otherwise(() => false);
-
-        if (shouldOverwrite) {
-          this.status = "applied";
-          this.lastApply = await write({
-            targetPath,
-            content: newContent,
+      // return a function for interactive overwrite
+      // this needs to happen sequentially, because we're prompting the user for input:
+      this.manualConflictResolution = {
+        printDiff,
+        promptUserInteractively: async () => {
+          printDiff();
+          const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
           });
-          this._fsState = this.lastApply;
-          this.askUserToWrite = undefined;
-          return;
-        }
-        this.status = "skipped";
-        this.askUserToWrite = undefined;
-        process.exitCode = 1;
-        console.log(
-          `Please update your config and re-run 'condu apply' when ready. Skipping: ${this.relPath}`,
-        );
+          const rawAnswer = await rl.question(
+            "Do you want to overwrite the file? (y/n)",
+          );
+          rl.close();
+          const shouldOverwrite = match(rawAnswer)
+            .with(P.union("y", "Y", P.string.regex(/yes/i)), () => true)
+            .otherwise(() => false);
+
+          if (shouldOverwrite) {
+            this.status = "applied";
+            this.lastApply = await write({
+              targetPath,
+              content: newContent,
+            });
+            this._fsState = this.lastApply;
+            this.manualConflictResolution = undefined;
+            return;
+          }
+          this.status = "skipped";
+          this.manualConflictResolution = undefined;
+          process.exitCode = 1;
+          console.log(
+            `Please update your config and re-run 'condu apply' when ready. Skipping: ${this.relPath}`,
+          );
+        },
       };
     }
   }

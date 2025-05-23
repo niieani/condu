@@ -15,7 +15,8 @@ export const moonCi = (opts: {} = {}) =>
   defineFeature("moonCi", {
     defineRecipe(condu) {
       const config = condu.project.config;
-      const packageManager = config.node.packageManager.name;
+      const { name: packageManager, version: packageManagerVersion } =
+        config.node.packageManager;
       condu.root.generateFile(".github/actions/moon-ci-setup/action.yml", {
         ...getYamlParseAndStringify<GithubAction>(),
         attributes: { gitignore: false },
@@ -38,10 +39,19 @@ export const moonCi = (opts: {} = {}) =>
               //   // 0 indicates all history for all branches and tags:
               //   with: { "fetch-depth": 0 },
               // },
-              // TODO: use pnpm action if pnpm is the package manager
-              ...(packageManager !== "npm" && packageManager !== "bun"
+              ...(packageManager === "yarn"
                 ? [{ run: `corepack enable`, shell: "bash" }]
-                : []),
+                : packageManager === "pnpm"
+                  ? [
+                      {
+                        uses: "pnpm/action-setup@v4",
+                        ...(packageManagerVersion
+                          ? { with: { version: packageManagerVersion } }
+                          : {}),
+                      },
+                    ]
+                  : []),
+              // TODO: use either bun or node
               {
                 uses: "actions/setup-node@v4",
                 with: {
