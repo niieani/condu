@@ -174,8 +174,8 @@ importers:
         specifier: workspace:^
         version: link:../../platform/condu
       remeda:
-        specifier: ^2.21.8
-        version: 2.21.8
+        specifier: ^2.21.9
+        version: 2.21.9
 
   packages/features/condu-packages:
     dependencies:
@@ -229,8 +229,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1
       remeda:
-        specifier: ^2.21.8
-        version: 2.21.8
+        specifier: ^2.21.9
+        version: 2.21.9
     devDependencies:
       '@types/eslint':
         specifier: ^9.6.1
@@ -242,8 +242,8 @@ importers:
         specifier: workspace:^
         version: link:../../platform/condu
       remeda:
-        specifier: ^2.21.8
-        version: 2.21.8
+        specifier: ^2.21.9
+        version: 2.21.9
 
   packages/features/gpt-summarizer:
     dependencies:
@@ -300,8 +300,8 @@ importers:
         specifier: workspace:^
         version: link:../../platform/condu
       remeda:
-        specifier: ^2.21.8
-        version: 2.21.8
+        specifier: ^2.21.9
+        version: 2.21.9
 
   packages/features/package-scripts:
     dependencies:
@@ -462,8 +462,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       remeda:
-        specifier: ^2.21.8
-        version: 2.21.8
+        specifier: ^2.21.9
+        version: 2.21.9
       sort-package-json:
         specifier: ^3.2.1
         version: 3.2.1
@@ -511,8 +511,8 @@ importers:
         specifier: ^1.1.8
         version: 1.1.8
       remeda:
-        specifier: ^2.21.8
-        version: 2.21.8
+        specifier: ^2.21.9
+        version: 2.21.9
     devDependencies:
       node-fetch:
         specifier: ^3.3.2
@@ -4719,8 +4719,8 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
-  remeda@2.21.8:
-    resolution: {integrity: sha512-l920D7Dap/ZZoH7pY3ZML+uqemZoUc+PmIDf5BrwtXPN3iP2vQK0T62ioN9ZJnD3ON8PmEi6y7YDtc2zW3i7oQ==}
+  remeda@2.21.9:
+    resolution: {integrity: sha512-TE8X1jfhzrQ6nbdwfTyHwiuzfBn3Dk7aCr8V/aY1DXLK/Rglp2yP/f/FALaP+/DdG6XOOlTxiRpKSRgAau3d4A==}
 
   rename-overwrite@6.0.3:
     resolution: {integrity: sha512-Daqe51STnrCUq/t4dbzCtfNBLElrqVpCtuWK0MuPrzUi6K/13E98y3E8/kzuMZt6IEmghMnF41J0AidrFqjZUA==}
@@ -10173,7 +10173,7 @@ snapshots:
       - encoding
       - supports-color
 
-  remeda@2.21.8:
+  remeda@2.21.9:
     dependencies:
       type-fest: 4.41.0
 

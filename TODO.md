@@ -1,7 +1,8 @@
 ## MVP / alpha TODO List
 
-- [x] filtering by `kind: "package"` only works in monorepo, because in single repo mode the root package is still tracked as a "workspace"
+- [ ] add api to condu so that modifyPackageJson keeps track of new properties added, so they can be removed when the feature is removed
 - [ ] validate NPM task system without moonrepo
+- [ ] move opinionated configuration away from features to the preset
 - [ ] revamped logging / output
 - [ ] implement TS references sync
 - [ ] pnpm install runs `condu apply` which adds pnpm-workspace, which need another pnpm install... how do we solve this?
