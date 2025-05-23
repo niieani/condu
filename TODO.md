@@ -1,5 +1,6 @@
 ## MVP / alpha TODO List
 
+- [ ] filtering by `kind: "package"` only works in monorepo, because in single repo mode the root package is still tracked as a "workspace"
 - [ ] validate NPM task system without moonrepo
 - [ ] revamped logging / output
 - [ ] implement TS references sync

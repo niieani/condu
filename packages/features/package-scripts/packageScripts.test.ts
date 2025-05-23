@@ -37,16 +37,14 @@ test("packageScripts feature should generate scripts for tasks", async () => {
   // Verify the scripts were generated
   expect(packageJson.scripts).toBeDefined();
 
-  testUtils.bypassMockFs(() => {
-    expect(packageJson.scripts).toMatchInlineSnapshot(`
-      {
-        "build": "pnpm run build:compile",
-        "build:compile": "tsc",
-        "test": "pnpm run test:vitest",
-        "test:vitest": "vitest --watch=false",
-      }
-    `);
-  });
+  expect(packageJson.scripts).toMatchInlineSnapshot(`
+    {
+      "build": "pnpm run build:compile",
+      "build:compile": "tsc",
+      "test": "pnpm run test:vitest",
+      "test:vitest": "vitest --watch=false",
+    }
+  `);
 });
 
 test("packageScripts feature should use custom prefix mapping", async () => {
@@ -75,14 +73,12 @@ test("packageScripts feature should use custom prefix mapping", async () => {
 
   const packageJson = testUtils.project.manifest;
 
-  testUtils.bypassMockFs(() => {
-    expect(packageJson.scripts).toMatchInlineSnapshot(`
-      {
-        "format": "pnpm run lint:eslint",
-        "lint:eslint": "eslint",
-      }
-    `);
-  });
+  expect(packageJson.scripts).toMatchInlineSnapshot(`
+    {
+      "format": "pnpm run lint:eslint",
+      "lint:eslint": "eslint",
+    }
+  `);
 });
 
 test("packageScripts feature should handle monorepo structure", async () => {
@@ -139,45 +135,39 @@ test("packageScripts feature should handle monorepo structure", async () => {
 
   const rootPackageJson = testUtils.project.manifest;
 
-  testUtils.bypassMockFs(() => {
-    expect(rootPackageJson.scripts).toMatchInlineSnapshot(`
-      {
-        "build": "pnpm run build:recursive",
-        "build:recursive": "pnpm -r run build",
-        "test": "pnpm run test:root && pnpm run test:recursive",
-        "test:eslint": "eslint .",
-        "test:recursive": "pnpm -r run test",
-        "test:root": "pnpm run test:eslint",
-      }
-    `);
-  });
+  expect(rootPackageJson.scripts).toMatchInlineSnapshot(`
+    {
+      "build": "pnpm run build:recursive",
+      "build:recursive": "pnpm -r run build",
+      "test": "pnpm run test:root && pnpm run test:recursive",
+      "test:eslint": "eslint .",
+      "test:recursive": "pnpm -r run test",
+      "test:root": "pnpm run test:eslint",
+    }
+  `);
 
   // Check the package-specific scripts in packages
   const pkgAContent = testUtils.project.workspacePackages.find(
     ({ relPath }) => relPath === "packages/a",
   );
   expect(pkgAContent).toBeDefined();
-  testUtils.bypassMockFs(() => {
-    expect(pkgAContent?.manifest.scripts).toMatchInlineSnapshot(`
-      {
-        "build": "pnpm run build:typescript",
-        "build:typescript": "tsc",
-      }
-    `);
-  });
+  expect(pkgAContent?.manifest.scripts).toMatchInlineSnapshot(`
+    {
+      "build": "pnpm run build:typescript",
+      "build:typescript": "tsc",
+    }
+  `);
 
   const pkgBContent = testUtils.project.workspacePackages.find(
     ({ relPath }) => relPath === "packages/b",
   );
   expect(pkgBContent).toBeDefined();
-  testUtils.bypassMockFs(() => {
-    expect(pkgBContent?.manifest.scripts).toMatchInlineSnapshot(`
-      {
-        "test": "pnpm run test:vitest",
-        "test:vitest": "vitest",
-      }
-    `);
-  });
+  expect(pkgBContent?.manifest.scripts).toMatchInlineSnapshot(`
+    {
+      "test": "pnpm run test:vitest",
+      "test:vitest": "vitest",
+    }
+  `);
 });
 
 test("packageScripts feature should filter tasks with custom filter", async () => {
@@ -218,16 +208,14 @@ test("packageScripts feature should filter tasks with custom filter", async () =
 
   const packageJson = testUtils.project.manifest;
 
-  testUtils.bypassMockFs(() => {
-    expect(packageJson.scripts).toMatchInlineSnapshot(`
-      {
-        "build": "pnpm run build:typescript",
-        "build:typescript": "tsc",
-        "test": "pnpm run test:test",
-        "test:test": "vitest",
-      }
-    `);
-  });
+  expect(packageJson.scripts).toMatchInlineSnapshot(`
+    {
+      "build": "pnpm run build:typescript",
+      "build:typescript": "tsc",
+      "test": "pnpm run test:test",
+      "test:test": "vitest",
+    }
+  `);
 
   // Verify excluded script
   expect(packageJson.scripts?.["build:typescript-dev"]).toBeUndefined();
@@ -268,23 +256,21 @@ test("packageScripts feature should track and clean up managed scripts", async (
 
   // Verify scripts were added and tracked
   const firstPackageJson = initialUtils.project.manifest;
-  initialUtils.bypassMockFs(() => {
-    expect(firstPackageJson.scripts).toMatchObject({
-      "user-script": "echo user script that should not be touched",
-      "build:typescript": "tsc",
-      "test:vitest": "vitest",
-      "build": expect.any(String),
-      "test": expect.any(String),
-    });
-
-    // Check that the scripts are tracked in condu section
-    expect(firstPackageJson.condu?.managedScripts).toEqual([
-      "build:typescript", 
-      "test:vitest", 
-      "build", 
-      "test"
-    ]);
+  expect(firstPackageJson.scripts).toMatchObject({
+    "user-script": "echo user script that should not be touched",
+    "build:typescript": "tsc",
+    "test:vitest": "vitest",
+    build: expect.any(String),
+    test: expect.any(String),
   });
+
+  // Check that the scripts are tracked in condu section
+  expect(firstPackageJson.condu?.managedScripts).toEqual([
+    "build:typescript",
+    "test:vitest",
+    "build",
+    "test",
+  ]);
 
   // Now simulate removing the vitest task
   const updatedTasksFeature = defineFeature("tasksFeature", {
@@ -301,29 +287,26 @@ test("packageScripts feature should track and clean up managed scripts", async (
   });
 
   // Re-apply with the updated feature
-  // Get the current filesystem state to use as the initial state for the next test
-  const currentFs = await initialUtils.getMockState();
-  
   using updatedUtils = await testApplyFeatures({
     config: { features: [updatedTasksFeature, packageScripts()] },
     // Start from the state after the first apply
-    initialFs: currentFs,
+    projectDir: initialUtils.projectDir,
   });
 
   const updatedPackageJson = updatedUtils.project.manifest;
-  updatedUtils.bypassMockFs(() => {
-    // Verify that build scripts remain
-    expect(updatedPackageJson.scripts?.["build:typescript"]).toBe("tsc");
-    expect(updatedPackageJson.scripts?.["build"]).toBeDefined();
-    
-    // These scripts should be removed
-    expect(updatedPackageJson.scripts?.["test:vitest"]).toBeUndefined();
-    expect(updatedPackageJson.scripts?.["test"]).toBeUndefined();
+  // Verify that build scripts remain
+  expect(updatedPackageJson.scripts?.["build:typescript"]).toBe("tsc");
+  expect(updatedPackageJson.scripts?.["build"]).toBeDefined();
 
-    // The managedScripts list should be updated
-    expect(updatedPackageJson.condu?.managedScripts).toContain("build:typescript");
-    expect(updatedPackageJson.condu?.managedScripts).toContain("build");
-    expect(updatedPackageJson.condu?.managedScripts).not.toContain("test:vitest");
-    expect(updatedPackageJson.condu?.managedScripts).not.toContain("test");
-  });
+  // These scripts should be removed
+  expect(updatedPackageJson.scripts?.["test:vitest"]).toBeUndefined();
+  expect(updatedPackageJson.scripts?.["test"]).toBeUndefined();
+
+  // The managedScripts list should be updated
+  expect(updatedPackageJson.condu?.managedScripts).toContain(
+    "build:typescript",
+  );
+  expect(updatedPackageJson.condu?.managedScripts).toContain("build");
+  expect(updatedPackageJson.condu?.managedScripts).not.toContain("test:vitest");
+  expect(updatedPackageJson.condu?.managedScripts).not.toContain("test");
 });

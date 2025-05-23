@@ -9,6 +9,7 @@ export class ConduProject {
   readonly workspacePackages: readonly ConduPackageEntry<"package">[];
   readonly projectConventions: DefinedWorkspaceProjectConvention[] | undefined;
   readonly config: ConduConfigWithInferredValues;
+  /** all packages in the project, including the workspace package and all workspace packages */
   readonly allPackages: readonly ConduPackageEntry[];
 
   constructor({
@@ -26,7 +27,11 @@ export class ConduProject {
     this.workspacePackages = workspacePackages;
     this.projectConventions = projectConventions;
     this.config = config;
-    this.allPackages = [workspacePackage, ...workspacePackages];
+    // if there are no projectConventions, that means we are not in a monorepo
+    // in which case 'workspacePackages' will already contain the workspace package
+    this.allPackages = projectConventions
+      ? [workspacePackage, ...workspacePackages]
+      : workspacePackages;
   }
 
   hasFeature(name: string) {

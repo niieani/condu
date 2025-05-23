@@ -28,6 +28,34 @@ export type InternalModifier = (
   pkg: ConduPackageJson,
 ) => ConduPackageJson | Promise<ConduPackageJson>;
 
+export const makeSingleRepoPackageEntryProxyFromWorkspace = (
+  entry: ConduPackageEntry<"workspace">,
+): ConduPackageEntry<"package"> => {
+  // returns a proxy that proxies everything to the workspace package
+  // but exposes 'kind' as 'package'
+  return new Proxy(entry, {
+    get(target, prop) {
+      // 1) Override the kind property
+      if (prop === "kind") {
+        return "package";
+      }
+
+      // 2) Grab the value off the real instance
+      const value = Reflect.get(target, prop, target);
+      //    — note: third argument = `target` forces `this` to bind to the real object
+
+      // 3) If it’s a method, bind it back to the real object
+      if (typeof value === "function") {
+        return value.bind(target);
+      }
+
+      // otherwise just return the raw value
+      return value;
+    },
+  }) as unknown as ConduPackageEntry<"package">;
+};
+
+
 export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
   implements Omit<IPackageEntry, "writeProjectManifest">
 {

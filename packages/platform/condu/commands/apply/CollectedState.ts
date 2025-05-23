@@ -1,6 +1,7 @@
 import type {
   ConduPackageEntry,
   PackageJsonModification,
+  PackageJsonPublishModification,
   ReadonlyConduPackageEntry,
 } from "./ConduPackageEntry.js";
 import type {
@@ -22,7 +23,7 @@ export interface CollectedState {
   /** we'll ensure these dependency resolutions are applied */
   resolutions: Record<string, string>;
   packageJsonModifications: PackageJsonModificationWithPackage[];
-  releasePackageJsonModifications: PackageJsonModificationWithPackage[];
+  releasePackageJsonModifications: PackageJsonPublishModificationWithPackage[];
   peerContext: PeerContext;
   stage: CollectionStage;
 }
@@ -45,6 +46,10 @@ export interface CollectedTask {
 
 export interface PackageJsonModificationWithPackage
   extends PackageJsonModification {
+  targetPackage: ConduPackageEntry;
+}
+export interface PackageJsonPublishModificationWithPackage
+  extends PackageJsonPublishModification {
   targetPackage: ConduPackageEntry;
 }
 

@@ -1,4 +1,3 @@
-/* eslint-disable import-x/no-named-as-default-member */
 import { configure } from "condu";
 import type { ConduConfigInput } from "condu/api/configTypes.js";
 import type { CollectedState } from "condu/commands/apply/CollectedState.js";
@@ -7,9 +6,9 @@ import {
   collectState,
 } from "condu/commands/apply/apply.js";
 
-import mockFs from "mock-fs";
-import type FileSystem from "mock-fs/lib/filesystem.js";
-import fs from "node:fs";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import { loadConduProject } from "condu/loadProject.js";
 import type { ConduProject } from "condu/commands/apply/ConduProject.js";
 import {
@@ -17,132 +16,197 @@ import {
   type DirectoryItems,
 } from "./getDirectoryStructureAndContentsRecursively.js";
 import { prepareAndReleaseDirectoryPackages } from "condu/commands/release/release.js";
-import path from "node:path";
 
-interface FeatureTestOptions {
-  /** Features and other configuration options */
-  config: ConduConfigInput;
-  /** Initial file system contents */
-  initialFs?: FileSystem.DirectoryItems;
-  /** Mock package.json contents */
-  packageJson?: Record<string, unknown>;
+type FeatureTestOptions =
+  | {
+      /** Features and other configuration options */
+      config: ConduConfigInput;
+      /** Initial file system contents */
+      initialFs?: DirectoryItems;
+      /** Mock package.json contents */
+      packageJson?: Record<string, unknown>;
+    }
+  | {
+      /** Features and other configuration options */
+      config: ConduConfigInput;
+      /** Directory to use as the project root - if unset will create a temp dir and delete it afterwards */
+      projectDir: string;
+    };
+
+// Helper to create the file system structure in a temp directory
+async function setupMockFileSystem(
+  baseDir: string,
+  structure: DirectoryItems,
+): Promise<void> {
+  const fileOperations: Array<{ filePath: string; content: string }> = [];
+  const dirCreatePaths: Array<string> = [];
+
+  function discoverPathsAndCollectOperations(
+    currentPath: string,
+    items: DirectoryItems,
+  ) {
+    for (const [name, content] of Object.entries(items)) {
+      const itemPath = path.join(currentPath, name);
+      if (typeof content === "string") {
+        // Collect file operation details
+        fileOperations.push({ filePath: itemPath, content });
+      } else if (typeof content === "object" && content !== null) {
+        // Add directory path to be created
+        dirCreatePaths.push(itemPath);
+        // Recurse for nested structure
+        discoverPathsAndCollectOperations(itemPath, content);
+      }
+    }
+  }
+
+  discoverPathsAndCollectOperations(baseDir, structure);
+
+  // Create all discovered directories in parallel.
+  // fs.mkdir with recursive: true handles creating parent directories if they don't exist.
+  // We filter out the baseDir itself if it was added, as it's already created.
+  const uniqueDirPaths = [...new Set(dirCreatePaths)].filter(
+    (p) => p !== baseDir,
+  );
+  if (uniqueDirPaths.length > 0) {
+    await Promise.all(
+      uniqueDirPaths.map((dirPath) => fs.mkdir(dirPath, { recursive: true })),
+    );
+  } else {
+    // Ensure the base directory itself exists before discovering paths within it
+    // This initial mkdir is important if baseDir itself is part of the structure to be created.
+    await fs.mkdir(baseDir, { recursive: true });
+  }
+
+  // After all directories are created, execute all file write operations in parallel.
+  if (fileOperations.length > 0) {
+    await Promise.all(
+      fileOperations.map(({ filePath, content }) =>
+        fs.writeFile(filePath, content),
+      ),
+    );
+  }
 }
 
 export async function testApplyFeatures({
   config,
-  initialFs = {},
-  packageJson = {},
+  ...options
 }: FeatureTestOptions): Promise<{
-  getFileContents: (path: string) => Promise<string>;
+  getFileContents: (filePath: string) => Promise<string>;
   collectedState: CollectedState;
   testRelease: () => Promise<void>;
   getMockState: () => Promise<Record<string, string | Buffer | DirectoryItems>>;
-  bypassMockFs: (typeof mockFs)["bypass"];
   project: ConduProject;
-  [Symbol.dispose]: () => void;
+  projectDir: string;
+  [Symbol.dispose]: () => Promise<void>;
 }> {
-  const defaultPackageJson = {
-    name: "mock-project",
-    version: "1.0.0",
-    ...packageJson,
+  const targetProjectDir =
+    "projectDir" in options
+      ? options.projectDir
+      : await fs.mkdtemp(path.join(os.tmpdir(), "condu-test-"));
+
+  const cleanup = async () => {
+    if ("projectDir" in options) {
+      // If a projectDir is provided, we don't want to delete it
+      return;
+    }
+    // Cleanup the temp directory if it was created
+    try {
+      await fs.rm(targetProjectDir, { recursive: true, force: true });
+    } catch (error) {
+      console.error(
+        `Failed to clean up temp directory: ${targetProjectDir}`,
+        error,
+      );
+    }
   };
 
-  const mockProjectFs = {
-    ".git": { refs: { remotes: { origin: { HEAD: "refs/heads/main" } } } },
-    "package.json": JSON.stringify(defaultPackageJson, undefined, 2),
-    ...initialFs,
-  } as const;
+  try {
+    if (!("projectDir" in options)) {
+      const { initialFs, packageJson } = options;
+      const defaultPackageJson = {
+        name: "mock-project",
+        version: "1.0.0",
+        ...packageJson,
+      };
 
-  // Set up mock file system with .config directory
-  mockFs({
-    "/mock-project": mockProjectFs,
-  });
+      const mockProjectFs: DirectoryItems = {
+        ".git": { refs: { remotes: { origin: { HEAD: "refs/heads/main" } } } },
+        "package.json": JSON.stringify(defaultPackageJson, undefined, 2),
+        ...initialFs, // Spread user-provided initial file system items
+      };
 
-  let project = await loadConduProject({
-    workspaceDir: "/mock-project",
-    getConfig: configure(config),
-  });
+      await setupMockFileSystem(targetProjectDir, mockProjectFs);
+    }
 
-  if (!project) {
-    throw new Error("Failed to load project");
-  }
-
-  // Collect state from features
-  const collected = await collectState({ project });
-
-  await applyAndCommitCollectedState(collected);
-  const { collectedState } = collected;
-
-  // reload the project so it can be used to make assertions
-  project =
-    (await loadConduProject({
-      workspaceDir: "/mock-project",
+    const project = await loadConduProject({
+      workspaceDir: targetProjectDir,
       getConfig: configure(config),
-    })) ?? project;
+    });
 
-  return {
-    project,
-    collectedState,
-    testRelease: async () => {
-      await prepareAndReleaseDirectoryPackages({
-        workspaceDirAbs: project.absPath,
-        packagesToPrepare:
-          project.workspacePackages.length > 0
-            ? project.workspacePackages
-            : project.allPackages,
-        absBuildDir: path.join(
-          project.absPath,
-          project.config.conventions.buildDir,
-        ),
-        srcDirName: project.config.conventions.sourceDir,
-        buildDirName: project.config.conventions.buildDir,
-        project,
-        collectedState,
-        dryRun: true,
-      });
-    },
-    getFileContents: async (path: string): Promise<string> => {
-      try {
-        // Try to get the file directly from the fileManager first
-        // const fileEntry =
-        //   collectedState.fileManager.files.get(path) ||
-        //   collectedState.fileManager.files.get(`/${path}`);
+    if (!project) {
+      throw new Error("Failed to load project");
+    }
 
-        // if (
-        //   fileEntry?.lastApply &&
-        //   typeof fileEntry.lastApply.content === "string"
-        // ) {
-        //   return fileEntry.lastApply.content;
-        // }
+    // Collect state from features
+    const collected = await collectState({ project });
 
-        // Fallback to reading from the mock filesystem
-        const filePath = `/mock-project/${path}`;
-        if ((await fs.promises.stat(filePath)).isFile()) {
-          return await fs.promises.readFile(filePath, "utf8");
+    await applyAndCommitCollectedState(collected);
+    const { collectedState } = collected;
+
+    // reload the project so it can be used to make assertions
+    // project =
+    //   (await loadConduProject({
+    //     workspaceDir: tempDir,
+    //     getConfig: configure(config),
+    //   })) ?? project;
+
+    return {
+      project,
+      collectedState,
+      projectDir: targetProjectDir,
+      testRelease: async () => {
+        await prepareAndReleaseDirectoryPackages({
+          workspaceDirAbs: project.absPath,
+          packagesToPrepare:
+            project.workspacePackages.length > 0
+              ? project.workspacePackages
+              : project.allPackages,
+          absBuildDir: path.join(
+            project.absPath,
+            project.config.conventions.buildDir,
+          ),
+          srcDirName: project.config.conventions.sourceDir,
+          buildDirName: project.config.conventions.buildDir,
+          project,
+          collectedState,
+          dryRun: true,
+        });
+      },
+      getFileContents: async (filePath: string): Promise<string> => {
+        try {
+          const fullPath = path.join(targetProjectDir, filePath);
+          if ((await fs.stat(fullPath)).isFile()) {
+            return await fs.readFile(fullPath, "utf8");
+          }
+          throw new Error(`File not found: ${filePath}`);
+        } catch (error) {
+          const err = error as Error;
+          throw new Error(`Failed to read file at ${filePath}: ${err.message}`);
         }
-
-        throw new Error(`File not found: ${path}`);
-      } catch (error) {
-        const err = error as Error;
-        throw new Error(`Failed to read file at ${path}: ${err.message}`);
-      }
-    },
-    getMockState: async () => {
-      try {
+      },
+      getMockState: async () => {
         return await getDirectoryStructureAndContentsRecursively(
-          "/mock-project",
+          targetProjectDir,
           {},
-          [".git", ".cache"],
+          [".git", ".cache"], // Exclude .git and .cache from the output
         );
-      } catch (error) {
-        const err = error as Error;
-        err.message = `Failed to get mock filesystem state: ${err.message}`;
-        throw err;
-      }
-    },
-    bypassMockFs: mockFs.bypass,
-    [Symbol.dispose]: () => {
-      mockFs.restore();
-    },
-  };
+      },
+      [Symbol.dispose]: async () => {
+        await cleanup();
+      },
+    };
+  } catch (error) {
+    await cleanup();
+    throw error;
+  }
 }

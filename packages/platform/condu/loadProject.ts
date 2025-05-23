@@ -16,6 +16,7 @@ import type {
 } from "./api/configTypes.js";
 import {
   ConduPackageEntry,
+  makeSingleRepoPackageEntryProxyFromWorkspace,
   type WorkspaceSubPackage,
 } from "./commands/apply/ConduPackageEntry.js";
 import { CONFIGURED } from "./api/configure.js";
@@ -81,15 +82,15 @@ export async function loadConduProject({
   getConfig,
   workspaceDir,
 }: LoadConduProjectData): Promise<ConduProject | undefined> {
-  const workspacePackage = new ConduPackageEntry(
-    await getPackage({
-      workspaceRootDir: workspaceDir,
-      manifestAbsPath: path.resolve(workspaceDir, "package.json"),
-      kind: "workspace",
-    }),
-  );
+  const rootPackage = await getPackage({
+    workspaceRootDir: workspaceDir,
+    manifestAbsPath: path.resolve(workspaceDir, "package.json"),
+    kind: "workspace",
+  });
 
-  const config = await getConfig(workspacePackage);
+  const workspacePackageEntry = new ConduPackageEntry(rootPackage);
+
+  const config = await getConfig(workspacePackageEntry);
 
   if (!config || !config[CONFIGURED]) {
     console.error(
@@ -105,7 +106,7 @@ export async function loadConduProject({
   const defaultBranch: string =
     config.git?.defaultBranch ?? (await getDefaultGitBranch(workspaceDir));
 
-  const { manifest } = workspacePackage;
+  const { manifest } = workspacePackageEntry;
   const { packageManager, engines, pnpm } = manifest;
   const [packageManagerName, packageManagerVersion] =
     packageManager?.split("@") ?? [];
@@ -150,8 +151,8 @@ export async function loadConduProject({
         DEFAULT_GENERATED_SOURCE_FILE_NAME_SUFFIXES,
       projectConventions,
     },
-    workspaceDir: workspacePackage.absPath,
-    configDir: path.join(workspacePackage.absPath, CONDU_CONFIG_DIR_NAME),
+    workspaceDir: workspacePackageEntry.absPath,
+    configDir: path.join(workspacePackageEntry.absPath, CONDU_CONFIG_DIR_NAME),
     globalPeerContext: {
       ...config.globalPeerContext,
       execWithTsSupport: Boolean(
@@ -162,21 +163,26 @@ export async function loadConduProject({
   } as const;
 
   const workspacePackages = await getWorkspacePackages({
+    workspace: workspacePackageEntry,
     projectConventions,
-    absPath: workspacePackage.absPath,
+    absPath: workspacePackageEntry.absPath,
   });
   return new ConduProject({
     projectConventions,
     config: configWithInferredValues,
-    workspacePackage,
+    workspacePackage: workspacePackageEntry,
     workspacePackages,
   });
 }
 
 export const getWorkspacePackages = async (
-  project: Pick<ConduProject, "projectConventions" | "absPath">,
+  project: Pick<ConduProject, "projectConventions" | "absPath" | "workspace">,
 ): Promise<WorkspaceSubPackage[]> => {
-  if (!project.projectConventions) return [];
+  if (!project.projectConventions) {
+    // no project conventions, so we are not in a monorepo
+    // proxy the workspace package as a single package
+    return [makeSingleRepoPackageEntryProxyFromWorkspace(project.workspace)];
+  }
   // note: could use 'moon query projects --json' instead
   // though that would lock us into 'moon'
   const packageJsonPaths = await getManifestsPaths({

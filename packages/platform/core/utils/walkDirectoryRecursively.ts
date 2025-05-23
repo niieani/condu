@@ -15,22 +15,21 @@ export async function* walkDirectoryRecursively(
   // we're not using the recursive option,
   // because we want to be able to filter out directories and selectively visit/recurse
   const dirHandle = await fs.opendir(directoryPath);
-  try {
-    for await (const file of dirHandle) {
-      // TODO: support recursing into directory symlinks?
-      if (file.isDirectory()) {
-        const thisDirPath = path.join(directoryPath, file.name);
-        if (!keep || keep({ directoryPath: thisDirPath, entry: file })) {
-          yield* walkDirectoryRecursively(thisDirPath, keep);
-        }
-      } else {
-        const fileData = { directoryPath, entry: file };
-        if (!keep || keep(fileData)) {
-          yield fileData;
-        }
+  // note: we do not need to close the dirHandle,
+  // because we are using async iteration
+  // and it will be closed automatically when the iteration is done
+  for await (const file of dirHandle) {
+    // TODO: support recursing into directory symlinks?
+    if (file.isDirectory()) {
+      const thisDirPath = path.join(directoryPath, file.name);
+      if (!keep || keep({ directoryPath: thisDirPath, entry: file })) {
+        yield * walkDirectoryRecursively(thisDirPath, keep);
+      }
+    } else {
+      const fileData = { directoryPath, entry: file };
+      if (!keep || keep(fileData)) {
+        yield fileData;
       }
     }
-  } finally {
-    await dirHandle.close();
   }
 }

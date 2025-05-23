@@ -51,21 +51,19 @@ test("editorconfig feature should use custom configuration", async () => {
 
   const content = await testUtils.getFileContents(".editorconfig");
 
-  testUtils.bypassMockFs(() => {
-    expect(content).toMatchInlineSnapshot(`
-      "root = true
+  expect(content).toMatchInlineSnapshot(`
+    "root = true
 
-      [*]
-      indent_style = space
-      indent_size = 4
+    [*]
+    indent_style = space
+    indent_size = 4
 
-      [*.md]
-      trim_trailing_whitespace = false
+    [*.md]
+    trim_trailing_whitespace = false
 
-      [Makefile]
-      indent_style = tab"
-    `);
-  });
+    [Makefile]
+    indent_style = tab"
+  `);
 });
 
 test("editorconfig feature should work with other features providing its peerContext", async () => {
