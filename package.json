@@ -68,7 +68,7 @@
     "eslint-plugin-unicorn": "^59.0.1",
     "node-resolve-ts": "^1.0.2",
     "prettier": "^3.5.3",
-    "release-please": "npm:release-please-fork@^16.10.5",
+    "release-please": "^17.0.0",
     "rollup": "^4.41.0",
     "rollup-plugin-swc3": "^0.12.1",
     "swc-loader": "^0.2.6",
@@ -81,6 +81,7 @@
     "webpack-cli": "^6.0.1",
     "webpack-merge": "^6.0.1"
   },
+  "packageManager": "pnpm@10.11.0",
   "condu": {
     "managedDependencies": {
       "eslint-plugin-import-x": "presence",
