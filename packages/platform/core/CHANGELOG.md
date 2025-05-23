@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.1.8](https://github.com/niieani/condu/compare/@condu/core@0.1.7...@condu/core@0.1.8) (2025-05-23)
+
+
+### Features
+
+* implement integration testing framework ([52b0271](https://github.com/niieani/condu/commit/52b0271d514ff1fe62822a6efa7c3d0b29ecace5))
+
+
+### Bug Fixes
+
+* bump remeda and node packages ([f009721](https://github.com/niieani/condu/commit/f00972173947c48e22a816c67b1b6b9406a39b29))
+* make root package work in non-monorepo ([3e24006](https://github.com/niieani/condu/commit/3e24006536c427eeaecdbc452a045f83e165816e))
+* upgrade dependencies ([37f4e2b](https://github.com/niieani/condu/commit/37f4e2babd29a9be1c69427ee13bcd08b8bbe25a))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/workspace-utils bumped to 0.1.8
+
 ## [0.1.7](https://github.com/niieani/condu/compare/@condu/core@0.1.6...@condu/core@0.1.7) (2024-12-21)
 
 

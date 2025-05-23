@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.1.11](https://github.com/niieani/condu/compare/@condu-feature/moon@0.1.10...@condu-feature/moon@0.1.11) (2025-05-23)
+
+
+### Bug Fixes
+
+* add TypeScript config support and merge moon project settings ([a02fc4c](https://github.com/niieani/condu/commit/a02fc4c4bb722f61a346c852b30f3acf034328a1))
+* bump remeda and node packages ([f009721](https://github.com/niieani/condu/commit/f00972173947c48e22a816c67b1b6b9406a39b29))
+* fixes from dependency bump ([66b22ea](https://github.com/niieani/condu/commit/66b22ea2ec08ab5440079053a720033637c41a6a))
+* satisfy eslint ([af43711](https://github.com/niieani/condu/commit/af43711eed9a8be0cd26dab5a4a138ed50a3a2ce))
+* upgrade dependencies ([37f4e2b](https://github.com/niieani/condu/commit/37f4e2babd29a9be1c69427ee13bcd08b8bbe25a))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 0.1.8
+    * @condu/schema-types bumped to 0.0.5
+  * peerDependencies
+    * condu bumped to 0.1.11
+
 ## [0.1.10](https://github.com/niieani/condu/compare/@condu-feature/moon@0.1.9...@condu-feature/moon@0.1.10) (2024-12-21)
 
 
