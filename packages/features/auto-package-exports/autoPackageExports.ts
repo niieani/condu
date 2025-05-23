@@ -114,7 +114,7 @@ function createExportsModifier({
     const generatedExports = Object.fromEntries(
       [...preferredDirectoryEntries].map(([dir, entry]) => {
         const basename = path.basename(entry, path.extname(entry));
-        const exportsPath = dir === "." ? dir : `${dir}/`;
+        const exportsPath = dir === "." ? "" : `${dir}/`;
 
         const exportEntry: Record<string, string> = {};
 

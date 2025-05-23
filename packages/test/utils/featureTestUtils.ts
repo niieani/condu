@@ -39,34 +39,48 @@ async function setupMockFileSystem(
   structure: DirectoryItems,
 ): Promise<void> {
   const fileOperations: Array<{ filePath: string; content: string }> = [];
-  const dirCreatePaths: Array<string> = [];
+  const dirCreatePaths: Array<string> = []; // Will collect all directory paths that need to exist
 
   function discoverPathsAndCollectOperations(
-    currentPath: string,
+    currentBasePathForItems: string, // The path where keys of 'items' should be resolved against
     items: DirectoryItems,
   ) {
     for (const [name, content] of Object.entries(items)) {
-      const itemPath = path.join(currentPath, name);
+      const pathSegmentsFromKey = name.split("/");
+      const fileNameOrFinalDirSegment = pathSegmentsFromKey.pop()!;
+
+      let pathForCurrentKeyResolution = currentBasePathForItems;
+      // Create intermediate directories from the key itself if pathSegmentsFromKey has any
+      for (const segment of pathSegmentsFromKey) {
+        pathForCurrentKeyResolution = path.join(
+          pathForCurrentKeyResolution,
+          segment,
+        );
+        dirCreatePaths.push(pathForCurrentKeyResolution);
+      }
+
+      const finalItemPath = path.join(
+        pathForCurrentKeyResolution,
+        fileNameOrFinalDirSegment,
+      );
+
       if (typeof content === "string") {
-        // Collect file operation details
-        fileOperations.push({ filePath: itemPath, content });
+        fileOperations.push({ filePath: finalItemPath, content });
       } else if (typeof content === "object" && content !== null) {
-        // Add directory path to be created
-        dirCreatePaths.push(itemPath);
-        // Recurse for nested structure
-        discoverPathsAndCollectOperations(itemPath, content);
+        dirCreatePaths.push(finalItemPath); // This is a directory defined by the key
+        // Recurse into it, using finalItemPath as the base for items within this directory
+        discoverPathsAndCollectOperations(
+          finalItemPath,
+          content as DirectoryItems,
+        );
       }
     }
   }
-
   discoverPathsAndCollectOperations(baseDir, structure);
 
-  // Create all discovered directories in parallel.
-  // fs.mkdir with recursive: true handles creating parent directories if they don't exist.
-  // We filter out the baseDir itself if it was added, as it's already created.
-  const uniqueDirPaths = [...new Set(dirCreatePaths)].filter(
-    (p) => p !== baseDir,
-  );
+  // 3. Create all discovered directories in parallel.
+  //    Using a Set to avoid redundant mkdir calls for the same path, though fs.mkdir recursive is idempotent.
+  const uniqueDirPaths = [...new Set(dirCreatePaths)];
   if (uniqueDirPaths.length > 0) {
     await Promise.all(
       uniqueDirPaths.map((dirPath) => fs.mkdir(dirPath, { recursive: true })),
@@ -77,7 +91,7 @@ async function setupMockFileSystem(
     await fs.mkdir(baseDir, { recursive: true });
   }
 
-  // After all directories are created, execute all file write operations in parallel.
+  // After all directories are ensured to exist, execute all file write operations in parallel.
   if (fileOperations.length > 0) {
     await Promise.all(
       fileOperations.map(({ filePath, content }) =>

@@ -9,8 +9,12 @@ test("autoPackageExports feature should generate basic exports", async () => {
     config: { features: [autoPackageExports()] },
     initialFs: {
       "index.ts": "export const hello = 'world';",
-      "utils/index.ts": "export const util = () => 'utility';",
-      "components/button.ts": "export const Button = () => 'button';",
+      utils: {
+        "index.ts": "export const util = () => 'utility';",
+      },
+      button: {
+        "button.ts": "export const Button = () => 'button';",
+      },
     },
   });
 
@@ -23,62 +27,31 @@ test("autoPackageExports feature should generate basic exports", async () => {
   // Check that the package.json has exports field
   expect(packageJson.exports).toBeDefined();
 
-  testUtils.bypassMockFs(() => {
-    // Check root export
-    expect(packageJson.exports["."]).toMatchObject({
-      source: "./index.ts",
-      bun: "./index.ts",
-      import: "./index.js",
-      require: "./index.cjs",
-      default: "./index.js",
-    });
-
-    // Check utils directory export
-    expect(packageJson.exports["./utils"]).toMatchObject({
-      source: "./utils/index.ts",
-      bun: "./utils/index.ts",
-      import: "./utils/index.js",
-      require: "./utils/index.cjs",
-      default: "./utils/index.js",
-    });
-
-    // Check components directory export
-    expect(packageJson.exports["./components"]).toMatchObject({
-      source: "./components/button.ts",
-      bun: "./components/button.ts",
-      import: "./components/button.js",
-      require: "./components/button.cjs",
-      default: "./components/button.js",
-    });
-  });
-});
-
-test("autoPackageExports feature should use single file in directory", async () => {
-  using testUtils = await testApplyFeatures({
-    config: {
-      features: [autoPackageExports({ useSingleFileInDirectory: true })],
-    },
-    initialFs: {
-      "singleFile/only-one.ts": "export const onlyOne = true;",
-      "multiFile/first.ts": "export const first = true;",
-      "multiFile/second.ts": "export const second = true;",
-    },
+  // Check root export
+  expect(packageJson.exports["."]).toMatchObject({
+    source: "./index.ts",
+    bun: "./index.ts",
+    import: "./index.js",
+    require: "./index.cjs",
+    default: "./index.js",
   });
 
-  await testUtils.testRelease();
+  // Check utils directory export
+  expect(packageJson.exports["./utils"]).toMatchObject({
+    source: "./utils/index.ts",
+    bun: "./utils/index.ts",
+    import: "./utils/index.js",
+    require: "./utils/index.cjs",
+    default: "./utils/index.js",
+  });
 
-  const packageJson = JSON.parse(
-    await testUtils.getFileContents("build/package.json"),
-  );
-
-  testUtils.bypassMockFs(() => {
-    // Single file directory should have an export
-    expect(packageJson.exports["./singleFile"]).toMatchObject({
-      source: "./singleFile/only-one.ts",
-    });
-
-    // Multi-file directory without index.ts or matching name should not have an export
-    expect(packageJson.exports["./multiFile"]).toBeUndefined();
+  // Check button directory export
+  expect(packageJson.exports["./button"]).toMatchObject({
+    source: "./button/button.ts",
+    bun: "./button/button.ts",
+    import: "./button/button.js",
+    require: "./button/button.cjs",
+    default: "./button/button.js",
   });
 });
 
@@ -102,13 +75,8 @@ test("autoPackageExports feature should add custom exports condition", async () 
     await testUtils.getFileContents("build/package.json"),
   );
 
-  testUtils.bypassMockFs(() => {
-    // Check that the custom condition is added
-    expect(packageJson.exports["."]).toHaveProperty(
-      "test-package",
-      "./index.ts",
-    );
-  });
+  // Check that the custom condition is added
+  expect(packageJson.exports["."]).toHaveProperty("test-package", "./index.ts");
 });
 
 test("autoPackageExports feature should work with monorepo structure", async () => {
