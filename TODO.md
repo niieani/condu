@@ -1,5 +1,6 @@
 ## MVP / alpha TODO List
 
+- [ ] create new condu commands (`condu install`, `condu add`, `condu remove`) that run the underlying command in the correct package manager. To achieve this, use `nypm` dependency programmatically (Unified Package Manager for Node.js - npm, pnpm, yarn, Bun and Deno) - see [api](https://raw.githubusercontent.com/unjs/nypm/refs/heads/main/src/api.ts) and [readme](https://raw.githubusercontent.com/unjs/nypm/refs/heads/main/README.md).
 - [ ] when using `pnpm`, hoist all packages in root level, but auto-add them as dependencies whenever needed - or use TS paths to resolve them for TS
 - [ ] `co` command is short for `condu` and supports proxying to underlying package manager - i.e. `co install`, `co add`, etc.
 - [ ] move opinionated configuration away from features to the preset
