@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.5](https://github.com/niieani/condu/compare/@condu/schema-types@0.0.4...@condu/schema-types@0.0.5) (2025-06-04)
+
+
+### Bug Fixes
+
+* upgrade dependencies ([37f4e2b](https://github.com/niieani/condu/commit/37f4e2babd29a9be1c69427ee13bcd08b8bbe25a))
+
 ## [0.0.4](https://github.com/niieani/condu/compare/@condu/schema-types@0.0.3...@condu/schema-types@0.0.4) (2024-10-07)
 
 
