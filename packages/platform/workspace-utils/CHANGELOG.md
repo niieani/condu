@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.1.8](https://github.com/niieani/condu/compare/@condu/workspace-utils@0.1.7...@condu/workspace-utils@0.1.8) (2025-06-04)
+
+
+### Features
+
+* track managed scripts ([71af7a6](https://github.com/niieani/condu/commit/71af7a670a0a5b0b79e325380cfc9d38734b309e))
+
+
+### Bug Fixes
+
+* update fast-glob import ([43d12a3](https://github.com/niieani/condu/commit/43d12a3e0b21675d7b12c48cf7ab1a25663daa36))
+* upgrade dependencies ([37f4e2b](https://github.com/niieani/condu/commit/37f4e2babd29a9be1c69427ee13bcd08b8bbe25a))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/schema-types bumped to 0.0.5
+
 ## [0.1.7](https://github.com/niieani/condu/compare/@condu/workspace-utils@0.1.6...@condu/workspace-utils@0.1.7) (2024-12-21)
 
 

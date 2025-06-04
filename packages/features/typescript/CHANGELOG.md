@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.11](https://github.com/niieani/condu/compare/@condu-feature/typescript@0.1.10...@condu-feature/typescript@0.1.11) (2025-06-04)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/schema-types bumped to 0.0.5
+  * peerDependencies
+    * condu bumped to 0.1.11
+
 ## [0.1.10](https://github.com/niieani/condu/compare/@condu-feature/typescript@0.1.9...@condu-feature/typescript@0.1.10) (2024-12-21)
 
 
