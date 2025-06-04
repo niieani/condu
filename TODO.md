@@ -1,22 +1,22 @@
 ## MVP / alpha TODO List
 
+- [ ] hosit all packages in root level, but auto-add them as dependencies whenever needed - or use TS paths to resolve them for TS
+- [ ] `co` command is short for `condu` and supports proxying to underlying package manager - i.e. `co install`, `co add`, etc.
+- [ ] feature to use `tsdown` in [unbundle mode](https://tsdown.dev/options/unbundle) for building packages
+- [ ] move opinionated configuration away from features to the preset
 - [ ] add api to condu so that modifyPackageJson keeps track of new properties added, so they can be removed when the feature is removed
 - [ ] validate NPM task system without moonrepo
-- [ ] move opinionated configuration away from features to the preset
 - [ ] revamped logging / output
 - [ ] implement TS references sync
 - [ ] pnpm install runs `condu apply` which adds pnpm-workspace, which need another pnpm install... how do we solve this?
 - [ ] `condu release` should maybe run the build?
 - [ ] Fix monorepo integration test for release to properly handle workspace dependencies
-- [ ] extract 'generatedEntrySources' to a feature which autogenerates 'exports' in package.json - both for published and non-published packages
-  - include adding a custom condition which is the name of the package, that points to the source ts
-  - auto-map 'exports' in published/dist package.json - if only one file in directory, use that
 - [ ] update the monorepo preset to allow passing `false` for each feature config to disable it
 - [ ] consider changing condu api to add prefixes e.g. `condu.in('package').file.create(...)`, `condu.root.packageJson.merge({...})`
 - [ ] perhaps merge object (for package json) by default ([see](https://youtu.be/Pmieyp75SrA?t=491)), rather than replacing it, set undefined if you want to remove keys explicitly, perhaps unless a helper function `$replace({...})` is used, which internally adds a `Symbol.for('replace')` property into the object, and that's how we know to avoid merging.
 - [ ] consider using `dependencies` and `prepare` [lifecycle scripts](https://docs.npmjs.com/cli/v11/using-npm/scripts#life-cycle-scripts) to run `condu apply`
 - [ ] support shorthand for filtering packages by name: `condu.in('package')`
-- [ ] exclude generated files from TS build (add file flag for typescript exclude, and inherit gitignore)
+- [ ] exclude condu-generated files from TS build (add file flag for typescript exclude, and inherit gitignore)
 - [ ] add condu api to define a file flag's behavior (e.g. to inherit another flag, like the gitignore flag)
 - [ ] add `repository`, `homepage` (fallback to repo) and `author`, `license` and `contributors` info to published package.json based on the root package.json
 - [ ] features that can be added multiple times (e.g. because they're applied to multiple packages, like webpack build) need to have a way to be uniquely identified (feature id?) - update 'apply' to handle this. Question remains about initial peer context - I guess it needs to be empty and then peer merging can handle additions to peer context of that same feature. Maybe instead of feature ID, we only apply the first one, but we apply the peerContext for all of them - like a reducer? Though what about situations in which you configure separately targeting different packages?

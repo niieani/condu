@@ -94,3 +94,6 @@
 - [x] `condu release` should be okay with overwriting files
 - [x] filtering by `kind: "package"` only works in monorepo, because in single repo mode the root package is still tracked as a "workspace"
 - [x] gitignore needs to exclude files that are already in gitignore coming from autolink
+- [x] extract 'generatedEntrySources' to a feature which autogenerates 'exports' in package.json - both for published and non-published packages
+  - include adding a custom condition which is the name of the package, that points to the source ts
+  - auto-map 'exports' in published/dist package.json - if only one file in directory, use that
