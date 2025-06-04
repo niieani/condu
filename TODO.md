@@ -1,8 +1,7 @@
 ## MVP / alpha TODO List
 
-- [ ] hosit all packages in root level, but auto-add them as dependencies whenever needed - or use TS paths to resolve them for TS
+- [ ] when using `pnpm`, hoist all packages in root level, but auto-add them as dependencies whenever needed - or use TS paths to resolve them for TS
 - [ ] `co` command is short for `condu` and supports proxying to underlying package manager - i.e. `co install`, `co add`, etc.
-- [ ] feature to use `tsdown` in [unbundle mode](https://tsdown.dev/options/unbundle) for building packages
 - [ ] move opinionated configuration away from features to the preset
 - [ ] add api to condu so that modifyPackageJson keeps track of new properties added, so they can be removed when the feature is removed
 - [ ] validate NPM task system without moonrepo
@@ -34,7 +33,7 @@
   - [ ] verify that we prompt before overwriting files that were never managed by condu before
   - [ ] when applying is done, and newly created files where previously committed, but now are managed by condu and would be gitignored, condu should remove these files from git using `git rm --cached` if they're gitignored - this can be verified with `git ls-files --cached -- <file>`
 - [ ] something is still broken with figuring out default branch
-- [ ] if we had a wrapper on the tool (pnpm/yarn/bun), could maybe symlink the workspace (and even lock) files? although maybe best not to move the lockfile in case it's used by other tools that do static analysis (like Snyk) and depend on it being in the root
+- [ ] if we had a wrapper on the tool (pnpm/yarn/npm/bun), could maybe symlink the workspace (and even lock) files? although maybe best not to move the lockfile in case it's used by other tools that do static analysis (like Snyk) and depend on it being in the root
 - [ ] add a command to update/set the package manager and node version in the root package.json
 - [ ] a way to add custom test / deploy scripts? maybe if one is present in any package.json, we could auto-add it to CI process?
 - [ ] bump versions to 1.0
@@ -43,6 +42,7 @@
 
 ## Later:
 
+- [ ] feature to use `tsdown` in [unbundle mode](https://tsdown.dev/options/unbundle) for building packages
 - [ ] create a philosophy page (like [here](https://tanstack.com/form/latest/docs/philosophy))
 - [ ] share on https://peerlist.io/
 - [ ] @shadcn/ui feature

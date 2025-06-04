@@ -655,15 +655,9 @@ importers:
       '@condu/workspace-utils':
         specifier: workspace:*
         version: link:../../platform/workspace-utils
-      '@types/mock-fs':
-        specifier: ^4.13.4
-        version: 4.13.4
       condu:
         specifier: workspace:*
         version: link:../../platform/condu
-      mock-fs:
-        specifier: ^5.5.0
-        version: 5.5.0
       vitest:
         specifier: ^3.1.4
         version: 3.1.4(@types/node@22.15.21)(terser@5.39.2)(tsx@4.19.4)(yaml@2.8.0)
@@ -1874,9 +1868,6 @@ packages:
 
   '@types/minimist@1.2.5':
     resolution: {integrity: sha512-hov8bUuiLiyFPGyFPE1lwWhmzYbirOXQNNo40+y3zow8aFVTeyn3VWL0VFFfdNddA8S4Vf0Tc062rzyNr7Paag==}
-
-  '@types/mock-fs@4.13.4':
-    resolution: {integrity: sha512-mXmM0o6lULPI8z3XNnQCpL0BGxPwx1Ul1wXYEPBGl4efShyxW2Rln0JOPEWGyZaYZMM6OVXM/15zUuFMY52ljg==}
 
   '@types/node@22.15.21':
     resolution: {integrity: sha512-EV/37Td6c+MgKAbkcLG6vqZ2zEYHD7bvSrzqqs2RIhbA6w3x+Dqz8MZM3sP6kGTeLrdoOgKZe+Xja7tUB2DNkQ==}
@@ -4149,10 +4140,6 @@ packages:
     resolution: {integrity: sha512-+NsyUUAZDmo6YVHzL/stxSu3t9YS1iljliy3BSDrXJ/dkn1KYdmtZODGGjLcc9XLgVVpH4KshHB8XmZgMhaBXg==}
     engines: {node: '>=10'}
     hasBin: true
-
-  mock-fs@5.5.0:
-    resolution: {integrity: sha512-d/P1M/RacgM3dB0sJ8rjeRNXxtapkPCUnMGmIN0ixJ16F/E4GUZCvWcSGfWGz8eaXYvn1s9baUwNjI4LOPEjiA==}
-    engines: {node: '>=12.0.0'}
 
   modify-values@1.0.1:
     resolution: {integrity: sha512-xV2bxeN6F7oYjZWTe/YPAy6MN2M+sL4u/Rlm2AHCIVGfo2p1yGmBHQ6vHehl4bRTZBdHu3TSkWdYgkwpYzAGSw==}
@@ -7125,10 +7112,6 @@ snapshots:
 
   '@types/minimist@1.2.5': {}
 
-  '@types/mock-fs@4.13.4':
-    dependencies:
-      '@types/node': 22.15.21
-
   '@types/node@22.15.21':
     dependencies:
       undici-types: 6.21.0
@@ -9560,8 +9543,6 @@ snapshots:
   mkdirp@1.0.4: {}
 
   mkdirp@3.0.1: {}
-
-  mock-fs@5.5.0: {}
 
   modify-values@1.0.1: {}
 

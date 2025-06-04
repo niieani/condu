@@ -167,13 +167,6 @@ export async function testApplyFeatures({
     await applyAndCommitCollectedState(collected);
     const { collectedState } = collected;
 
-    // reload the project so it can be used to make assertions
-    // project =
-    //   (await loadConduProject({
-    //     workspaceDir: tempDir,
-    //     getConfig: configure(config),
-    //   })) ?? project;
-
     return {
       project,
       collectedState,
