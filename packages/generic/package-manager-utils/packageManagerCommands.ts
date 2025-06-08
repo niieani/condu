@@ -47,8 +47,8 @@ export function getRunCommand(
       case "npm":
         return `npm run --workspaces ${scriptName}`;
       case "yarn":
-        // yarn v2+ uses 'workspace foreach'
-        return `yarn workspace foreach ${scriptName}`;
+        // yarn v2+ uses 'workspaces foreach'
+        return `yarn workspaces foreach ${scriptName}`;
       case "pnpm":
         return `pnpm -r run ${scriptName}`;
       case "bun":

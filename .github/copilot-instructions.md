@@ -31,6 +31,10 @@ This project is a configuration management library that uses code-based configur
   - `packages/features` - `condu`'s individual features (plugins or extensions)
   - `packages/presets` - condu presets
   - `packages/test` - test packages and packages related to testing
+- CLI:
+  - uses 'clipanion' for parsing arguments and registering commands
+  - `packages/platform/condu/cli.ts`: CLI command are registered
+  - `packages/platform/condu/commands`: Actual command implementation
 - package.json:
   - add both external and internal dependencies using `pnpm`, never modify the "dependencies" property directly
   - for internal dependencies, always use `workspace:*` as the version, e.g. `pnpm i "@condu-test/utils@workspace:*" -D`
