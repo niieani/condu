@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.11](https://github.com/niieani/condu/compare/@condu-feature/gitignore@0.1.10...@condu-feature/gitignore@0.1.11) (2025-06-08)
+
+
+### Bug Fixes
+
+* bump remeda and node packages ([f009721](https://github.com/niieani/condu/commit/f00972173947c48e22a816c67b1b6b9406a39b29))
+* exclude files that are already in gitignore ([5536a27](https://github.com/niieani/condu/commit/5536a27e6cadf5916fd61ddad90c665cde3d6e77))
+* upgrade dependencies ([37f4e2b](https://github.com/niieani/condu/commit/37f4e2babd29a9be1c69427ee13bcd08b8bbe25a))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * peerDependencies
+    * condu bumped to 0.1.11
+
 ## [0.1.10](https://github.com/niieani/condu/compare/@condu-feature/gitignore@0.1.9...@condu-feature/gitignore@0.1.10) (2024-12-21)
 
 
