@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.0.6](https://github.com/niieani/condu/compare/@condu-feature/editorconfig@0.0.5...@condu-feature/editorconfig@0.0.6) (2025-06-08)
+
+
+### Features
+
+* implement feature testing utility ([eda0726](https://github.com/niieani/condu/commit/eda072696fe04953c9e01d8689962dd6df1f4657))
+
+
+### Bug Fixes
+
+* make root package work in non-monorepo ([3e24006](https://github.com/niieani/condu/commit/3e24006536c427eeaecdbc452a045f83e165816e))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @condu-test/utils bumped to 1.0.0
+  * peerDependencies
+    * condu bumped to 0.1.11
+
 ## [0.0.5](https://github.com/niieani/condu/compare/@condu-feature/editorconfig@0.0.4...@condu-feature/editorconfig@0.0.5) (2024-12-21)
 
 

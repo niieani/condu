@@ -1,5 +1,44 @@
 # Changelog
 
+## [0.1.11](https://github.com/niieani/condu/compare/condu@0.1.10...condu@0.1.11) (2025-06-08)
+
+
+### Features
+
+* add auto-package-exports feature for generating package.json exports field ([0865581](https://github.com/niieani/condu/commit/0865581f400c85f84638c1fa4de85799f6c699b1))
+* add support for inline features ([a7c131c](https://github.com/niieani/condu/commit/a7c131cfeafbc35560b4806a6ce07307678f542d))
+* correct 'init' command ([47031b5](https://github.com/niieani/condu/commit/47031b50bce48a2cdbb8725a397f3f09235d76b3))
+* expose globalRegistry in manifest modifications ([553c5fa](https://github.com/niieani/condu/commit/553c5fad6004064770d823830fad1a19b31177b0))
+* implement feature testing utility ([eda0726](https://github.com/niieani/condu/commit/eda072696fe04953c9e01d8689962dd6df1f4657))
+* implement package-scripts feature ([e123329](https://github.com/niieani/condu/commit/e123329374b28be0fa337598a3b454c83f241e01))
+* implement packageScripts feature ([2297655](https://github.com/niieani/condu/commit/22976552c6f33cb0e30ebcb13d4690f80bc8c611))
+* implement project.hasFeature() ([3588d19](https://github.com/niieani/condu/commit/3588d192b124fd25a19bb44d9e0a5d4c0af45569))
+
+
+### Bug Fixes
+
+* bump remeda and node packages ([f009721](https://github.com/niieani/condu/commit/f00972173947c48e22a816c67b1b6b9406a39b29))
+* correctly output publishConfig ([a1b3ad4](https://github.com/niieani/condu/commit/a1b3ad4bbbaeb431b7f1739a3b4aae5fd63d5ddc))
+* exclude files that are already in gitignore ([5536a27](https://github.com/niieani/condu/commit/5536a27e6cadf5916fd61ddad90c665cde3d6e77))
+* fixes from dependency bump ([66b22ea](https://github.com/niieani/condu/commit/66b22ea2ec08ab5440079053a720033637c41a6a))
+* make root package work in non-monorepo ([3e24006](https://github.com/niieani/condu/commit/3e24006536c427eeaecdbc452a045f83e165816e))
+* move throwOnManualChanges logic into FileManager ([ce3ef59](https://github.com/niieani/condu/commit/ce3ef59a3095a8681b97c0529c9c0393b3e4197b))
+* support internal manifest modifiers ([6feac0b](https://github.com/niieani/condu/commit/6feac0bfb298b4c5b4b80318510ce2990d9a867c))
+* update moon CI setup to use pnpm action and improve conflict resolution handling ([742635d](https://github.com/niieani/condu/commit/742635d56c57644939e8c241db178419c34328e8))
+* upgrade dependencies ([37f4e2b](https://github.com/niieani/condu/commit/37f4e2babd29a9be1c69427ee13bcd08b8bbe25a))
+* when a symlink already exists and we say to overwrite it with file contents, it should remove the symlink first, otherwise for some reason it writes over the symlink target ([b27ce06](https://github.com/niieani/condu/commit/b27ce0625f18d0f04f655a4bbd8c92400e101364))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 0.1.8
+    * @condu/package-manager-utils bumped to 1.0.0
+    * @condu/schema-types bumped to 0.0.5
+    * @condu/update-specifiers bumped to 0.1.8
+    * @condu/workspace-utils bumped to 0.1.8
+
 ## [0.1.10](https://github.com/niieani/condu/compare/condu@0.1.9...condu@0.1.10) (2024-12-21)
 
 

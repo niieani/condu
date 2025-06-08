@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.8](https://github.com/niieani/condu/compare/@condu/update-specifiers@0.1.7...@condu/update-specifiers@0.1.8) (2025-06-08)
+
+
+### Bug Fixes
+
+* upgrade dependencies ([37f4e2b](https://github.com/niieani/condu/commit/37f4e2babd29a9be1c69427ee13bcd08b8bbe25a))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 0.1.8
+
 ## [0.1.7](https://github.com/niieani/condu/compare/@condu/update-specifiers@0.1.6...@condu/update-specifiers@0.1.7) (2024-12-21)
 
 
