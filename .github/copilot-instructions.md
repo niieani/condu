@@ -69,6 +69,9 @@ This project is a configuration management library that uses code-based configur
 When building or editing condu features:
 
 - use `modifyPackageJson` or `modifyPublishedPackageJson` based on the type of edit to package.json file, never `modifyGeneratedFile`.
+- to generate TypeScript types from JSON schemas: add schema URL to `packages/platform/schema-types/utils/schemas.ts`, then run `pnpm run updateSchemas`
+- when modifying user-editable comment-JSON files, use `assign` from `comment-json` to preserve comments and formatting
+- use peer context to share configuration between features; declare module extension for type safety
 
 ## Actions to take after modifying the project
 

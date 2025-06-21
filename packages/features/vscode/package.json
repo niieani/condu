@@ -8,5 +8,9 @@
   },
   "peerDependencies": {
     "condu": "workspace:^"
+  },
+  "devDependencies": {
+    "@condu-feature/oxlint": "workspace:*",
+    "@condu-test/utils": "workspace:*"
   }
 }

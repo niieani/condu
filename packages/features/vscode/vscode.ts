@@ -1,6 +1,7 @@
 import { defineFeature, getJsonParseAndStringify } from "condu";
 import { assign } from "comment-json";
 import type { VscodeSettingsWorkspace } from "@condu/schema-types/schemas/vscodeSettingsWorkspace.gen.js";
+import type { Extensions } from "@condu/schema-types/schemas/vscodeExtensions.gen.js";
 
 const RUNNING_SOURCE_VERSION = import.meta.url.endsWith(".ts");
 
@@ -24,6 +25,8 @@ interface VSCodePeerContext {
   suggestedSettings: VscodeSettingsWorkspace;
   /** these settings will always override the user's preferences; avoid using in most cases */
   enforcedSettings: VscodeSettingsWorkspace;
+  /** extensions configuration for .vscode/extensions.json */
+  extensions: Extensions;
 }
 
 interface VSCodeConfig extends Partial<VSCodePeerContext> {
@@ -38,6 +41,7 @@ export const vscode = ({
     initialPeerContext: {
       suggestedSettings: config.suggestedSettings ?? {},
       enforcedSettings: config.enforcedSettings ?? {},
+      extensions: config.extensions ?? {},
     },
 
     modifyPeerContexts: () => ({
@@ -47,7 +51,7 @@ export const vscode = ({
       }),
     }),
 
-    defineRecipe(condu, { suggestedSettings, enforcedSettings }) {
+    defineRecipe(condu, { suggestedSettings, enforcedSettings, extensions }) {
       condu.root.modifyUserEditableFile(".vscode/settings.json", {
         ...getJsonParseAndStringify<VscodeSettingsWorkspace>(),
         ifNotExists: "create",
@@ -101,6 +105,58 @@ export const vscode = ({
           return finalConfig;
         },
       });
+
+      // Generate extensions.json if there are extensions configured
+      if (
+        extensions.recommendations?.length ||
+        extensions.unwantedRecommendations?.length
+      ) {
+        condu.root.modifyUserEditableFile(".vscode/extensions.json", {
+          ...getJsonParseAndStringify<Extensions>(),
+          ifNotExists: "create",
+          content({ content = {} }) {
+            // Merge recommendations arrays
+            const allRecommendations = [
+              ...(content.recommendations ?? []),
+              ...(extensions.recommendations ?? []),
+            ];
+            const mergedRecommendations =
+              allRecommendations.length > 0
+                ? Array.from(new Set(allRecommendations))
+                : undefined;
+
+            // Merge unwantedRecommendations arrays
+            const allUnwantedRecommendations = [
+              ...(content.unwantedRecommendations ?? []),
+              ...(extensions.unwantedRecommendations ?? []),
+            ];
+            const mergedUnwantedRecommendations =
+              allUnwantedRecommendations.length > 0
+                ? Array.from(new Set(allUnwantedRecommendations))
+                : undefined;
+
+            // Return undefined if no extensions are configured
+            if (
+              !mergedRecommendations?.length &&
+              !mergedUnwantedRecommendations?.length
+            ) {
+              return undefined;
+            }
+
+            // Use assign to preserve comments and other JSON nodes
+            const mergedExtensions = assign(content, {
+              ...(mergedRecommendations && {
+                recommendations: mergedRecommendations,
+              }),
+              ...(mergedUnwantedRecommendations && {
+                unwantedRecommendations: mergedUnwantedRecommendations,
+              }),
+            });
+
+            return mergedExtensions;
+          },
+        });
+      }
 
       // TODO: also, auto-add 'tasks.json' based on the defined tasks
     },

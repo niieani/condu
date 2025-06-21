@@ -25,4 +25,8 @@ export const schemas = {
   //   "https://github.com/wraith13/vscode-schemas/raw/master/en/latest/schemas/settings/resourceLanguage.json",
   releasePleaseConfig:
     "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  oxlint:
+    "https://raw.githubusercontent.com/oxc-project/oxc/refs/heads/main/npm/oxlint/configuration_schema.json",
+  vscodeExtensions:
+    "https://github.com/wraith13/vscode-schemas/raw/refs/heads/master/en/latest/schemas/extensions.json",
 };

@@ -10,6 +10,7 @@
   "packages/features/library-bundle": "0.1.10",
   "packages/features/link-other-monorepo": "0.0.7",
   "packages/features/moon": "0.1.10",
+  "packages/features/oxlint": "0.0.0",
   "packages/features/package-scripts": "0.0.0",
   "packages/features/pnpm": "0.0.8",
   "packages/features/prettier": "0.0.5",
