@@ -56,7 +56,7 @@ export default configure((pkg) => ({
           skipLibCheck: true,
           composite: false,
         },
-        exclude: ["integration-tests"],
+        exclude: ["integration-tests", "manual-testing"],
         // include: [".config/condu.ts"],
       },
     }),
@@ -113,7 +113,11 @@ export default configure((pkg) => ({
       },
     }),
     prettier({
-      ignore: ["**/.*.json", "integration-tests"],
+      ignore: [
+        "**/.*.json",
+        "integration-tests",
+        ".github/copilot-instructions.md",
+      ],
     }),
     vitest(),
     moon(),

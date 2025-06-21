@@ -16,7 +16,6 @@ export type PathWhereTheDownloadedPackagesAreStoredOnYourSystem = string
  * - If `always` (the default), it'll always regenerate the cache files so they use the current cache version.
  */
 export type BehaviorThatYarnShouldFollowWhenItDetectsThatACacheEntryIsOutdated = ("required-only" | "match-spec" | "always")
-export type PathToAFileContainingOneOrMultipleCertificateAuthoritySigningCertificates = string
 /**
  * Supports git branches, tags, and commits. The default configuration will compare against master, origin/master, upstream/master, main, origin/main, and upstream/main.
  */
@@ -145,17 +144,12 @@ export type DefineWhetherPureSemverRangesShouldAllowWorkspaceResolutionOrNot = b
  * Various files we be stored there: global cache, metadata cache, ...
  */
 export type PathWhereAllFilesGlobalToTheSystemWillBeStored = string
-/**
- * Only HTTP proxies are supported at the moment.
- */
 export type ProxyToUseWhenMakingAnHTTPRequest = string
 export type AmountOfTimeToWaitInSecondsBeforeRetryingAFailedHTTPRequest = number
 export type AmountOfTimeToWaitInMillisecondsBeforeCancellingPendingHTTPRequests = number
+export type PathToAFileContainingOneOrMultipleCertificateAuthoritySigningCertificates = string
 export type PathToAFileContainingACertificateChainInPEMFormat = string
 export type PathToAFileContainingAPrivateKeyInPEMFormat = string
-/**
- * Only HTTP proxies are supported at the moment.
- */
 export type DefineAProxyToUseWhenMakingAnHTTPSRequest = string
 /**
  * If true, whatever Yarn version is being executed will keep running rather than looking at the value of `yarnPath` to decide.
@@ -230,6 +224,10 @@ export type DefineHowToCopyFilesToTheirTargetDestination = ("classic" | "hardlin
  */
 export type DefineHowNodePackagesShouldBeInstalled = ((string | ("pnp" | "pnpm" | "node-modules")) & string)
 /**
+ * By default, the store is stored in the `node_modules/.store` of the project. Sometimes in CI scenario's it is convenient to store this in a different location so it can be cached and reused.
+ */
+export type PathWhereThePnpmStoreWillBeStored = string
+/**
  * Possible values are:
  * 
  * - If `junctions`, Yarn will use Windows junctions when linking workspaces into `node_modules` directories, which are always absolute paths.
@@ -255,9 +253,13 @@ export type DefineTheAuthenticationCredentialsToUseByDefaultWhenAccessingYourReg
  */
 export type DefineTheAuthenticationTokenToUseByDefaultWhenAccessingYourRegistries = string
 /**
- * Valid values are `public` and `restricted`, but `restricted` usually requires to register for a paid plan (this is up to the registry you use). Can be overridden on a per-package basis using the `publishConfig.access` field.
+ * Valid values are `public` and `restricted`, but `restricted` usually requires to register for a paid plan (this is up to the registry you use). Can be overridden on a per-package basis using the [`publishConfig.access`](manifest#publishConfig.access) field.
  */
 export type DefineTheDefaultAccessToUseWhenPublishingPackagesToTheNpmRegistry = ("public" | "restricted")
+/**
+ * If true, Yarn will generate and publish the provenance information when publishing packages. Can be overridden on a per-package basis using the [`publishConfig.provenance`](manifest#publishConfig.provenance) field.
+ */
+export type DefineWhetherToAttachAProvenanceStatementWhenPublishingPackagesToTheNpmRegistry = boolean
 export type ArrayOfPackageNameGlobPatternsToExcludeFromYarnNpmAudit = string[]
 export type ArrayOfAdvisoryIDGlobPatternsToIgnoreFromYarnNpmAuditResults = string[]
 /**
@@ -374,7 +376,6 @@ export type PathOfAYarnBinaryToUseInsteadOfTheGlobalOne = string
 export interface Yarnrc {
 cacheFolder?: PathWhereTheDownloadedPackagesAreStoredOnYourSystem
 cacheMigrationMode?: BehaviorThatYarnShouldFollowWhenItDetectsThatACacheEntryIsOutdated
-httpsCaFilePath?: PathToAFileContainingOneOrMultipleCertificateAuthoritySigningCertificates
 changesetBaseRefs?: ListOfGitRefsAgainstWhichYarnWillCompareYourBranchWhenItNeedsToDetectChanges
 changesetIgnorePatterns?: ArrayOfFileGlobPatternsThatWillBeExcludedFromChangeDetection
 checksumBehavior?: BehaviorThatYarnShouldFollowWhenItDetectsThatACacheEntryHasADifferentChecksumThanExpected
@@ -413,6 +414,7 @@ globalFolder?: PathWhereAllFilesGlobalToTheSystemWillBeStored
 httpProxy?: ProxyToUseWhenMakingAnHTTPRequest
 httpRetry?: AmountOfTimeToWaitInSecondsBeforeRetryingAFailedHTTPRequest
 httpTimeout?: AmountOfTimeToWaitInMillisecondsBeforeCancellingPendingHTTPRequests
+httpsCaFilePath?: PathToAFileContainingOneOrMultipleCertificateAuthoritySigningCertificates
 httpsCertFilePath?: PathToAFileContainingACertificateChainInPEMFormat
 httpsKeyFilePath?: PathToAFileContainingAPrivateKeyInPEMFormat
 httpsProxy?: DefineAProxyToUseWhenMakingAnHTTPSRequest
@@ -429,12 +431,14 @@ nmHoistingLimits?: HighestPointWherePackagesCanBeHoisted
 nmSelfReferences?: DefineWhetherWorkspacesAreAllowedToRequireThemselves
 nmMode?: DefineHowToCopyFilesToTheirTargetDestination
 nodeLinker?: DefineHowNodePackagesShouldBeInstalled
+pnpmStoreFolder?: PathWhereThePnpmStoreWillBeStored
 winLinkType?: DefineWhetherToUseJunctionsOrSymlinksWhenCreatingLinksOnWindows
 npmAlwaysAuth?: DefineWhetherToAlwaysSendAuthenticationCredentialsWhenQueryingTheNpmRegistry
 npmAuditRegistry?: DefineTheRegistryToUseWhenAuditingDependencies
 npmAuthIdent?: DefineTheAuthenticationCredentialsToUseByDefaultWhenAccessingYourRegistries
 npmAuthToken?: DefineTheAuthenticationTokenToUseByDefaultWhenAccessingYourRegistries
 npmPublishAccess?: DefineTheDefaultAccessToUseWhenPublishingPackagesToTheNpmRegistry
+npmPublishProvenance?: DefineWhetherToAttachAProvenanceStatementWhenPublishingPackagesToTheNpmRegistry
 npmAuditExcludePackages?: ArrayOfPackageNameGlobPatternsToExcludeFromYarnNpmAudit
 npmAuditIgnoreAdvisories?: ArrayOfAdvisoryIDGlobPatternsToIgnoreFromYarnNpmAuditResults
 npmPublishRegistry?: DefineTheRegistryToUseWhenPushingPackages
@@ -481,9 +485,9 @@ export interface AdditionalNetworkSettingsPerHostname {
  * via the `patternProperty` "^(.+)$".
  */
 [k: string]: {
-httpsCaFilePath?: PathToAFileContainingOneOrMultipleCertificateAuthoritySigningCertificates
 enableNetwork?: DefineWhetherRemoteNetworkRequestsAreAllowedOrNot
 httpProxy?: ProxyToUseWhenMakingAnHTTPRequest
+httpsCaFilePath?: PathToAFileContainingOneOrMultipleCertificateAuthoritySigningCertificates
 httpsCertFilePath?: PathToAFileContainingACertificateChainInPEMFormat
 httpsKeyFilePath?: PathToAFileContainingAPrivateKeyInPEMFormat
 httpsProxy?: DefineAProxyToUseWhenMakingAnHTTPSRequest

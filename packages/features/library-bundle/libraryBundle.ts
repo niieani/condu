@@ -144,21 +144,21 @@ module.exports = async (env, argv) => {
             : { ".": pkg.exports };
         const rootEntryInput = exports && "." in exports ? exports : undefined;
         const dotEntry = rootEntryInput?.["."];
-        const rootEntry: PackageExportsEntryObject | undefined = dotEntry
+        const rootEntry: Record<string, string> | undefined = dotEntry
           ? ((typeof dotEntry === "object"
               ? { ...dotEntry }
-              : { default: dotEntry }) as PackageExportsEntryObject)
+              : { default: dotEntry }) as Record<string, string>)
           : undefined;
         const relativeToPath = `./${path.join(packageRelativePathToEntry, builtEntryName)}`;
         const types = `./${entry.replace(/\.[cm]?ts$/, ".d.ts")}`;
 
         if (rootEntry?.["source"] === `./${entry}`) {
           // override the source entry with the built entry
-          rootEntry.import = relativeToPath;
+          rootEntry["import"] = relativeToPath;
           rootEntry["bun"] = relativeToPath;
-          rootEntry.default = relativeToPath;
-          rootEntry.types = types;
-          delete rootEntry.require;
+          rootEntry["default"] = relativeToPath;
+          rootEntry["types"] = types;
+          delete rootEntry["require"];
         }
 
         return {

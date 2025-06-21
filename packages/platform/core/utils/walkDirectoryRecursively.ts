@@ -23,7 +23,7 @@ export async function* walkDirectoryRecursively(
     if (file.isDirectory()) {
       const thisDirPath = path.join(directoryPath, file.name);
       if (!keep || keep({ directoryPath: thisDirPath, entry: file })) {
-        yield * walkDirectoryRecursively(thisDirPath, keep);
+        yield* walkDirectoryRecursively(thisDirPath, keep);
       }
     } else {
       const fileData = { directoryPath, entry: file };

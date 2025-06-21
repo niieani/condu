@@ -15,15 +15,15 @@ declare module "condu" {
 }
 
 const commonJsFirstPreset = {
-  module: "CommonJS",
-  moduleResolution: "Node",
+  module: "commonjs",
+  moduleResolution: "node",
   esModuleInterop: true,
 } satisfies TSConfig["compilerOptions"];
 
 const esmFirstPreset = {
-  module: "NodeNext",
+  module: "nodenext",
   // most recommended way, because it's compatible with most tools (requires .js imports)
-  moduleResolution: "NodeNext",
+  moduleResolution: "nodenext",
   // esModuleInterop: false,
 } satisfies TSConfig["compilerOptions"];
 
@@ -90,9 +90,9 @@ export const typescript = ({
       const baseConfig = {
         ...tsconfig,
         compilerOptions: {
-          target: "ESNext",
+          target: "esnext",
           ...selectedPreset,
-          module: "NodeNext",
+          module: "nodenext",
           moduleDetection: "force",
           strict: true,
           // we don't need to emit 'use strict' in the files

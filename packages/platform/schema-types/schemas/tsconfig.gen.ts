@@ -58,6 +58,10 @@ emitBOM?: (boolean | null)
  */
 emitDeclarationOnly?: (boolean | null)
 /**
+ * Do not allow runtime constructs that are not part of ECMAScript.
+ */
+erasableSyntaxOnly?: (boolean | null)
+/**
  * Differentiate between undefined and not present when type checking
  */
 exactOptionalPropertyTypes?: (boolean | null)
@@ -108,21 +112,21 @@ mapRoot?: (string | null)
 /**
  * Specify what module code is generated.
  */
-module?: ((("CommonJS" | "AMD" | "System" | "UMD" | "ES6" | "ES2015" | "ES2020" | "ESNext" | "None" | "ES2022" | "Node16" | "NodeNext" | "Preserve") | {
+module?: ((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "nodenext" | "preserve") | {
 [k: string]: unknown | undefined
-}) & (((("CommonJS" | "AMD" | "System" | "UMD" | "ES6" | "ES2015" | "ES2020" | "ESNext" | "None" | "ES2022" | "Node16" | "NodeNext" | "Preserve") | {
+}) & (((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "nodenext" | "preserve") | {
 [k: string]: unknown | undefined
-}) & string) | ((("CommonJS" | "AMD" | "System" | "UMD" | "ES6" | "ES2015" | "ES2020" | "ESNext" | "None" | "ES2022" | "Node16" | "NodeNext" | "Preserve") | {
+}) & string) | ((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "nodenext" | "preserve") | {
 [k: string]: unknown | undefined
 }) & null)))
 /**
  * Specify how TypeScript looks up a file from a given module specifier.
  */
-moduleResolution?: ((("Classic" | "Node" | "Node10" | "Node16" | "NodeNext" | "Bundler") | {
+moduleResolution?: ((("classic" | "node" | "node10" | "node16" | "nodenext" | "bundler") | {
 [k: string]: unknown | undefined
-}) & (((("Classic" | "Node" | "Node10" | "Node16" | "NodeNext" | "Bundler") | {
+}) & (((("classic" | "node" | "node10" | "node16" | "nodenext" | "bundler") | {
 [k: string]: unknown | undefined
-}) & string) | ((("Classic" | "Node" | "Node10" | "Node16" | "NodeNext" | "Bundler") | {
+}) & string) | ((("classic" | "node" | "node10" | "node16" | "nodenext" | "bundler") | {
 [k: string]: unknown | undefined
 }) & null)))
 /**
@@ -176,6 +180,10 @@ noResolve?: (boolean | null)
  */
 noStrictGenericChecks?: (boolean | null)
 /**
+ * DEPRECATED. Specify an output for the build. It is recommended to use `outFile` instead.
+ */
+out?: (string | null)
+/**
  * Skip type checking .d.ts files that are included with TypeScript.
  */
 skipDefaultLibCheck?: (boolean | null)
@@ -216,6 +224,10 @@ pretty?: (boolean | null)
  */
 removeComments?: (boolean | null)
 /**
+ * Rewrite '.ts', '.tsx', '.mts', and '.cts' file extensions in relative import paths to their JavaScript equivalent in output files.
+ */
+rewriteRelativeImportExtensions?: (boolean | null)
+/**
  * Specify the root folder within your source files.
  */
 rootDir?: (string | null)
@@ -246,11 +258,11 @@ stripInternal?: (boolean | null)
 /**
  * Set the JavaScript language version for emitted JavaScript and include compatible library declarations.
  */
-target?: ((("ES3" | "ES5" | "ES6" | "ES2015" | "ES2016" | "ES2017" | "ES2018" | "ES2019" | "ES2020" | "ES2021" | "ES2022" | "ES2023" | "ESNext") | {
+target?: ((("es3" | "es5" | "es6" | "es2015" | "es2016" | "es2017" | "es2018" | "es2019" | "es2020" | "es2021" | "es2022" | "es2023" | "es2024" | "esnext") | {
 [k: string]: unknown | undefined
-}) & (((("ES3" | "ES5" | "ES6" | "ES2015" | "ES2016" | "ES2017" | "ES2018" | "ES2019" | "ES2020" | "ES2021" | "ES2022" | "ES2023" | "ESNext") | {
+}) & (((("es3" | "es5" | "es6" | "es2015" | "es2016" | "es2017" | "es2018" | "es2019" | "es2020" | "es2021" | "es2022" | "es2023" | "es2024" | "esnext") | {
 [k: string]: unknown | undefined
-}) & string) | ((("ES3" | "ES5" | "ES6" | "ES2015" | "ES2016" | "ES2017" | "ES2018" | "ES2019" | "ES2020" | "ES2021" | "ES2022" | "ES2023" | "ESNext") | {
+}) & string) | ((("es3" | "es5" | "es6" | "es2015" | "es2016" | "es2017" | "es2018" | "es2019" | "es2020" | "es2021" | "es2022" | "es2023" | "es2024" | "esnext") | {
 [k: string]: unknown | undefined
 }) & null)))
 /**
@@ -376,13 +388,17 @@ disableSizeLimit?: (boolean | null)
 /**
  * Specify a set of bundled library declaration files that describe the target runtime environment.
  */
-lib?: (((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
+lib?: (((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2017.ArrayBuffer" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Iterator" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "ES2024" | "ES2024.ArrayBuffer" | "ES2024.Collection" | "ES2024.Object" | "ES2024.Promise" | "ES2024.Regexp" | "ES2024.SharedMemory" | "ES2024.String" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
 [k: string]: unknown | undefined
-}) & (((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
+}) & (((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2017.ArrayBuffer" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Iterator" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "ES2024" | "ES2024.ArrayBuffer" | "ES2024.Collection" | "ES2024.Object" | "ES2024.Promise" | "ES2024.Regexp" | "ES2024.SharedMemory" | "ES2024.String" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
 [k: string]: unknown | undefined
-}) & string) | ((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
+}) & string) | ((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2017.ArrayBuffer" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Iterator" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "ES2024" | "ES2024.ArrayBuffer" | "ES2024.Collection" | "ES2024.Object" | "ES2024.Promise" | "ES2024.Regexp" | "ES2024.SharedMemory" | "ES2024.String" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
 [k: string]: unknown | undefined
 }) & null)))[] | null)
+/**
+ * Enable lib replacement.
+ */
+libReplacement?: (boolean | null)
 /**
  * Specify how TypeScript determine a file as module.
  */
@@ -554,6 +570,10 @@ emitBOM?: (boolean | null)
  */
 emitDeclarationOnly?: (boolean | null)
 /**
+ * Do not allow runtime constructs that are not part of ECMAScript.
+ */
+erasableSyntaxOnly?: (boolean | null)
+/**
  * Differentiate between undefined and not present when type checking
  */
 exactOptionalPropertyTypes?: (boolean | null)
@@ -604,21 +624,21 @@ mapRoot?: (string | null)
 /**
  * Specify what module code is generated.
  */
-module?: ((("CommonJS" | "AMD" | "System" | "UMD" | "ES6" | "ES2015" | "ES2020" | "ESNext" | "None" | "ES2022" | "Node16" | "NodeNext" | "Preserve") | {
+module?: ((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "nodenext" | "preserve") | {
 [k: string]: unknown | undefined
-}) & (((("CommonJS" | "AMD" | "System" | "UMD" | "ES6" | "ES2015" | "ES2020" | "ESNext" | "None" | "ES2022" | "Node16" | "NodeNext" | "Preserve") | {
+}) & (((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "nodenext" | "preserve") | {
 [k: string]: unknown | undefined
-}) & string) | ((("CommonJS" | "AMD" | "System" | "UMD" | "ES6" | "ES2015" | "ES2020" | "ESNext" | "None" | "ES2022" | "Node16" | "NodeNext" | "Preserve") | {
+}) & string) | ((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "nodenext" | "preserve") | {
 [k: string]: unknown | undefined
 }) & null)))
 /**
  * Specify how TypeScript looks up a file from a given module specifier.
  */
-moduleResolution?: ((("Classic" | "Node" | "Node10" | "Node16" | "NodeNext" | "Bundler") | {
+moduleResolution?: ((("classic" | "node" | "node10" | "node16" | "nodenext" | "bundler") | {
 [k: string]: unknown | undefined
-}) & (((("Classic" | "Node" | "Node10" | "Node16" | "NodeNext" | "Bundler") | {
+}) & (((("classic" | "node" | "node10" | "node16" | "nodenext" | "bundler") | {
 [k: string]: unknown | undefined
-}) & string) | ((("Classic" | "Node" | "Node10" | "Node16" | "NodeNext" | "Bundler") | {
+}) & string) | ((("classic" | "node" | "node10" | "node16" | "nodenext" | "bundler") | {
 [k: string]: unknown | undefined
 }) & null)))
 /**
@@ -672,6 +692,10 @@ noResolve?: (boolean | null)
  */
 noStrictGenericChecks?: (boolean | null)
 /**
+ * DEPRECATED. Specify an output for the build. It is recommended to use `outFile` instead.
+ */
+out?: (string | null)
+/**
  * Skip type checking .d.ts files that are included with TypeScript.
  */
 skipDefaultLibCheck?: (boolean | null)
@@ -712,6 +736,10 @@ pretty?: (boolean | null)
  */
 removeComments?: (boolean | null)
 /**
+ * Rewrite '.ts', '.tsx', '.mts', and '.cts' file extensions in relative import paths to their JavaScript equivalent in output files.
+ */
+rewriteRelativeImportExtensions?: (boolean | null)
+/**
  * Specify the root folder within your source files.
  */
 rootDir?: (string | null)
@@ -742,11 +770,11 @@ stripInternal?: (boolean | null)
 /**
  * Set the JavaScript language version for emitted JavaScript and include compatible library declarations.
  */
-target?: ((("ES3" | "ES5" | "ES6" | "ES2015" | "ES2016" | "ES2017" | "ES2018" | "ES2019" | "ES2020" | "ES2021" | "ES2022" | "ES2023" | "ESNext") | {
+target?: ((("es3" | "es5" | "es6" | "es2015" | "es2016" | "es2017" | "es2018" | "es2019" | "es2020" | "es2021" | "es2022" | "es2023" | "es2024" | "esnext") | {
 [k: string]: unknown | undefined
-}) & (((("ES3" | "ES5" | "ES6" | "ES2015" | "ES2016" | "ES2017" | "ES2018" | "ES2019" | "ES2020" | "ES2021" | "ES2022" | "ES2023" | "ESNext") | {
+}) & (((("es3" | "es5" | "es6" | "es2015" | "es2016" | "es2017" | "es2018" | "es2019" | "es2020" | "es2021" | "es2022" | "es2023" | "es2024" | "esnext") | {
 [k: string]: unknown | undefined
-}) & string) | ((("ES3" | "ES5" | "ES6" | "ES2015" | "ES2016" | "ES2017" | "ES2018" | "ES2019" | "ES2020" | "ES2021" | "ES2022" | "ES2023" | "ESNext") | {
+}) & string) | ((("es3" | "es5" | "es6" | "es2015" | "es2016" | "es2017" | "es2018" | "es2019" | "es2020" | "es2021" | "es2022" | "es2023" | "es2024" | "esnext") | {
 [k: string]: unknown | undefined
 }) & null)))
 /**
@@ -872,13 +900,17 @@ disableSizeLimit?: (boolean | null)
 /**
  * Specify a set of bundled library declaration files that describe the target runtime environment.
  */
-lib?: (((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
+lib?: (((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2017.ArrayBuffer" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Iterator" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "ES2024" | "ES2024.ArrayBuffer" | "ES2024.Collection" | "ES2024.Object" | "ES2024.Promise" | "ES2024.Regexp" | "ES2024.SharedMemory" | "ES2024.String" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
 [k: string]: unknown | undefined
-}) & (((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
+}) & (((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2017.ArrayBuffer" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Iterator" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "ES2024" | "ES2024.ArrayBuffer" | "ES2024.Collection" | "ES2024.Object" | "ES2024.Promise" | "ES2024.Regexp" | "ES2024.SharedMemory" | "ES2024.String" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
 [k: string]: unknown | undefined
-}) & string) | ((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
+}) & string) | ((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2017.ArrayBuffer" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Iterator" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "ES2024" | "ES2024.ArrayBuffer" | "ES2024.Collection" | "ES2024.Object" | "ES2024.Promise" | "ES2024.Regexp" | "ES2024.SharedMemory" | "ES2024.String" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
 [k: string]: unknown | undefined
 }) & null)))[] | null)
+/**
+ * Enable lib replacement.
+ */
+libReplacement?: (boolean | null)
 /**
  * Specify how TypeScript determine a file as module.
  */
@@ -1007,10 +1039,10 @@ strictBuiltinIteratorReturn?: (boolean | null)
  * the file extension is ignored.
  * This is useful if you cannot use .mts, .cts, .mjs, or .cjs file extensions;
  * it achieves the same effect.
- *
+ * 
  * Each key is a glob pattern following the same rules as tsconfig's "include" array.
  * When multiple patterns match the same file, the last pattern takes precedence.
- *
+ * 
  * `cjs` overrides matches files to compile and execute as CommonJS.
  * `esm` overrides matches files to compile and execute as native ECMAScript modules.
  * `package` overrides either of the above to default behavior, which obeys package.json "type" and
@@ -1129,7 +1161,7 @@ traceResolution?: (boolean | null)
 export interface TsNodeDefinition {
 /**
  * ts-node options.  See also: https://typestrong.org/ts-node/docs/configuration
- *
+ * 
  * ts-node offers TypeScript execution and REPL for node.js, with source map support.
  */
 "ts-node"?: ({
@@ -1153,17 +1185,17 @@ compilerOptions?: (CompilerOptions & ({
 emit?: (boolean | null)
 /**
  * Enable native ESM support.
- *
+ * 
  * For details, see https://typestrong.org/ts-node/docs/imports#native-ecmascript-modules
  */
 esm?: (boolean | null)
 /**
  * Allows the usage of top level await in REPL.
- *
+ * 
  * Uses node's implementation which accomplishes this with an AST syntax transformation.
- *
+ * 
  * Enabled by default when tsconfig target is es2018 or above. Set to false to disable.
- *
+ * 
  * **Note**: setting to `true` when tsconfig target is too low will throw an Error.  Leave as `undefined`
  * to get default, automatic behavior.
  */
@@ -1172,29 +1204,29 @@ experimentalReplAwait?: (boolean | null)
  * Enable experimental features that re-map imports and require calls to support:
  * `baseUrl`, `paths`, `rootDirs`, `.js` to `.ts` file extension mappings,
  * `outDir` to `rootDir` mappings for composite projects and monorepos.
- *
+ * 
  * For details, see https://github.com/TypeStrong/ts-node/issues/1514
  */
 experimentalResolver?: (boolean | null)
 /**
  * Like node's `--experimental-specifier-resolution`, , but can also be set in your `tsconfig.json` for convenience.
- *
+ * 
  * For details, see https://nodejs.org/dist/latest-v18.x/docs/api/esm.html#customizing-esm-specifier-resolution-algorithm
  */
 experimentalSpecifierResolution?: (("explicit" | "node") | null)
 /**
  * Load "files" and "include" from `tsconfig.json` on startup.
- *
+ * 
  * Default is to override `tsconfig.json` "files" and "include" to only include the entrypoint script.
  */
 files?: (boolean | null)
 /**
  * Paths which should not be compiled.
- *
+ * 
  * Each string in the array is converted to a regular expression via `new RegExpstring` and tested against source paths prior to compilation.
- *
+ * 
  * Source paths are normalized to posix-style separators, relative to the directory containing `tsconfig.json` or to cwd if no `tsconfig.json` is loaded.
- *
+ * 
  * Default is to ignore all node_modules subdirectories.
  */
 ignore?: ((string | null)[] | null)
@@ -1209,7 +1241,7 @@ logError?: (boolean | null)
 moduleTypes?: TsNodeModuleTypes
 /**
  * Re-order file extensions so that TypeScript imports are preferred.
- *
+ * 
  * For example, when both `index.js` and `index.ts` exist, enabling this option causes `require('./index')` to resolve to `index.ts` instead of `index.js`
  */
 preferTsExts?: (boolean | null)
@@ -1219,9 +1251,9 @@ preferTsExts?: (boolean | null)
 pretty?: (boolean | null)
 /**
  * Modules to require, like node's `--require` flag.
- *
+ * 
  * If specified in `tsconfig.json`, the modules will be resolved relative to the `tsconfig.json` file.
- *
+ * 
  * If specified programmatically, each input string should be pre-resolved to an absolute path for
  * best results.
  */
@@ -1237,9 +1269,9 @@ scopeDir?: (string | null)
 skipIgnore?: (boolean | null)
 /**
  * Transpile with swc instead of the TypeScript compiler, and skip typechecking.
- *
+ * 
  * Equivalent to setting both `transpileOnly: true` and `transpiler: 'ts-node/transpilers/swc'`
- *
+ * 
  * For complete instructions: https://typestrong.org/ts-node/docs/transpilers
  */
 swc?: (boolean | null)

@@ -17,10 +17,8 @@ types?: Types
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types = [("created" | "edited" | "deleted"), ...(("created" | "edited" | "deleted"))[]]
+export type Types = (([unknown, ...(unknown)[]] | string) & ("created" | "edited" | "deleted")[])
 /**
  * Runs your workflow anytime the check_run event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/checks/runs.
  */
@@ -33,10 +31,8 @@ types?: Types1
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types1 = [("created" | "rerequested" | "completed" | "requested_action"), ...(("created" | "rerequested" | "completed" | "requested_action"))[]]
+export type Types1 = (([unknown, ...(unknown)[]] | string) & ("created" | "rerequested" | "completed" | "requested_action")[])
 /**
  * Runs your workflow anytime the check_suite event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/checks/suites/.
  */
@@ -49,10 +45,8 @@ types?: Types2
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types2 = [("completed" | "requested" | "rerequested"), ...(("completed" | "requested" | "rerequested"))[]]
+export type Types2 = (([unknown, ...(unknown)[]] | string) & ("completed" | "requested" | "rerequested")[])
 /**
  * Runs your workflow anytime the discussion event occurs. More than one activity type triggers this event. For information about the GraphQL API, see https://docs.github.com/en/graphql/guides/using-the-graphql-api-for-discussions
  */
@@ -65,10 +59,8 @@ types?: Types3
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types3 = [("created" | "edited" | "deleted" | "transferred" | "pinned" | "unpinned" | "labeled" | "unlabeled" | "locked" | "unlocked" | "category_changed" | "answered" | "unanswered"), ...(("created" | "edited" | "deleted" | "transferred" | "pinned" | "unpinned" | "labeled" | "unlabeled" | "locked" | "unlocked" | "category_changed" | "answered" | "unanswered"))[]]
+export type Types3 = (([unknown, ...(unknown)[]] | string) & ("created" | "edited" | "deleted" | "transferred" | "pinned" | "unpinned" | "labeled" | "unlabeled" | "locked" | "unlocked" | "category_changed" | "answered" | "unanswered")[])
 /**
  * Runs your workflow anytime the discussion_comment event occurs. More than one activity type triggers this event. For information about the GraphQL API, see https://docs.github.com/en/graphql/guides/using-the-graphql-api-for-discussions
  */
@@ -81,10 +73,8 @@ types?: Types4
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types4 = [("created" | "edited" | "deleted"), ...(("created" | "edited" | "deleted"))[]]
+export type Types4 = (([unknown, ...(unknown)[]] | string) & ("created" | "edited" | "deleted")[])
 /**
  * Runs your workflow anytime the issue_comment event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/issues/comments/.
  */
@@ -97,10 +87,8 @@ types?: Types5
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types5 = [("created" | "edited" | "deleted"), ...(("created" | "edited" | "deleted"))[]]
+export type Types5 = (([unknown, ...(unknown)[]] | string) & ("created" | "edited" | "deleted")[])
 /**
  * Runs your workflow anytime the issues event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/issues.
  */
@@ -113,10 +101,8 @@ types?: Types6
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types6 = [("opened" | "edited" | "deleted" | "transferred" | "pinned" | "unpinned" | "closed" | "reopened" | "assigned" | "unassigned" | "labeled" | "unlabeled" | "locked" | "unlocked" | "milestoned" | "demilestoned"), ...(("opened" | "edited" | "deleted" | "transferred" | "pinned" | "unpinned" | "closed" | "reopened" | "assigned" | "unassigned" | "labeled" | "unlabeled" | "locked" | "unlocked" | "milestoned" | "demilestoned"))[]]
+export type Types6 = (([unknown, ...(unknown)[]] | string) & ("opened" | "edited" | "deleted" | "transferred" | "pinned" | "unpinned" | "closed" | "reopened" | "assigned" | "unassigned" | "labeled" | "unlabeled" | "locked" | "unlocked" | "milestoned" | "demilestoned")[])
 /**
  * Runs your workflow anytime the label event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/issues/labels/.
  */
@@ -129,10 +115,8 @@ types?: Types7
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types7 = [("created" | "edited" | "deleted"), ...(("created" | "edited" | "deleted"))[]]
+export type Types7 = (([unknown, ...(unknown)[]] | string) & ("created" | "edited" | "deleted")[])
 /**
  * Runs your workflow when a pull request is added to a merge queue, which adds the pull request to a merge group. For information about the merge queue, see https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/merging-a-pull-request-with-a-merge-queue .
  */
@@ -145,10 +129,8 @@ types?: Types8
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types8 = ["checks_requested", ...("checks_requested")[]]
+export type Types8 = (([unknown, ...(unknown)[]] | string) & ("checks_requested")[])
 /**
  * Runs your workflow anytime the milestone event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/issues/milestones/.
  */
@@ -161,10 +143,8 @@ types?: Types9
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types9 = [("created" | "closed" | "opened" | "edited" | "deleted"), ...(("created" | "closed" | "opened" | "edited" | "deleted"))[]]
+export type Types9 = (([unknown, ...(unknown)[]] | string) & ("created" | "closed" | "opened" | "edited" | "deleted")[])
 /**
  * Runs your workflow anytime the project event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/projects/.
  */
@@ -177,10 +157,8 @@ types?: Types10
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types10 = [("created" | "updated" | "closed" | "reopened" | "edited" | "deleted"), ...(("created" | "updated" | "closed" | "reopened" | "edited" | "deleted"))[]]
+export type Types10 = (([unknown, ...(unknown)[]] | string) & ("created" | "updated" | "closed" | "reopened" | "edited" | "deleted")[])
 /**
  * Runs your workflow anytime the project_card event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/projects/cards.
  */
@@ -193,10 +171,8 @@ types?: Types11
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types11 = [("created" | "moved" | "converted" | "edited" | "deleted"), ...(("created" | "moved" | "converted" | "edited" | "deleted"))[]]
+export type Types11 = (([unknown, ...(unknown)[]] | string) & ("created" | "moved" | "converted" | "edited" | "deleted")[])
 /**
  * Runs your workflow anytime the project_column event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/projects/columns.
  */
@@ -209,10 +185,8 @@ types?: Types12
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types12 = [("created" | "updated" | "moved" | "deleted"), ...(("created" | "updated" | "moved" | "deleted"))[]]
+export type Types12 = (([unknown, ...(unknown)[]] | string) & ("created" | "updated" | "moved" | "deleted")[])
 /**
  * Runs your workflow anytime the pull_request event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/pulls.
  * Note: Workflows do not run on private base repositories when you open a pull request from a forked repository.
@@ -233,10 +207,8 @@ types?: Types13
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types13 = [("assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "milestoned" | "demilestoned" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled" | "enqueued" | "dequeued"), ...(("assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "milestoned" | "demilestoned" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled" | "enqueued" | "dequeued"))[]]
+export type Types13 = (([unknown, ...(unknown)[]] | string) & ("assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "milestoned" | "demilestoned" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled" | "enqueued" | "dequeued")[])
 /**
  * Runs your workflow anytime the pull_request_review event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/pulls/reviews.
  * Note: Workflows do not run on private base repositories when you open a pull request from a forked repository.
@@ -253,10 +225,8 @@ types?: Types14
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types14 = [("submitted" | "edited" | "dismissed"), ...(("submitted" | "edited" | "dismissed"))[]]
+export type Types14 = (([unknown, ...(unknown)[]] | string) & ("submitted" | "edited" | "dismissed")[])
 /**
  * Runs your workflow anytime a comment on a pull request's unified diff is modified, which triggers the pull_request_review_comment event. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/pulls/comments.
  * Note: Workflows do not run on private base repositories when you open a pull request from a forked repository.
@@ -273,10 +243,8 @@ types?: Types15
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types15 = [("created" | "edited" | "deleted"), ...(("created" | "edited" | "deleted"))[]]
+export type Types15 = (([unknown, ...(unknown)[]] | string) & ("created" | "edited" | "deleted")[])
 /**
  * This event is similar to pull_request, except that it runs in the context of the base repository of the pull request, rather than in the merge commit. This means that you can more safely make your secrets available to the workflows triggered by the pull request, because only workflows defined in the commit on the base repository are run. For example, this event allows you to create workflows that label and comment on pull requests, based on the contents of the event payload.
  */
@@ -293,10 +261,8 @@ types?: Types16
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types16 = [("assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"), ...(("assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled"))[]]
+export type Types16 = (([unknown, ...(unknown)[]] | string) & ("assigned" | "unassigned" | "labeled" | "unlabeled" | "opened" | "edited" | "closed" | "reopened" | "synchronize" | "converted_to_draft" | "ready_for_review" | "locked" | "unlocked" | "review_requested" | "review_request_removed" | "auto_merge_enabled" | "auto_merge_disabled")[])
 /**
  * Runs your workflow when someone pushes to a repository branch, which triggers the push event.
  * Note: The webhook payload available to GitHub Actions does not include the added, removed, and modified attributes in the commit object. You can retrieve the full commit object using the REST API. For more information, see https://developer.github.com/v3/repos/commits/#get-a-single-commit.
@@ -352,10 +318,8 @@ types?: Types17
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types17 = [("published" | "updated"), ...(("published" | "updated"))[]]
+export type Types17 = (([unknown, ...(unknown)[]] | string) & ("published" | "updated")[])
 /**
  * Runs your workflow anytime the release event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/repos/releases/ in the GitHub Developer documentation.
  */
@@ -368,10 +332,46 @@ types?: Types18
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
+ */
+export type Types18 = (([unknown, ...(unknown)[]] | string) & ("published" | "unpublished" | "created" | "edited" | "deleted" | "prereleased" | "released")[])
+/**
+ * A string identifier to associate with the input. The value of <input_id> is a map of the input's metadata. The <input_id> must be a unique identifier within the inputs object. The <input_id> must start with a letter or _ and contain only alphanumeric characters, -, or _.
+ * 
+ * This interface was referenced by `undefined`'s JSON-Schema definition
+ * via the `patternProperty` "^[_a-zA-Z][a-zA-Z0-9_-]*$".
+ */
+export type WorkflowDispatchInput = ({
+[k: string]: unknown | undefined
+} & {
+/**
+ * A string description of the input parameter.
+ */
+description: string
+/**
+ * A string shown to users using the deprecated input.
+ */
+deprecationMessage?: string
+/**
+ * A boolean to indicate whether the action requires the input parameter. Set to true when the parameter is required.
+ */
+required?: boolean
+/**
+ * A string representing the default value. The default value is used when an input parameter isn't specified in a workflow file.
+ */
+default?: {
+[k: string]: unknown | undefined
+}
+/**
+ * A string representing the type of the input.
+ */
+type?: ("string" | "choice" | "boolean" | "number" | "environment")
+/**
+ * The options of the dropdown list, if the type is a choice.
  * 
  * @minItems 1
  */
-export type Types18 = [("published" | "unpublished" | "created" | "edited" | "deleted" | "prereleased" | "released"), ...(("published" | "unpublished" | "created" | "edited" | "deleted" | "prereleased" | "released"))[]]
+options?: [string, ...(string)[]]
+})
 /**
  * This event occurs when a workflow run is requested or completed, and allows you to execute a workflow based on the finished result of another workflow. For example, if your pull_request workflow generates build artifacts, you can create a new workflow that uses workflow_run to analyze the results and add a comment to the original pull request.
  */
@@ -388,10 +388,8 @@ workflows?: [string, ...(string)[]]
 /**
  * Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
  * You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
- * 
- * @minItems 1
  */
-export type Types19 = [("requested" | "completed" | "in_progress"), ...(("requested" | "completed" | "in_progress"))[]]
+export type Types19 = (([unknown, ...(unknown)[]] | string) & ("requested" | "completed" | "in_progress")[])
 export type StringContainingExpressionSyntax = string
 /**
  * You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
@@ -412,8 +410,103 @@ export type Name = string
  */
 export type Permissions = (("read-all" | "write-all") | PermissionsEvent)
 export type PermissionsLevel = ("read" | "write" | "none")
+export type Step = ({
 /**
- * To set custom environment variables, you need to specify the variables in the workflow file. You can define environment variables for a step, job, or entire workflow using the jobs.<job_id>.steps[*].env, jobs.<job_id>.env, and env keywords. For more information, see https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idstepsenv
+ * A unique identifier for the step. You can use the id to reference the step in contexts. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
+ */
+id?: string
+/**
+ * You can use the if conditional to prevent a step from running unless a condition is met. You can use any supported context and expression to create a conditional.
+ * Expressions in an if conditional do not require the ${{ }} syntax. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
+ */
+if?: (boolean | number | string)
+/**
+ * A name for your step to display on GitHub.
+ */
+name?: string
+/**
+ * Selects an action to run as part of a step in your job. An action is a reusable unit of code. You can use an action defined in the same repository as the workflow, a public repository, or in a published Docker container image (https://hub.docker.com/).
+ * We strongly recommend that you include the version of the action you are using by specifying a Git ref, SHA, or Docker tag number. If you don't specify a version, it could break your workflows or cause unexpected behavior when the action owner publishes an update.
+ * - Using the commit SHA of a released action version is the safest for stability and security.
+ * - Using the specific major action version allows you to receive critical fixes and security patches while still maintaining compatibility. It also assures that your workflow should still work.
+ * - Using the master branch of an action may be convenient, but if someone releases a new major version with a breaking change, your workflow could break.
+ * Some actions require inputs that you must set using the with keyword. Review the action's README file to determine the inputs required.
+ * Actions are either JavaScript files or Docker containers. If the action you're using is a Docker container you must run the job in a Linux virtual environment. For more details, see https://help.github.com/en/articles/virtual-environments-for-github-actions.
+ */
+uses?: string
+/**
+ * Runs command-line programs using the operating system's shell. If you do not provide a name, the step name will default to the text specified in the run command.
+ * Commands run using non-login shells by default. You can choose a different shell and customize the shell used to run commands. For more information, see https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#using-a-specific-shell.
+ * Each run keyword represents a new process and shell in the virtual environment. When you provide multi-line commands, each line runs in the same shell.
+ */
+run?: string
+"working-directory"?: WorkingDirectory
+shell?: Shell
+with?: Env
+/**
+ * Sets environment variables for steps to use in the virtual environment. You can also set environment variables for the entire workflow or a job.
+ */
+env?: ({
+[k: string]: (string | number | boolean) | undefined
+} | StringContainingExpressionSyntax)
+/**
+ * Prevents a job from failing when a step fails. Set to true to allow a job to pass when this step fails.
+ */
+"continue-on-error"?: (boolean | ExpressionSyntax)
+/**
+ * The maximum number of minutes to run the step before killing the process.
+ */
+"timeout-minutes"?: (number | ExpressionSyntax)
+} & Step1 & {
+/**
+ * A unique identifier for the step. You can use the id to reference the step in contexts. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
+ */
+id?: string
+/**
+ * You can use the if conditional to prevent a step from running unless a condition is met. You can use any supported context and expression to create a conditional.
+ * Expressions in an if conditional do not require the ${{ }} syntax. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
+ */
+if?: (boolean | number | string)
+/**
+ * A name for your step to display on GitHub.
+ */
+name?: string
+/**
+ * Selects an action to run as part of a step in your job. An action is a reusable unit of code. You can use an action defined in the same repository as the workflow, a public repository, or in a published Docker container image (https://hub.docker.com/).
+ * We strongly recommend that you include the version of the action you are using by specifying a Git ref, SHA, or Docker tag number. If you don't specify a version, it could break your workflows or cause unexpected behavior when the action owner publishes an update.
+ * - Using the commit SHA of a released action version is the safest for stability and security.
+ * - Using the specific major action version allows you to receive critical fixes and security patches while still maintaining compatibility. It also assures that your workflow should still work.
+ * - Using the master branch of an action may be convenient, but if someone releases a new major version with a breaking change, your workflow could break.
+ * Some actions require inputs that you must set using the with keyword. Review the action's README file to determine the inputs required.
+ * Actions are either JavaScript files or Docker containers. If the action you're using is a Docker container you must run the job in a Linux virtual environment. For more details, see https://help.github.com/en/articles/virtual-environments-for-github-actions.
+ */
+uses?: string
+/**
+ * Runs command-line programs using the operating system's shell. If you do not provide a name, the step name will default to the text specified in the run command.
+ * Commands run using non-login shells by default. You can choose a different shell and customize the shell used to run commands. For more information, see https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#using-a-specific-shell.
+ * Each run keyword represents a new process and shell in the virtual environment. When you provide multi-line commands, each line runs in the same shell.
+ */
+run?: string
+"working-directory"?: WorkingDirectory
+shell?: Shell
+with?: Env
+/**
+ * Sets environment variables for steps to use in the virtual environment. You can also set environment variables for the entire workflow or a job.
+ */
+env?: ({
+[k: string]: (string | number | boolean) | undefined
+} | StringContainingExpressionSyntax)
+/**
+ * Prevents a job from failing when a step fails. Set to true to allow a job to pass when this step fails.
+ */
+"continue-on-error"?: (boolean | ExpressionSyntax)
+/**
+ * The maximum number of minutes to run the step before killing the process.
+ */
+"timeout-minutes"?: (number | ExpressionSyntax)
+} & Step1)
+/**
+ * A map of the input parameters defined by the action. Each input parameter is a key/value pair. Input parameters are set as environment variables. The variable is prefixed with INPUT_ and converted to upper case.
  */
 export type Env = ({
 args?: string
@@ -422,6 +515,11 @@ entrypoint?: string
 } & ({
 [k: string]: (string | number | boolean) | undefined
 } | StringContainingExpressionSyntax))
+export type Step1 = ({
+[k: string]: unknown | undefined
+} | {
+[k: string]: unknown | undefined
+})
 /**
  * A build matrix is a set of different configurations of the virtual environment. For example you might run a job against more than one supported version of a language, operating system, or tool. Each configuration is a copy of the job that runs and reports a status.
  * You can specify a matrix by supplying an array for the configuration options. For example, if the GitHub virtual environment supports Node.js versions 6, 8, and 10 you could specify an array of those versions in the matrix.
@@ -430,9 +528,10 @@ entrypoint?: string
 export type Matrix = ({
 [k: string]: ([Configuration | undefined, ...(Configuration | undefined)[]] | ExpressionSyntax) | undefined
 } | ExpressionSyntax)
-export type Configuration = (string | number | boolean | {
-[k: string]: Configuration | undefined
-} | undefined[]) | undefined
+export type Configuration = string | number | boolean | ConfigurationObject | Configuration[] | undefined;
+export interface ConfigurationObject {
+  [key: string]: Configuration;
+}
 /**
  * To set custom environment variables, you need to specify the variables in the workflow file. You can define environment variables for a step, job, or entire workflow using the jobs.<job_id>.steps[*].env, jobs.<job_id>.env, and env keywords. For more information, see https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idstepsenv
  */
@@ -549,10 +648,6 @@ inputs?: {
  */
 description?: string
 /**
- * A string shown to users using the deprecated input.
- */
-deprecationMessage?: string
-/**
  * A boolean to indicate whether the action requires the input parameter. Set to true when the parameter is required.
  */
 required?: boolean
@@ -564,6 +659,27 @@ type: ("boolean" | "number" | "string")
  * The default value is used when an input parameter isn't specified in a workflow file.
  */
 default?: (boolean | number | string)
+}
+}
+/**
+ * When using the workflow_call keyword, you can optionally specify inputs that are passed to the called workflow from the caller workflow.
+ */
+outputs?: {
+/**
+ * A string identifier to associate with the output. The value of <output_id> is a map of the output's metadata. The <output_id> must be a unique identifier within the outputs object. The <output_id> must start with a letter or _ and contain only alphanumeric characters, -, or _.
+ * 
+ * This interface was referenced by `undefined`'s JSON-Schema definition
+ * via the `patternProperty` "^[_a-zA-Z][a-zA-Z0-9_-]*$".
+ */
+[k: string]: {
+/**
+ * A string description of the output parameter.
+ */
+description?: string
+/**
+ * The value that the output parameter will be mapped to. You can set this to a string or an expression with context. For example, you can use the steps context to set the value of an output to the output value of a step.
+ */
+value: string
 }
 }
 /**
@@ -584,7 +700,7 @@ description?: string
 /**
  * A boolean specifying whether the secret must be supplied.
  */
-required: boolean
+required?: boolean
 }
 }
 [k: string]: unknown | undefined
@@ -597,15 +713,7 @@ workflow_dispatch?: {
  * Input parameters allow you to specify data that the action expects to use during runtime. GitHub stores input parameters as environment variables. Input ids with uppercase letters are converted to lowercase during runtime. We recommended using lowercase input ids.
  */
 inputs?: {
-/**
- * A string identifier to associate with the input. The value of <input_id> is a map of the input's metadata. The <input_id> must be a unique identifier within the inputs object. The <input_id> must start with a letter or _ and contain only alphanumeric characters, -, or _.
- * 
- * This interface was referenced by `undefined`'s JSON-Schema definition
- * via the `patternProperty` "^[_a-zA-Z][a-zA-Z0-9_-]*$".
- */
-[k: string]: {
-[k: string]: unknown | undefined
-}
+[k: string]: (WorkflowDispatchInput) | undefined
 }
 }
 workflow_run?: EventObject17
@@ -692,7 +800,7 @@ permissions?: Permissions
 /**
  * The type of machine to run the job on. The machine can be either a GitHub-hosted runner, or a self-hosted runner.
  */
-"runs-on": (string | ([string] & unknown[]) | {
+"runs-on": (string | ([string, ...(string)[]] & unknown[]) | {
 group?: string
 labels?: (string | string[])
 [k: string]: unknown | undefined
@@ -726,113 +834,7 @@ if?: (boolean | number | string)
  * 
  * @minItems 1
  */
-steps?: [(({
-uses: string
-[k: string]: unknown | undefined
-} | {
-run: string
-[k: string]: unknown | undefined
-}) & {
-/**
- * A unique identifier for the step. You can use the id to reference the step in contexts. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
- */
-id?: string
-/**
- * You can use the if conditional to prevent a step from running unless a condition is met. You can use any supported context and expression to create a conditional.
- * Expressions in an if conditional do not require the ${{ }} syntax. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
- */
-if?: (boolean | number | string)
-/**
- * A name for your step to display on GitHub.
- */
-name?: string
-/**
- * Selects an action to run as part of a step in your job. An action is a reusable unit of code. You can use an action defined in the same repository as the workflow, a public repository, or in a published Docker container image (https://hub.docker.com/).
- * We strongly recommend that you include the version of the action you are using by specifying a Git ref, SHA, or Docker tag number. If you don't specify a version, it could break your workflows or cause unexpected behavior when the action owner publishes an update.
- * - Using the commit SHA of a released action version is the safest for stability and security.
- * - Using the specific major action version allows you to receive critical fixes and security patches while still maintaining compatibility. It also assures that your workflow should still work.
- * - Using the master branch of an action may be convenient, but if someone releases a new major version with a breaking change, your workflow could break.
- * Some actions require inputs that you must set using the with keyword. Review the action's README file to determine the inputs required.
- * Actions are either JavaScript files or Docker containers. If the action you're using is a Docker container you must run the job in a Linux virtual environment. For more details, see https://help.github.com/en/articles/virtual-environments-for-github-actions.
- */
-uses?: string
-/**
- * Runs command-line programs using the operating system's shell. If you do not provide a name, the step name will default to the text specified in the run command.
- * Commands run using non-login shells by default. You can choose a different shell and customize the shell used to run commands. For more information, see https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#using-a-specific-shell.
- * Each run keyword represents a new process and shell in the virtual environment. When you provide multi-line commands, each line runs in the same shell.
- */
-run?: string
-"working-directory"?: WorkingDirectory
-shell?: Shell
-with?: Env
-/**
- * To set custom environment variables, you need to specify the variables in the workflow file. You can define environment variables for a step, job, or entire workflow using the jobs.<job_id>.steps[*].env, jobs.<job_id>.env, and env keywords. For more information, see https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idstepsenv
- */
-env?: ({
-[k: string]: (string | number | boolean) | undefined
-} | StringContainingExpressionSyntax)
-/**
- * Prevents a job from failing when a step fails. Set to true to allow a job to pass when this step fails.
- */
-"continue-on-error"?: (boolean | ExpressionSyntax)
-/**
- * The maximum number of minutes to run the step before killing the process.
- */
-"timeout-minutes"?: (number | ExpressionSyntax)
-}), ...((({
-uses: string
-[k: string]: unknown | undefined
-} | {
-run: string
-[k: string]: unknown | undefined
-}) & {
-/**
- * A unique identifier for the step. You can use the id to reference the step in contexts. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
- */
-id?: string
-/**
- * You can use the if conditional to prevent a step from running unless a condition is met. You can use any supported context and expression to create a conditional.
- * Expressions in an if conditional do not require the ${{ }} syntax. For more information, see https://help.github.com/en/articles/contexts-and-expression-syntax-for-github-actions.
- */
-if?: (boolean | number | string)
-/**
- * A name for your step to display on GitHub.
- */
-name?: string
-/**
- * Selects an action to run as part of a step in your job. An action is a reusable unit of code. You can use an action defined in the same repository as the workflow, a public repository, or in a published Docker container image (https://hub.docker.com/).
- * We strongly recommend that you include the version of the action you are using by specifying a Git ref, SHA, or Docker tag number. If you don't specify a version, it could break your workflows or cause unexpected behavior when the action owner publishes an update.
- * - Using the commit SHA of a released action version is the safest for stability and security.
- * - Using the specific major action version allows you to receive critical fixes and security patches while still maintaining compatibility. It also assures that your workflow should still work.
- * - Using the master branch of an action may be convenient, but if someone releases a new major version with a breaking change, your workflow could break.
- * Some actions require inputs that you must set using the with keyword. Review the action's README file to determine the inputs required.
- * Actions are either JavaScript files or Docker containers. If the action you're using is a Docker container you must run the job in a Linux virtual environment. For more details, see https://help.github.com/en/articles/virtual-environments-for-github-actions.
- */
-uses?: string
-/**
- * Runs command-line programs using the operating system's shell. If you do not provide a name, the step name will default to the text specified in the run command.
- * Commands run using non-login shells by default. You can choose a different shell and customize the shell used to run commands. For more information, see https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#using-a-specific-shell.
- * Each run keyword represents a new process and shell in the virtual environment. When you provide multi-line commands, each line runs in the same shell.
- */
-run?: string
-"working-directory"?: WorkingDirectory
-shell?: Shell
-with?: Env
-/**
- * To set custom environment variables, you need to specify the variables in the workflow file. You can define environment variables for a step, job, or entire workflow using the jobs.<job_id>.steps[*].env, jobs.<job_id>.env, and env keywords. For more information, see https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idstepsenv
- */
-env?: ({
-[k: string]: (string | number | boolean) | undefined
-} | StringContainingExpressionSyntax)
-/**
- * Prevents a job from failing when a step fails. Set to true to allow a job to pass when this step fails.
- */
-"continue-on-error"?: (boolean | ExpressionSyntax)
-/**
- * The maximum number of minutes to run the step before killing the process.
- */
-"timeout-minutes"?: (number | ExpressionSyntax)
-}))[]]
+steps?: [Step, ...(Step)[]]
 /**
  * The maximum number of minutes to let a workflow run before GitHub automatically cancels it. Default: 360
  */
@@ -885,6 +887,7 @@ deployments?: PermissionsLevel
 discussions?: PermissionsLevel
 "id-token"?: PermissionsLevel
 issues?: PermissionsLevel
+models?: ("read" | "none")
 packages?: PermissionsLevel
 pages?: PermissionsLevel
 "pull-requests"?: PermissionsLevel

@@ -55,7 +55,6 @@ export const makeSingleRepoPackageEntryProxyFromWorkspace = (
   }) as unknown as ConduPackageEntry<"package">;
 };
 
-
 export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
   implements Omit<IPackageEntry, "writeProjectManifest">
 {

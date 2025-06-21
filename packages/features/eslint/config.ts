@@ -1,6 +1,6 @@
 import type { Linter, ESLint } from "eslint";
 import js from "@eslint/js";
-import importPlugin from "eslint-plugin-import-x";
+import { flatConfigs as importPluginFlatConfigs } from "eslint-plugin-import-x";
 import globals from "globals";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import * as typescriptParser from "@typescript-eslint/parser";
@@ -58,7 +58,7 @@ export const getConfigs = (
     ...ignores,
   ];
 
-  const importXPlugin = importPlugin.flatConfigs.recommended.plugins?.[
+  const importXPlugin = importPluginFlatConfigs.recommended.plugins?.[
     "import-x"
   ] as ESLint.Plugin;
 
@@ -76,8 +76,8 @@ export const getConfigs = (
     },
     js.configs.recommended,
     {
-      ...importPlugin.flatConfigs.recommended,
-      ...importPlugin.flatConfigs.typescript,
+      ...importPluginFlatConfigs.recommended,
+      ...importPluginFlatConfigs.typescript,
       // TODO: use files from config
       files: [`**/*.{${executableExtensionsList}}`],
       plugins: {
@@ -113,8 +113,8 @@ export const getConfigs = (
       rules: {
         "no-unused-vars": "off",
         "no-redeclare": "off",
-        ...importPlugin.flatConfigs.recommended.rules,
-        ...importPlugin.flatConfigs.typescript.rules,
+        ...importPluginFlatConfigs.recommended.rules,
+        ...importPluginFlatConfigs.typescript.rules,
         // turn on errors for missing imports
         "import-x/no-unresolved": [
           "error",
@@ -158,8 +158,8 @@ export const getConfigs = (
         ...defaultRules,
       },
       settings: {
-        ...importPlugin.flatConfigs.recommended.settings,
-        ...importPlugin.flatConfigs.typescript.settings,
+        ...importPluginFlatConfigs.recommended.settings,
+        ...importPluginFlatConfigs.typescript.settings,
         // "import-x/parsers": {
         //   "@typescript-eslint/parser": [".ts", ".tsx"],
         // },

@@ -6,7 +6,7 @@ import path from "node:path";
 import type { TSESTree } from "@typescript-eslint/utils";
 import { minimatch } from "minimatch";
 
-import type { RuleContext } from "eslint-plugin-import-x/types.js";
+import type { RuleContext } from "eslint-plugin-import-x/types";
 import {
   createRule,
   moduleVisitor,
@@ -14,7 +14,7 @@ import {
   pkgUp,
   importType,
   getFilePackageName,
-} from "eslint-plugin-import-x/utils/index.js";
+} from "eslint-plugin-import-x/utils/index";
 import {
   type SemVerPrefix,
   makeLazyAutofix,

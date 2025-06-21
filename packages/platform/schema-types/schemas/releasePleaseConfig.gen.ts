@@ -164,6 +164,7 @@ versioning?: unknown
 "changelog-sections"?: unknown
 "release-as"?: unknown
 "skip-github-release"?: unknown
+"skip-changelog"?: unknown
 draft?: unknown
 prerelease?: unknown
 "draft-pull-request"?: unknown
@@ -179,7 +180,9 @@ label?: unknown
 "pull-request-header"?: unknown
 "pull-request-footer"?: unknown
 "separate-pull-requests"?: unknown
+"always-update"?: unknown
 "tag-separator"?: unknown
+"date-format"?: unknown
 "extra-files"?: unknown
 "version-file"?: unknown
 "snapshot-label"?: unknown
@@ -236,6 +239,10 @@ hidden?: boolean
  */
 "skip-github-release"?: boolean
 /**
+ * Skip generating a changelog for this package. Defaults to `false`.
+ */
+"skip-changelog"?: boolean
+/**
  * Create the GitHub release in draft mode. Defaults to `false`.
  */
 draft?: boolean
@@ -288,9 +295,17 @@ prerelease?: boolean
  */
 "separate-pull-requests"?: boolean
 /**
+ * Always update the pull request with the latest changes. Defaults to `false`.
+ */
+"always-update"?: boolean
+/**
  * Customize the separator between the component and version in the GitHub tag.
  */
 "tag-separator"?: string
+/**
+ * Date format given as a strftime expression for the generic strategy.
+ */
+"date-format"?: string
 /**
  * Specify extra generic files to replace versions.
  */

@@ -79,8 +79,17 @@ async function updateSchemas() {
         // there's a bug in tsconfig schema, correct it:
         `(FilesDefinition | ExcludeDefinition | IncludeDefinition | ReferencesDefinition)`,
         `(FilesDefinition & ExcludeDefinition & IncludeDefinition & ReferencesDefinition)`,
+      )
+      // fix for circular ref in githubWorkflow:
+      .replace(
+        `export type Configuration = (string | number | boolean | {
+[k: string]: Configuration | undefined
+} | Configuration | undefined[]) | undefined`,
+        `export type Configuration = string | number | boolean | ConfigurationObject | Configuration[] | undefined;
+export interface ConfigurationObject {
+  [key: string]: Configuration;
+}`,
       );
-
     ts += `\nexport type { ${topLevelSchemaNameSource} as default };\n`;
 
     promises.push(

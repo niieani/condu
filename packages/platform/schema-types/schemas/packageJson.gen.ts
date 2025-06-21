@@ -12,7 +12,7 @@ export type PackageJson = ({
  */
 name?: string
 /**
- * Version must be parseable by node-semver, which is bundled with npm as a dependency.
+ * Version must be parsable by node-semver, which is bundled with npm as a dependency.
  */
 version?: string
 /**
@@ -86,6 +86,18 @@ exports?: ((string | null) | {
  */
 [k: string]: ((PackageExportsEntry | PackageExportsFallback)) | undefined
 } | PackageExportsEntryObject1 | PackageExportsFallback1)
+/**
+ * The "imports" field is used to create private mappings that only apply to import specifiers from within the package itself.
+ */
+imports?: {
+/**
+ * The module path that is resolved when this environment matches the property name.
+ * 
+ * This interface was referenced by `undefined`'s JSON-Schema definition
+ * via the `patternProperty` "^#.+$".
+ */
+[k: string]: ((PackageImportsEntry | PackageImportsFallback)) | undefined
+}
 bin?: (string | {
 [k: string]: string | undefined
 })
@@ -166,7 +178,7 @@ lint?: string
  */
 prepublish?: string
 /**
- * Run both BEFORE the package is packed and published, and on local npm install without any arguments. This is run AFTER prepublish, but BEFORE prepublishOnly.
+ * Runs BEFORE the package is packed, i.e. during "npm publish" and "npm pack", and on local "npm install" without any arguments. This is run AFTER "prepublish", but BEFORE "prepublishOnly".
  */
 prepare?: string
 /**
@@ -229,21 +241,10 @@ config?: {
 [k: string]: unknown | undefined
 }
 dependencies?: Dependency
-devDependencies?: Dependency
-optionalDependencies?: Dependency
-peerDependencies?: Dependency
-/**
- * When a user installs your package, warnings are emitted if packages specified in "peerDependencies" are not already installed. The "peerDependenciesMeta" field serves to provide more information on how your peer dependencies are utilized. Most commonly, it allows peer dependencies to be marked as optional. Metadata for this field is specified with a simple hash of the package name to a metadata object.
- */
-peerDependenciesMeta?: {
-[k: string]: {
-/**
- * Specifies that this peer dependency is optional and should not be installed automatically.
- */
-optional?: boolean
-[k: string]: unknown | undefined
-} | undefined
-}
+devDependencies?: DevDependency
+optionalDependencies?: OptionalDependency
+peerDependencies?: PeerDependency
+peerDependenciesMeta?: PeerDependencyMeta
 /**
  * Array of package names that will be bundled when publishing the package.
  */
@@ -296,6 +297,32 @@ os?: string[]
  */
 cpu?: string[]
 /**
+ * Define the runtime and package manager for developing the current project.
+ */
+devEngines?: {
+/**
+ * Specifies which operating systems are supported for development
+ */
+os?: (DevEngineDependency | DevEngineDependency[])
+/**
+ * Specifies which CPU architectures are supported for development
+ */
+cpu?: (DevEngineDependency | DevEngineDependency[])
+/**
+ * Specifies which C standard libraries are supported for development
+ */
+libc?: (DevEngineDependency | DevEngineDependency[])
+/**
+ * Specifies which JavaScript runtimes (like Node.js, Deno, Bun) are supported for development. Values should use WinterCG Runtime Keys (see https://runtime-keys.proposal.wintercg.org/)
+ */
+runtime?: (DevEngineDependency | DevEngineDependency[])
+/**
+ * Specifies which package managers are supported for development
+ */
+packageManager?: (DevEngineDependency | DevEngineDependency[])
+[k: string]: unknown | undefined
+}
+/**
  * DEPRECATED: This option used to trigger an npm warning, but it will no longer warn. It is purely there for informational purposes. It is now recommended that you install any binaries as local devDependencies wherever possible.
  */
 preferGlobal?: boolean
@@ -307,6 +334,7 @@ publishConfig?: {
 access?: ("public" | "restricted")
 tag?: string
 registry?: string
+provenance?: boolean
 [k: string]: unknown | undefined
 }
 dist?: {
@@ -349,6 +377,151 @@ ava?: AVAConfigSchema
 release?: SemanticReleaseSchema
 jscpd?: HttpsJsonSchemastoreOrgJscpdJson
 /**
+ * Defines pnpm specific configuration.
+ */
+pnpm?: {
+/**
+ * Used to override any dependency in the dependency graph.
+ */
+overrides?: {
+[k: string]: unknown | undefined
+}
+/**
+ * Used to extend the existing package definitions with additional information.
+ */
+packageExtensions?: {
+/**
+ * This interface was referenced by `undefined`'s JSON-Schema definition
+ * via the `patternProperty` "^.+$".
+ */
+[k: string]: {
+dependencies?: Dependency
+optionalDependencies?: OptionalDependency
+peerDependencies?: PeerDependency
+peerDependenciesMeta?: PeerDependencyMeta
+}
+}
+peerDependencyRules?: {
+/**
+ * pnpm will not print warnings about missing peer dependencies from this list.
+ */
+ignoreMissing?: string[]
+/**
+ * Unmet peer dependency warnings will not be printed for peer dependencies of the specified range.
+ */
+allowedVersions?: {
+[k: string]: unknown | undefined
+}
+/**
+ * Any peer dependency matching the pattern will be resolved from any version, regardless of the range specified in "peerDependencies".
+ */
+allowAny?: string[]
+}
+/**
+ * A list of dependencies to run builds for.
+ */
+neverBuiltDependencies?: string[]
+/**
+ * A list of package names that are allowed to be executed during installation.
+ */
+onlyBuiltDependencies?: string[]
+/**
+ * Specifies a JSON file that lists the only packages permitted to run installation scripts during the pnpm install process.
+ */
+onlyBuiltDependenciesFile?: string
+/**
+ * A list of package names that should not be built during installation.
+ */
+ignoredBuiltDependencies?: string[]
+/**
+ * A list of deprecated versions that the warnings are suppressed.
+ */
+allowedDeprecatedVersions?: {
+[k: string]: unknown | undefined
+}
+/**
+ * A list of dependencies that are patched.
+ */
+patchedDependencies?: {
+[k: string]: unknown | undefined
+}
+/**
+ * When true, installation won't fail if some of the patches from the "patchedDependencies" field were not applied.
+ */
+allowNonAppliedPatches?: boolean
+/**
+ * When true, installation won't fail if some of the patches from the "patchedDependencies" field were not applied.
+ */
+allowUnusedPatches?: boolean
+updateConfig?: {
+/**
+ * A list of packages that should be ignored when running "pnpm outdated" or "pnpm update --latest".
+ */
+ignoreDependencies?: string[]
+}
+/**
+ * Configurational dependencies are installed before all the other types of dependencies (before 'dependencies', 'devDependencies', 'optionalDependencies').
+ */
+configDependencies?: {
+[k: string]: unknown | undefined
+}
+auditConfig?: {
+/**
+ * A list of CVE IDs that will be ignored by "pnpm audit".
+ */
+ignoreCves?: string[]
+/**
+ * A list of GHSA Codes that will be ignored by "pnpm audit".
+ */
+ignoreGhsas?: string[]
+}
+/**
+ * A list of scripts that must exist in each project.
+ */
+requiredScripts?: string[]
+/**
+ * Specifies architectures for which you'd like to install optional dependencies, even if they don't match the architecture of the system running the install.
+ */
+supportedArchitectures?: {
+os?: string[]
+cpu?: string[]
+libc?: string[]
+}
+/**
+ * A list of optional dependencies that the install should be skipped.
+ */
+ignoredOptionalDependencies?: string[]
+executionEnv?: {
+/**
+ * Specifies which exact Node.js version should be used for the project's runtime.
+ */
+nodeVersion?: string
+}
+}
+/**
+ * Defines the StackBlitz configuration for the project.
+ */
+stackblitz?: {
+/**
+ * StackBlitz automatically installs npm dependencies when opening a project.
+ */
+installDependencies?: boolean
+/**
+ * A terminal command to be executed when opening the project, after installing npm dependencies.
+ */
+startCommand?: (string | boolean)
+/**
+ * The compileTrigger option controls how file changes in the editor are written to the WebContainers in-memory filesystem. 
+ */
+compileTrigger?: ("auto" | "keystroke" | "save")
+/**
+ * A map of default environment variables that will be set in each top-level shell process.
+ */
+env?: {
+[k: string]: unknown | undefined
+}
+}
+/**
  * Any property starting with _ is valid.
  * 
  * This interface was referenced by `undefined`'s JSON-Schema definition
@@ -385,6 +558,15 @@ export type PackageExportsFallback = PackageExportsEntry[]
  * Used to allow fallbacks in case this environment doesn't support the preceding entries.
  */
 export type PackageExportsFallback1 = PackageExportsEntry[]
+export type PackageImportsEntry = (PackageImportsEntryPath | PackageImportsEntryObject)
+/**
+ * The module path that is resolved when this specifier is imported. Set to `null` to disallow importing this module.
+ */
+export type PackageImportsEntryPath = (string | null)
+/**
+ * Used to allow fallbacks in case this environment doesn't support the preceding entries.
+ */
+export type PackageImportsFallback = PackageImportsEntry[]
 /**
  * URL to a website with details about how to fund the package.
  */
@@ -464,19 +646,11 @@ export type SchemaForPrettierrc = ((OptionsDefinition & OverridesDefinition) | s
  * Your configuration can extend an existing configuration(s) (whether your own or a third-party config)
  */
 export type SimpleStringOrArrayStringRule = ((string | SimpleArrayStringRule) & (((string | SimpleArrayStringRule) & string) | ((string | SimpleArrayStringRule) & unknown[])))
-/**
- * @minItems 1
- * 
- * This interface was referenced by `undefined`'s JSON-Schema definition
- * via the `patternProperty` ".*".
- */
-export type SimpleArrayStringRule = [string, ...(string)[]]
+export type SimpleArrayStringRule = string[]
 /**
  * Plugins are rules or sets of rules built by the community that support methodologies, toolsets, non-standard CSS features, or very specific use cases
- * 
- * @minItems 1
  */
-export type SimpleArrayStringRule1 = [string, ...(string)[]]
+export type SimpleArrayStringRule1 = string[]
 export type AllRules = (AtRule & Block & Color & Comment & CustomMedia & CustomProperty & Declaration & DeclarationBlock & Font & Function & GeneralSheet & KeyframeDeclaration & Length & Lightness & MediaFeature & MediaQuery & MediaQueryList & Number & Property & RootRule & Rule & Selector & SelectorList & ShorthandProperty & String & StylelintDisableComment & Time & Unit & Value & ValueList)
 /**
  * Specify a blacklist of disallowed at-rules
@@ -493,7 +667,7 @@ export type AlwaysMultiLineRule = ((null | ("always" | "always-multi-line" | [])
 /**
  * Disallow vendor prefixes for at-rules
  */
-export type BooleanRule = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Specify a whitelist of allowed at-rules
  */
@@ -517,11 +691,11 @@ export type NewlineSpaceRule1 = ((null | ("always" | "never" | "always-single-li
 /**
  * Disallow empty blocks
  */
-export type BooleanRule1 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule1 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow single-line blocks
  */
-export type BooleanRule2 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule2 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Require a newline after the opening brace of blocks
  */
@@ -541,15 +715,15 @@ export type LowerUpperRule1 = ((null | ("lower" | "upper" | []) | [((("lower" | 
 /**
  * Disallow hex colors
  */
-export type BooleanRule3 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule3 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow invalid hex colors
  */
-export type BooleanRule4 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule4 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow empty comments
  */
-export type BooleanRule5 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule5 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Require or disallow whitespace on the inside of comment markers
  */
@@ -561,15 +735,15 @@ export type ArrayStringRule2 = (((null | string) | [((([] | {}) | SimpleArrayStr
 /**
  * Specify a pattern for custom media query names
  */
-export type StringRule = (((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))]) & ((null & ((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))])) | (((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))]) & string) | (((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))]) & unknown[])))
+export type StringRule = (((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))]) & ((null & ((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))])) | (((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))]) & string) | (((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))]) & unknown[])))
 /**
  * Disallow custom properties outside of `:root` rules
  */
-export type BooleanRule6 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule6 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Specify a pattern for custom properties
  */
-export type StringRule1 = (((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))]) & ((null & ((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))])) | (((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))]) & string) | (((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))]) & unknown[])))
+export type StringRule1 = (((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))]) & ((null & ((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))])) | (((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))]) & string) | (((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))]) & unknown[])))
 /**
  * Require a single space or disallow whitespace after the bang of declarations
  */
@@ -589,63 +763,16 @@ export type AlwaysNeverRule3 = ((null | ("always" | "never" | []) | [((("always"
 /**
  * Disallow `!important` within declarations
  */
-export type BooleanRule7 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
-/**
- * Specify a blacklist of disallowed property and unit pairs within declarations
- */
-export type ObjectRule = ((null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule]) & ((null & (null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule])) | (null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule]) | ((null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule]) & unknown[])))
-/**
- * Specify a whitelist of allowed property and unit pairs within declarations
- */
-export type ObjectRule1 = ((null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule]) & ((null & (null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule])) | (null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule]) | ((null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule]) & unknown[])))
-/**
- * Specify a blacklist of disallowed property and value pairs within declarations
- */
-export type ObjectRule2 = ((null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule]) & ((null & (null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule])) | (null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule]) | ((null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule]) & unknown[])))
-/**
- * Specify a whitelist of allowed property and value pairs within declarations
- */
-export type ObjectRule3 = ((null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule]) & ((null & (null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule])) | (null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule]) | ((null | {
-[k: string]: (SimpleArrayStringRule) | undefined
-} | [CoreRule, CoreRule]) & unknown[])))
+export type BooleanRule7 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
+export type SimpleStringOrArrayStringRule1 = ((string | SimpleArrayStringRule) | undefined & (((string | SimpleArrayStringRule) & string) | ((string | SimpleArrayStringRule) & unknown[])) | undefined) | undefined
 /**
  * Disallow property values that are ignored due to another property value in the same rule
  */
-export type BooleanRule8 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule8 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow shorthand properties that override related longhand properties
  */
-export type BooleanRule9 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule9 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Require a newline or disallow whitespace after the semicolons of declaration blocks
  */
@@ -677,7 +804,7 @@ export type ArrayStringRule3 = (((null | string) | [((([] | {}) | SimpleArrayStr
 /**
  * Disallow an unspaced operator within `calc` functions
  */
-export type BooleanRule10 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule10 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Require a newline or disallow whitespace after the commas of functions
  */
@@ -697,7 +824,7 @@ export type SpaceRule3 = ((null | ("always" | "never" | "always-single-line" | "
 /**
  * Disallow direction values in `linear-gradientstring` calls that are not valid according to the standard syntax
  */
-export type BooleanRule11 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule11 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Limit the number of adjacent empty lines within functions
  */
@@ -717,7 +844,7 @@ export type AlwaysNeverRule5 = ((null | ("always" | "never" | []) | [((("always"
 /**
  * Disallow scheme-relative urls
  */
-export type BooleanRule12 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule12 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Require or disallow quotes for urls
  */
@@ -741,31 +868,31 @@ export type IntegerRule2 = (((null | number) | [(({} | CoreRule) & ((({} | CoreR
 /**
  * Disallow selectors of lower specificity from coming after overriding selectors of higher specificity
  */
-export type BooleanRule13 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule13 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow duplicate selectors within a stylesheet
  */
-export type BooleanRule14 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule14 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow empty sources
  */
-export type BooleanRule15 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule15 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow extra semicolons
  */
-export type BooleanRule16 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule16 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow double-slash comments `(//...)` which are not supported by CSS and could lead to unexpected results
  */
-export type BooleanRule17 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule17 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow missing end-of-source newlines
  */
-export type BooleanRule18 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule18 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow animation names that do not correspond to a `@keyframes` declaration
  */
-export type BooleanRule19 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule19 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Require or disallow Unicode BOM
  */
@@ -773,11 +900,11 @@ export type AlwaysNeverRule8 = ((null | ("always" | "never" | []) | [((("always"
 /**
  * Disallow !important within keyframe declarations
  */
-export type BooleanRule20 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule20 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow units for zero lengths
  */
-export type BooleanRule21 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule21 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Require a single space or disallow whitespace after the colon in media features
  */
@@ -793,11 +920,11 @@ export type LowerUpperRule2 = ((null | ("lower" | "upper" | []) | [((("lower" | 
 /**
  * Disallow vendor prefixes for media feature names
  */
-export type BooleanRule22 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule22 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow missing punctuation for non-boolean media features
  */
-export type BooleanRule23 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule23 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Require a single space or disallow whitespace on the inside of the parentheses within media features
  */
@@ -837,7 +964,7 @@ export type IntegerRule3 = (((null | number) | [(({} | CoreRule) & ((({} | CoreR
 /**
  * Disallow trailing zeros in numbers
  */
-export type BooleanRule24 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule24 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Specify a blacklist of disallowed properties
  */
@@ -849,7 +976,7 @@ export type LowerUpperRule3 = ((null | ("lower" | "upper" | []) | [((("lower" | 
 /**
  * Disallow vendor prefixes for properties
  */
-export type BooleanRule25 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule25 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Specify a whitelist of allowed properties
  */
@@ -857,7 +984,7 @@ export type ArrayStringRule7 = (((null | string) | [((([] | {}) | SimpleArrayStr
 /**
  * Disallow standard properties inside `:root` rules
  */
-export type BooleanRule26 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule26 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Require a single space or disallow whitespace on the inside of the brackets within attribute selector
  */
@@ -893,11 +1020,11 @@ export type AlwaysNeverRule20 = ((null | ("always" | "never" | []) | [((("always
 /**
  * Disallow non-space characters for descendant combinators of selectors
  */
-export type BooleanRule27 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule27 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Specify a pattern for id selectors
  */
-export type StringRule2 = (((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))]) & ((null & ((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))])) | (((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))]) & string) | (((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))]) & unknown[])))
+export type StringRule2 = (((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))]) & ((null & ((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))])) | (((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))]) & string) | (((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))]) & unknown[])))
 /**
  * Limit the number of compound selectors in a selector
  */
@@ -905,31 +1032,31 @@ export type IntegerRule4 = (((null | number) | [(({} | CoreRule) & ((({} | CoreR
 /**
  * Limit the specificity of selectors
  */
-export type StringRule3 = (((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))]) & ((null & ((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))])) | (((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))]) & string) | (((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))]) & unknown[])))
+export type StringRule3 = (((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))]) & ((null & ((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))])) | (((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))]) & string) | (((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))]) & unknown[])))
 /**
  * Specify a pattern for the selectors of rules nested within rules
  */
-export type StringRule4 = (((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))]) & ((null & ((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))])) | (((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))]) & string) | (((null | string) | [(({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule))), (({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)) & ({} | CoreRule) & ((({} | CoreRule) & string) | ({} | CoreRule)))]) & unknown[])))
+export type StringRule4 = (((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))]) & ((null & ((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))])) | (((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))]) & string) | (((null | string) | [((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule))), ((string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)) & (string | CoreRule) & (((string | CoreRule) & string) | (string | CoreRule)))]) & unknown[])))
 /**
  * Disallow attribute selectors
  */
-export type BooleanRule28 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule28 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow combinators in selectors
  */
-export type BooleanRule29 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule29 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow id selectors
  */
-export type BooleanRule30 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule30 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow the universal selector
  */
-export type BooleanRule31 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule31 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow vendor prefixes for selectors
  */
-export type BooleanRule32 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule32 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Specify lowercase or uppercase for pseudo-class selectors
  */
@@ -953,7 +1080,7 @@ export type SingleDoubleRule = ((null | ("single" | "double" | []) | [((("single
 /**
  * Disallow the composition of :root in selectors
  */
-export type BooleanRule33 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule33 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Specify lowercase or uppercase for type selectors
  */
@@ -981,11 +1108,11 @@ export type SpaceRule8 = ((null | ("always" | "never" | "always-single-line" | "
 /**
  * Disallow redundant values in shorthand properties
  */
-export type BooleanRule34 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule34 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Disallow (unescaped) newlines in strings
  */
-export type BooleanRule35 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule35 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Specify single or double quotes around strings
  */
@@ -993,7 +1120,7 @@ export type SingleDoubleRule1 = ((null | ("single" | "double" | []) | [((("singl
 /**
  * Disallow `animation` and `transition` less than or equal to 100ms
  */
-export type BooleanRule36 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule36 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Specify a blacklist of disallowed units
  */
@@ -1009,7 +1136,7 @@ export type UnitRule1 = ((null | ("em" | "ex" | "px" | "%" | "rem" | "vw" | "vh"
 /**
  * Disallow vendor prefixes for values
  */
-export type BooleanRule37 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule37 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Require a newline or disallow whitespace after the commas of value lists
  */
@@ -1033,19 +1160,19 @@ export type IntegerRule6 = (((null | number) | [(({} | CoreRule) & ((({} | CoreR
 /**
  * Provide a glob or array of globs to ignore specific files
  */
-export type SimpleStringOrArrayStringRule1 = ((string | SimpleArrayStringRule) & (((string | SimpleArrayStringRule) & string) | ((string | SimpleArrayStringRule) & unknown[])))
+export type SimpleStringOrArrayStringRule2 = ((string | SimpleArrayStringRule) & (((string | SimpleArrayStringRule) & string) | ((string | SimpleArrayStringRule) & unknown[])))
 /**
  * Report stylelint-disable comments without a description.
  */
-export type BooleanRule38 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule38 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Report stylelint-disable comments that don't match rules that are specified in the configuration object.
  */
-export type BooleanRule39 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule39 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * Report stylelint-disable comments that don't actually match any lints that need to be disabled
  */
-export type BooleanRule40 = ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & ((null & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | (boolean & (null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))])) | ((null | (true | []) | [(((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule))), (((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)) & ((true | {}) | CoreRule) & ((((true | {}) | CoreRule) & boolean) | ((true | {}) | CoreRule)))]) & unknown[])))
+export type BooleanRule40 = ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & ((null & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | (boolean & (null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))])) | ((null | boolean | [((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule))), ((boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)) & (boolean | CoreRule) & (((boolean | CoreRule) & boolean) | (boolean | CoreRule)))]) & unknown[])))
 /**
  * An array of glob patterns to select test files. Files with an underscore prefix are ignored. By default only selects files with `cjs`, `mjs` & `js` extensions, even if the pattern matches other files. Specify `extensions` to allow other file extensions
  */
@@ -1085,6 +1212,10 @@ require?: (PackageExportsEntry | PackageExportsFallback)
  */
 import?: (PackageExportsEntry | PackageExportsFallback)
 /**
+ * The same as `import`, but can be used with require(esm) in Node 20+. This requires the files to not use any top-level awaits.
+ */
+"module-sync"?: (PackageExportsEntry | PackageExportsFallback)
+/**
  * The module path that is resolved when this environment is Node.js.
  */
 node?: (PackageExportsEntry | PackageExportsFallback)
@@ -1093,22 +1224,12 @@ node?: (PackageExportsEntry | PackageExportsFallback)
  */
 default?: (PackageExportsEntry | PackageExportsFallback)
 /**
- * The module path that is resolved for TypeScript types when this specifier is imported. Should be listed before other conditions.
+ * The module path that is resolved for TypeScript types when this specifier is imported. Should be listed before other conditions. Additionally, versioned "types" condition in the form "types@{selector}" are supported.
  */
 types?: (PackageExportsEntry | PackageExportsFallback)
-/**
- * The module path that is resolved when this environment matches the property name.
- * 
- * This interface was referenced by `PackageExportsEntryObject`'s JSON-Schema definition
- * via the `patternProperty` "^(?![\.0-9]).".
- * 
- * This interface was referenced by `PackageExportsEntryObject1`'s JSON-Schema definition
- * via the `patternProperty` "^(?![\.0-9]).".
- */
-[k: string]: ((PackageExportsEntry | PackageExportsFallback)) | undefined
 }
 /**
- * Used to specify conditional exports, note that Conditional exports are unsupported in older environments, so it's recommended to use the fallback array option if support for those environments is a concern.
+ * The module path that is resolved when the module specifier matches "name", shadows the "main" field.
  */
 export interface PackageExportsEntryObject1 {
 /**
@@ -1120,6 +1241,10 @@ require?: (PackageExportsEntry | PackageExportsFallback)
  */
 import?: (PackageExportsEntry | PackageExportsFallback)
 /**
+ * The same as `import`, but can be used with require(esm) in Node 20+. This requires the files to not use any top-level awaits.
+ */
+"module-sync"?: (PackageExportsEntry | PackageExportsFallback)
+/**
  * The module path that is resolved when this environment is Node.js.
  */
 node?: (PackageExportsEntry | PackageExportsFallback)
@@ -1128,19 +1253,34 @@ node?: (PackageExportsEntry | PackageExportsFallback)
  */
 default?: (PackageExportsEntry | PackageExportsFallback)
 /**
- * The module path that is resolved for TypeScript types when this specifier is imported. Should be listed before other conditions.
+ * The module path that is resolved for TypeScript types when this specifier is imported. Should be listed before other conditions. Additionally, versioned "types" condition in the form "types@{selector}" are supported.
  */
 types?: (PackageExportsEntry | PackageExportsFallback)
+}
 /**
- * The module path that is resolved when this environment matches the property name.
- * 
- * This interface was referenced by `PackageExportsEntryObject`'s JSON-Schema definition
- * via the `patternProperty` "^(?![\.0-9]).".
- * 
- * This interface was referenced by `PackageExportsEntryObject1`'s JSON-Schema definition
- * via the `patternProperty` "^(?![\.0-9]).".
+ * Used to specify conditional exports, note that Conditional exports are unsupported in older environments, so it's recommended to use the fallback array option if support for those environments is a concern.
  */
-[k: string]: ((PackageExportsEntry | PackageExportsFallback)) | undefined
+export interface PackageImportsEntryObject {
+/**
+ * The module path that is resolved when this specifier is imported as a CommonJS module using the `require(...)` function.
+ */
+require?: (PackageImportsEntry | PackageImportsFallback)
+/**
+ * The module path that is resolved when this specifier is imported as an ECMAScript module using an `import` declaration or the dynamic `import(...)` function.
+ */
+import?: (PackageImportsEntry | PackageImportsFallback)
+/**
+ * The module path that is resolved when this environment is Node.js.
+ */
+node?: (PackageImportsEntry | PackageImportsFallback)
+/**
+ * The module path that is resolved when no other export type matches.
+ */
+default?: (PackageImportsEntry | PackageImportsFallback)
+/**
+ * The module path that is resolved for TypeScript types when this specifier is imported. Should be listed before other conditions. Additionally, versioned "types" condition in the form "types@{selector}" are supported.
+ */
+types?: (PackageImportsEntry | PackageImportsFallback)
 }
 /**
  * Used to inform about ways to help fund development of the package.
@@ -1157,6 +1297,54 @@ type?: string
  */
 export interface Dependency {
 [k: string]: string | undefined
+}
+/**
+ * Specifies dependencies that are required for the development and testing of the project. These dependencies are not needed in the production environment.
+ */
+export interface DevDependency {
+[k: string]: string | undefined
+}
+/**
+ * Specifies dependencies that are optional for your project. These dependencies are attempted to be installed during the npm install process, but if they fail to install, the installation process will not fail.
+ */
+export interface OptionalDependency {
+[k: string]: string | undefined
+}
+/**
+ * Specifies dependencies that are required by the package but are expected to be provided by the consumer of the package.
+ */
+export interface PeerDependency {
+[k: string]: string | undefined
+}
+/**
+ * When a user installs your package, warnings are emitted if packages specified in "peerDependencies" are not already installed. The "peerDependenciesMeta" field serves to provide more information on how your peer dependencies are utilized. Most commonly, it allows peer dependencies to be marked as optional. Metadata for this field is specified with a simple hash of the package name to a metadata object.
+ */
+export interface PeerDependencyMeta {
+[k: string]: {
+/**
+ * Specifies that this peer dependency is optional and should not be installed automatically.
+ */
+optional?: boolean
+[k: string]: unknown | undefined
+} | undefined
+}
+/**
+ * Specifies requirements for development environment components such as operating systems, runtimes, or package managers. Used to ensure consistent development environments across the team.
+ */
+export interface DevEngineDependency {
+/**
+ * The name of the dependency, with allowed values depending on the parent field
+ */
+name: string
+/**
+ * The version range for the dependency
+ */
+version?: string
+/**
+ * What action to take if validation fails
+ */
+onFail?: ("ignore" | "warn" | "error" | "download")
+[k: string]: unknown | undefined
 }
 export interface JSONSchemaForESLintConfigurationFiles {
 ecmaFeatures?: EcmaFeatures
@@ -8059,9 +8247,7 @@ allowNever?: boolean
  * Enforce consistent awaiting of returned promises
  * https://typescript-eslint.io/rules/return-await
  */
-"@typescript-eslint/return-await"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), {
-[k: string]: unknown | undefined
-}])
+"@typescript-eslint/return-await"?: (number | ("off" | "warn" | "error") | [(number | ("off" | "warn" | "error")), ("never" | "error-handling-correctness-only" | "in-try-catch" | "always")])
 /**
  * Require or disallow semicolons instead of ASI
  * https://typescript-eslint.io/rules/semi
@@ -8250,6 +8436,10 @@ embeddedLanguageFormatting?: ("auto" | "off")
  */
 endOfLine?: ("lf" | "crlf" | "cr" | "auto")
 /**
+ * Where to print operators when binary expressions wrap lines.
+ */
+experimentalOperatorPosition?: ("start" | "end")
+/**
  * Use curious ternaries, with the question mark after the condition.
  */
 experimentalTernaries?: boolean
@@ -8269,6 +8459,10 @@ insertPragma?: boolean
  * Use single quotes in JSX.
  */
 jsxSingleQuote?: boolean
+/**
+ * How to wrap object literals.
+ */
+objectWrap?: ("preserve" | "collapse")
 /**
  * Which parser to use.
  */
@@ -8380,6 +8574,10 @@ embeddedLanguageFormatting?: ("auto" | "off")
  */
 endOfLine?: ("lf" | "crlf" | "cr" | "auto")
 /**
+ * Where to print operators when binary expressions wrap lines.
+ */
+experimentalOperatorPosition?: ("start" | "end")
+/**
  * Use curious ternaries, with the question mark after the condition.
  */
 experimentalTernaries?: boolean
@@ -8399,6 +8597,10 @@ insertPragma?: boolean
  * Use single quotes in JSX.
  */
 jsxSingleQuote?: boolean
+/**
+ * How to wrap object literals.
+ */
+objectWrap?: ("preserve" | "collapse")
 /**
  * Which parser to use.
  */
@@ -8490,7 +8692,7 @@ processors?: (string | []|[string, ...({
  * Ignore stylelint-disable (e.g. /* stylelint-disable block-no-empty * /) comments.
  */
 ignoreDisables?: boolean
-ignoreFiles?: SimpleStringOrArrayStringRule1
+ignoreFiles?: SimpleStringOrArrayStringRule2
 /**
  * The default severity level for all rules that do not have a severity specified in their secondary options
  */
@@ -8651,14 +8853,42 @@ export interface Declaration {
  */
 "declaration-empty-line-before"?: ((null | ("always" | "never" | []) | [((("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)) & (("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))), ((("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)) & (("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)))]) & ((null & (null | ("always" | "never" | []) | [((("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)) & (("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))), ((("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)) & (("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)))])) | ((null | ("always" | "never" | []) | [((("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)) & (("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))), ((("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)) & (("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)))]) & string) | ((null | ("always" | "never" | []) | [((("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)) & (("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule))), ((("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)) & (("always" | "never" | {}) | CoreRule) & (((("always" | "never" | {}) | CoreRule) & string) | (("always" | "never" | {}) | CoreRule)))]) & unknown[])))
 "declaration-no-important"?: BooleanRule7
-"declaration-property-unit-blacklist"?: ObjectRule
-"declaration-property-unit-whitelist"?: ObjectRule1
-"declaration-property-value-blacklist"?: ObjectRule2
+/**
+ * Specify a blacklist of disallowed property and unit pairs within declarations
+ */
+"declaration-property-unit-blacklist"?: (null | {
+[k: string]: SimpleStringOrArrayStringRule1 | undefined
+} | [{
+[k: string]: SimpleStringOrArrayStringRule1 | undefined
+}, CoreRule])
+/**
+ * Specify a whitelist of allowed property and unit pairs within declarations
+ */
+"declaration-property-unit-whitelist"?: (null | {
+[k: string]: SimpleStringOrArrayStringRule1 | undefined
+} | [{
+[k: string]: SimpleStringOrArrayStringRule1 | undefined
+}, CoreRule])
+/**
+ * Specify a blacklist of disallowed property and value pairs within declarations
+ */
+"declaration-property-value-blacklist"?: (null | {
+[k: string]: SimpleStringOrArrayStringRule1 | undefined
+} | [{
+[k: string]: SimpleStringOrArrayStringRule1 | undefined
+}, CoreRule])
 /**
  * Disallow unknown values for properties within declarations
  */
 "declaration-property-value-no-unknown"?: ((true | null) | [(true | null)]|[(true | null), CoreRule])
-"declaration-property-value-whitelist"?: ObjectRule3
+/**
+ * Specify a whitelist of allowed property and value pairs within declarations
+ */
+"declaration-property-value-whitelist"?: (null | {
+[k: string]: SimpleStringOrArrayStringRule1 | undefined
+} | [{
+[k: string]: SimpleStringOrArrayStringRule1 | undefined
+}, CoreRule])
 [k: string]: unknown | undefined
 }
 export interface DeclarationBlock {
