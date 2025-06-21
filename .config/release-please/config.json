@@ -11,6 +11,11 @@
       "component": "@condu-feature/auto-package-exports",
       "initial-version": "1.0.0"
     },
+    "packages/features/biome": {
+      "release-type": "node",
+      "component": "@condu-feature/biome",
+      "initial-version": "1.0.0"
+    },
     "packages/features/ci-github-actions": {
       "release-type": "node",
       "component": "@condu-feature/ci-github-actions",
