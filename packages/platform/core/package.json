@@ -5,10 +5,10 @@
   "dependencies": {
     "@condu/workspace-utils": "workspace:^",
     "async-memoize-one": "^1.1.8",
-    "remeda": "^2.21.9"
+    "remeda": "^2.23.0"
   },
   "devDependencies": {
     "node-fetch": "^3.3.2",
-    "vitest": "^3.1.4"
+    "vitest": "^3.2.4"
   }
 }
