@@ -69,7 +69,7 @@ export const eslint = (config: EslintFeatureConfig = {}) =>
                   // "--import",
                   // // this is a chicken and egg problem, the package might not be installed yet, so we can't resolve it :(
                   // import.meta
-                  //   .resolve("node-resolve-ts/register")
+                  //   .resolve("node-ts-resolver/strip")
                   //   .slice("file://".length),
                 ],
               }
@@ -111,8 +111,11 @@ export default configs;
       condu.root.ensureDependency("@eslint/js");
       condu.root.ensureDependency("@typescript-eslint/parser");
       condu.root.ensureDependency("@typescript-eslint/eslint-plugin");
+      condu.root.setDependencyResolutions({
+        "@eslint/core": "latest",
+      });
       if (execWithTsSupport) {
-        condu.root.ensureDependency("node-resolve-ts");
+        condu.root.ensureDependency("node-ts-resolver");
       }
 
       condu.root.defineTask("eslint", {
@@ -122,7 +125,12 @@ export default configs;
           inputs: ["@group(sources)"],
           ...(execWithTsSupport
             ? // TODO: consider node strip types instead
-              { env: { NODE_OPTIONS: "--import tsx/esm" } }
+              {
+                env: {
+                  NODE_OPTIONS:
+                    "--experimental-strip-types --import node-ts-resolver/strip",
+                },
+              }
             : {}),
         },
       });

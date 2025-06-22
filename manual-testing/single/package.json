@@ -24,7 +24,7 @@
     "eslint-import-resolver-typescript": "^3.7.0",
     "eslint-plugin-import-x": "^4.6.1",
     "eslint-plugin-unicorn": "^56.0.1",
-    "node-resolve-ts": "^1.0.2",
+    "node-ts-resolver": "^1.0.0",
     "typescript": "^5.7.3"
   },
   "engines": {

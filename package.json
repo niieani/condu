@@ -66,7 +66,7 @@
     "eslint-import-resolver-typescript": "^4.4.3",
     "eslint-plugin-import-x": "^4.15.2",
     "eslint-plugin-unicorn": "^59.0.1",
-    "node-resolve-ts": "^1.0.2",
+    "node-ts-resolver": "^1.0.0",
     "prettier": "^3.5.3",
     "release-please": "^17.1.0",
     "rollup": "^4.44.0",
