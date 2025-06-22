@@ -310,3 +310,49 @@ test("packageScripts feature should track and clean up managed scripts", async (
   expect(updatedPackageJson.condu?.managedScripts).not.toContain("test:vitest");
   expect(updatedPackageJson.condu?.managedScripts).not.toContain("test");
 });
+
+test("packageScripts feature should handle environment variables", async () => {
+  // Create a feature that defines a task with environment variables
+  const taskWithEnvFeature = defineFeature("taskWithEnvFeature", {
+    defineRecipe(condu) {
+      // Define a task with environment variables including ones that need escaping
+      condu.root.defineTask("lint-with-env", {
+        type: "test",
+        definition: {
+          command: "eslint",
+          args: [".", "--fix"],
+          env: {
+            NODE_ENV: "development",
+            ESLINT_CONFIG: "strict",
+            MESSAGE: "hello world",
+            COMPLEX_VALUE: 'contains "quotes" and spaces',
+            SIMPLE_PATH: "/usr/bin",
+          },
+        },
+      });
+
+      // Define a task without env for comparison
+      condu.root.defineTask("build-no-env", {
+        type: "build",
+        definition: {
+          command: "tsc",
+        },
+      });
+    },
+  });
+
+  using testUtils = await testApplyFeatures({
+    config: { features: [taskWithEnvFeature, packageScripts()] },
+  });
+
+  const packageJson = testUtils.project.manifest;
+
+  expect(packageJson.scripts).toMatchInlineSnapshot(`
+    {
+      "build": "pnpm run build:build-no-env",
+      "build:build-no-env": "tsc",
+      "test": "pnpm run test:lint-with-env",
+      "test:lint-with-env": "NODE_ENV=development ESLINT_CONFIG=strict MESSAGE="hello world" COMPLEX_VALUE="contains \\"quotes\\" and spaces" SIMPLE_PATH=/usr/bin eslint . --fix",
+    }
+  `);
+});

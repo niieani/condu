@@ -10,6 +10,34 @@ import type {
 } from "condu/commands/apply/CollectedState.js";
 
 /**
+ * Escapes a value for safe use in shell environment variable assignment
+ */
+const escapeShellValue = (value: string): string => {
+  // If the value contains no special characters, return as-is
+  if (/^[\w./:-]*$/.test(value)) {
+    return value;
+  }
+
+  // Use double quotes and escape any double quotes and backslashes
+  return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+};
+
+// Helper function to format environment variables for shell execution
+const formatEnvVars = (
+  env: Record<string, string> | null | undefined,
+): string => {
+  if (!env || Object.keys(env).length === 0) {
+    return "";
+  }
+
+  return (
+    Object.entries(env)
+      .map(([key, value]) => `${key}=${escapeShellValue(value)}`)
+      .join(" ") + " "
+  );
+};
+
+/**
  * A feature that generates package.json scripts for tasks defined in features
  */
 export const packageScripts = (
@@ -111,12 +139,14 @@ export const packageScripts = (
           if (!definition.command && !definition.script) continue;
 
           // Create the script content
+          const envVars = formatEnvVars(definition.env);
           const scriptContent = definition.command || definition.script || "";
           const scriptArgs =
             definition.args && Array.isArray(definition.args)
               ? " " + definition.args.join(" ")
               : "";
-          packageScripts[scriptName] = `${scriptContent}${scriptArgs}`;
+          packageScripts[scriptName] =
+            `${envVars}${scriptContent}${scriptArgs}`;
         }
 
         // Now create aggregated scripts for each task type in this package
@@ -222,12 +252,14 @@ export const packageScripts = (
         if (!definition.command && !definition.script) continue;
 
         // Create the script content
+        const envVars = formatEnvVars(definition.env);
         const scriptContent = definition.command || definition.script || "";
         const scriptArgs =
           definition.args && Array.isArray(definition.args)
             ? " " + definition.args.join(" ")
             : "";
-        rootPackageScripts[scriptName] = `${scriptContent}${scriptArgs}`;
+        rootPackageScripts[scriptName] =
+          `${envVars}${scriptContent}${scriptArgs}`;
       }
 
       // Create aggregated scripts for the root package
@@ -319,9 +351,7 @@ export const packageScripts = (
             };
 
             // Update the list of managed scripts
-            if (!manifest.condu) {
-              manifest.condu = {};
-            }
+            manifest.condu ??= {};
             manifest.condu.managedScripts = newManagedScripts;
 
             return manifest;
