@@ -14,11 +14,12 @@ type AutofixFn = (fixer: RuleFixer) => void;
 
 export class LazyAutofix extends String {
   applied = false;
-  constructor(
-    public autofixFn: AutofixFn,
-    public fixer: RuleFixer,
-  ) {
+  autofixFn: AutofixFn;
+  fixer: RuleFixer;
+  constructor(autofixFn: AutofixFn, fixer: RuleFixer) {
     super("");
+    this.autofixFn = autofixFn;
+    this.fixer = fixer;
   }
   override startsWith() {
     if (!this.applied) {

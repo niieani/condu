@@ -124,6 +124,7 @@ export const typescript = ({
           verbatimModuleSyntax: true,
           forceConsistentCasingInFileNames: true,
           isolatedModules: true,
+          erasableSyntaxOnly: true,
           ...(isComposite
             ? {
                 composite: true,

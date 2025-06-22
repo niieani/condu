@@ -5,8 +5,10 @@ export class OverlayMemoryOnReadOnlyRealFileSystem
   extends InMemoryFileSystemHost
   implements FileSystemHost
 {
-  constructor(private readonly realFs: FileSystemHost) {
+  private readonly realFs: FileSystemHost;
+  constructor(realFs: FileSystemHost) {
     super();
+    this.realFs = realFs;
   }
 
   override async directoryExists(dirPath: string): Promise<boolean> {

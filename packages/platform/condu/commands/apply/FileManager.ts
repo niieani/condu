@@ -1001,5 +1001,8 @@ export class SymlinkTarget {
   toString() {
     return `symlink:${this.target}`;
   }
-  constructor(public readonly target: string) {}
+  public readonly target: string;
+  constructor(target: string) {
+    this.target = target;
+  }
 }
