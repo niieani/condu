@@ -5,6 +5,10 @@
   "bin": {
     "condu": "bin.ts"
   },
+  "scripts": {
+    "build": "pnpm run build:build-library-bundle-cli",
+    "build:build-library-bundle-cli": "webpack build --config ./.config/generated/webpack.config.cjs --entry ./index.ts --env moduleTarget=esm --env filename=index.bundle.js --env outDir=../../../build/packages/platform/condu"
+  },
   "dependencies": {
     "@condu/core": "workspace:^",
     "@condu/package-manager-utils": "workspace:^",
@@ -49,7 +53,11 @@
       "webpack-merge": "presence",
       "@swc/core": "presence",
       "swc-loader": "presence"
-    }
+    },
+    "managedScripts": [
+      "build:build-library-bundle-cli",
+      "build"
+    ]
   },
   "publishDependencies": [
     "@pnpm",

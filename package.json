@@ -23,17 +23,36 @@
     "packages/test/*"
   ],
   "scripts": {
+    "build": "pnpm run build:root && pnpm run build:recursive",
+    "build:build-typescript": "pnpm exec condu tsc --preset ts-to-cts",
+    "build:recursive": "pnpm -r run build",
+    "build:root": "pnpm run build:build-typescript",
     "condu": "bun packages/platform/condu/bin.ts",
+    "format": "pnpm run format:root && pnpm run format:recursive",
+    "format:format-prettier": "prettier . --write",
+    "format:recursive": "pnpm -r run format",
+    "format:root": "pnpm run format:format-prettier",
     "postinstall": "test -f .config/condu.ts && bun condu apply",
     "moon": "moon",
+    "publish": "pnpm run publish:root && pnpm run publish:recursive",
+    "publish:recursive": "pnpm -r run publish",
+    "publish:release": "pnpm run condu release",
+    "publish:root": "pnpm run publish:release",
     "start": "bun condu",
+    "test": "pnpm run test:root && pnpm run test:recursive",
+    "test:eslint": "NODE_OPTIONS=\"--experimental-strip-types --import node-ts-resolver/strip\" eslint",
+    "test:recursive": "pnpm -r run test",
+    "test:root": "pnpm run test:typecheck-typescript && pnpm run test:eslint && pnpm run test:test-prettier",
+    "test:test-prettier": "prettier . --check",
+    "test:typecheck-typescript": "pnpm exec tsc --noEmit",
     "updateSchemas": "bun packages/platform/schema-types/utils/updateSchemas.ts"
   },
   "resolutions": {
-    "@typescript-eslint/utils": "8.32.1",
-    "@typescript-eslint/parser": "8.32.1",
-    "@typescript-eslint/eslint-plugin": "8.32.1",
-    "@typescript-eslint/types": "8.32.1"
+    "@eslint/core": "latest",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "@typescript-eslint/types": "latest",
+    "@typescript-eslint/utils": "latest"
   },
   "devDependencies": {
     "@condu-feature/auto-package-exports": "workspace:*",
@@ -45,6 +64,7 @@
     "@condu-feature/gpt-summarizer": "workspace:*",
     "@condu-feature/library-bundle": "workspace:*",
     "@condu-feature/moon": "workspace:*",
+    "@condu-feature/package-scripts": "workspace:*",
     "@condu-feature/pnpm": "workspace:*",
     "@condu-feature/prettier": "workspace:*",
     "@condu-feature/release-please": "workspace:*",
@@ -55,7 +75,6 @@
     "@moonrepo/cli": "^1.37.3",
     "@moonrepo/types": "^1.29.0",
     "@swc/core": "^1.12.5",
-    "@types/eslint": "^9.6.1",
     "@types/node": "^24.0.3",
     "@typescript-eslint/eslint-plugin": "8.34.1",
     "@typescript-eslint/parser": "8.34.1",
@@ -82,14 +101,6 @@
     "webpack-merge": "^6.0.1"
   },
   "packageManager": "pnpm@10.11.0",
-  "condu": {
-    "managedDependencies": {
-      "eslint-plugin-import-x": "presence",
-      "@eslint/js": "presence",
-      "prettier": "presence",
-      "node-resolve-ts": "presence"
-    }
-  },
   "engines": {
     "node": "24.1.0"
   },
@@ -104,6 +115,34 @@
     "packageExtensions": {},
     "ignoredOptionalDependencies": [
       "eslint-plugin-import"
+    ]
+  },
+  "condu": {
+    "managedDependencies": {
+      "eslint-plugin-import-x": "presence",
+      "@eslint/js": "presence",
+      "prettier": "presence",
+      "node-ts-resolver": "presence"
+    },
+    "managedScripts": [
+      "build:build-typescript",
+      "test:typecheck-typescript",
+      "publish:release",
+      "test:eslint",
+      "test:test-prettier",
+      "format:format-prettier",
+      "build:root",
+      "test:root",
+      "format:root",
+      "publish:root",
+      "build:recursive",
+      "build",
+      "test:recursive",
+      "test",
+      "format:recursive",
+      "format",
+      "publish:recursive",
+      "publish"
     ]
   }
 }

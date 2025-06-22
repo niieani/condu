@@ -14,6 +14,7 @@ import { gptSummarizer } from "@condu-feature/gpt-summarizer/gptSummarizer.js";
 import { releasePlease } from "@condu-feature/release-please/release-please.js";
 import { autoPackageExports } from "@condu-feature/auto-package-exports/autoPackageExports.js";
 import { configure, defineFeature } from "condu";
+import { packageScripts } from "@condu-feature/package-scripts/packageScripts.js";
 
 export default configure((pkg) => ({
   engine: "bun",
@@ -152,6 +153,7 @@ export default configure((pkg) => ({
     autoPackageExports({
       customExportsCondition: true,
     }),
+    packageScripts(),
     gitignore({ ignore: [".swc/", ".idea/", ".env", ".env.*", "/brand/"] }),
   ],
 }));
