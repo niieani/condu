@@ -5,12 +5,13 @@
   "dependencies": {
     "@condu/schema-types": "workspace:^",
     "@eslint/js": "^9.29.0",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "@typescript-eslint/utils": "latest",
     "eslint-module-utils": "^2.12.1",
     "globals": "^16.2.0",
     "minimatch": "^10.0.3",
-    "remeda": "^2.23.0"
-  },
-  "devDependencies": {
+    "remeda": "^2.23.1"
   },
   "peerDependencies": {
     "@typescript-eslint/eslint-plugin": "8.32.1",

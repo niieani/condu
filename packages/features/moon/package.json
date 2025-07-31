@@ -6,7 +6,7 @@
     "@condu/core": "workspace:^",
     "@condu/schema-types": "workspace:^",
     "@moonrepo/types": "^1.29.0",
-    "remeda": "^2.23.0"
+    "remeda": "^2.23.1"
   },
   "peerDependencies": {
     "condu": "workspace:^"

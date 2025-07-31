@@ -93,8 +93,8 @@ importers:
         specifier: ^4.0.1
         version: 4.0.1
       bun-types:
-        specifier: ^1.2.16
-        version: 1.2.16
+        specifier: ^1.2.17
+        version: 1.2.17
       condu:
         specifier: workspace:*
         version: link:packages/platform/condu
@@ -188,8 +188,8 @@ importers:
         specifier: workspace:^
         version: link:../../platform/condu
       remeda:
-        specifier: ^2.23.0
-        version: 2.23.0
+        specifier: ^2.23.1
+        version: 2.23.1
 
   packages/features/condu-packages:
     dependencies:
@@ -243,8 +243,8 @@ importers:
         specifier: ^10.0.3
         version: 10.0.3
       remeda:
-        specifier: ^2.23.0
-        version: 2.23.0
+        specifier: ^2.23.1
+        version: 2.23.1
 
   packages/features/gitignore:
     dependencies:
@@ -255,8 +255,8 @@ importers:
         specifier: workspace:^
         version: link:../../generic/gitignore-matcher
       remeda:
-        specifier: ^2.23.0
-        version: 2.23.0
+        specifier: ^2.23.1
+        version: 2.23.1
 
   packages/features/gpt-summarizer:
     dependencies:
@@ -313,8 +313,8 @@ importers:
         specifier: workspace:^
         version: link:../../platform/condu
       remeda:
-        specifier: ^2.23.0
-        version: 2.23.0
+        specifier: ^2.23.1
+        version: 2.23.1
 
   packages/features/oxlint:
     dependencies:
@@ -495,8 +495,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       remeda:
-        specifier: ^2.23.0
-        version: 2.23.0
+        specifier: ^2.23.1
+        version: 2.23.1
       sort-package-json:
         specifier: ^3.2.1
         version: 3.2.1
@@ -544,8 +544,8 @@ importers:
         specifier: ^1.1.8
         version: 1.1.8
       remeda:
-        specifier: ^2.23.0
-        version: 2.23.0
+        specifier: ^2.23.1
+        version: 2.23.1
     devDependencies:
       node-fetch:
         specifier: ^3.3.2
@@ -2600,8 +2600,8 @@ packages:
   builtins@5.1.0:
     resolution: {integrity: sha512-SW9lzGTLvWTP1AY8xeAMZimqDrIaSdLQUcVr9DMef51niJ022Ri87SwRRKYm4A6iHfkPaiVUu/Duw2Wc4J7kKg==}
 
-  bun-types@1.2.16:
-    resolution: {integrity: sha512-ciXLrHV4PXax9vHvUrkvun9VPVGOVwbbbBF/Ev1cXz12lyEZMoJpIJABOfPcN9gDJRaiKF9MVbSygLg4NXu3/A==}
+  bun-types@1.2.17:
+    resolution: {integrity: sha512-ElC7ItwT3SCQwYZDYoAH+q6KT4Fxjl8DtZ6qDulUFBmXA8YB4xo+l54J9ZJN+k2pphfn9vk7kfubeSd5QfTVJQ==}
 
   bytes@3.1.2:
     resolution: {integrity: sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==}
@@ -4724,8 +4724,8 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
-  remeda@2.23.0:
-    resolution: {integrity: sha512-0mPy6q4ZMkAyrmucV6U6RaQ4GaJ7PLy9kTCNzC4k99DY6kQZXQIU8lxUVV4ocCWcjPvl7PSpOa42oPJWQiGouA==}
+  remeda@2.23.1:
+    resolution: {integrity: sha512-sFaGllLOpecOnk9J5arEY/ihoRGsuLRDgudiOTv73YlR3wPEDiDfPzx7cpU/n3No9qE534D/Du09/mXeb5ff0g==}
 
   rename-overwrite@6.0.3:
     resolution: {integrity: sha512-Daqe51STnrCUq/t4dbzCtfNBLElrqVpCtuWK0MuPrzUi6K/13E98y3E8/kzuMZt6IEmghMnF41J0AidrFqjZUA==}
@@ -7997,7 +7997,7 @@ snapshots:
     dependencies:
       semver: 7.7.2
 
-  bun-types@1.2.16:
+  bun-types@1.2.17:
     dependencies:
       '@types/node': 24.0.3
 
@@ -10103,7 +10103,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  remeda@2.23.0:
+  remeda@2.23.1:
     dependencies:
       type-fest: 4.41.0
 

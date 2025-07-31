@@ -559,7 +559,7 @@ condu.root.ensureDependency("react", {
   // Use a custom name for the dependency
   installAsAlias: "react-aliased",
   // Specify how versioning is managed
-  managed: "exact", // or "presence" to preserve existing versions
+  managed: "version", // or "presence" to preserve existing versions
 });
 
 // Add peer dependencies

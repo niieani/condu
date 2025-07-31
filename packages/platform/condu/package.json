@@ -30,7 +30,7 @@
     "clipanion": "4.0.0-rc.4",
     "comment-json": "^4.2.5",
     "print-diff": "^2.0.0",
-    "remeda": "^2.23.0",
+    "remeda": "^2.23.1",
     "sort-package-json": "^3.2.1",
     "spdx-license-list": "^6.10.0",
     "ts-pattern": "^5.7.1",
