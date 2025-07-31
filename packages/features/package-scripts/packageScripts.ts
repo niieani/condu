@@ -19,7 +19,7 @@ const escapeShellValue = (value: string): string => {
   }
 
   // Use double quotes and escape any double quotes and backslashes
-  return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+  return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 };
 
 // Helper function to format environment variables for shell execution

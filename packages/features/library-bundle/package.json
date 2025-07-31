@@ -7,7 +7,7 @@
     "@condu/schema-types": "workspace:^"
   },
   "devDependencies": {
-    "webpack": "^5.99.9"
+    "webpack": "^5.101.0"
   },
   "peerDependencies": {
     "condu": "workspace:^"
