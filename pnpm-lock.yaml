@@ -119,9 +119,6 @@ importers:
       node-ts-resolver:
         specifier: ^1.0.0
         version: 1.0.0
-      prettier:
-        specifier: ^3.6.2
-        version: 3.6.2
       release-please:
         specifier: ^17.1.1
         version: 17.1.1

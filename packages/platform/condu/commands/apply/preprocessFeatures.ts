@@ -1,5 +1,6 @@
 import type { ConfiguredConduConfig } from "../../api/configTypes.js";
 import { autolink } from "../../builtin-features/autolink.js";
+import { ANONYMOUS_RECIPE_PREFIX } from "../../constants.js";
 import type { RecipeFunction, FeatureDefinition } from "./conduApiTypes.js";
 import { topologicalSortFeatures } from "./topologicalSortFeatures.js";
 
@@ -10,16 +11,18 @@ import { topologicalSortFeatures } from "./topologicalSortFeatures.js";
  * @returns A feature definition
  */
 function mapInlineRecipeToFeature(
-  feature: RecipeFunction,
+  feature: RecipeFunction
 ): FeatureDefinition<string> {
   // TODO: maybe fallback to sha of the recipe function.toString()?
   const name =
-    feature.name || `recipe-${Math.random().toString(36).slice(2, 10)}`;
+    feature.name ||
+    `${ANONYMOUS_RECIPE_PREFIX}${Math.random().toString(36).slice(2, 10)}`;
   return {
     name,
     defineRecipe: feature,
     stack:
       new Error().stack?.split("\n").slice(2).join("\n") ?? import.meta.url,
+    anonymous: true,
   };
 }
 /**

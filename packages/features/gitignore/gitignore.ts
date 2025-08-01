@@ -1,4 +1,8 @@
-import { defineFeature, CONDU_CONFIG_DIR_NAME } from "condu";
+import {
+  defineFeature,
+  CONDU_CONFIG_DIR_NAME,
+  ANONYMOUS_RECIPE_PREFIX,
+} from "condu";
 import { groupBy, unique } from "remeda";
 import { GitIgnore } from "gitignore-matcher/gitignore-matcher.js";
 
@@ -32,14 +36,16 @@ export const gitignore = (opts: IgnoreConfig = {}) =>
           const filesByFeature = groupBy(
             [...files],
             ([_path, file]) =>
-              file.managedByFeatures[0]?.featureName ?? "unmanaged",
+              file.managedByFeatures[0]?.featureName ?? "unmanaged"
           );
           const userIgnored = new GitIgnore(ignore.join("\n"));
           const entriesFromFeatures = Object.entries(filesByFeature).flatMap(
             ([featureName, files]) => {
               if (featureName === "gitignore") return [];
               return [
-                `# ${featureName}:`,
+                featureName.startsWith(ANONYMOUS_RECIPE_PREFIX)
+                  ? "# (anonymous recipe)"
+                  : `# ${featureName}:`,
                 ...files.flatMap(([p, f]) => {
                   const result = f.attributes.inAllPackages
                     ? f.relPath
@@ -51,7 +57,7 @@ export const gitignore = (opts: IgnoreConfig = {}) =>
                   return [result];
                 }),
               ];
-            },
+            }
           );
           // TODO: option to group all inAllPackages files by adding a single non / prefixed entry for a cleaner output
           return unique([

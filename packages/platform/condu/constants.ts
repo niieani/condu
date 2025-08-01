@@ -34,3 +34,4 @@ export const BUILTIN_TASK_NAMES = new Set<string>([
   "publish",
   "start",
 ] satisfies Task["type"][]);
+export const ANONYMOUS_RECIPE_PREFIX = "recipe-";
