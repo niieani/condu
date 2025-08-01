@@ -64,7 +64,9 @@ export const eslint = (config: EslintFeatureConfig = {}) =>
             ? {
                 "eslint.execArgv": [
                   "--import",
-                  import.meta.resolve("tsx/esm").slice("file://".length),
+                  import.meta
+                    .resolve("tsx/esm")
+                    .slice("file://".length),
                   // "--experimental-strip-types",
                   // "--import",
                   // // this is a chicken and egg problem, the package might not be installed yet, so we can't resolve it :(

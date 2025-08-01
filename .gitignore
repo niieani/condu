@@ -12,8 +12,6 @@ node_modules
 /packages/platform/condu/.config/generated/webpack.config.cjs
 # eslint:
 /eslint.config.js
-# prettier:
-/.prettierignore
 # moon:
 /.moon/
 /.moon/cache
@@ -23,8 +21,13 @@ node_modules
 /.moon/tasks.yml
 moon.yml
 /moon.yml
+# recipe-qxxbkjp8:
+/manual-testing
 # vscode:
 /.vscode/settings.json
+/.vscode/extensions.json
+# biome:
+/biome.json
 # autolink:
 /vitest.config.ts
 # custom ignore patterns:

@@ -11,6 +11,7 @@ import { libraryBundle } from "@condu-feature/library-bundle/libraryBundle.js";
 import { editorconfig } from "@condu-feature/editorconfig/editorconfig.js";
 import { prettier } from "@condu-feature/prettier/prettier.js";
 import { gptSummarizer } from "@condu-feature/gpt-summarizer/gptSummarizer.js";
+import { biome } from "@condu-feature/biome/biome.js";
 import { releasePlease } from "@condu-feature/release-please/release-please.js";
 import { autoPackageExports } from "@condu-feature/auto-package-exports/autoPackageExports.js";
 import { configure, defineFeature } from "condu";
@@ -113,13 +114,13 @@ export default configure((pkg) => ({
         // TODO: review the rest https://github.com/sindresorhus/eslint-plugin-unicorn/tree/main?tab=readme-ov-file
       },
     }),
-    prettier({
-      ignore: [
-        "**/.*.json",
-        "integration-tests",
-        ".github/copilot-instructions.md",
-      ],
-    }),
+    // prettier({
+    //   ignore: [
+    //     "**/.*.json",
+    //     "integration-tests",
+    //     ".github/copilot-instructions.md",
+    //   ],
+    // }),
     vitest(),
     moon(),
     moonCi(),
@@ -129,6 +130,9 @@ export default configure((pkg) => ({
         "bootstrap-sha": "487dfcb00e029d0c8f483f41d0de82a992885f3d",
       },
     }),
+    (condu) => {
+      condu.root.ignoreFile("manual-testing");
+    },
     vscode({
       hideGeneratedFiles: false,
       suggestedSettings: {
@@ -150,6 +154,14 @@ export default configure((pkg) => ({
     //   ignore: ["TODO.md", "CHANGELOG.md"],
     //   removeComments: true,
     // }),
+    biome({
+      config: {
+        linter: { enabled: false },
+        formatter: { enabled: true, useEditorconfig: true },
+        assist: { enabled: false },
+        // files: { includes: ["packages"] },
+      },
+    }),
     autoPackageExports({
       customExportsCondition: true,
     }),

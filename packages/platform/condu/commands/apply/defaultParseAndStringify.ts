@@ -22,7 +22,7 @@ export function getDefaultParse<DeserializedT>(
 }
 
 const jsonStringify = <DeserializedT>(content: DeserializedT): string =>
-  commentJsonStringify(content, undefined, 2);
+  commentJsonStringify(content, undefined, 2) + "\n";
 const noopStringify = <DeserializedT>(content: DeserializedT) =>
   String(content);
 
