@@ -67,15 +67,6 @@ export const biome = ({ config = {}, ignore = [] }: BiomeFeatureConfig = {}) =>
       condu.root.ensureDependency("@biomejs/biome", { rangePrefix: "" });
 
       // Define biome tasks
-      condu.root.defineTask("biome-lint", {
-        type: "test",
-        definition: {
-          command: "biome",
-          args: ["lint", "."],
-          inputs: ["@group(sources)"],
-        },
-      });
-
       condu.root.defineTask("biome-format", {
         type: "format",
         definition: {
