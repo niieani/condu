@@ -36,7 +36,7 @@ export const gitignore = (opts: IgnoreConfig = {}) =>
           const filesByFeature = groupBy(
             [...files],
             ([_path, file]) =>
-              file.managedByFeatures[0]?.featureName ?? "unmanaged"
+              file.managedByFeatures[0]?.featureName ?? "unmanaged",
           );
           const userIgnored = new GitIgnore(ignore.join("\n"));
           const entriesFromFeatures = Object.entries(filesByFeature).flatMap(
@@ -57,7 +57,7 @@ export const gitignore = (opts: IgnoreConfig = {}) =>
                   return [result];
                 }),
               ];
-            }
+            },
           );
           // TODO: option to group all inAllPackages files by adding a single non / prefixed entry for a cleaner output
           return unique([

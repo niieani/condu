@@ -150,7 +150,7 @@ export type FeatureDefinitionInput<
   FeatureDefinitionPeerContextDependentProps<NameT>;
 
 export interface FeatureDefinitionMeta<
-  NameT extends PossibleFeatureNames = PossibleFeatureNames
+  NameT extends PossibleFeatureNames = PossibleFeatureNames,
 > {
   name: NameT;
   // TODO: maybe instead of stack just the file path of the feature definition from import.meta.url?

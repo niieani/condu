@@ -3,12 +3,10 @@ import type { Configuration } from "@condu/schema-types/schemas/biome.gen.js";
 export interface BiomeFeatureInput {
   config?: Partial<Configuration>;
   ignore?: string[];
+  useAsDefaultFormatter?: boolean;
 }
 
-export interface BiomeFeaturePeerContext {
-  config: Partial<Configuration>;
-  ignore: string[];
-}
+export type BiomeFeaturePeerContext = Required<BiomeFeatureInput>;
 
 declare module "condu" {
   interface PeerContext {

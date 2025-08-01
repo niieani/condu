@@ -11,7 +11,7 @@ import { topologicalSortFeatures } from "./topologicalSortFeatures.js";
  * @returns A feature definition
  */
 function mapInlineRecipeToFeature(
-  feature: RecipeFunction
+  feature: RecipeFunction,
 ): FeatureDefinition<string> {
   // TODO: maybe fallback to sha of the recipe function.toString()?
   const name =

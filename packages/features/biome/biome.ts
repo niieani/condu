@@ -8,6 +8,7 @@ export const biome = ({ config = {}, ignore = [] }: BiomeFeatureConfig = {}) =>
     initialPeerContext: {
       config,
       ignore,
+      useAsDefaultFormatter: false,
     },
 
     modifyPeerContexts: () => ({
@@ -19,6 +20,14 @@ export const biome = ({ config = {}, ignore = [] }: BiomeFeatureConfig = {}) =>
             ...(current.extensions.recommendations ?? []),
             "biomejs.biome",
           ],
+        },
+        enforcedSettings: {
+          "editor.defaultFormatter": "biomejs.biome" as never,
+          "[typescript]": {
+            "editor.defaultFormatter": "biomejs.biome" as never,
+            ...current.enforcedSettings?.["[typescript]"],
+          },
+          ...current.enforcedSettings,
         },
       }),
     }),
