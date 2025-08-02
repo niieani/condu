@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.0](https://github.com/niieani/condu/compare/@condu/test-dummy-dep@1.0.0...@condu/test-dummy-dep@1.0.0) (2025-08-02)
+
+
+### Bug Fixes
+
+* bump dummy ([c7906d0](https://github.com/niieani/condu/commit/c7906d07d21f9d64ee7387a9eded4de17321eedb))
+* bump dummy-dep ([e57b6b9](https://github.com/niieani/condu/commit/e57b6b99e56fe61486129e3013a40aa1c6aadbed))
+* bump dummy-dep again ([8d9b5f1](https://github.com/niieani/condu/commit/8d9b5f156e983fa8c8744c1c87602bf5f2ec9e22))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0 ([9d876c9](https://github.com/niieani/condu/commit/9d876c9fba8dbc305ac5be25e6f4fda47d6400b9))
+
 ## [1.0.0](https://github.com/niieani/condu/compare/@condu/test-dummy-dep@1.0.3...@condu/test-dummy-dep@1.0.0) (2025-08-02)
 
 
