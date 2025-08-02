@@ -5,7 +5,14 @@ export { defineFeature } from "./api/defineFeature.js";
 export * from "./constants.js";
 export * from "./cli.js";
 export * from "./getProjectGlobsFromMoonConfig.js";
-export * from "./packageManagerUtils.js";
+// webpack doesn't like * re-exports from another package, so we're listing the items one by one:
+export {
+  getRecursiveRunCommand,
+  getRunCommand,
+  getSequentialRunCommands,
+  type PackageManager,
+  type RunCommandOptions,
+} from "./packageManagerUtils.js";
 export type * from "@condu/workspace-utils/packageJsonTypes.js";
 export type * from "./commands/apply/conduApiTypes.js";
 export type * from "./commands/apply/CollectedState.js";

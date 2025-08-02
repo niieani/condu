@@ -1,5 +1,6 @@
 ## MVP / alpha TODO List
 
+- [ ] add an init command that can be run like `bunx condu init` or `pnpx condu init`
 - [ ] make CI github actions work agnostic from the build system (moon vs packageScripts)
 - [ ] support bun's implementation of catalogs
 - [ ] enable using biome formatter with prettier (in which case prettier is enabled for non-JS files)
