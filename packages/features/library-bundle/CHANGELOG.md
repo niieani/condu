@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.0.0](https://github.com/niieani/condu/compare/@condu-feature/library-bundle@0.1.10...@condu-feature/library-bundle@1.0.0) (2025-08-02)
+
+
+### Bug Fixes
+
+* dependency upgrade ([ba2f8bb](https://github.com/niieani/condu/commit/ba2f8bb0cb6ab8f9f59861f1e921971238ec868b))
+* upgrade dependencies ([37f4e2b](https://github.com/niieani/condu/commit/37f4e2babd29a9be1c69427ee13bcd08b8bbe25a))
+* upgrade packages ([92e7272](https://github.com/niieani/condu/commit/92e72720753b246a5e67c08224ce1fc46c5f9a09))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0 ([9d876c9](https://github.com/niieani/condu/commit/9d876c9fba8dbc305ac5be25e6f4fda47d6400b9))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/schema-types bumped to 1.0.0
+  * peerDependencies
+    * condu bumped to 1.0.0
+
 ## [0.1.10](https://github.com/niieani/condu/compare/@condu-feature/library-bundle@0.1.9...@condu-feature/library-bundle@0.1.10) (2024-12-21)
 
 

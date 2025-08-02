@@ -1,5 +1,57 @@
 # Changelog
 
+## [1.0.0](https://github.com/niieani/condu/compare/condu@0.1.10...condu@1.0.0) (2025-08-02)
+
+
+### Features
+
+* add auto-package-exports feature for generating package.json exports field ([0865581](https://github.com/niieani/condu/commit/0865581f400c85f84638c1fa4de85799f6c699b1))
+* add support for inline features ([a7c131c](https://github.com/niieani/condu/commit/a7c131cfeafbc35560b4806a6ce07307678f542d))
+* correct 'init' command ([47031b5](https://github.com/niieani/condu/commit/47031b50bce48a2cdbb8725a397f3f09235d76b3))
+* expose globalRegistry in manifest modifications ([553c5fa](https://github.com/niieani/condu/commit/553c5fad6004064770d823830fad1a19b31177b0))
+* implement feature testing utility ([eda0726](https://github.com/niieani/condu/commit/eda072696fe04953c9e01d8689962dd6df1f4657))
+* implement package-scripts feature ([e123329](https://github.com/niieani/condu/commit/e123329374b28be0fa337598a3b454c83f241e01))
+* implement packageScripts feature ([2297655](https://github.com/niieani/condu/commit/22976552c6f33cb0e30ebcb13d4690f80bc8c611))
+* implement project.hasFeature() ([3588d19](https://github.com/niieani/condu/commit/3588d192b124fd25a19bb44d9e0a5d4c0af45569))
+
+
+### Bug Fixes
+
+* bump dependencies ([ac6a65e](https://github.com/niieani/condu/commit/ac6a65e45620f2111bc8f609be0350af24e11cce))
+* bump remeda and node packages ([f009721](https://github.com/niieani/condu/commit/f00972173947c48e22a816c67b1b6b9406a39b29))
+* correctly output publishConfig ([a1b3ad4](https://github.com/niieani/condu/commit/a1b3ad4bbbaeb431b7f1739a3b4aae5fd63d5ddc))
+* dependency upgrade ([ba2f8bb](https://github.com/niieani/condu/commit/ba2f8bb0cb6ab8f9f59861f1e921971238ec868b))
+* enable erasableSyntaxOnly ([0b631e5](https://github.com/niieani/condu/commit/0b631e516a6cbd131e65bdf379201591b82319a4))
+* enable packageScripts for condu ([73bce96](https://github.com/niieani/condu/commit/73bce96d44e6f98a1adf7c03c06c87181fed1d42))
+* exclude files that are already in gitignore ([5536a27](https://github.com/niieani/condu/commit/5536a27e6cadf5916fd61ddad90c665cde3d6e77))
+* fixes from dependency bump ([66b22ea](https://github.com/niieani/condu/commit/66b22ea2ec08ab5440079053a720033637c41a6a))
+* make root package work in non-monorepo ([3e24006](https://github.com/niieani/condu/commit/3e24006536c427eeaecdbc452a045f83e165816e))
+* mark anonymous recipes ([8edb66f](https://github.com/niieani/condu/commit/8edb66f5112430c26e63df99d62f80c40b788682))
+* move throwOnManualChanges logic into FileManager ([ce3ef59](https://github.com/niieani/condu/commit/ce3ef59a3095a8681b97c0529c9c0393b3e4197b))
+* support internal manifest modifiers ([6feac0b](https://github.com/niieani/condu/commit/6feac0bfb298b4c5b4b80318510ce2990d9a867c))
+* update moon CI setup to use pnpm action and improve conflict resolution handling ([742635d](https://github.com/niieani/condu/commit/742635d56c57644939e8c241db178419c34328e8))
+* upgrade dependencies ([df64406](https://github.com/niieani/condu/commit/df64406b2322e8db6d1ad3f86f6ab9dfd3001871))
+* upgrade dependencies ([37f4e2b](https://github.com/niieani/condu/commit/37f4e2babd29a9be1c69427ee13bcd08b8bbe25a))
+* upgrade packages ([92e7272](https://github.com/niieani/condu/commit/92e72720753b246a5e67c08224ce1fc46c5f9a09))
+* use biome as formatter ([5f2554d](https://github.com/niieani/condu/commit/5f2554d038d11b4261a06f8e97e64fedc68a1523))
+* when a symlink already exists and we say to overwrite it with file contents, it should remove the symlink first, otherwise for some reason it writes over the symlink target ([b27ce06](https://github.com/niieani/condu/commit/b27ce0625f18d0f04f655a4bbd8c92400e101364))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0 ([9d876c9](https://github.com/niieani/condu/commit/9d876c9fba8dbc305ac5be25e6f4fda47d6400b9))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 1.0.0
+    * @condu/package-manager-utils bumped to 1.0.0
+    * @condu/schema-types bumped to 1.0.0
+    * @condu/update-specifiers bumped to 1.0.0
+    * @condu/workspace-utils bumped to 1.0.0
+
 ## [0.1.10](https://github.com/niieani/condu/compare/condu@0.1.9...condu@0.1.10) (2024-12-21)
 
 

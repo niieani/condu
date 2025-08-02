@@ -1,0 +1,28 @@
+# Changelog
+
+## 1.0.0 (2025-08-02)
+
+
+### Features
+
+* add biome feature ([288a3e1](https://github.com/niieani/condu/commit/288a3e153f657f8c6250ec398a6953d4cec8003f))
+
+
+### Bug Fixes
+
+* remove biome-lint task from biome feature as check already covers it ([1484755](https://github.com/niieani/condu/commit/1484755344a5c5b1a7dd5bac7a1bda608392b497))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0 ([9d876c9](https://github.com/niieani/condu/commit/9d876c9fba8dbc305ac5be25e6f4fda47d6400b9))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/schema-types bumped to 1.0.0
+    * condu bumped to 1.0.0
+  * devDependencies
+    * @condu-test/utils bumped to 1.0.0

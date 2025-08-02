@@ -1,6 +1,6 @@
 {
   "name": "gitignore-matcher",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "sideEffects": false,
   "type": "module",
   "publishConfig": {

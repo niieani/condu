@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0](https://github.com/niieani/condu/compare/gitignore-matcher@0.0.2...gitignore-matcher@1.0.0) (2025-08-02)
+
+
+### Miscellaneous Chores
+
+* release 1.0.0 ([9d876c9](https://github.com/niieani/condu/commit/9d876c9fba8dbc305ac5be25e6f4fda47d6400b9))
+
 ## [0.0.2](https://github.com/niieani/condu/compare/gitignore-matcher@0.0.1...gitignore-matcher@0.0.2) (2024-12-21)
 
 

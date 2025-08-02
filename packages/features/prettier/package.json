@@ -1,6 +1,6 @@
 {
   "name": "@condu-feature/prettier",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "sideEffects": false,
   "type": "module",
   "publishConfig": {

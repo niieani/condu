@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.0.0](https://github.com/niieani/condu/compare/@condu-feature/typescript@0.1.10...@condu-feature/typescript@1.0.0) (2025-08-02)
+
+
+### Bug Fixes
+
+* enable erasableSyntaxOnly ([0b631e5](https://github.com/niieani/condu/commit/0b631e516a6cbd131e65bdf379201591b82319a4))
+* upgrade packages ([92e7272](https://github.com/niieani/condu/commit/92e72720753b246a5e67c08224ce1fc46c5f9a09))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0 ([9d876c9](https://github.com/niieani/condu/commit/9d876c9fba8dbc305ac5be25e6f4fda47d6400b9))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/schema-types bumped to 1.0.0
+  * peerDependencies
+    * condu bumped to 1.0.0
+
 ## [0.1.10](https://github.com/niieani/condu/compare/@condu-feature/typescript@0.1.9...@condu-feature/typescript@0.1.10) (2024-12-21)
 
 
