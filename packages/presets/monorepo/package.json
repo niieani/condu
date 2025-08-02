@@ -1,6 +1,6 @@
 {
   "name": "@condu-preset/monorepo",
-  "version": "0.0.7",
+  "version": "1.0.0",
   "sideEffects": false,
   "type": "module",
   "dependencies": {

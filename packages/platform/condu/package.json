@@ -1,6 +1,6 @@
 {
   "name": "condu",
-  "version": "0.1.10",
+  "version": "1.0.0",
   "type": "module",
   "bin": {
     "condu": "bin.ts"

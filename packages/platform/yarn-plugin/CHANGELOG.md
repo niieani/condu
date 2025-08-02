@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.0](https://github.com/niieani/condu/compare/@condu/yarn-plugin@0.1.6...@condu/yarn-plugin@1.0.0) (2025-08-02)
+
+
+### Bug Fixes
+
+* upgrade dependencies ([df64406](https://github.com/niieani/condu/commit/df64406b2322e8db6d1ad3f86f6ab9dfd3001871))
+* upgrade dependencies ([37f4e2b](https://github.com/niieani/condu/commit/37f4e2babd29a9be1c69427ee13bcd08b8bbe25a))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0 ([9d876c9](https://github.com/niieani/condu/commit/9d876c9fba8dbc305ac5be25e6f4fda47d6400b9))
+
 ## [0.1.6](https://github.com/niieani/condu/compare/@condu/yarn-plugin@0.1.5...@condu/yarn-plugin@0.1.6) (2024-10-12)
 
 

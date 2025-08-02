@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.0.0](https://github.com/niieani/condu/compare/@condu/update-specifiers@0.1.7...@condu/update-specifiers@1.0.0) (2025-08-02)
+
+
+### Bug Fixes
+
+* enable erasableSyntaxOnly ([0b631e5](https://github.com/niieani/condu/commit/0b631e516a6cbd131e65bdf379201591b82319a4))
+* upgrade dependencies ([37f4e2b](https://github.com/niieani/condu/commit/37f4e2babd29a9be1c69427ee13bcd08b8bbe25a))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0 ([9d876c9](https://github.com/niieani/condu/commit/9d876c9fba8dbc305ac5be25e6f4fda47d6400b9))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 1.0.0
+
 ## [0.1.7](https://github.com/niieani/condu/compare/@condu/update-specifiers@0.1.6...@condu/update-specifiers@0.1.7) (2024-12-21)
 
 

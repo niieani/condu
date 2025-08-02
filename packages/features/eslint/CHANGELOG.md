@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.0.0](https://github.com/niieani/condu/compare/@condu-feature/eslint@0.1.10...@condu-feature/eslint@1.0.0) (2025-08-02)
+
+
+### Bug Fixes
+
+* add missing peerDependency ([fe217f5](https://github.com/niieani/condu/commit/fe217f57ab836e0c41fc15bbba7b2d09adbc179f))
+* bump dependencies ([ac6a65e](https://github.com/niieani/condu/commit/ac6a65e45620f2111bc8f609be0350af24e11cce))
+* bump remeda and node packages ([f009721](https://github.com/niieani/condu/commit/f00972173947c48e22a816c67b1b6b9406a39b29))
+* dependency upgrade ([ba2f8bb](https://github.com/niieani/condu/commit/ba2f8bb0cb6ab8f9f59861f1e921971238ec868b))
+* enable erasableSyntaxOnly ([0b631e5](https://github.com/niieani/condu/commit/0b631e516a6cbd131e65bdf379201591b82319a4))
+* enable packageScripts for condu ([73bce96](https://github.com/niieani/condu/commit/73bce96d44e6f98a1adf7c03c06c87181fed1d42))
+* lock ts versions ([10576eb](https://github.com/niieani/condu/commit/10576eb5b857e263674f7078af03ea296b3b51c6))
+* upgrade dependencies ([df64406](https://github.com/niieani/condu/commit/df64406b2322e8db6d1ad3f86f6ab9dfd3001871))
+* upgrade dependencies ([37f4e2b](https://github.com/niieani/condu/commit/37f4e2babd29a9be1c69427ee13bcd08b8bbe25a))
+* upgrade packages ([92e7272](https://github.com/niieani/condu/commit/92e72720753b246a5e67c08224ce1fc46c5f9a09))
+* use biome as formatter ([5f2554d](https://github.com/niieani/condu/commit/5f2554d038d11b4261a06f8e97e64fedc68a1523))
+* use node-ts-resolver instead of tsx ([5b02870](https://github.com/niieani/condu/commit/5b028708bb5ed9717e077a34a11c634ebb96154a))
+
+
+### Miscellaneous Chores
+
+* release 1.0.0 ([9d876c9](https://github.com/niieani/condu/commit/9d876c9fba8dbc305ac5be25e6f4fda47d6400b9))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/schema-types bumped to 1.0.0
+  * peerDependencies
+    * condu bumped to 1.0.0
+
 ## [0.1.10](https://github.com/niieani/condu/compare/@condu-feature/eslint@0.1.9...@condu-feature/eslint@0.1.10) (2024-12-21)
 
 

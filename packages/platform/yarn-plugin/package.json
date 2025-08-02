@@ -1,6 +1,6 @@
 {
   "name": "@condu/yarn-plugin",
-  "version": "0.1.6",
+  "version": "1.0.0",
   "license": "MIT",
   "type": "module",
   "devDependencies": {
