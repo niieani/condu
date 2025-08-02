@@ -165,11 +165,6 @@
       "release-type": "node",
       "component": "@condu/test-dummy",
       "initial-version": "1.0.0"
-    },
-    "packages/test/utils": {
-      "release-type": "node",
-      "component": "@condu-test/utils",
-      "initial-version": "1.0.0"
     }
   },
   "plugins": [

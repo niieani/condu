@@ -2,6 +2,7 @@
   "name": "@condu-test/utils",
   "version": "1.0.0",
   "type": "module",
+  "private": true,
   "dependencies": {
     "@condu/workspace-utils": "workspace:*",
     "condu": "workspace:*",
