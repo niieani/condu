@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.1](https://github.com/niieani/condu/compare/@condu-feature/eslint@1.0.0...@condu-feature/eslint@1.0.1) (2025-08-02)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * peerDependencies
+    * condu bumped to 1.0.1
+
 ## [1.0.0](https://github.com/niieani/condu/compare/@condu-feature/eslint@0.1.10...@condu-feature/eslint@1.0.0) (2025-08-02)
 
 
