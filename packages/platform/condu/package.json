@@ -25,6 +25,7 @@
     "@pnpm/types": "^1000.7.0",
     "@pnpm/workspace.find-packages": "^1000.0.31",
     "@pnpm/workspace.read-manifest": "^1000.2.2",
+    "@moonrepo/types": "^1.31.1",
     "@types/which": "^3.0.4",
     "async-memoize-one": "^1.1.8",
     "clipanion": "4.0.0-rc.4",

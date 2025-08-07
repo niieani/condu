@@ -1,6 +1,11 @@
 ## MVP / alpha TODO List
 
 - [ ] add an init command that can be run like `bunx condu init` or `pnpx condu init`
+  - package.json: add type: module, install condum detect package manager
+  - create condu.ts
+  - create directories (src or packages based on --monorepo or not)
+- [ ] vitest feature should define the test task
+- [ ] add an 'ai-agents' feature that autogenerates description based on all the features enabled
 - [ ] make CI github actions work agnostic from the build system (moon vs packageScripts)
 - [ ] support bun's implementation of catalogs
 - [ ] enable using biome formatter with prettier (in which case prettier is enabled for non-JS files)
