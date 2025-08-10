@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/niieani/condu/compare/@condu/workspace-utils@1.0.0...@condu/workspace-utils@1.0.1) (2025-08-10)
+
+
+### Bug Fixes
+
+* update dependencies ([d13f3f8](https://github.com/niieani/condu/commit/d13f3f848dab7277cfeec5e53cc25ac0f454a054))
+
 ## [1.0.0](https://github.com/niieani/condu/compare/@condu/workspace-utils@0.1.7...@condu/workspace-utils@1.0.0) (2025-08-02)
 
 
