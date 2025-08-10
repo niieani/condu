@@ -8,6 +8,6 @@
   },
   "devDependencies": {
     "@condu-test/utils": "workspace:*",
-    "@types/node": "^24.1.0"
+    "@types/node": "^24.2.1"
   }
 }
