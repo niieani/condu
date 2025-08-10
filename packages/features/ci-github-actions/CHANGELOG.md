@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.2](https://github.com/niieani/condu/compare/@condu-feature/ci-github-actions@1.0.1...@condu-feature/ci-github-actions@1.0.2) (2025-08-10)
+
+
+### Bug Fixes
+
+* update dependencies ([d13f3f8](https://github.com/niieani/condu/commit/d13f3f848dab7277cfeec5e53cc25ac0f454a054))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * peerDependencies
+    * condu bumped to 1.0.2
+
 ## [1.0.1](https://github.com/niieani/condu/compare/@condu-feature/ci-github-actions@1.0.0...@condu-feature/ci-github-actions@1.0.1) (2025-08-02)
 
 

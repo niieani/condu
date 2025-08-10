@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.2](https://github.com/niieani/condu/compare/condu@1.0.1...condu@1.0.2) (2025-08-10)
+
+
+### Bug Fixes
+
+* add missing dependency ([b2ae76e](https://github.com/niieani/condu/commit/b2ae76efc004db00c46ad8d1e2c748bfac9f1547))
+* update dependencies ([d13f3f8](https://github.com/niieani/condu/commit/d13f3f848dab7277cfeec5e53cc25ac0f454a054))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 1.0.1
+    * @condu/update-specifiers bumped to 1.0.1
+    * @condu/workspace-utils bumped to 1.0.1
+
 ## [1.0.1](https://github.com/niieani/condu/compare/condu@1.0.0...condu@1.0.1) (2025-08-02)
 
 
