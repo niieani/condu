@@ -1,6 +1,6 @@
 {
   "name": "@condu-feature/auto-package-exports",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Condu feature for auto-generating package.json exports",
   "type": "module",
   "keywords": [

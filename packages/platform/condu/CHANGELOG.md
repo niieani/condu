@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/niieani/condu/compare/condu@1.0.2...condu@1.0.3) (2025-08-10)
+
+
+### Bug Fixes
+
+* downgrade webpack as it contains a bug ([9c9cbbe](https://github.com/niieani/condu/commit/9c9cbbea83c775ff155a834b3337b0912d9c375a))
+
 ## [1.0.2](https://github.com/niieani/condu/compare/condu@1.0.1...condu@1.0.2) (2025-08-10)
 
 
