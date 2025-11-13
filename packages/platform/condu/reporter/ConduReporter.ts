@@ -16,6 +16,8 @@ import { Spinner } from "./Spinner.js";
 import type { BaseRenderer } from "./renderers/BaseRenderer.js";
 import { CiRenderer } from "./renderers/CiRenderer.js";
 import { LocalMinimalRenderer } from "./renderers/LocalMinimalRenderer.js";
+import { LocalModernRenderer } from "./renderers/LocalModernRenderer.js";
+import { LocalRetroRenderer } from "./renderers/LocalRetroRenderer.js";
 import { QuietRenderer } from "./renderers/QuietRenderer.js";
 
 /**
@@ -71,10 +73,9 @@ export class ConduReporter {
       case "minimal":
         return new LocalMinimalRenderer(this.supportsColor);
       case "modern":
+        return new LocalModernRenderer(this.supportsColor);
       case "retro":
-        // For now, use minimal for all local modes
-        // We can implement modern and retro later
-        return new LocalMinimalRenderer(this.supportsColor);
+        return new LocalRetroRenderer(this.supportsColor);
       default:
         return new LocalMinimalRenderer(this.supportsColor);
     }
