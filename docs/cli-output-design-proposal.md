@@ -24,9 +24,9 @@ This proposal outlines a modern, informative, and visually appealing CLI output 
 - **Implementation**: Uses `clearLine()`, `cursorTo()`, rewrites lines
 
 **Non-Interactive Mode** (Append-only)
-- **When**: CI environment OR non-TTY OR `CI=true`
+- **When**: CI environment OR non-TTY (stdout or stdin) OR `CI=true`
 - **Behavior**: Append-only output, no line rewrites
-- **Features**: Timestamped logs, clear section markers, grep-friendly
+- **Features**: Clear section markers, grep-friendly, no animations
 - **Implementation**: Simple `console.log()` style output
 
 ### Verbosity Levels
@@ -97,16 +97,16 @@ Loading configuration
 
 Collecting state
   ✓ typescript
-    • Generating tsconfig.base.json
-    • Generating package-specific tsconfig files
-    • Adding typescript dependency
+    Generating tsconfig.base.json
+    Generating package-specific tsconfig files
+    Adding typescript dependency
   ✓ eslint
-    • Generating .eslintrc.json
-    • Generating .eslintignore
-    • Adding eslint dependencies
+    Generating .eslintrc.json
+    Generating .eslintignore
+    Adding eslint dependencies
   ⠋ prettier › Modifying package.json...
-    • Checking existing prettier config
-    • Generating .prettierrc.json
+    Checking existing prettier config
+    Generating .prettierrc.json
   · vitest
   · github-actions
   · moon
@@ -165,21 +165,21 @@ Summary: 12 files, 3 packages, 1 needs review
 ```
 condu apply
 
-[2025-11-13 10:23:45] Loading configuration
-[2025-11-13 10:23:45] 8 features found
+Loading configuration
+  8 features found
 
-[2025-11-13 10:23:45] Processing features (8)
-[2025-11-13 10:23:45] ✓ typescript (1/8)
-[2025-11-13 10:23:45]   • Generating tsconfig.base.json
-[2025-11-13 10:23:45]   • Generating package-specific tsconfig files
-[2025-11-13 10:23:45]   • Adding typescript dependency
-[2025-11-13 10:23:46] ✓ eslint (2/8)
-[2025-11-13 10:23:46]   • Generating .eslintrc.json
-[2025-11-13 10:23:46]   • Generating .eslintignore
-[2025-11-13 10:23:46]   • Adding eslint dependencies
-[2025-11-13 10:23:46] ✓ prettier (3/8)
-[2025-11-13 10:23:46]   • Checking existing prettier config
-[2025-11-13 10:23:46]   • Generating .prettierrc.json
+Processing features (8)
+  ✓ typescript (1/8)
+    Generating tsconfig.base.json
+    Generating package-specific tsconfig files
+    Adding typescript dependency
+  ✓ eslint (2/8)
+    Generating .eslintrc.json
+    Generating .eslintignore
+    Adding eslint dependencies
+  ✓ prettier (3/8)
+    Checking existing prettier config
+    Generating .prettierrc.json
 [continues...]
 ```
 
@@ -188,6 +188,226 @@ condu apply
 ```
 Applying 8 features...
 ✓ 12 files, 3 packages, 1 needs review (2.3s)
+```
+
+---
+
+## Reporting Condu API Operations
+
+The reporter tracks and displays all operations performed through the condu feature API. Here's how each capability is reported:
+
+### File Operations
+
+**generateFile()**
+```typescript
+reporter.log('Generating .config/tsconfig.json')
+reporter.reportFile({
+  path: '.config/tsconfig.json',
+  operation: 'generated',
+  status: 'success',
+  managedBy: ['typescript']
+})
+```
+
+**modifyGeneratedFile()**
+```typescript
+reporter.log('Modifying .config/eslintrc.json')
+reporter.reportFile({
+  path: '.config/eslintrc.json',
+  operation: 'updated',
+  status: 'success',
+  managedBy: ['eslint', 'prettier']
+})
+```
+
+**modifyUserEditableFile()**
+```typescript
+reporter.log('Modifying user-editable package.json')
+reporter.reportFile({
+  path: 'package.json',
+  operation: 'updated',
+  status: 'success',
+  managedBy: ['typescript']
+})
+```
+
+**ignoreFile()**
+```typescript
+reporter.log('Adding .DS_Store to .gitignore')
+// Internally tracked, shown in summary if verbose
+```
+
+### Dependency Operations
+
+**ensureDependency()**
+```typescript
+reporter.log('Adding typescript@^5.7.3 to devDependencies')
+reporter.reportDependency({
+  type: 'add',
+  packageName: 'typescript',
+  version: '^5.7.3',
+  scope: 'devDependencies',
+  target: 'workspace'
+})
+```
+
+**setDependencyResolutions()**
+```typescript
+reporter.log('Setting resolution: typescript=5.7.3')
+// Shown in applying phase under "Resolutions"
+```
+
+### Package Modifications
+
+**modifyPackageJson()**
+```typescript
+reporter.log('Modifying package.json scripts')
+reporter.reportFile({
+  path: 'package.json',
+  operation: 'updated',
+  status: 'success',
+  managedBy: ['moon']
+})
+```
+
+**modifyPublishedPackageJson()**
+```typescript
+reporter.log('Modifying published package.json exports')
+reporter.reportFile({
+  path: 'package.json',
+  operation: 'updated',
+  status: 'success',
+  managedBy: ['condu-build']
+})
+```
+
+### Task Operations
+
+**defineTask()**
+```typescript
+reporter.log('Defining task: build')
+// Shown in summary: "8 tasks defined"
+```
+
+### Complete Feature Example (Verbose)
+
+```
+→ condu apply --verbose
+
+Loading configuration
+  ✓ 8 features found
+
+Collecting state
+  ✓ typescript (1/8)
+    Initializing typescript
+    Generating .config/tsconfig.base.json
+    Generating .config/tsconfig.json
+    Generating packages/platform/condu/tsconfig.json
+    Adding typescript@^5.7.3 to devDependencies
+    Adding @typescript-eslint/parser@^8.20.0 to devDependencies
+    Modifying package.json scripts
+    Defining task: typecheck
+    Recipe defined
+  ✓ eslint (2/8)
+    Initializing eslint
+    Generating .config/eslintrc.json
+    Generating .config/.eslintignore
+    Adding eslint@^9.20.0 to devDependencies
+    Adding @typescript-eslint/eslint-plugin@^8.20.0 to devDependencies
+    Modifying package.json scripts
+    Defining task: lint
+    Recipe defined
+  ✓ prettier (3/8)
+    Initializing prettier
+    Checking existing prettier config
+    Generating .config/.prettierrc.json
+    Modifying .config/eslintrc.json (eslint integration)
+    Adding prettier@^3.4.2 to devDependencies
+    Adding eslint-config-prettier@^9.1.0 to devDependencies
+    Modifying package.json scripts
+    Defining task: format
+    Recipe defined
+  ✓ vitest (4/8)
+    Initializing vitest
+    Generating vitest.config.ts
+    Adding vitest@^3.2.4 to devDependencies
+    Modifying package.json scripts
+    Defining task: test
+    Recipe defined
+  [... continues for all features ...]
+
+Applying changes
+  Files
+    ✓ .config/tsconfig.base.json          [generated by typescript]
+    ✓ .config/tsconfig.json               [generated by typescript]
+    ✓ .config/eslintrc.json               [generated by eslint, prettier]
+    ✓ .config/.eslintignore               [generated by eslint]
+    ✓ .config/.prettierrc.json            [generated by prettier]
+    ↻ packages/platform/condu/tsconfig.json [updated by typescript]
+    ↻ package.json                         [updated by typescript, eslint, prettier, vitest]
+
+  Dependencies (workspace)
+    + typescript@^5.7.3                    [devDependencies]
+    + @typescript-eslint/parser@^8.20.0    [devDependencies]
+    + @typescript-eslint/eslint-plugin@^8.20.0 [devDependencies]
+    + eslint@^9.20.0                       [devDependencies]
+    + eslint-config-prettier@^9.1.0        [devDependencies]
+    + prettier@^3.4.2                      [devDependencies]
+    + vitest@^3.2.4                        [devDependencies]
+
+  Tasks
+    ✓ typecheck defined in workspace
+    ✓ lint defined in workspace
+    ✓ format defined in workspace
+    ✓ test defined in workspace
+
+Summary
+  8 features processed
+  15 files processed (7 generated, 8 updated)
+  1 package modified
+  7 dependencies added
+  4 tasks defined
+
+✓ Complete in 2.3s
+```
+
+### Normal Mode (Less Verbose)
+
+In normal mode, the detailed logs are hidden, showing only:
+
+```
+→ condu apply
+
+Loading configuration
+  ✓ 8 features found
+
+Collecting state
+  ✓ typescript (1/8)
+  ✓ eslint (2/8)
+  ✓ prettier (3/8)
+  ✓ vitest (4/8)
+  ✓ github-actions (5/8)
+  ✓ moon (6/8)
+  ✓ webpack (7/8)
+  ✓ autolink (8/8)
+
+Applying changes
+  Files
+    ✓ .config/tsconfig.base.json          [generated]
+    ✓ .config/tsconfig.json               [generated]
+    ✓ .config/eslintrc.json               [generated]
+    ↻ package.json                         [updated]
+
+  Dependencies
+    + typescript@^5.7.3
+    + eslint@^9.20.0
+    + prettier@^3.4.2
+    + vitest@^3.2.4
+
+Summary
+  15 files processed, 1 package modified, 7 deps added, 4 tasks defined
+
+✓ Complete in 2.3s
 ```
 
 ---
@@ -265,7 +485,7 @@ Summary: 12 files, 3 packages, 1 needs review
 ⚠ Manual review required:
   .config/eslintrc.json (line 42: conflicting config)
 
-To resolve conflicts, run: condu apply --interactive
+Run in an interactive terminal to resolve conflicts.
 ```
 
 ---
@@ -310,7 +530,7 @@ To resolve conflicts, run: condu apply --interactive
 ### Core Components
 
 ```typescript
-// packages/platform/condu-reporter/ConduReporter.ts
+// packages/platform/condu-reporter/index.ts
 
 /**
  * Singleton reporter instance for all condu CLI output
@@ -387,7 +607,8 @@ export class ConduReporter {
 // Auto-detect mode
 function detectMode(): 'interactive' | 'non-interactive' {
   if (process.env.CI === 'true') return 'non-interactive'
-  if (!process.stdout.isTTY) return 'non-interactive'
+  // Interactive requires BOTH stdout (for display) AND stdin (for input)
+  if (!process.stdout.isTTY || !process.stdin.isTTY) return 'non-interactive'
   return 'interactive'
 }
 
@@ -545,7 +766,7 @@ export class InteractiveRenderer extends BaseRenderer {
       const symbol = this.getStatusSymbol(f.status)
       const message = f.message ? ` › ${f.message}` : ''
       const logs = this.verbosity === 'verbose' && f.logs.length > 0
-        ? '\n' + f.logs.map(log => `    • ${log}`).join('\n')
+        ? '\n' + f.logs.map(log => `    ${log}`).join('\n')
         : ''
       return `  ${symbol} ${f.name}${message}${logs}`
     })
@@ -570,13 +791,10 @@ export class NonInteractiveRenderer extends BaseRenderer {
       .map((f, idx) => {
         const symbol = this.getStatusSymbol(f.status)
         const counter = `(${idx + 1}/${features.length})`
-        const timestamp = this.verbosity === 'verbose'
-          ? `[${new Date().toISOString()}] `
-          : ''
         const logs = this.verbosity === 'verbose' && f.logs.length > 0
-          ? '\n' + f.logs.map(log => `${timestamp}  • ${log}`).join('\n')
+          ? '\n' + f.logs.map(log => `    ${log}`).join('\n')
           : ''
-        return `${timestamp}${symbol} ${f.name} ${counter}${logs}`
+        return `${symbol} ${f.name} ${counter}${logs}`
       })
     return lines.join('\n')
   }
@@ -597,7 +815,7 @@ export class NonInteractiveRenderer extends BaseRenderer {
 ```typescript
 // packages/platform/condu/commands/apply/apply.ts
 
-import { reporter } from 'condu-reporter'
+import { reporter } from '@condu/reporter'
 
 export async function apply(): Promise<void> {
   reporter.startPhase('init')
@@ -651,7 +869,7 @@ export async function apply(): Promise<void> {
 ```typescript
 // packages/platform/condu/commands/apply/collectState.ts
 
-import { reporter } from 'condu-reporter'
+import { reporter } from '@condu/reporter'
 
 export async function collectState(options: CollectStateOptions) {
   const { features } = options
@@ -691,7 +909,7 @@ export async function collectState(options: CollectStateOptions) {
 ```typescript
 // packages/platform/condu/commands/apply/FileManager.ts
 
-import { reporter } from 'condu-reporter'
+import { reporter } from '@condu/reporter'
 
 export class FileManager {
   async applyAllFiles(): Promise<void> {
@@ -796,7 +1014,7 @@ Add new flags to the apply command:
 ```typescript
 // packages/platform/condu/commands/ApplyCommand.ts
 
-import { reporter } from 'condu-reporter'
+import { reporter } from '@condu/reporter'
 
 export class ApplyCommand extends Command {
   static paths = [['apply']]
@@ -814,7 +1032,11 @@ export class ApplyCommand extends Command {
   })
 
   interactive = Option.Boolean('--interactive,-i', undefined, {
-    description: 'Force interactive mode (for conflict resolution)',
+    description: 'Force interactive mode (overrides auto-detection)',
+  })
+
+  nonInteractive = Option.Boolean('--non-interactive', false, {
+    description: 'Force non-interactive mode (no prompts)',
   })
 
   async execute() {
@@ -827,10 +1049,12 @@ export class ApplyCommand extends Command {
 
     // Determine mode
     let mode: ReporterMode
-    if (this.interactive !== undefined) {
+    if (this.nonInteractive) {
+      mode = 'non-interactive'
+    } else if (this.interactive !== undefined) {
       mode = this.interactive ? 'interactive' : 'non-interactive'
     } else {
-      mode = detectMode()
+      mode = detectMode()  // Auto-detect based on TTY
     }
 
     // Re-initialize reporter with CLI options
@@ -1057,7 +1281,7 @@ describe('ConduReporter', () => {
    - Implement pause/resume for prompts
 
 3. **Use singleton pattern** for reporter
-   - Export initialized instance: `import { reporter } from 'condu-reporter'`
+   - Export initialized instance: `import { reporter } from '@condu/reporter'`
    - No need to pass through function parameters
    - Easy to use anywhere in codebase
 
@@ -1067,11 +1291,14 @@ describe('ConduReporter', () => {
    - Then add color support
    - Finally add interactive prompts for conflict resolution
 
-5. **Environment variables**
+5. **Environment variables and flags**
    - `CONDU_QUIET=true` OR `--quiet` → quiet verbosity
    - `--verbose` OR `-v` → verbose verbosity
    - `NO_COLOR=1` OR `--no-color` → disable colors
-   - Auto-detect `CI=true` and TTY for mode selection
+   - `--interactive` → force interactive mode
+   - `--non-interactive` → force non-interactive mode
+   - Auto-detect: Interactive mode requires both `stdin.isTTY` AND `stdout.isTTY` (for input and display)
+   - Auto-detect: `CI=true` forces non-interactive mode
 
 This approach provides immediate value while allowing for iterative improvement.
 
@@ -1085,7 +1312,7 @@ The reporter should be its own package for modularity:
 packages/
   platform/
     condu-reporter/
-      package.json
+      package.json          # name: "@condu/reporter"
       index.ts              # Re-exports everything
       ConduReporter.ts      # Main class
       types.ts              # Type definitions
@@ -1098,10 +1325,22 @@ packages/
         NonInteractiveRenderer.ts
 ```
 
+**package.json:**
+```json
+{
+  "name": "@condu/reporter",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  }
+}
+```
+
 This allows other condu commands to use the reporter independently:
 
 ```typescript
-import { reporter } from 'condu-reporter'
+import { reporter } from '@condu/reporter'
 
 reporter.info('Starting build...')
 reporter.success('Build complete!')
