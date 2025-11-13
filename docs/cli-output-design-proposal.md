@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-This proposal outlines a modern, informative, and visually appealing CLI output system for condu, with emphasis on the `apply` command. The design supports three display modes (local, CI, quiet) and provides a flexible, singleton-based reporter architecture that can be used across all condu commands.
+This proposal outlines a modern, informative, and visually appealing CLI output system for condu, with emphasis on the `apply` command. The design supports two rendering modes (interactive and non-interactive) with three output levels (normal, verbose, quiet), and provides a flexible, singleton-based reporter architecture that can be used across all condu commands.
 
 ## Design Goals
 
@@ -10,241 +10,62 @@ This proposal outlines a modern, informative, and visually appealing CLI output 
 2. **Confidence-inspiring**: Clear progress indicators and summaries
 3. **Adaptive**: Automatically adjust output based on environment (TTY, CI, etc.)
 4. **Compact**: Efficient use of terminal space, especially for quiet mode
-5. **Modern & Stylish**: Eye-catching design with emojis and colors
+5. **Modern & Clean**: Eye-catching design with emojis and colors
 6. **Practical**: Easy to parse in logs, grep-friendly when needed
 
-## Display Modes
+## Output Modes
 
-### 1. Local Mode (Full & Fancy)
-**When**: Interactive TTY, not in CI, no `--quiet` flag
-**Features**: Full color, emojis, spinners, progress bars, detailed output
+### Rendering Modes
 
-### 2. CI Mode (Simple & Structured)
-**When**: CI environment detected OR `CI=true` OR non-TTY
-**Features**: No spinners, plain text, clear section markers, timestamps
+**Interactive Mode** (TUI-like)
+- **When**: TTY detected AND not in CI
+- **Behavior**: Updates terminal state in-place using ANSI escape codes
+- **Features**: Spinners, dynamic line updates, live progress
+- **Implementation**: Uses `clearLine()`, `cursorTo()`, rewrites lines
 
-### 3. Quiet Mode (Minimal)
-**When**: `--quiet` flag OR `CONDU_QUIET=true` OR postinstall context
-**Features**: Single line with spinner in TTY, minimal output, summary only
+**Non-Interactive Mode** (Append-only)
+- **When**: CI environment OR non-TTY OR `CI=true`
+- **Behavior**: Append-only output, no line rewrites
+- **Features**: Timestamped logs, clear section markers, grep-friendly
+- **Implementation**: Simple `console.log()` style output
 
----
+### Verbosity Levels
 
-## Theme Options
+**Normal Mode** (default)
+- Standard output with key information
+- Feature progress, file operations, summaries
 
-### Option A: Modern Minimalist
+**Verbose Mode** (`--verbose` or `-v`)
+- Detailed output including additional task logs
+- Shows what each feature is doing at each step
+- Displays arbitrary logs attached to current operations
 
-**Local Mode Example:**
-```
-┌─ condu apply
-│
-├─ Loading configuration...
-│  ✓ Found 8 features to apply
-│
-├─ Collecting state
-│  ⠋ typescript › Generating tsconfig files...
-│
-│  Feature Pipeline:
-│  ✓ typescript      (12 files, 3 deps)
-│  ✓ eslint          (2 files, 5 deps)
-│  ⠋ prettier        Modifying package.json...
-│  ○ vitest
-│  ○ github-actions
-│  ○ moon
-│  ○ webpack
-│  ○ autolink
-│
-├─ Applying changes
-│  ✓ .config/tsconfig.base.json                    [generated]
-│  ✓ .config/tsconfig.json                         [generated]
-│  ↻ packages/platform/condu/tsconfig.json         [updated]
-│  + packages/features/new-feature/package.json    [created]
-│  ⚠ .config/eslintrc.json                         [needs review]
-│
-│  Dependencies:
-│  + typescript@^5.7.3
-│  + @typescript-eslint/parser@^8.20.0
-│
-│  3 packages modified, 12 files processed
-│
-└─ ✓ Complete in 2.3s
-
-   📝 1 file requires manual review:
-      .config/eslintrc.json (line 42: conflicting config)
-```
-
-**CI Mode Example:**
-```
-[condu:apply] Loading configuration...
-[condu:apply] Found 8 features to apply
-
-[condu:apply:features] Collecting state...
-[condu:apply:features] typescript (1/8)
-[condu:apply:features] eslint (2/8)
-[condu:apply:features] prettier (3/8)
-[condu:apply:features] vitest (4/8)
-[condu:apply:features] github-actions (5/8)
-[condu:apply:features] moon (6/8)
-[condu:apply:features] webpack (7/8)
-[condu:apply:features] autolink (8/8)
-
-[condu:apply:files] Applying changes...
-[condu:apply:files] ✓ .config/tsconfig.base.json [generated]
-[condu:apply:files] ✓ .config/tsconfig.json [generated]
-[condu:apply:files] ↻ packages/platform/condu/tsconfig.json [updated]
-[condu:apply:files] + packages/features/new-feature/package.json [created]
-[condu:apply:files] ⚠ .config/eslintrc.json [needs-review]
-
-[condu:apply:deps] Adding dependencies...
-[condu:apply:deps] + typescript@^5.7.3
-[condu:apply:deps] + @typescript-eslint/parser@^8.20.0
-
-[condu:apply] Summary: 3 packages modified, 12 files processed
-[condu:apply] ⚠ 1 file requires manual review
-[condu:apply] ✓ Complete in 2.3s
-```
-
-**Quiet Mode Example (TTY):**
-```
-Applying configuration (8 features)
-⠋ eslint › Modifying .config/eslintrc.json...
-✓ 12 files processed, 3 packages modified, 1 needs review (2.3s)
-```
-
-**Quiet Mode Example (Non-TTY):**
-```
-Applying configuration (8 features)...
-✓ 12 files processed, 3 packages modified, 1 needs review (2.3s)
-```
+**Quiet Mode** (`--quiet` or `-q`)
+- Minimal output - single line with spinner (interactive) or minimal text (non-interactive)
+- Only summary at the end
+- Used for postinstall contexts
 
 ---
 
-### Option B: Retro Terminal
+## Output Examples
 
-**Local Mode Example:**
-```
-╔═══════════════════════════════════════════════════════════════════╗
-║ 🖥  CONDU APPLY v1.0.3                                            ║
-╚═══════════════════════════════════════════════════════════════════╝
+### Interactive Mode (Normal)
 
-▸▸▸ PHASE 1: INITIALIZATION
-    → Loading configuration...
-    ✓ 8 features ready to process
-
-▸▸▸ PHASE 2: COLLECTING STATE
-
-    🔨 typescript ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100%
-       ✓ 12 files queued, 3 dependencies added
-
-    🧹 eslint ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100%
-       ✓ 2 files queued, 5 dependencies added
-
-    ⚙  prettier ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100%
-       ✓ 1 file queued, 2 dependencies added
-
-    [...5 more features...]
-
-▸▸▸ PHASE 3: APPLYING CHANGES
-
-    FILES:
-    [✓] .config/tsconfig.base.json ........................ generated
-    [✓] .config/tsconfig.json ............................. generated
-    [↻] packages/platform/condu/tsconfig.json ............. updated
-    [+] packages/features/new-feature/package.json ........ created
-    [⚠] .config/eslintrc.json ............................. needs-review
-
-    12 files processed (4 created, 6 updated, 1 needs review, 1 deleted)
-
-    DEPENDENCIES:
-    [+] typescript@^5.7.3
-    [+] @typescript-eslint/parser@^8.20.0
-    [...8 more...]
-
-    10 dependencies added across 3 packages
-
-▸▸▸ RESULT: SUCCESS ✓
-
-    ⏱  Completed in 2.34s
-
-    ⚠  ACTION REQUIRED:
-    1 file needs manual review:
-    • .config/eslintrc.json (line 42: conflicting config)
-      Run: condu review .config/eslintrc.json
-
-╔═══════════════════════════════════════════════════════════════════╗
-║ 🎉 Configuration successfully applied!                            ║
-╚═══════════════════════════════════════════════════════════════════╝
-```
-
-**CI Mode Example:**
-```
-================================================================================
- CONDU APPLY v1.0.3
-================================================================================
-
->>> PHASE 1: INITIALIZATION
-[2025-11-09 10:23:45] Loading configuration...
-[2025-11-09 10:23:45] ✓ 8 features ready to process
-
->>> PHASE 2: COLLECTING STATE
-[2025-11-09 10:23:45] [1/8] typescript
-[2025-11-09 10:23:46] [2/8] eslint
-[2025-11-09 10:23:46] [3/8] prettier
-[2025-11-09 10:23:46] [4/8] vitest
-[2025-11-09 10:23:46] [5/8] github-actions
-[2025-11-09 10:23:46] [6/8] moon
-[2025-11-09 10:23:47] [7/8] webpack
-[2025-11-09 10:23:47] [8/8] autolink
-
->>> PHASE 3: APPLYING CHANGES
-[2025-11-09 10:23:47] FILES:
-[2025-11-09 10:23:47] ✓ generated: .config/tsconfig.base.json
-[2025-11-09 10:23:47] ✓ generated: .config/tsconfig.json
-[2025-11-09 10:23:47] ↻ updated: packages/platform/condu/tsconfig.json
-[2025-11-09 10:23:47] + created: packages/features/new-feature/package.json
-[2025-11-09 10:23:47] ⚠ needs-review: .config/eslintrc.json
-
-[2025-11-09 10:23:47] DEPENDENCIES:
-[2025-11-09 10:23:47] + typescript@^5.7.3
-[2025-11-09 10:23:47] + @typescript-eslint/parser@^8.20.0
-
->>> RESULT: SUCCESS ✓
-[2025-11-09 10:23:47] 12 files processed, 3 packages modified
-[2025-11-09 10:23:47] ⚠ 1 file requires manual review
-[2025-11-09 10:23:47] Completed in 2.3s
-
-⚠ ACTION REQUIRED:
-  .config/eslintrc.json (line 42: conflicting config)
-
-================================================================================
-```
-
-**Quiet Mode Example:**
-```
-▸▸▸ Applying configuration (8 features)
-⠙ prettier › Modifying package.json...
-✓ Complete: 12 files, 3 packages, 1 needs review (2.3s)
-```
-
----
-
-### Option C: Ultra Minimal (Recommended for CI as default)
-
-**Local Mode Example:**
 ```
 → condu apply
 
 Loading configuration
-  8 features found
+  ✓ 8 features found
 
 Collecting state
-  typescript   ✓
-  eslint       ✓
-  prettier     ⠋ processing...
-  vitest       ·
-  github-actions  ·
-  moon         ·
-  webpack      ·
-  autolink     ·
+  ✓ typescript
+  ✓ eslint
+  ⠋ prettier › Modifying package.json...
+  · vitest
+  · github-actions
+  · moon
+  · webpack
+  · autolink
 
 Applying changes
   Files
@@ -266,7 +87,45 @@ Summary
 ✓ Complete in 2.3s
 ```
 
-**CI Mode Example:**
+### Interactive Mode (Verbose)
+
+```
+→ condu apply
+
+Loading configuration
+  ✓ 8 features found
+
+Collecting state
+  ✓ typescript
+    • Generating tsconfig.base.json
+    • Generating package-specific tsconfig files
+    • Adding typescript dependency
+  ✓ eslint
+    • Generating .eslintrc.json
+    • Generating .eslintignore
+    • Adding eslint dependencies
+  ⠋ prettier › Modifying package.json...
+    • Checking existing prettier config
+    • Generating .prettierrc.json
+  · vitest
+  · github-actions
+  · moon
+  · webpack
+  · autolink
+
+[continues with more detail...]
+```
+
+### Interactive Mode (Quiet)
+
+```
+Applying 8 features
+⠋ prettier › Modifying package.json...
+✓ 12 files, 3 packages, 1 needs review (2.3s)
+```
+
+### Non-Interactive Mode (Normal)
+
 ```
 condu apply
 
@@ -274,14 +133,14 @@ Loading configuration
   8 features found
 
 Processing features (8)
-  typescript (1/8) ✓
-  eslint (2/8) ✓
-  prettier (3/8) ✓
-  vitest (4/8) ✓
-  github-actions (5/8) ✓
-  moon (6/8) ✓
-  webpack (7/8) ✓
-  autolink (8/8) ✓
+  ✓ typescript (1/8)
+  ✓ eslint (2/8)
+  ✓ prettier (3/8)
+  ✓ vitest (4/8)
+  ✓ github-actions (5/8)
+  ✓ moon (6/8)
+  ✓ webpack (7/8)
+  ✓ autolink (8/8)
 
 Applying changes
   ✓ .config/tsconfig.base.json [generated]
@@ -301,31 +160,132 @@ Summary: 12 files, 3 packages, 1 needs review
   .config/eslintrc.json (line 42: conflicting config)
 ```
 
-**Quiet Mode Example:**
+### Non-Interactive Mode (Verbose)
+
 ```
-Applying 8 features
-⠋ prettier › Modifying package.json...
+condu apply
+
+[2025-11-13 10:23:45] Loading configuration
+[2025-11-13 10:23:45] 8 features found
+
+[2025-11-13 10:23:45] Processing features (8)
+[2025-11-13 10:23:45] ✓ typescript (1/8)
+[2025-11-13 10:23:45]   • Generating tsconfig.base.json
+[2025-11-13 10:23:45]   • Generating package-specific tsconfig files
+[2025-11-13 10:23:45]   • Adding typescript dependency
+[2025-11-13 10:23:46] ✓ eslint (2/8)
+[2025-11-13 10:23:46]   • Generating .eslintrc.json
+[2025-11-13 10:23:46]   • Generating .eslintignore
+[2025-11-13 10:23:46]   • Adding eslint dependencies
+[2025-11-13 10:23:46] ✓ prettier (3/8)
+[2025-11-13 10:23:46]   • Checking existing prettier config
+[2025-11-13 10:23:46]   • Generating .prettierrc.json
+[continues...]
+```
+
+### Non-Interactive Mode (Quiet)
+
+```
+Applying 8 features...
 ✓ 12 files, 3 packages, 1 needs review (2.3s)
+```
+
+---
+
+## Interactive Prompts & Conflict Resolution
+
+One of the key features of the reporter is the ability to **pause the output**, display arbitrary content (like diffs), handle user input, and **resume** normal operation.
+
+### Example: Manual Conflict Resolution (Interactive)
+
+```
+→ condu apply
+
+Loading configuration
+  ✓ 8 features found
+
+Collecting state
+  ✓ typescript
+  ✓ eslint
+  ✓ prettier
+  [... continues ...]
+
+Applying changes
+  Files
+    ✓ .config/tsconfig.base.json          [generated]
+    ✓ .config/tsconfig.json               [generated]
+    ⚠ .config/eslintrc.json               [conflict detected]
+
+┌─────────────────────────────────────────────────────────────────────
+│ Manual review required: .config/eslintrc.json
+│
+│ The file has been modified manually. Choose how to proceed:
+│
+│ --- Expected (generated by condu)
+│ +++ Current (in filesystem)
+│ @@ -15,7 +15,7 @@
+│    "rules": {
+│ -    "no-console": "error",
+│ +    "no-console": "warn",
+│      "indent": ["error", 2]
+│    }
+│
+│ Options:
+│   [k] Keep current version (yours)
+│   [o] Overwrite with generated version (condu's)
+│   [e] Edit manually
+│   [s] Skip (leave as-is, mark as unmanaged)
+│   [d] Show full diff
+│
+│ Your choice: █
+└─────────────────────────────────────────────────────────────────────
+
+[User input happens here, then output resumes]
+
+Applying changes (continued)
+  Files
+    ↻ .config/eslintrc.json               [kept yours]
+    ✓ packages/.../package.json           [created]
+    [... continues ...]
+```
+
+### Non-Interactive Mode (No prompts)
+
+In non-interactive mode, conflicts are **never** prompted interactively. Instead, they're logged and skipped:
+
+```
+Applying changes
+  ✓ .config/tsconfig.base.json [generated]
+  ✓ .config/tsconfig.json [generated]
+  ⚠ .config/eslintrc.json [needs-review]
+
+Summary: 12 files, 3 packages, 1 needs review
+✓ Complete in 2.3s
+
+⚠ Manual review required:
+  .config/eslintrc.json (line 42: conflicting config)
+
+To resolve conflicts, run: condu apply --interactive
 ```
 
 ---
 
 ## Color Scheme
 
-### Local Mode (with colors)
+### Interactive Mode (with colors)
 - **Success**: Green (`\x1b[32m`)
 - **Warning**: Yellow (`\x1b[33m`)
 - **Error**: Red (`\x1b[31m`)
 - **Info**: Cyan (`\x1b[36m`)
-- **Muted**: Gray (`\x1b[90m`)
+- **Muted/Pending**: Gray (`\x1b[90m`)
 - **Highlight**: Bright White (`\x1b[97m`)
 
-### CI Mode (no colors or minimal)
+### Non-Interactive Mode
 - Plain text with semantic prefixes: `✓`, `✗`, `⚠`, `→`
 - Optional: Use ANSI colors but no animations
 
 ### Quiet Mode
-- Same as CI mode but ultra-condensed
+- Minimal color usage, mainly success/error indicators
 
 ---
 
@@ -340,12 +300,8 @@ Applying 8 features
 | + | Added | New file/dependency |
 | - | Removed | Deleted file/dependency |
 | → | In Progress | Current action |
-| ○ | Pending | Queued operation |
+| · | Pending | Queued operation (dim) |
 | ⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏ | Spinner | Active processing (cycles) |
-| ┌├└│ | Tree | Structural hierarchy |
-| ▸▸▸ | Section | Major phase separator |
-| 📝 | Note | Important information |
-| 🎉 | Success | Final success message |
 
 ---
 
@@ -354,20 +310,22 @@ Applying 8 features
 ### Core Components
 
 ```typescript
-// packages/platform/condu/reporter/ConduReporter.ts
+// packages/platform/condu-reporter/ConduReporter.ts
 
 /**
  * Singleton reporter instance for all condu CLI output
  */
 export class ConduReporter {
-  private mode: 'local' | 'ci' | 'quiet'
-  private theme: 'modern' | 'retro' | 'minimal'
+  private mode: 'interactive' | 'non-interactive'
+  private verbosity: 'quiet' | 'normal' | 'verbose'
   private supportsColor: boolean
   private isInteractiveTTY: boolean
   private startTime: number
   private currentPhase?: Phase
   private features: FeatureProgress[] = []
   private files: FileOperation[] = []
+  private currentTaskLogs: string[] = []
+  private isPaused = false
 
   // Singleton pattern
   private static instance?: ConduReporter
@@ -395,9 +353,12 @@ export class ConduReporter {
   updateFeature(name: string, message: string): void
   endFeature(name: string, stats: FeatureStats): void
 
+  // Task logging (for verbose mode)
+  log(message: string): void  // Adds log to current task
+  clearLogs(): void           // Clears accumulated logs
+
   // File operations
   reportFile(operation: FileOperation): void
-  reportConflict(file: string, diff: string): void
 
   // Dependencies
   reportDependency(operation: DependencyOperation): void
@@ -411,6 +372,12 @@ export class ConduReporter {
   // Summary
   printSummary(summary: ApplySummary): void
 
+  // Interactive prompts (only works in interactive mode)
+  pause(): void                           // Pause output updates
+  resume(): void                          // Resume output updates
+  prompt<T>(options: PromptOptions<T>): Promise<T>  // Show interactive prompt
+  showDiff(file: string, diff: string): void        // Display diff
+
   // Low-level control (for advanced use)
   write(text: string): void
   clearLine(): void
@@ -418,11 +385,10 @@ export class ConduReporter {
 }
 
 // Auto-detect mode
-function detectMode(): 'local' | 'ci' | 'quiet' {
-  if (process.env.CONDU_QUIET === 'true') return 'quiet'
-  if (process.env.CI === 'true') return 'ci'
-  if (!process.stdout.isTTY) return 'ci'
-  return 'local'
+function detectMode(): 'interactive' | 'non-interactive' {
+  if (process.env.CI === 'true') return 'non-interactive'
+  if (!process.stdout.isTTY) return 'non-interactive'
+  return 'interactive'
 }
 
 // Auto-detect color support
@@ -436,7 +402,7 @@ function supportsColor(): boolean {
 // Initialize singleton at module load
 export const reporter = ConduReporter.initialize({
   mode: detectMode(),
-  theme: process.env.CONDU_THEME as any ?? 'minimal',
+  verbosity: 'normal',
   supportsColor: supportsColor(),
   isInteractiveTTY: process.stdout.isTTY,
 })
@@ -448,7 +414,7 @@ export default reporter
 ### Type Definitions
 
 ```typescript
-// packages/platform/condu/reporter/types.ts
+// packages/platform/condu-reporter/types.ts
 
 export type Phase =
   | 'init'
@@ -457,13 +423,13 @@ export type Phase =
   | 'applying'
   | 'complete'
 
-export type ReporterMode = 'local' | 'ci' | 'quiet'
+export type ReporterMode = 'interactive' | 'non-interactive'
 
-export type ReporterTheme = 'modern' | 'retro' | 'minimal'
+export type VerbosityLevel = 'quiet' | 'normal' | 'verbose'
 
 export interface ReporterOptions {
   mode?: ReporterMode
-  theme?: ReporterTheme
+  verbosity?: VerbosityLevel
   supportsColor?: boolean
   isInteractiveTTY?: boolean
 }
@@ -485,6 +451,7 @@ export interface FeatureProgress {
   status: 'pending' | 'in-progress' | 'complete' | 'error'
   message?: string
   stats?: FeatureStats
+  logs: string[]  // Accumulated logs for verbose mode
 }
 
 export interface FileOperation {
@@ -523,18 +490,27 @@ export interface ApplySummary {
   errors: string[]
   warnings: string[]
 }
+
+export interface PromptOptions<T> {
+  message: string
+  choices?: Array<{ key: string; label: string; value: T }>
+  default?: T
+  type?: 'select' | 'confirm' | 'input'
+}
 ```
 
 ### Renderer Abstraction
 
 ```typescript
-// packages/platform/condu/reporter/renderers/BaseRenderer.ts
+// packages/platform/condu-reporter/renderers/BaseRenderer.ts
 
 export abstract class BaseRenderer {
   protected supportsColor: boolean
+  protected verbosity: VerbosityLevel
 
-  constructor(supportsColor: boolean) {
+  constructor(supportsColor: boolean, verbosity: VerbosityLevel) {
     this.supportsColor = supportsColor
+    this.verbosity = verbosity
   }
 
   abstract renderPhaseStart(phase: Phase): string
@@ -561,21 +537,59 @@ export abstract class BaseRenderer {
   }
 }
 
-// Separate renderers for each mode/theme
-// packages/platform/condu/reporter/renderers/LocalModernRenderer.ts
-export class LocalModernRenderer extends BaseRenderer { ... }
+// Separate renderers for each mode
+// packages/platform/condu-reporter/renderers/InteractiveRenderer.ts
+export class InteractiveRenderer extends BaseRenderer {
+  renderFeatureProgress(features: FeatureProgress[]): string {
+    const lines = features.map(f => {
+      const symbol = this.getStatusSymbol(f.status)
+      const message = f.message ? ` › ${f.message}` : ''
+      const logs = this.verbosity === 'verbose' && f.logs.length > 0
+        ? '\n' + f.logs.map(log => `    • ${log}`).join('\n')
+        : ''
+      return `  ${symbol} ${f.name}${message}${logs}`
+    })
+    return lines.join('\n')
+  }
 
-// packages/platform/condu/reporter/renderers/LocalRetroRenderer.ts
-export class LocalRetroRenderer extends BaseRenderer { ... }
+  private getStatusSymbol(status: FeatureProgress['status']): string {
+    switch (status) {
+      case 'complete': return this.color('✓', '32')  // green
+      case 'in-progress': return '⠋'  // spinner frame
+      case 'error': return this.color('✗', '31')  // red
+      case 'pending': return this.dim('·')
+    }
+  }
+}
 
-// packages/platform/condu/reporter/renderers/LocalMinimalRenderer.ts
-export class LocalMinimalRenderer extends BaseRenderer { ... }
+// packages/platform/condu-reporter/renderers/NonInteractiveRenderer.ts
+export class NonInteractiveRenderer extends BaseRenderer {
+  renderFeatureProgress(features: FeatureProgress[]): string {
+    const lines = features
+      .filter(f => f.status !== 'pending')
+      .map((f, idx) => {
+        const symbol = this.getStatusSymbol(f.status)
+        const counter = `(${idx + 1}/${features.length})`
+        const timestamp = this.verbosity === 'verbose'
+          ? `[${new Date().toISOString()}] `
+          : ''
+        const logs = this.verbosity === 'verbose' && f.logs.length > 0
+          ? '\n' + f.logs.map(log => `${timestamp}  • ${log}`).join('\n')
+          : ''
+        return `${timestamp}${symbol} ${f.name} ${counter}${logs}`
+      })
+    return lines.join('\n')
+  }
 
-// packages/platform/condu/reporter/renderers/CIRenderer.ts
-export class CIRenderer extends BaseRenderer { ... }
-
-// packages/platform/condu/reporter/renderers/QuietRenderer.ts
-export class QuietRenderer extends BaseRenderer { ... }
+  private getStatusSymbol(status: FeatureProgress['status']): string {
+    switch (status) {
+      case 'complete': return '✓'
+      case 'in-progress': return '→'
+      case 'error': return '✗'
+      case 'pending': return '·'
+    }
+  }
+}
 ```
 
 ### Integration with Apply Command
@@ -583,7 +597,7 @@ export class QuietRenderer extends BaseRenderer { ... }
 ```typescript
 // packages/platform/condu/commands/apply/apply.ts
 
-import reporter from '../../reporter/ConduReporter.js'
+import { reporter } from 'condu-reporter'
 
 export async function apply(): Promise<void> {
   reporter.startPhase('init')
@@ -591,13 +605,13 @@ export async function apply(): Promise<void> {
   try {
     // Loading phase
     reporter.startPhase('loading')
-    reporter.info('Loading configuration...')
+    reporter.info('Loading configuration')
 
     const { conduConfigFileObject } = await loadConduConfigFromFilesystem()
     const { conduProject } = await loadConduProject()
 
     const features = preprocessFeatures(conduConfigFileObject.features)
-    reporter.success(`Found ${features.length} features to apply`)
+    reporter.success(`${features.length} features found`)
     reporter.endPhase('loading', { success: true })
 
     // Collecting phase
@@ -637,7 +651,7 @@ export async function apply(): Promise<void> {
 ```typescript
 // packages/platform/condu/commands/apply/collectState.ts
 
-import reporter from '../../reporter/ConduReporter.js'
+import { reporter } from 'condu-reporter'
 
 export async function collectState(options: CollectStateOptions) {
   const { features } = options
@@ -651,7 +665,9 @@ export async function collectState(options: CollectStateOptions) {
 
     try {
       // Execute recipe
+      reporter.log(`Initializing ${feature.name}`)
       await feature.defineRecipe?.(api)
+      reporter.log(`Recipe defined`)
 
       // Report stats
       reporter.endFeature(feature.name, {
@@ -675,13 +691,39 @@ export async function collectState(options: CollectStateOptions) {
 ```typescript
 // packages/platform/condu/commands/apply/FileManager.ts
 
-import reporter from '../../reporter/ConduReporter.js'
+import { reporter } from 'condu-reporter'
 
 export class FileManager {
   async applyAllFiles(): Promise<void> {
     for (const [relPath, file] of this.files.entries()) {
       try {
-        await this.applyFile(file)
+        reporter.log(`Processing ${relPath}`)
+
+        const hasManualChanges = await this.detectManualChanges(file)
+
+        if (hasManualChanges && reporter.mode === 'interactive') {
+          // Pause output and show interactive prompt
+          reporter.pause()
+
+          const diff = await this.generateDiff(file)
+          const choice = await reporter.prompt({
+            message: `Manual review required: ${relPath}`,
+            type: 'select',
+            choices: [
+              { key: 'k', label: 'Keep current version (yours)', value: 'keep' },
+              { key: 'o', label: 'Overwrite with generated version', value: 'overwrite' },
+              { key: 'e', label: 'Edit manually', value: 'edit' },
+              { key: 's', label: 'Skip', value: 'skip' },
+              { key: 'd', label: 'Show full diff', value: 'diff' },
+            ],
+          })
+
+          await this.handleConflictChoice(file, choice)
+
+          reporter.resume()
+        } else {
+          await this.applyFile(file)
+        }
 
         reporter.reportFile({
           path: relPath,
@@ -703,7 +745,7 @@ export class FileManager {
 ## Environment Detection
 
 ```typescript
-// packages/platform/condu/reporter/detection.ts
+// packages/platform/condu-reporter/detection.ts
 
 export function detectEnvironment() {
   return {
@@ -720,7 +762,6 @@ export function detectEnvironment() {
     supportsColor: detectColorSupport(),
     terminalWidth: process.stdout.columns ?? 80,
     isQuiet: process.env.CONDU_QUIET === 'true',
-    preferredTheme: process.env.CONDU_THEME as ReporterTheme | undefined,
   }
 }
 
@@ -755,6 +796,8 @@ Add new flags to the apply command:
 ```typescript
 // packages/platform/condu/commands/ApplyCommand.ts
 
+import { reporter } from 'condu-reporter'
+
 export class ApplyCommand extends Command {
   static paths = [['apply']]
 
@@ -766,19 +809,34 @@ export class ApplyCommand extends Command {
     description: 'Show detailed output including debug information',
   })
 
-  theme = Option.String('--theme', {
-    description: 'Output theme: modern, retro, minimal',
-  })
-
   noColor = Option.Boolean('--no-color', false, {
     description: 'Disable colored output',
   })
 
+  interactive = Option.Boolean('--interactive,-i', undefined, {
+    description: 'Force interactive mode (for conflict resolution)',
+  })
+
   async execute() {
-    // Initialize reporter with CLI options
-    const reporter = ConduReporter.initialize({
-      mode: this.quiet ? 'quiet' : detectMode(),
-      theme: this.theme as ReporterTheme ?? 'minimal',
+    // Determine verbosity
+    const verbosity: VerbosityLevel = this.quiet
+      ? 'quiet'
+      : this.verbose
+      ? 'verbose'
+      : 'normal'
+
+    // Determine mode
+    let mode: ReporterMode
+    if (this.interactive !== undefined) {
+      mode = this.interactive ? 'interactive' : 'non-interactive'
+    } else {
+      mode = detectMode()
+    }
+
+    // Re-initialize reporter with CLI options
+    reporter.initialize({
+      mode,
+      verbosity,
       supportsColor: !this.noColor && supportsColor(),
       isInteractiveTTY: process.stdout.isTTY,
     })
@@ -792,10 +850,10 @@ export class ApplyCommand extends Command {
 
 ## Spinner Implementation
 
-For the quiet/local modes with spinners:
+For the interactive mode with spinners:
 
 ```typescript
-// packages/platform/condu/reporter/Spinner.ts
+// packages/platform/condu-reporter/Spinner.ts
 
 const SPINNER_FRAMES = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
 
@@ -856,43 +914,88 @@ export class Spinner {
 
 ---
 
+## Interactive Prompt Implementation
+
+```typescript
+// packages/platform/condu-reporter/Prompt.ts
+
+import * as readline from 'node:readline'
+
+export async function prompt<T>(options: PromptOptions<T>): Promise<T> {
+  const { message, choices, type = 'select' } = options
+
+  // Display the prompt box
+  console.log('┌─────────────────────────────────────────────────────────────────────')
+  console.log(`│ ${message}`)
+  console.log('│')
+
+  if (type === 'select' && choices) {
+    console.log('│ Options:')
+    for (const choice of choices) {
+      console.log(`│   [${choice.key}] ${choice.label}`)
+    }
+    console.log('│')
+    console.log('│ Your choice: ')
+    console.log('└─────────────────────────────────────────────────────────────────────')
+
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    })
+
+    return new Promise((resolve) => {
+      rl.question('', (answer) => {
+        rl.close()
+        const choice = choices.find(c => c.key === answer.trim())
+        if (choice) {
+          resolve(choice.value)
+        } else {
+          console.log(`Invalid choice: ${answer}`)
+          resolve(prompt(options))  // Retry
+        }
+      })
+    })
+  }
+
+  throw new Error('Unsupported prompt type')
+}
+```
+
+---
+
 ## Progressive Enhancement Strategy
 
-### Phase 1: Core Infrastructure
+### Phase 1: Core Infrastructure (v1)
 1. Implement `ConduReporter` class with singleton pattern
-2. Add basic renderers (CI mode first as baseline)
+2. Add basic renderers for interactive and non-interactive modes
 3. Integrate into `apply` command at key points
 4. Add environment detection
+5. Support normal, verbose, quiet verbosity levels
 
-### Phase 2: Enhanced Local Mode
-1. Implement spinners and progress indicators
-2. Add color support with fallbacks
-3. Create theme variants (modern, retro, minimal)
-4. Add real-time feature progress display
+### Phase 2: Interactive Features (v1.1)
+1. Implement pause/resume functionality
+2. Add interactive prompts for conflict resolution
+3. Implement diff display
+4. Add spinner animations for interactive mode
 
-### Phase 3: Quiet Mode
-1. Implement compact single-line output
-2. Add postinstall context detection
-3. Optimize for minimal distraction
-
-### Phase 4: Advanced Features
-1. Add `--json` flag for machine-readable output
-2. Implement progress percentage calculation
-3. Add estimated time remaining
-4. Support for nested operations (e.g., sub-tasks within features)
+### Phase 3: Enhancements (v2)
+1. Add progress percentage calculation
+2. Add estimated time remaining
+3. Support for nested operations (e.g., sub-tasks within features)
+4. Performance profiling (which features take longest)
 
 ---
 
 ## Testing Strategy
 
 ```typescript
-// packages/platform/condu/reporter/ConduReporter.test.ts
+// packages/platform/condu-reporter/ConduReporter.test.ts
 
 describe('ConduReporter', () => {
-  it('auto-detects CI mode from environment', () => {
+  it('auto-detects non-interactive mode from CI environment', () => {
     process.env.CI = 'true'
     const reporter = ConduReporter.initialize()
-    expect(reporter.mode).toBe('ci')
+    expect(reporter.mode).toBe('non-interactive')
   })
 
   it('respects NO_COLOR environment variable', () => {
@@ -903,12 +1006,36 @@ describe('ConduReporter', () => {
 
   it('outputs correct format in quiet mode', () => {
     const output = captureStdout(() => {
-      const reporter = ConduReporter.initialize({ mode: 'quiet' })
+      const reporter = ConduReporter.initialize({
+        mode: 'non-interactive',
+        verbosity: 'quiet',
+      })
       reporter.startPhase('applying')
       reporter.printSummary(mockSummary)
     })
 
     expect(output).toMatch(/✓ \d+ files processed/)
+  })
+
+  it('accumulates logs in verbose mode', () => {
+    const reporter = ConduReporter.initialize({ verbosity: 'verbose' })
+    reporter.startFeature('typescript', { index: 0, total: 1 })
+    reporter.log('Generating tsconfig')
+    reporter.log('Adding dependencies')
+
+    expect(reporter.features[0].logs).toHaveLength(2)
+  })
+
+  it('does not show prompts in non-interactive mode', async () => {
+    const reporter = ConduReporter.initialize({ mode: 'non-interactive' })
+
+    const result = await reporter.prompt({
+      message: 'Choose',
+      choices: [{ key: 'y', label: 'Yes', value: true }],
+    })
+
+    // Should throw or return default without prompting
+    expect(result).toBeUndefined()
   })
 })
 ```
@@ -917,62 +1044,81 @@ describe('ConduReporter', () => {
 
 ## Recommendation
 
-**For initial implementation, I recommend:**
+**For initial implementation:**
 
-1. **Start with Option C (Ultra Minimal)** as the default theme
-   - Cleanest, most versatile
-   - Works well in all environments
-   - Easy to enhance later
+1. **Start with non-interactive mode**
+   - Simplest, most stable
+   - Works everywhere (CI, TTY, non-TTY)
+   - Easy to test
 
-2. **Implement modes in this order:**
-   - CI mode first (simplest, most stable)
-   - Local mode next (with minimal theme)
-   - Quiet mode last (requires spinner handling)
+2. **Add interactive mode next**
+   - Implement spinners for live updates
+   - Add color support with fallbacks
+   - Implement pause/resume for prompts
 
 3. **Use singleton pattern** for reporter
-   - Export initialized instance: `import reporter from '@condu/reporter'`
+   - Export initialized instance: `import { reporter } from 'condu-reporter'`
    - No need to pass through function parameters
    - Easy to use anywhere in codebase
 
 4. **Progressive enhancement**
-   - Start with basic text output
-   - Add colors next
-   - Then spinners/animations
-   - Finally add theme variants
+   - Start with basic text output in non-interactive mode
+   - Add interactive mode with spinners
+   - Then add color support
+   - Finally add interactive prompts for conflict resolution
 
 5. **Environment variables**
-   - `CONDU_QUIET=true` → quiet mode
-   - `CONDU_THEME=retro|modern|minimal` → theme selection
-   - `NO_COLOR=1` → disable colors
-   - Auto-detect `CI=true` and TTY
+   - `CONDU_QUIET=true` OR `--quiet` → quiet verbosity
+   - `--verbose` OR `-v` → verbose verbosity
+   - `NO_COLOR=1` OR `--no-color` → disable colors
+   - Auto-detect `CI=true` and TTY for mode selection
 
-This approach provides immediate value while allowing for iterative improvement toward the more stylized options.
-
----
-
-## Questions for Consideration
-
-1. Should we add a `--json` output mode for machine parsing?
-2. Do we want to log to a file in addition to stdout?
-3. Should we support different verbosity levels (--verbose, -v, -vv, -vvv)?
-4. Should manual conflict resolution be part of the reporter or separate?
-5. Do we want telemetry/analytics on which features take longest?
+This approach provides immediate value while allowing for iterative improvement.
 
 ---
 
-## Appendix: Dependencies to Consider
+## Package Structure
 
-### Minimal approach (recommended):
+The reporter should be its own package for modularity:
+
+```
+packages/
+  platform/
+    condu-reporter/
+      package.json
+      index.ts              # Re-exports everything
+      ConduReporter.ts      # Main class
+      types.ts              # Type definitions
+      detection.ts          # Environment detection
+      Spinner.ts            # Spinner implementation
+      Prompt.ts             # Interactive prompts
+      renderers/
+        BaseRenderer.ts
+        InteractiveRenderer.ts
+        NonInteractiveRenderer.ts
+```
+
+This allows other condu commands to use the reporter independently:
+
+```typescript
+import { reporter } from 'condu-reporter'
+
+reporter.info('Starting build...')
+reporter.success('Build complete!')
+```
+
+---
+
+## Dependencies
+
+**Recommended approach**: Start with zero dependencies
 - No external dependencies, use native Node.js capabilities
 - ANSI escape codes directly
 - Simple state management
+- Use `node:readline` for prompts
 
-### Enhanced approach:
-- `picocolors` or `chalk` - color support (2KB vs 15KB)
-- `cli-spinners` - spinner animations
-- `cli-progress` - progress bars
-- `log-symbols` - consistent symbols across platforms
+**Optional enhancements** (only if needed):
+- `picocolors` - tiny color library (2KB)
 - `string-width` - proper width calculation for Unicode
-- `wrap-ansi` - text wrapping with ANSI support
 
 **Recommendation**: Start with zero dependencies, add `picocolors` only if color logic gets complex.
