@@ -1,0 +1,309 @@
+import type {
+  ApplySummary,
+  DependencyOperation,
+  FeatureContext,
+  FeatureProgress,
+  FeatureStats,
+  FileOperation,
+  Phase,
+  PhaseResult,
+  ReporterMode,
+  ReporterOptions,
+  ReporterTheme,
+} from "./types.js";
+import { detectColorSupport, detectMode } from "./detection.js";
+import { Spinner } from "./Spinner.js";
+import type { BaseRenderer } from "./renderers/BaseRenderer.js";
+import { CiRenderer } from "./renderers/CiRenderer.js";
+import { LocalMinimalRenderer } from "./renderers/LocalMinimalRenderer.js";
+import { QuietRenderer } from "./renderers/QuietRenderer.js";
+
+/**
+ * Singleton reporter instance for all condu CLI output
+ */
+export class ConduReporter {
+  private mode: ReporterMode;
+  private theme: ReporterTheme;
+  private supportsColor: boolean;
+  private isInteractiveTTY: boolean;
+  private startTime: number;
+  private currentPhase?: Phase;
+  private features: FeatureProgress[] = [];
+  private files: FileOperation[] = [];
+  private dependencies: DependencyOperation[] = [];
+  private renderer: BaseRenderer;
+  private spinner?: Spinner;
+  private quietRenderer?: QuietRenderer;
+
+  // Singleton pattern
+  private static instance?: ConduReporter;
+
+  private constructor(options: ReporterOptions) {
+    this.mode = options.mode ?? detectMode();
+    this.theme = options.theme ?? "minimal";
+    this.supportsColor = options.supportsColor ?? detectColorSupport();
+    this.isInteractiveTTY = options.isInteractiveTTY ?? false;
+    this.startTime = Date.now();
+
+    // Create the appropriate renderer
+    this.renderer = this.createRenderer();
+
+    // Create spinner for quiet mode if in TTY
+    if (this.mode === "quiet" && this.isInteractiveTTY) {
+      this.spinner = new Spinner();
+      if (this.renderer instanceof QuietRenderer) {
+        this.quietRenderer = this.renderer;
+      }
+    }
+  }
+
+  private createRenderer(): BaseRenderer {
+    if (this.mode === "quiet") {
+      return new QuietRenderer(this.supportsColor);
+    }
+
+    if (this.mode === "ci") {
+      return new CiRenderer(this.supportsColor);
+    }
+
+    // Local mode
+    switch (this.theme) {
+      case "minimal":
+        return new LocalMinimalRenderer(this.supportsColor);
+      case "modern":
+      case "retro":
+        // For now, use minimal for all local modes
+        // We can implement modern and retro later
+        return new LocalMinimalRenderer(this.supportsColor);
+      default:
+        return new LocalMinimalRenderer(this.supportsColor);
+    }
+  }
+
+  static initialize(options: ReporterOptions = {}): ConduReporter {
+    if (!ConduReporter.instance) {
+      ConduReporter.instance = new ConduReporter(options);
+    }
+    return ConduReporter.instance;
+  }
+
+  static get(): ConduReporter {
+    if (!ConduReporter.instance) {
+      throw new Error("Reporter not initialized");
+    }
+    return ConduReporter.instance;
+  }
+
+  static reset(): void {
+    ConduReporter.instance = undefined;
+  }
+
+  // Phase management
+  startPhase(phase: Phase): void {
+    this.currentPhase = phase;
+    const output = this.renderer.renderPhaseStart(phase);
+    if (output) {
+      this.write(output);
+    }
+
+    // Start spinner for quiet mode
+    if (this.mode === "quiet" && this.spinner && phase === "loading") {
+      this.spinner.start("Applying configuration");
+    }
+  }
+
+  endPhase(phase: Phase, result: PhaseResult): void {
+    const output = this.renderer.renderPhaseEnd(phase, result);
+    if (output) {
+      this.write(output);
+    }
+
+    // Update spinner or stop it
+    if (this.mode === "quiet" && this.spinner) {
+      if (phase === "complete") {
+        // Don't stop spinner yet, we'll do it in printSummary
+      }
+    }
+  }
+
+  // Feature reporting
+  startFeature(name: string, context: FeatureContext): void {
+    const existing = this.features.find((f) => f.name === name);
+    if (existing) {
+      existing.status = "in-progress";
+      existing.index = context.index;
+      existing.total = context.total;
+    } else {
+      this.features.push({
+        name,
+        status: "in-progress",
+        index: context.index,
+        total: context.total,
+      });
+    }
+
+    // Update display
+    this.updateFeatureDisplay();
+  }
+
+  updateFeature(name: string, message: string): void {
+    const feature = this.features.find((f) => f.name === name);
+    if (feature) {
+      feature.message = message;
+      this.updateFeatureDisplay();
+    }
+  }
+
+  endFeature(name: string, stats: FeatureStats): void {
+    const feature = this.features.find((f) => f.name === name);
+    if (feature) {
+      feature.status = "complete";
+      feature.stats = stats;
+      this.updateFeatureDisplay();
+    }
+  }
+
+  private updateFeatureDisplay(): void {
+    // Update spinner in quiet mode
+    if (this.mode === "quiet" && this.spinner && this.quietRenderer) {
+      const inProgress = this.features.find((f) => f.status === "in-progress");
+      if (inProgress) {
+        const message = inProgress.message ? ` › ${inProgress.message}` : "";
+        this.spinner.update(
+          `Applying ${this.features.length} features: ${inProgress.name}${message}`,
+        );
+      }
+    } else if (this.mode === "local") {
+      // For local mode, we could update the display
+      // For now, we'll just render it once after collecting is done
+    } else if (this.mode === "ci") {
+      // Render feature progress for CI
+      const output = this.renderer.renderFeatureProgress(this.features);
+      if (output) {
+        this.write(output);
+      }
+    }
+  }
+
+  // File operations
+  reportFile(operation: FileOperation): void {
+    this.files.push(operation);
+
+    // Only output in non-quiet mode
+    if (this.mode !== "quiet") {
+      const output = this.renderer.renderFileOperation(operation);
+      if (output) {
+        this.write(output);
+      }
+    }
+  }
+
+  // Dependencies
+  reportDependency(operation: DependencyOperation): void {
+    this.dependencies.push(operation);
+
+    // Only output in non-quiet mode
+    if (this.mode !== "quiet") {
+      const output = this.renderer.renderDependencyOperation(operation);
+      if (output) {
+        this.write(output);
+      }
+    }
+  }
+
+  // Messages
+  info(message: string): void {
+    const output = this.renderer.renderInfo(message);
+    if (output) {
+      this.write(output);
+    }
+  }
+
+  warn(message: string): void {
+    const output = this.renderer.renderWarn(message);
+    if (output) {
+      this.write(output);
+    }
+  }
+
+  error(message: string, error?: Error): void {
+    // Stop spinner if active
+    if (this.spinner) {
+      this.spinner.stop();
+    }
+
+    const output = this.renderer.renderError(message, error);
+    if (output) {
+      this.write(output);
+    }
+  }
+
+  success(message: string): void {
+    const output = this.renderer.renderSuccess(message);
+    if (output) {
+      this.write(output);
+    }
+  }
+
+  // Summary
+  printSummary(summary: ApplySummary): void {
+    // Stop spinner if active
+    if (this.spinner) {
+      this.spinner.stop();
+    }
+
+    const output = this.renderer.renderSummary(summary);
+    if (output) {
+      this.write(output);
+    }
+  }
+
+  // Low-level control
+  write(text: string): void {
+    if (text) {
+      process.stdout.write(`${text}\n`);
+    }
+  }
+
+  clearLine(): void {
+    if (this.isInteractiveTTY) {
+      process.stdout.clearLine(0);
+      process.stdout.cursorTo(0);
+    }
+  }
+
+  updateLine(text: string): void {
+    if (this.isInteractiveTTY) {
+      this.clearLine();
+      process.stdout.write(text);
+    } else {
+      this.write(text);
+    }
+  }
+
+  // Helpers for feature progress display
+  renderFeatureList(): void {
+    if (this.mode !== "quiet" && this.features.length > 0) {
+      const output = this.renderer.renderFeatureProgress(this.features);
+      if (output) {
+        this.write(output);
+      }
+    }
+  }
+
+  // Get elapsed time
+  getElapsedTime(): number {
+    return Date.now() - this.startTime;
+  }
+}
+
+// Initialize singleton at module load with auto-detected settings
+export const reporter = ConduReporter.initialize({
+  mode: detectMode(),
+  theme: (process.env["CONDU_THEME"] as ReporterTheme) ?? "minimal",
+  supportsColor: detectColorSupport(),
+  isInteractiveTTY: process.stdout.isTTY ?? false,
+});
+
+// Re-export for convenience
+export default reporter;

@@ -322,6 +322,11 @@ export class FileManager {
   async applyAllFiles(
     collectedStateReadOnlyView: ConduReadonlyCollectedStateView,
   ): Promise<void> {
+    const { ConduReporter } = await import("../../reporter/ConduReporter.js");
+    const reporter = ConduReporter.get();
+
+    reporter.startPhase("applying");
+
     const arg = { collectedStateReadOnlyView } as const;
 
     // apply all files in parallel (TODO: limit concurrency)
@@ -329,9 +334,24 @@ export class FileManager {
       this.files.values(),
       (file) =>
         file.applyAndCommit(arg).then(() => {
-          console.log(
-            `${file.status} (${file.lastApplyKind}): ${file.relPath} [${file.managedByFeatures.map((f) => f.featureName).join(", ")}]`,
+          // Map file status and kind to reporter types
+          const operationType = this.mapLastApplyKindToOperation(
+            file.lastApplyKind,
           );
+          const fileStatus = this.mapFileStatusToReporterStatus(file.status);
+
+          // Construct the relative path from root
+          const filePath =
+            file.targetPackage === this.rootPackage
+              ? file.relPath
+              : `${file.targetPackage.relPath}${file.relPath}`;
+
+          reporter.reportFile({
+            path: filePath,
+            operation: operationType,
+            status: fileStatus,
+            managedBy: file.managedByFeatures.map((f) => f.featureName),
+          });
         }),
     );
     await Promise.all(applyPromises);
@@ -413,6 +433,48 @@ export class FileManager {
       }
     } catch {
       // no cache file or invalid
+    }
+  }
+
+  private mapLastApplyKindToOperation(
+    lastApplyKind: string | undefined,
+  ): "generated" | "updated" | "created" | "deleted" | "skipped" {
+    if (!lastApplyKind) return "skipped";
+
+    switch (lastApplyKind) {
+      case "generated":
+      case "symlink":
+        return "generated";
+      case "created":
+        return "created";
+      case "updated":
+      case "user-edited":
+        return "updated";
+      case "deleted":
+      case "no-longer-generated":
+        return "deleted";
+      case "skipped":
+      case "non-fs":
+      case "invalid":
+      default:
+        return "skipped";
+    }
+  }
+
+  private mapFileStatusToReporterStatus(
+    status: string,
+  ): "success" | "conflict" | "error" | "needs-review" {
+    switch (status) {
+      case "applied":
+        return "success";
+      case "needs-user-input":
+        return "needs-review";
+      case "skipped":
+        return "success";
+      case "error":
+        return "error";
+      default:
+        return "success";
     }
   }
 }

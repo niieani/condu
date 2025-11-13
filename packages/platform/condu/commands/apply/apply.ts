@@ -42,16 +42,81 @@ type AllPossiblePeerContexts = UnionToIntersection<
 export async function apply(
   options: LoadConfigOptions = {},
 ): Promise<ProjectAndCollectedState | undefined> {
-  const projectLoadData = await loadConduConfigFnFromFs(options);
-  const project = await loadConduProject(projectLoadData);
-  if (!project) {
-    return;
+  const { ConduReporter } = await import("../../reporter/ConduReporter.js");
+  const reporter = ConduReporter.get();
+  const startTime = Date.now();
+
+  try {
+    reporter.startPhase("loading");
+    reporter.info("Loading configuration...");
+
+    const projectLoadData = await loadConduConfigFnFromFs(options);
+    const project = await loadConduProject(projectLoadData);
+    if (!project) {
+      return;
+    }
+
+    const featureCount = project.config.features.length;
+    reporter.success(`Found ${featureCount} features to apply`);
+    reporter.endPhase("loading", { success: true });
+
+    const collected = await collectState({ ...options, project });
+
+    reporter.endPhase("collecting", { success: true });
+
+    await applyAndCommitCollectedState(collected);
+
+    reporter.endPhase("applying", { success: true });
+
+    // Print summary
+    reporter.startPhase("complete");
+    const duration = Date.now() - startTime;
+
+    // Build summary from collected state
+    const { fileManager } = collected.collectedState;
+    const filesArray = Array.from(fileManager.files.values());
+
+    // Count files by their status
+    const appliedFiles = filesArray.filter((f) => f.status === "applied");
+    const skippedFiles = filesArray.filter((f) => f.status === "skipped");
+
+    const summary = {
+      totalFeatures: featureCount,
+      totalFiles: filesArray.length,
+      filesCreated: appliedFiles.filter(
+        (f) => f.lastApplyKind === "generated" || f.lastApplyKind === "symlink",
+      ).length,
+      filesUpdated: appliedFiles.filter(
+        (f) => f.lastApplyKind === "user-editable",
+      ).length,
+      filesDeleted: filesArray.filter(
+        (f) => f.lastApplyKind === "no-longer-generated",
+      ).length,
+      filesSkipped: skippedFiles.length,
+      filesNeedingReview: filesArray.filter(
+        (f) => f.status === "needs-user-input",
+      ).length,
+      packagesModified: new Set(filesArray.map((f) => f.targetPackage.relPath))
+        .size,
+      depsAdded: collected.collectedState.dependencies.length,
+      depsRemoved: 0,
+      duration,
+      errors: [],
+      warnings: [],
+    };
+
+    reporter.printSummary(summary);
+    reporter.endPhase("complete", { success: true });
+
+    return collected;
+  } catch (error) {
+    reporter.error("Apply failed", error as Error);
+    reporter.endPhase("complete", {
+      success: false,
+      error: error as Error,
+    });
+    throw error;
   }
-  const collected = await collectState({ ...options, project });
-
-  await applyAndCommitCollectedState(collected);
-
-  return collected;
 }
 
 interface CollectStateConfig extends FileManagerOptions {
@@ -61,6 +126,11 @@ interface CollectStateConfig extends FileManagerOptions {
 export async function collectState(
   options: CollectStateConfig,
 ): Promise<ProjectAndCollectedState> {
+  const { ConduReporter } = await import("../../reporter/ConduReporter.js");
+  const reporter = ConduReporter.get();
+
+  reporter.startPhase("collecting");
+
   // TODO: add a mutex file lock to prevent concurrent runs of apply
   const { project, ...fsOptions } = options;
   const { config } = project;
@@ -146,7 +216,9 @@ export async function collectState(
 
   const conduApiPerFeature: Array<[FeatureDefinition, ConduApi]> = [];
   // Run apply functions in topological order
-  for (const feature of features) {
+  for (const [index, feature] of features.entries()) {
+    reporter.startFeature(feature.name, { index, total: features.length });
+
     const conduApi = createConduApi({
       project,
       collectionContext: { featureName: feature.name },
@@ -163,7 +235,27 @@ export async function collectState(
     } else {
       await feature.defineRecipe?.(conduApi);
     }
+
+    // Report feature completion with stats
+    const featureFiles = Array.from(fileManager.files.values()).filter((f) =>
+      f.managedByFeatures.some((mf) => mf.featureName === feature.name),
+    );
+    const featureDeps = changesCollector.dependencies.filter(
+      (d) => d.context.featureName === feature.name,
+    );
+
+    reporter.endFeature(feature.name, {
+      filesQueued: featureFiles.length,
+      depsAdded: featureDeps.length,
+      resolutionsSet: 0,
+      packagesModified: new Set(
+        featureFiles.map((f) => f.targetPackage.relPath),
+      ).size,
+    });
   }
+
+  // Render feature list after collecting
+  reporter.renderFeatureList();
 
   changesCollector.stage = "recipes-defined";
 
