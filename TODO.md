@@ -4,6 +4,7 @@
   - package.json: add type: module, install condum detect package manager
   - create condu.ts
   - create directories (src or packages based on --monorepo or not)
+- [ ] when something is added, and them removed from condu config, it (maybe?) needs to be removed (e.g. vscode's suggested settings) - think about it
 - [ ] vitest feature should define the test task
 - [ ] add an 'ai-agents' feature that autogenerates description based on all the features enabled
 - [ ] make CI github actions work agnostic from the build system (moon vs packageScripts)

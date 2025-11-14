@@ -4,7 +4,7 @@
   "type": "module",
   "dependencies": {
     "@condu/workspace-utils": "workspace:^",
-    "async-memoize-one": "^1.1.8",
+    "async-memoize-one": "^1.1.9",
     "remeda": "^2.30.0"
   },
   "devDependencies": {

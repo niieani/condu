@@ -36,3 +36,4 @@ moon.yml
 .env
 .env.*
 /brand/
+.claude/*.local.json

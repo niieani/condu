@@ -166,6 +166,6 @@ export default configure((pkg) => ({
       customExportsCondition: true,
     }),
     packageScripts(),
-    gitignore({ ignore: [".swc/", ".idea/", ".env", ".env.*", "/brand/"] }),
+    gitignore({ ignore: [".swc/", ".idea/", ".env", ".env.*", "/brand/", '.claude/*.local.json'] }),
   ],
 }));
