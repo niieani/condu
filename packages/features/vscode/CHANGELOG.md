@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.4](https://github.com/niieani/condu/compare/@condu-feature/vscode@1.0.3...@condu-feature/vscode@1.0.4) (2025-11-14)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/schema-types bumped to 1.0.1
+  * devDependencies
+    * @condu-feature/oxlint bumped to 1.0.4
+  * peerDependencies
+    * condu bumped to 1.0.4
+
 ## [1.0.3](https://github.com/niieani/condu/compare/@condu-feature/vscode@1.0.2...@condu-feature/vscode@1.0.3) (2025-08-10)
 
 
