@@ -67,8 +67,26 @@ export class QuietRenderer extends BaseRenderer {
     }
 
     const durationStr = (summary.duration / 1000).toFixed(1);
+    const summaryLine = this.green(`✓ ${parts.join(", ")} (${durationStr}s)`);
 
-    return this.green(`✓ ${parts.join(", ")} (${durationStr}s)`);
+    if (summary.manualReviewItems.length === 0) {
+      return summaryLine;
+    }
+
+    const detailLines = summary.manualReviewItems.map((item) => {
+      const managedBy =
+        item.managedBy.length > 0
+          ? ` (managed by ${item.managedBy.join(", ")})`
+          : "";
+      const message = item.message ? ` — ${item.message}` : "";
+      return `  - ${item.path}${managedBy}${message}`;
+    });
+
+    return [
+      summaryLine,
+      this.yellow("⚠ Manual review required:"),
+      ...detailLines,
+    ].join("\n");
   }
 
   renderInfo(_message: string): string {

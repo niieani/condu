@@ -332,49 +332,56 @@ export class FileManager {
     // apply all files in parallel (TODO: limit concurrency)
     const applyPromises: Promise<void>[] = Array.from(
       this.files.values(),
-      (file) =>
-        file.applyAndCommit(arg).then(() => {
-          // Map file status and kind to reporter types
-          const operationType = this.mapLastApplyKindToOperation(
-            file.lastApplyKind,
-          );
-          const fileStatus = this.mapFileStatusToReporterStatus(file.status);
-
-          // Construct the relative path from root
-          const filePath =
-            file.targetPackage === this.rootPackage
-              ? file.relPath
-              : `${file.targetPackage.relPath}${file.relPath}`;
-
-          reporter.reportFile({
-            path: filePath,
-            operation: operationType,
-            status: fileStatus,
-            managedBy: file.managedByFeatures.map((f) => f.featureName),
-          });
-        }),
+      (file) => file.applyAndCommit(arg),
     );
     await Promise.all(applyPromises);
 
     for (const file of this.files.values()) {
       // any files that need user input/confirmation need to be handled sequentially
       if (file.manualConflictResolution) {
-        if (!IS_INTERACTIVE || this.throwOnManualChanges) {
-          process.exitCode = 1;
-          if (this.throwOnManualChanges) {
-            throw new Error(
-              `Manual changes present in ${file.relPath}, please resolve the conflict by running 'condu apply' interactively.`,
+        reporter.pauseForUserInput();
+        try {
+          if (!IS_INTERACTIVE || this.throwOnManualChanges) {
+            process.exitCode = 1;
+            if (this.throwOnManualChanges) {
+              throw new Error(
+                `Manual changes present in ${file.relPath}, please resolve the conflict by running 'condu apply' interactively.`,
+              );
+            }
+            console.log(
+              `Please resolve the conflict in '${file.relPath}' by running 'condu apply' interactively. Skipping due to diff:`,
             );
+            file.manualConflictResolution.printDiff();
+            file.status = "skipped";
+            file.manualReviewDetails ??=
+              "Kept existing changes; rerun 'condu apply' after reconciling this file.";
+          } else {
+            await file.manualConflictResolution.promptUserInteractively();
           }
-          console.log(
-            `Please resolve the conflict in '${file.relPath}' by running 'condu apply' interactively. Skipping due to diff:`,
-          );
-          file.manualConflictResolution.printDiff();
-          file.status = "skipped";
-        } else {
-          await file.manualConflictResolution.promptUserInteractively();
+          file.manualConflictResolution = undefined;
+        } finally {
+          reporter.resumeAfterUserInput();
         }
       }
+    }
+
+    for (const file of this.files.values()) {
+      const operationType = this.mapLastApplyKindToOperation(
+        file.lastApplyKind,
+      );
+      const fileStatus = this.mapFileStatusToReporterStatus(file);
+      const filePath =
+        file.targetPackage === this.rootPackage
+          ? file.relPath
+          : `${file.targetPackage.relPath}${file.relPath}`;
+
+      reporter.reportFile({
+        path: filePath,
+        operation: operationType,
+        status: fileStatus,
+        managedBy: file.managedByFeatures.map((f) => f.featureName),
+        details: file.manualReviewDetails,
+      });
     }
     // write the updated cache file
     await this.cacheFile.applyAndCommit({
@@ -462,17 +469,19 @@ export class FileManager {
   }
 
   private mapFileStatusToReporterStatus(
-    status: string,
+    file: ConduFile<any>,
   ): "success" | "conflict" | "error" | "needs-review" {
-    switch (status) {
+    if (file.manualReviewDetails) {
+      return "needs-review";
+    }
+
+    switch (file.status) {
       case "applied":
         return "success";
       case "needs-user-input":
         return "needs-review";
       case "skipped":
-        return "success";
-      case "error":
-        return "error";
+        return file.manualReviewDetails ? "needs-review" : "success";
       default:
         return "success";
     }
@@ -544,6 +553,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
   manualConflictResolution?:
     | { printDiff: () => void; promptUserInteractively: () => Promise<void> }
     | undefined;
+  manualReviewDetails?: string;
   lastApplyKind?: FileKind;
   get isManaged(): boolean {
     return this.managedByFeatures.length > 0;
@@ -932,6 +942,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     { overwriteWithoutAsking = false } = {},
   ): Promise<void> {
     const targetPath = this.absPath;
+    this.manualReviewDetails = undefined;
     const existingFile = await this.getFsFile();
 
     if (
@@ -992,6 +1003,8 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       return;
     } else {
       this.status = "needs-user-input";
+      this.manualReviewDetails =
+        "Manual changes detected; review and re-run 'condu apply'.";
 
       const printDiff = () => {
         console.log(
@@ -1030,6 +1043,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
             });
             this._fsState = this.lastApply;
             this.manualConflictResolution = undefined;
+            this.manualReviewDetails = undefined;
             return;
           }
           this.status = "skipped";

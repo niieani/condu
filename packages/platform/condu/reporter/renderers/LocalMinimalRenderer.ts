@@ -55,6 +55,10 @@ export class LocalMinimalRenderer extends BaseRenderer {
   }
 
   renderFileOperation(op: FileOperation): string {
+    if (this.verbosity !== "verbose" && op.operation === "skipped") {
+      return "";
+    }
+
     const symbols: Record<typeof op.operation, string> = {
       generated: this.green("✓"),
       created: this.green("+"),
@@ -76,7 +80,8 @@ export class LocalMinimalRenderer extends BaseRenderer {
     const pathDisplay =
       op.path.length > 60 ? `...${op.path.slice(-57)}` : op.path;
 
-    return `    ${symbol} ${this.dim(pathDisplay.padEnd(60))} ${this.gray(`[${op.operation}]`)}${statusSuffix}`;
+    const detail = op.details ? ` ${this.dim(op.details)}` : "";
+    return `    ${symbol} ${this.dim(pathDisplay.padEnd(60))} ${this.gray(`[${op.operation}]`)}${statusSuffix}${detail}`;
   }
 
   renderDependencyOperation(op: DependencyOperation): string {
@@ -115,6 +120,21 @@ export class LocalMinimalRenderer extends BaseRenderer {
       lines.push(
         `  ${this.yellow("⚠")} ${summary.filesNeedingReview} file(s) need manual review`,
       );
+    }
+
+    if (summary.manualReviewItems.length > 0) {
+      lines.push("");
+      lines.push(this.yellow("Manual review required:"));
+      for (const item of summary.manualReviewItems) {
+        const managedBy =
+          item.managedBy.length > 0
+            ? this.dim(` (managed by ${item.managedBy.join(", ")})`)
+            : "";
+        lines.push(`  - ${item.path}${managedBy}`);
+        if (item.message) {
+          lines.push(`    ${this.dim(item.message)}`);
+        }
+      }
     }
 
     if (summary.errors.length > 0) {

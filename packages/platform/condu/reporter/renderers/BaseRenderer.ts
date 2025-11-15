@@ -6,13 +6,16 @@ import type {
   FileOperation,
   Phase,
   PhaseResult,
+  VerbosityLevel,
 } from "../types.js";
 
 export abstract class BaseRenderer {
   protected supportsColor: boolean;
+  protected verbosity: VerbosityLevel;
 
-  constructor(supportsColor: boolean) {
+  constructor(supportsColor: boolean, verbosity: VerbosityLevel) {
     this.supportsColor = supportsColor;
+    this.verbosity = verbosity;
   }
 
   abstract renderPhaseStart(phase: Phase): string;

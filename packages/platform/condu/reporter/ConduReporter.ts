@@ -10,6 +10,7 @@ import type {
   ReporterMode,
   ReporterOptions,
   ReporterTheme,
+  VerbosityLevel,
 } from "./types.js";
 import { detectColorSupport, detectMode } from "./detection.js";
 import { Spinner } from "./Spinner.js";
@@ -29,6 +30,7 @@ export class ConduReporter {
   private supportsColor: boolean;
   private isInteractiveTTY: boolean;
   private startTime: number;
+  private verbosity: VerbosityLevel;
   private currentPhase?: Phase;
   private features: FeatureProgress[] = [];
   private files: FileOperation[] = [];
@@ -36,6 +38,8 @@ export class ConduReporter {
   private renderer: BaseRenderer;
   private spinner?: Spinner;
   private quietRenderer?: QuietRenderer;
+  private quietSpinnerText = "Applying configuration";
+  private quietSpinnerPaused = false;
 
   // Singleton pattern
   private static instance?: ConduReporter;
@@ -45,6 +49,10 @@ export class ConduReporter {
     this.theme = options.theme ?? "minimal";
     this.supportsColor = options.supportsColor ?? detectColorSupport();
     this.isInteractiveTTY = options.isInteractiveTTY ?? false;
+    this.verbosity =
+      this.mode === "quiet"
+        ? "quiet"
+        : options.verbosity ?? "normal";
     this.startTime = Date.now();
 
     // Create the appropriate renderer
@@ -61,23 +69,23 @@ export class ConduReporter {
 
   private createRenderer(): BaseRenderer {
     if (this.mode === "quiet") {
-      return new QuietRenderer(this.supportsColor);
+      return new QuietRenderer(this.supportsColor, "quiet");
     }
 
     if (this.mode === "ci") {
-      return new CiRenderer(this.supportsColor);
+      return new CiRenderer(this.supportsColor, this.verbosity);
     }
 
     // Local mode
     switch (this.theme) {
       case "minimal":
-        return new LocalMinimalRenderer(this.supportsColor);
+        return new LocalMinimalRenderer(this.supportsColor, this.verbosity);
       case "modern":
-        return new LocalModernRenderer(this.supportsColor);
+        return new LocalModernRenderer(this.supportsColor, this.verbosity);
       case "retro":
-        return new LocalRetroRenderer(this.supportsColor);
+        return new LocalRetroRenderer(this.supportsColor, this.verbosity);
       default:
-        return new LocalMinimalRenderer(this.supportsColor);
+        return new LocalMinimalRenderer(this.supportsColor, this.verbosity);
     }
   }
 
@@ -109,7 +117,9 @@ export class ConduReporter {
 
     // Start spinner for quiet mode
     if (this.mode === "quiet" && this.spinner && phase === "loading") {
-      this.spinner.start("Applying configuration");
+      this.quietSpinnerText = "Applying configuration";
+      this.spinner.start(this.quietSpinnerText);
+      this.quietSpinnerPaused = false;
     }
   }
 
@@ -170,9 +180,8 @@ export class ConduReporter {
       const inProgress = this.features.find((f) => f.status === "in-progress");
       if (inProgress) {
         const message = inProgress.message ? ` › ${inProgress.message}` : "";
-        this.spinner.update(
-          `Applying ${this.features.length} features: ${inProgress.name}${message}`,
-        );
+        this.quietSpinnerText = `Applying ${this.features.length} features: ${inProgress.name}${message}`;
+        this.spinner.update(this.quietSpinnerText);
       }
     } else if (this.mode === "local") {
       // For local mode, we could update the display
@@ -292,6 +301,28 @@ export class ConduReporter {
     }
   }
 
+  pauseForUserInput(): void {
+    if (this.mode === "quiet" && this.spinner && !this.quietSpinnerPaused) {
+      this.spinner.stop();
+      this.quietSpinnerPaused = true;
+    }
+  }
+
+  resumeAfterUserInput(): void {
+    if (
+      this.mode === "quiet" &&
+      this.spinner &&
+      this.quietRenderer &&
+      this.quietSpinnerPaused
+    ) {
+      const fallback =
+        this.quietRenderer?.getCurrentLine() ?? this.quietSpinnerText;
+      this.quietSpinnerText = fallback || "Applying configuration";
+      this.spinner.start(this.quietSpinnerText);
+      this.quietSpinnerPaused = false;
+    }
+  }
+
   // Get elapsed time
   getElapsedTime(): number {
     return Date.now() - this.startTime;
@@ -302,6 +333,7 @@ export class ConduReporter {
 export const reporter = ConduReporter.initialize({
   mode: detectMode(),
   theme: (process.env["CONDU_THEME"] as ReporterTheme) ?? "minimal",
+  verbosity: process.env["CONDU_VERBOSE"] === "1" ? "verbose" : "normal",
   supportsColor: detectColorSupport(),
   isInteractiveTTY: process.stdout.isTTY ?? false,
 });

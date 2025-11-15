@@ -1,7 +1,7 @@
 import { Command, Option } from "clipanion";
 import { ConduReporter } from "../reporter/ConduReporter.js";
 import { detectColorSupport, detectMode } from "../reporter/detection.js";
-import type { ReporterTheme } from "../reporter/types.js";
+import type { ReporterTheme, VerbosityLevel } from "../reporter/types.js";
 
 export class ApplyCommand extends Command {
   static override paths = [["apply"]];
@@ -31,10 +31,17 @@ export class ApplyCommand extends Command {
     // Reset any existing reporter instance
     ConduReporter.reset();
 
+    const verbosity: VerbosityLevel = this.quiet
+      ? "quiet"
+      : this.verbose
+        ? "verbose"
+        : "normal";
+
     // Initialize reporter with CLI options
     ConduReporter.initialize({
       mode: this.quiet ? "quiet" : detectMode(),
       theme: (this.theme as ReporterTheme) ?? "minimal",
+      verbosity,
       supportsColor: !this.noColor && detectColorSupport(),
       isInteractiveTTY: process.stdout.isTTY ?? false,
     });

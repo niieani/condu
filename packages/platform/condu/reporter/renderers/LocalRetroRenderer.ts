@@ -121,6 +121,10 @@ export class LocalRetroRenderer extends BaseRenderer {
   }
 
   renderFileOperation(op: FileOperation): string {
+    if (this.verbosity !== "verbose" && op.operation === "skipped") {
+      return "";
+    }
+
     const symbols: Record<typeof op.operation, string> = {
       generated: this.green("[✓]"),
       created: this.green("[+]"),
@@ -140,7 +144,8 @@ export class LocalRetroRenderer extends BaseRenderer {
     const statusTag = statusTags[op.status];
     const dots = ".".repeat(Math.max(0, 50 - op.path.length));
 
-    return `    ${symbol} ${op.path} ${this.dim(dots)} ${statusTag}`;
+    const detail = op.details ? ` ${this.dim(op.details)}` : "";
+    return `    ${symbol} ${op.path} ${this.dim(dots)} ${statusTag}${detail}`;
   }
 
   renderDependencyOperation(op: DependencyOperation): string {
@@ -193,7 +198,11 @@ export class LocalRetroRenderer extends BaseRenderer {
     }
 
     // Action required
-    if (summary.filesNeedingReview > 0 || summary.warnings.length > 0) {
+    if (
+      summary.filesNeedingReview > 0 ||
+      summary.warnings.length > 0 ||
+      summary.manualReviewItems.length > 0
+    ) {
       lines.push("");
       lines.push(`    ${this.yellow("⚠  ACTION REQUIRED:")}`);
 
@@ -201,6 +210,19 @@ export class LocalRetroRenderer extends BaseRenderer {
         lines.push(
           `    ${summary.filesNeedingReview} file${summary.filesNeedingReview > 1 ? "s" : ""} need${summary.filesNeedingReview === 1 ? "s" : ""} manual review`,
         );
+      }
+
+      if (summary.manualReviewItems.length > 0) {
+        for (const item of summary.manualReviewItems) {
+          const managedBy =
+            item.managedBy.length > 0
+              ? this.dim(` (managed by ${item.managedBy.join(", ")})`)
+              : "";
+          lines.push(`      • ${item.path}${managedBy}`);
+          if (item.message) {
+            lines.push(`        ${this.dim(item.message)}`);
+          }
+        }
       }
 
       for (const warning of summary.warnings) {

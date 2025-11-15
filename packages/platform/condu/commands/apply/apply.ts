@@ -48,7 +48,6 @@ export async function apply(
 
   try {
     reporter.startPhase("loading");
-    reporter.info("Loading configuration...");
 
     const projectLoadData = await loadConduConfigFnFromFs(options);
     const project = await loadConduProject(projectLoadData);
@@ -75,6 +74,16 @@ export async function apply(
     // Build summary from collected state
     const { fileManager } = collected.collectedState;
     const filesArray = Array.from(fileManager.files.values());
+    const manualReviewItems = filesArray
+      .filter((f) => f.manualReviewDetails)
+      .map((f) => ({
+        path:
+          f.targetPackage === project.workspace
+            ? f.relPath
+            : `${f.targetPackage.relPath}${f.relPath}`,
+        managedBy: f.managedByFeatures.map((mf) => mf.featureName),
+        message: f.manualReviewDetails!,
+      }));
 
     // Count files by their status
     const appliedFiles = filesArray.filter((f) => f.status === "applied");
@@ -93,9 +102,7 @@ export async function apply(
         (f) => f.lastApplyKind === "no-longer-generated",
       ).length,
       filesSkipped: skippedFiles.length,
-      filesNeedingReview: filesArray.filter(
-        (f) => f.status === "needs-user-input",
-      ).length,
+      filesNeedingReview: manualReviewItems.length,
       packagesModified: new Set(filesArray.map((f) => f.targetPackage.relPath))
         .size,
       depsAdded: collected.collectedState.dependencies.length,
@@ -103,6 +110,7 @@ export async function apply(
       duration,
       errors: [],
       warnings: [],
+      manualReviewItems,
     };
 
     reporter.printSummary(summary);

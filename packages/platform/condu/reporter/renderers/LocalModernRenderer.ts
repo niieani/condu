@@ -71,6 +71,10 @@ export class LocalModernRenderer extends BaseRenderer {
   }
 
   renderFileOperation(op: FileOperation): string {
+    if (this.verbosity !== "verbose" && op.operation === "skipped") {
+      return "";
+    }
+
     const symbols: Record<typeof op.operation, string> = {
       generated: this.green("✓"),
       created: this.green("+"),
@@ -93,7 +97,8 @@ export class LocalModernRenderer extends BaseRenderer {
     const pathDisplay =
       op.path.length > 55 ? `...${op.path.slice(-52)}` : op.path;
 
-    return `${this.bold("│")}  ${symbol} ${pathDisplay.padEnd(55)} ${operation}${statusTag}`;
+    const detail = op.details ? ` ${this.dim(op.details)}` : "";
+    return `${this.bold("│")}  ${symbol} ${pathDisplay.padEnd(55)} ${operation}${statusTag}${detail}`;
   }
 
   renderDependencyOperation(op: DependencyOperation): string {
@@ -123,16 +128,24 @@ export class LocalModernRenderer extends BaseRenderer {
       `${this.bold("└─")} ${this.green("✓")} ${this.bold(`Complete in ${durationStr}s`)}`,
     );
 
-    // Warnings/Errors section
-    if (summary.filesNeedingReview > 0) {
+    if (summary.manualReviewItems.length > 0) {
       lines.push("");
       lines.push(
-        `   ${this.yellow("📝")} ${this.bold(`${summary.filesNeedingReview} file requires manual review:`)}`,
+        `${this.bold("│")}  ${this.yellow("Manual review required:")}`,
       );
-      // Note: We don't have the specific files here, but in practice
-      // they would be listed from the fileManager
+      for (const item of summary.manualReviewItems) {
+        const managedBy =
+          item.managedBy.length > 0
+            ? this.dim(` (managed by ${item.managedBy.join(", ")})`)
+            : "";
+        lines.push(`${this.bold("│")}    - ${item.path}${managedBy}`);
+        if (item.message) {
+          lines.push(`${this.bold("│")}      ${this.dim(item.message)}`);
+        }
+      }
     }
 
+    // Warnings/Errors section
     if (summary.errors.length > 0) {
       lines.push("");
       lines.push(`   ${this.red("✗")} ${this.bold("Errors:")}`);

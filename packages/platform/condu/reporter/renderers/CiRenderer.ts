@@ -51,6 +51,10 @@ export class CiRenderer extends BaseRenderer {
   }
 
   renderFileOperation(op: FileOperation): string {
+    if (this.verbosity !== "verbose" && op.operation === "skipped") {
+      return "";
+    }
+
     const symbols: Record<typeof op.operation, string> = {
       generated: "✓",
       created: "+",
@@ -75,7 +79,8 @@ export class CiRenderer extends BaseRenderer {
           ? this.yellow.bind(this)
           : (text: string) => text;
 
-    return colorFn(`  ${symbol} ${op.path} [${op.operation}]${statusSuffix}`);
+    const detail = op.details ? ` ${op.details}` : "";
+    return colorFn(`  ${symbol} ${op.path} [${op.operation}]${statusSuffix}${detail}`);
   }
 
   renderDependencyOperation(op: DependencyOperation): string {
@@ -103,6 +108,19 @@ export class CiRenderer extends BaseRenderer {
           `⚠ ${summary.filesNeedingReview} file(s) require manual review`,
         ),
       );
+    }
+
+    if (summary.manualReviewItems.length > 0) {
+      lines.push(this.yellow("Manual review required:"));
+      for (const item of summary.manualReviewItems) {
+        const managedBy =
+          item.managedBy.length > 0
+            ? ` (managed by ${item.managedBy.join(", ")})`
+            : "";
+        lines.push(
+          this.yellow(`  - ${item.path}${managedBy}${item.message ? ` — ${item.message}` : ""}`),
+        );
+      }
     }
 
     if (summary.errors.length > 0) {

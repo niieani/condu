@@ -4,9 +4,12 @@ export type ReporterMode = "local" | "ci" | "quiet";
 
 export type ReporterTheme = "modern" | "retro" | "minimal";
 
+export type VerbosityLevel = "quiet" | "normal" | "verbose";
+
 export interface ReporterOptions {
   mode?: ReporterMode;
   theme?: ReporterTheme;
+  verbosity?: VerbosityLevel;
   supportsColor?: boolean;
   isInteractiveTTY?: boolean;
 }
@@ -46,6 +49,7 @@ export interface FileOperation {
   operation: FileOperationType;
   status: FileStatus;
   managedBy: string[];
+  details?: string;
 }
 
 export interface DependencyOperation {
@@ -76,6 +80,13 @@ export interface ApplySummary {
   duration: number;
   errors: string[];
   warnings: string[];
+  manualReviewItems: ManualReviewItem[];
+}
+
+export interface ManualReviewItem {
+  path: string;
+  managedBy: string[];
+  message: string;
 }
 
 export type AnsiColor =
