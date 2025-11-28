@@ -40,10 +40,20 @@ export class CiRenderer extends BaseRenderer {
         lines.push(
           `  ${feature.name} (${feature.index + 1}/${feature.total}) ✓`,
         );
+        if (this.verbosity === "verbose" && feature.logs.length > 0) {
+          for (const log of feature.logs) {
+            lines.push(`    • ${log}`);
+          }
+        }
       } else if (feature.status === "in-progress") {
         lines.push(
           `  ${feature.name} (${feature.index + 1}/${feature.total}) ${feature.message ?? ""}`,
         );
+        if (this.verbosity === "verbose" && feature.logs.length > 0) {
+          for (const log of feature.logs) {
+            lines.push(`    • ${log}`);
+          }
+        }
       }
     }
 

@@ -18,6 +18,7 @@ import {
   ConduReadonlyCollectedStateView,
   type CollectedDependency,
   type CollectionStage,
+  type DependencyDefinitionInput,
 } from "./CollectedState.js";
 import type { ConduProject } from "./ConduProject.js";
 import {
@@ -28,6 +29,7 @@ import {
 import type { PeerContext } from "../../extendable.js";
 import { UpsertMap } from "@condu/core/utils/UpsertMap.js";
 import type { UnionToIntersection } from "type-fest";
+import type { ConduReporter as ReporterInstance } from "../../reporter/ConduReporter.js";
 
 export interface ProjectAndCollectedState {
   project: ConduProject;
@@ -86,12 +88,19 @@ export async function apply(
       }));
 
     // Count files by their status
-    const appliedFiles = filesArray.filter((f) => f.status === "applied");
-    const skippedFiles = filesArray.filter((f) => f.status === "skipped");
+    const appliedFiles = filesArray.filter(
+      (f) => f.status === "applied" && f.hadChanges,
+    );
+    const skippedFiles = filesArray.filter(
+      (f) => f.status === "skipped" && f.hadChanges,
+    );
+    const changedFiles = filesArray.filter(
+      (f) => f.hadChanges || f.status === "needs-user-input",
+    );
 
     const summary = {
       totalFeatures: featureCount,
-      totalFiles: filesArray.length,
+      totalFiles: changedFiles.length,
       filesCreated: appliedFiles.filter(
         (f) => f.lastApplyKind === "generated" || f.lastApplyKind === "symlink",
       ).length,
@@ -103,7 +112,9 @@ export async function apply(
       ).length,
       filesSkipped: skippedFiles.length,
       filesNeedingReview: manualReviewItems.length,
-      packagesModified: new Set(filesArray.map((f) => f.targetPackage.relPath))
+      packagesModified: new Set(
+        changedFiles.map((f) => f.targetPackage.relPath),
+      )
         .size,
       depsAdded: collected.collectedState.dependencies.length,
       depsRemoved: 0,
@@ -232,6 +243,7 @@ export async function collectState(
       collectionContext: { featureName: feature.name },
       changesCollector,
       collectedStateReadOnlyView,
+      reporter,
     });
     conduApiPerFeature.push([feature, conduApi]);
 
@@ -296,11 +308,13 @@ const createConduApi = ({
   collectionContext,
   changesCollector,
   collectedStateReadOnlyView,
+  reporter,
 }: {
   project: ConduProject;
   collectionContext: CollectionContext;
   changesCollector: CollectedState;
   collectedStateReadOnlyView: ConduReadonlyCollectedStateView;
+  reporter: ReporterInstance;
 }): ConduApi => ({
   project,
   root: createStateDeclarationApi({
@@ -309,6 +323,7 @@ const createConduApi = ({
     collectionContext,
     matchesAllWorkspacePackages: false,
     collectedStateReadOnlyView,
+    reporter,
   }),
   in(criteria) {
     const matchPackageFn = isMatching(criteria);
@@ -333,6 +348,7 @@ const createConduApi = ({
       collectionContext,
       matchesAllWorkspacePackages,
       collectedStateReadOnlyView,
+      reporter,
     });
   },
 });
@@ -343,17 +359,25 @@ const createStateDeclarationApi = ({
   collectionContext,
   collectedStateReadOnlyView,
   matchesAllWorkspacePackages,
+  reporter,
 }: {
   matchingPackages: readonly ConduPackageEntry[];
   changesCollector: CollectedState;
   collectionContext: CollectionContext;
   collectedStateReadOnlyView: ConduReadonlyCollectedStateView;
   matchesAllWorkspacePackages: boolean;
+  reporter: ReporterInstance;
 }): ScopedRecipeApi => ({
   ignoreFile(relPath, options) {
     assertFreshCollectorState(changesCollector, collectionContext, ["fresh"]);
 
     for (const pkg of matchingPackages) {
+      const filePath = formatFileTarget(pkg, relPath);
+      logFeatureAction({
+        reporter,
+        collectionContext,
+        message: `Ignoring ${filePath}`,
+      });
       changesCollector.fileManager
         .manageFile({
           targetPackage: pkg,
@@ -373,6 +397,12 @@ const createStateDeclarationApi = ({
     ]);
 
     for (const pkg of matchingPackages) {
+      const filePath = formatFileTarget(pkg, relPath);
+      logFeatureAction({
+        reporter,
+        collectionContext,
+        message: `Generating ${filePath}`,
+      });
       changesCollector.fileManager
         .manageFile({
           targetPackage: pkg,
@@ -398,6 +428,12 @@ const createStateDeclarationApi = ({
     ]);
 
     for (const pkg of matchingPackages) {
+      const filePath = formatFileTarget(pkg, relPath);
+      logFeatureAction({
+        reporter,
+        collectionContext,
+        message: `Modifying generated file ${filePath}`,
+      });
       changesCollector.fileManager
         .manageFile({
           targetPackage: pkg,
@@ -423,6 +459,12 @@ const createStateDeclarationApi = ({
     ]);
 
     for (const pkg of matchingPackages) {
+      const filePath = formatFileTarget(pkg, relPath);
+      logFeatureAction({
+        reporter,
+        collectionContext,
+        message: `Modifying user-editable file ${filePath}`,
+      });
       changesCollector.fileManager
         .manageFile({
           targetPackage: pkg,
@@ -448,6 +490,11 @@ const createStateDeclarationApi = ({
     ]);
 
     for (const pkg of matchingPackages) {
+      logFeatureAction({
+        reporter,
+        collectionContext,
+        message: `Ensuring dependency ${name}${describeDependencyVersion(dependencyDef)} in ${formatPackageTarget(pkg)} (${(dependencyDef?.list ?? "devDependencies")})`,
+      });
       changesCollector.dependencies.push({
         targetPackage: pkg,
         dependencyDefinition: { name, ...dependencyDef },
@@ -463,6 +510,11 @@ const createStateDeclarationApi = ({
     ]);
 
     Object.assign(changesCollector.resolutions, resolutions);
+    logFeatureAction({
+      reporter,
+      collectionContext,
+      message: `Setting dependency resolutions for ${Object.keys(resolutions).join(", ")}`,
+    });
     return this;
   },
   modifyPackageJson(modifier) {
@@ -472,6 +524,11 @@ const createStateDeclarationApi = ({
     ]);
 
     for (const pkg of matchingPackages) {
+      logFeatureAction({
+        reporter,
+        collectionContext,
+        message: `Modifying package.json in ${formatPackageTarget(pkg)}`,
+      });
       changesCollector.packageJsonModifications.push({
         targetPackage: pkg,
         globalRegistry: collectedStateReadOnlyView,
@@ -488,6 +545,11 @@ const createStateDeclarationApi = ({
     ]);
 
     for (const pkg of matchingPackages) {
+      logFeatureAction({
+        reporter,
+        collectionContext,
+        message: `Modifying published package.json in ${formatPackageTarget(pkg)}`,
+      });
       changesCollector.releasePackageJsonModifications.push({
         targetPackage: pkg,
         globalRegistry: collectedStateReadOnlyView,
@@ -502,6 +564,11 @@ const createStateDeclarationApi = ({
     assertFreshCollectorState(changesCollector, collectionContext, ["fresh"]);
 
     for (const pkg of matchingPackages) {
+      logFeatureAction({
+        reporter,
+        collectionContext,
+        message: `Defining task "${name}" in ${formatPackageTarget(pkg)}`,
+      });
       changesCollector.tasks.push({
         targetPackage: pkg,
         taskDefinition: { name, ...task },
@@ -511,6 +578,37 @@ const createStateDeclarationApi = ({
     return this;
   },
 });
+
+const formatFileTarget = (pkg: ConduPackageEntry, relPath: string): string =>
+  pkg.kind === "workspace" ? relPath : `${pkg.relPath}${relPath}`;
+
+const formatPackageTarget = (pkg: ConduPackageEntry): string =>
+  pkg.kind === "workspace" ? "workspace" : pkg.relPath;
+
+const describeDependencyVersion = (
+  dependency?: DependencyDefinitionInput,
+): string => {
+  if (!dependency) return "";
+  if ("version" in dependency && dependency.version) {
+    return `@${dependency.version}`;
+  }
+  if (dependency.tag) {
+    return `@${dependency.tag}`;
+  }
+  return "";
+};
+
+const logFeatureAction = ({
+  reporter,
+  collectionContext,
+  message,
+}: {
+  reporter: ReporterInstance;
+  collectionContext: CollectionContext;
+  message: string;
+}): void => {
+  reporter.log(message, { feature: collectionContext.featureName });
+};
 
 function assertFreshCollectorState(
   changesCollector: CollectedState,

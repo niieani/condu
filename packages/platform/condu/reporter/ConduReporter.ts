@@ -144,12 +144,14 @@ export class ConduReporter {
       existing.status = "in-progress";
       existing.index = context.index;
       existing.total = context.total;
+      existing.logs ??= [];
     } else {
       this.features.push({
         name,
         status: "in-progress",
         index: context.index,
         total: context.total,
+        logs: [],
       });
     }
 
@@ -170,6 +172,7 @@ export class ConduReporter {
     if (feature) {
       feature.status = "complete";
       feature.stats = stats;
+      feature.logs ??= [];
       this.updateFeatureDisplay();
     }
   }
@@ -298,6 +301,26 @@ export class ConduReporter {
       if (output) {
         this.write(output);
       }
+    }
+  }
+
+  log(message: string, { feature }: { feature?: string } = {}): void {
+    if (this.verbosity !== "verbose") {
+      return;
+    }
+
+    const targetFeature = feature
+      ? this.features.find((f) => f.name === feature)
+      : undefined;
+
+    if (targetFeature) {
+      targetFeature.logs ??= [];
+      targetFeature.logs.push(message);
+    }
+
+    if (this.mode !== "quiet") {
+      const prefix = feature ? `${feature} › ` : "";
+      this.write(`  ${prefix}${message}`);
     }
   }
 

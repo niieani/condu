@@ -99,6 +99,13 @@ export class LocalRetroRenderer extends BaseRenderer {
         lines.push(`       ${this.green("✓")} ${statsStr}`);
         lines.push("");
       }
+
+      if (this.verbosity === "verbose" && feature.logs.length > 0) {
+        for (const log of feature.logs) {
+          lines.push(`       ${this.dim("•")} ${log}`);
+        }
+        lines.push("");
+      }
     }
 
     return lines.join("\n");

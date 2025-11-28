@@ -65,6 +65,12 @@ export class LocalModernRenderer extends BaseRenderer {
       lines.push(
         `${this.bold("│")}  ${statusSymbol} ${feature.name.padEnd(18)}${messageStr}${statsStr}`,
       );
+
+      if (this.verbosity === "verbose" && feature.logs.length > 0) {
+        for (const log of feature.logs) {
+          lines.push(`${this.bold("│")}    ${this.dim("•")} ${log}`);
+        }
+      }
     }
 
     return lines.join("\n");

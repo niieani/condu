@@ -33,6 +33,7 @@ export interface FeatureProgress {
   total: number;
   message?: string;
   stats?: FeatureStats;
+  logs: string[];
 }
 
 export type FileOperationType =
@@ -87,6 +88,19 @@ export interface ManualReviewItem {
   path: string;
   managedBy: string[];
   message: string;
+}
+
+export interface PromptChoice<T> {
+  key: string;
+  label: string;
+  value: T;
+}
+
+export interface PromptOptions<T> {
+  message: string;
+  detail?: string | string[];
+  choices: PromptChoice<T>[];
+  defaultKey?: string;
 }
 
 export type AnsiColor =

@@ -6,10 +6,8 @@ import type {
   WorkspaceSubPackage,
 } from "./ConduPackageEntry.js";
 import fs from "node:fs/promises";
-import readline from "node:readline/promises";
 import path from "node:path";
 import { printUnifiedDiff } from "print-diff";
-import { match, P } from "ts-pattern";
 import type {
   ConduReadonlyCollectedStateView,
   CollectionContext,
@@ -24,6 +22,7 @@ import {
   FILE_STATE_PATH,
   CURRENT_CACHE_VERSION,
 } from "../../constants.js";
+import { prompt } from "../../reporter/Prompt.js";
 import type {
   FileNameToSerializedTypeMapping,
   GlobalFileAttributes,
@@ -73,6 +72,8 @@ export type PossibleDeserializedValue =
   | number
   | boolean
   | null;
+
+type ManualReviewAction = "overwrite" | "skip";
 
 export type ResolvedSerializedType<PathT extends string> =
   PathT extends DefinedFileNames
@@ -375,6 +376,10 @@ export class FileManager {
           ? file.relPath
           : `${file.targetPackage.relPath}${file.relPath}`;
 
+      if (!file.hadChanges && fileStatus === "success") {
+        continue;
+      }
+
       reporter.reportFile({
         path: filePath,
         operation: operationType,
@@ -460,6 +465,8 @@ export class FileManager {
       case "deleted":
       case "no-longer-generated":
         return "deleted";
+      case "unchanged":
+        return "skipped";
       case "skipped":
       case "non-fs":
       case "invalid":
@@ -521,6 +528,7 @@ export type FileKind =
   | "generated"
   | "user-editable"
   | "symlink"
+  | "unchanged"
   | "invalid"
   | "no-longer-generated";
 
@@ -547,11 +555,16 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
   get absPath(): string {
     return path.join(this.targetPackage.absPath, this.relPath);
   }
+  /** whether the last apply mutated the filesystem */
+  hadChanges = false;
   // TODO: add featureExecutionOrder
   managedByFeatures: CollectionContext[] = [];
   status: "pending" | "applied" | "skipped" | "needs-user-input" = "pending";
   manualConflictResolution?:
-    | { printDiff: () => void; promptUserInteractively: () => Promise<void> }
+    | {
+        printDiff: () => void;
+        promptUserInteractively: () => Promise<boolean>;
+      }
     | undefined;
   manualReviewDetails?: string;
   lastApplyKind?: FileKind;
@@ -865,10 +878,13 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
     }
 
     if (stringified) {
-      await this.attemptWriteToFileSystem(stringified, {
+      const wrote = await this.attemptWriteToFileSystem(stringified, {
         overwriteWithoutAsking:
           kind === "user-editable" || overwriteWithoutAsking,
       });
+      if (!wrote) {
+        kind = "unchanged";
+      }
     } else if (kind === "non-fs") {
       this.status = "skipped";
     }
@@ -940,19 +956,21 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
   async attemptWriteToFileSystem(
     newContent: string | SymlinkTarget,
     { overwriteWithoutAsking = false } = {},
-  ): Promise<void> {
+  ): Promise<boolean> {
     const targetPath = this.absPath;
     this.manualReviewDetails = undefined;
+    this.hadChanges = false;
     const existingFile = await this.getFsFile();
 
     if (
       existingFile &&
       existingFile.content.toString().trim() === newContent.toString().trim()
     ) {
-      this.status = "applied";
+      this.status = "skipped";
       this.lastApply = existingFile;
+      this.lastApplyKind = "unchanged";
       // already up to date
-      return;
+      return false;
     }
 
     // Check if we're replacing a symlink with a regular file
@@ -981,7 +999,8 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
         content: newContent,
       });
       this._fsState = this.lastApply;
-      return;
+      this.hadChanges = true;
+      return true;
     }
 
     const lastEditedByCondu = existingFile === this.lastApply;
@@ -1000,7 +1019,8 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
         content: newContent,
       });
       this._fsState = this.lastApply;
-      return;
+      this.hadChanges = true;
+      return true;
     } else {
       this.status = "needs-user-input";
       this.manualReviewDetails =
@@ -1023,37 +1043,53 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
         printDiff,
         promptUserInteractively: async () => {
           printDiff();
-          const rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-          });
-          const rawAnswer = await rl.question(
-            "Do you want to overwrite the file? (y/n)",
-          );
-          rl.close();
-          const shouldOverwrite = match(rawAnswer)
-            .with(P.union("y", "Y", P.string.regex(/yes/i)), () => true)
-            .otherwise(() => false);
 
-          if (shouldOverwrite) {
-            this.status = "applied";
-            this.lastApply = await write({
-              targetPath,
-              content: newContent,
+          // eslint-disable-next-line no-constant-condition
+          while (true) {
+            const action = await prompt<ManualReviewAction>({
+              message: `Manual review required: ${this.relPath}`,
+              detail: "The file has local modifications. Choose how to proceed.",
+              choices: [
+                {
+                  key: "o",
+                  label: "Overwrite with generated version (condu)",
+                  value: "overwrite",
+                },
+                {
+                  key: "s",
+                  label: "Skip for now (keeps your current version)",
+                  value: "skip",
+                },
+              ],
+              defaultKey: "s",
             });
-            this._fsState = this.lastApply;
+
+            if (action === "overwrite") {
+              this.status = "applied";
+              this.lastApply = await write({
+                targetPath,
+                content: newContent,
+              });
+              this._fsState = this.lastApply;
+              this.hadChanges = true;
+              this.manualConflictResolution = undefined;
+              this.manualReviewDetails = undefined;
+              return true;
+            }
+
+            this.status = "skipped";
             this.manualConflictResolution = undefined;
-            this.manualReviewDetails = undefined;
-            return;
+            this.manualReviewDetails =
+              "Kept your local changes; reconcile manually and rerun 'condu apply'.";
+            process.exitCode = 1;
+            console.log(
+              `Please update your config and re-run 'condu apply' when ready. Skipping: ${this.relPath}`,
+            );
+            return false;
           }
-          this.status = "skipped";
-          this.manualConflictResolution = undefined;
-          process.exitCode = 1;
-          console.log(
-            `Please update your config and re-run 'condu apply' when ready. Skipping: ${this.relPath}`,
-          );
         },
       };
+      return false;
     }
   }
 

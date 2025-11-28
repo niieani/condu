@@ -48,7 +48,18 @@ export class LocalMinimalRenderer extends BaseRenderer {
           ? ` ${this.dim(feature.message)}`
           : "";
 
-      lines.push(`  ${statusSymbol} ${feature.name}${messageStr}`);
+      const statsStr =
+        feature.status === "complete" && feature.stats
+          ? ` ${this.dim(`(${feature.stats.filesQueued} files, ${feature.stats.depsAdded} deps)`)}`
+          : "";
+
+      lines.push(`  ${statusSymbol} ${feature.name}${messageStr}${statsStr}`);
+
+      if (this.verbosity === "verbose" && feature.logs.length > 0) {
+        for (const log of feature.logs) {
+          lines.push(`    ${this.dim("•")} ${log}`);
+        }
+      }
     }
 
     return lines.join("\n");
