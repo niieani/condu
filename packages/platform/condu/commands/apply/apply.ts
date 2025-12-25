@@ -58,7 +58,12 @@ export async function apply(
     }
 
     const featureCount = project.config.features.length;
-    reporter.success(`Found ${featureCount} features to apply`);
+    if (
+      reporter.getMode() !== "ci" ||
+      reporter.getVerbosity() === "verbose"
+    ) {
+      reporter.success(`Found ${featureCount} features to apply`);
+    }
     reporter.endPhase("loading", { success: true });
 
     const collected = await collectState({ ...options, project });
@@ -66,8 +71,6 @@ export async function apply(
     reporter.endPhase("collecting", { success: true });
 
     const applyResult = await applyAndCommitCollectedState(collected);
-
-    reporter.endPhase("applying", { success: true });
 
     // Print summary
     reporter.startPhase("complete");
@@ -111,6 +114,22 @@ export async function apply(
     for (const pkg of applyResult.packagesTouched) {
       packagesWithChangedFiles.add(pkg.relPath);
     }
+
+    const noChanges =
+      changedFiles.length === 0 &&
+      applyResult.dependencyStats.changed === 0 &&
+      applyResult.dependencyStats.removed === 0;
+
+    if (noChanges) {
+      const message = "No changes required (already up to date)";
+      if (reporter.getMode() === "quiet") {
+        reporter.write(message);
+      } else {
+        reporter.info(message);
+      }
+    }
+
+    reporter.endPhase("applying", { success: true });
 
     const summary = {
       totalFeatures: featureCount,

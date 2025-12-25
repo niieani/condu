@@ -36,6 +36,7 @@ export class ConduReporter {
   private quietRenderer?: QuietRenderer;
   private quietSpinnerText = "Applying configuration";
   private quietSpinnerPaused = false;
+  private lastFileFeature?: string;
 
   // Singleton pattern
   private static instance?: ConduReporter;
@@ -96,6 +97,9 @@ export class ConduReporter {
   // Phase management
   startPhase(phase: Phase): void {
     this.currentPhase = phase;
+    if (phase === "applying") {
+      this.lastFileFeature = undefined;
+    }
     const output = this.renderer.renderPhaseStart(phase);
     if (output) {
       this.write(output);
@@ -131,25 +135,25 @@ export class ConduReporter {
       existing.index = context.index;
       existing.total = context.total;
       existing.logs ??= [];
+      this.updateFeatureDisplay(existing);
     } else {
-      this.features.push({
+      const feature: FeatureProgress = {
         name,
         status: "in-progress",
         index: context.index,
         total: context.total,
         logs: [],
-      });
+      };
+      this.features.push(feature);
+      this.updateFeatureDisplay(feature);
     }
-
-    // Update display
-    this.updateFeatureDisplay();
   }
 
   updateFeature(name: string, message: string): void {
     const feature = this.features.find((f) => f.name === name);
     if (feature) {
       feature.message = message;
-      this.updateFeatureDisplay();
+      this.updateFeatureDisplay(feature);
     }
   }
 
@@ -159,11 +163,11 @@ export class ConduReporter {
       feature.status = "complete";
       feature.stats = stats;
       feature.logs ??= [];
-      this.updateFeatureDisplay();
+      this.updateFeatureDisplay(feature);
     }
   }
 
-  private updateFeatureDisplay(): void {
+  private updateFeatureDisplay(feature?: FeatureProgress): void {
     // Update spinner in quiet mode
     if (this.mode === "quiet" && this.spinner && this.quietRenderer) {
       const inProgress = this.features.find((f) => f.status === "in-progress");
@@ -176,8 +180,13 @@ export class ConduReporter {
       // For local mode, we could update the display
       // For now, we'll just render it once after collecting is done
     } else if (this.mode === "ci") {
+      if (this.verbosity !== "verbose") {
+        return;
+      }
       // Render feature progress for CI
-      const output = this.renderer.renderFeatureProgress(this.features);
+      const output = feature
+        ? this.renderer.renderFeatureProgress([feature])
+        : this.renderer.renderFeatureProgress(this.features);
       if (output) {
         this.write(output);
       }
@@ -192,6 +201,18 @@ export class ConduReporter {
     if (this.mode !== "quiet") {
       const output = this.renderer.renderFileOperation(operation);
       if (output) {
+        if (this.mode === "ci" || this.mode === "local") {
+          const featureName = operation.managedBy[0] ?? "unmanaged";
+          const featureSuffix =
+            operation.managedBy.length > 1
+              ? ` +${operation.managedBy.length - 1} more`
+              : "";
+          const featureLine = `${featureName}${featureSuffix}`;
+          if (featureLine !== this.lastFileFeature) {
+            this.lastFileFeature = featureLine;
+            this.write(`  ${featureLine}:`);
+          }
+        }
         this.write(output);
       }
     }
@@ -282,7 +303,7 @@ export class ConduReporter {
 
   // Helpers for feature progress display
   renderFeatureList(): void {
-    if (this.mode !== "quiet" && this.features.length > 0) {
+    if (this.mode === "local" && this.features.length > 0) {
       const output = this.renderer.renderFeatureProgress(this.features);
       if (output) {
         this.write(output);
@@ -335,6 +356,14 @@ export class ConduReporter {
   // Get elapsed time
   getElapsedTime(): number {
     return Date.now() - this.startTime;
+  }
+
+  getMode(): ReporterMode {
+    return this.mode;
+  }
+
+  getVerbosity(): VerbosityLevel {
+    return this.verbosity;
   }
 }
 

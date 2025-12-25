@@ -33,10 +33,17 @@ export class ApplyCommand extends Command {
         ? "verbose"
         : "normal";
 
+    const detectedMode = detectMode();
+    const reporterMode =
+      this.quiet && detectedMode === "ci"
+        ? "ci"
+        : this.quiet
+          ? "quiet"
+          : detectedMode;
+
     // Initialize reporter with CLI options
     ConduReporter.initialize({
-      mode: this.quiet ? "quiet" : detectMode(),
-      theme: "minimal",
+      mode: reporterMode,
       verbosity,
       supportsColor: !this.noColor && detectColorSupport(),
       isInteractiveTTY: process.stdout.isTTY ?? false,

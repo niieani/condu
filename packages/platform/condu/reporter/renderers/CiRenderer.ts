@@ -17,12 +17,12 @@ export class CiRenderer extends BaseRenderer {
     const phaseNames: Record<Phase, string> = {
       init: "Initializing",
       loading: "Loading configuration",
-      collecting: "Processing features",
+      collecting: "",
       applying: "Applying changes",
       complete: "Complete",
     };
 
-    return `${phaseNames[phase]}`;
+    return phaseNames[phase];
   }
 
   renderPhaseEnd(_phase: Phase, result: PhaseResult): string {
@@ -33,21 +33,16 @@ export class CiRenderer extends BaseRenderer {
   }
 
   renderFeatureProgress(features: FeatureProgress[]): string {
+    if (this.verbosity === "quiet") {
+      return "";
+    }
+
     const lines: string[] = [];
 
     for (const feature of features) {
       if (feature.status === "complete") {
         lines.push(
           `  ${feature.name} (${feature.index + 1}/${feature.total}) ✓`,
-        );
-        if (this.verbosity === "verbose" && feature.logs.length > 0) {
-          for (const log of feature.logs) {
-            lines.push(`    • ${log}`);
-          }
-        }
-      } else if (feature.status === "in-progress") {
-        lines.push(
-          `  ${feature.name} (${feature.index + 1}/${feature.total}) ${feature.message ?? ""}`,
         );
         if (this.verbosity === "verbose" && feature.logs.length > 0) {
           for (const log of feature.logs) {
@@ -61,6 +56,9 @@ export class CiRenderer extends BaseRenderer {
   }
 
   renderFileOperation(op: FileOperation): string {
+    if (this.verbosity === "quiet") {
+      return "";
+    }
     if (this.verbosity !== "verbose" && op.operation === "skipped") {
       return "";
     }
@@ -90,10 +88,15 @@ export class CiRenderer extends BaseRenderer {
           : (text: string) => text;
 
     const detail = op.details ? ` ${op.details}` : "";
-    return colorFn(`  ${symbol} ${op.path} [${op.operation}]${statusSuffix}${detail}`);
+    return colorFn(
+      `    ${symbol} ${op.path} [${op.operation}]${statusSuffix}${detail}`,
+    );
   }
 
   renderDependencyOperation(op: DependencyOperation): string {
+    if (this.verbosity === "quiet") {
+      return "";
+    }
     const symbols = {
       add: "+",
       remove: "-",
