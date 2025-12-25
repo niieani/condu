@@ -79,7 +79,7 @@ export class ConduProject {
     return this.#workspacePackage.absPath;
   }
 
-  async applyAndCommit() {
+  async applyAndCommit(): Promise<void> {
     await this.#workspacePackage.applyAndCommit();
   }
 }

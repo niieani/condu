@@ -122,10 +122,43 @@ export class LocalMinimalRenderer extends BaseRenderer {
     if (summary.filesDeleted > 0)
       fileDetails.push(`${summary.filesDeleted} deleted`);
 
-    lines.push(
-      `  ${summary.totalFiles} files processed${fileDetails.length > 0 ? ` (${fileDetails.join(", ")})` : ""}`,
+    const filesChangedText =
+      summary.filesChanged > 0
+        ? this.green(`${summary.filesChanged} changed`)
+        : this.dim(`${summary.filesChanged} changed`);
+    const filesUnchangedText = this.dim(
+      `${summary.filesUnchanged} unchanged`,
     );
-    lines.push(`  ${summary.packagesModified} packages modified`);
+    const depsChangedText =
+      summary.depsChanged > 0
+        ? this.green(`${summary.depsChanged} changed`)
+        : this.dim(`${summary.depsChanged} changed`);
+    const depsUnchangedText = this.dim(
+      `${summary.depsUnchanged} unchanged`,
+    );
+
+    lines.push(`  Features: ${summary.totalFeatures}`);
+    const filesDetailSuffix =
+      fileDetails.length > 0 ? ` (${fileDetails.join(", ")})` : "";
+    const depsRemovedSuffix =
+      summary.depsRemoved > 0
+        ? ` · ${this.red(`${summary.depsRemoved} removed`)}`
+        : "";
+
+    const filesParts = [
+      `Files: ${summary.filesEvaluated} evaluated`,
+      filesChangedText,
+      filesUnchangedText,
+    ];
+    const depsParts = [
+      `Deps: ${summary.depsEvaluated} evaluated`,
+      depsChangedText,
+      depsUnchangedText,
+    ];
+
+    lines.push(`  ${filesParts.join(" · ")}${filesDetailSuffix}`);
+    lines.push(`  ${depsParts.join(" · ")}${depsRemovedSuffix}`);
+    lines.push(`  Packages: ${summary.packagesModified} touched`);
 
     if (summary.filesNeedingReview > 0) {
       lines.push(

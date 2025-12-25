@@ -70,13 +70,18 @@ export interface PhaseResult {
 export interface ApplySummary {
   totalFeatures: number;
   totalFiles: number;
+  filesEvaluated: number;
+  filesChanged: number;
+  filesUnchanged: number;
   filesCreated: number;
   filesUpdated: number;
   filesDeleted: number;
   filesSkipped: number;
   filesNeedingReview: number;
   packagesModified: number;
-  depsAdded: number;
+  depsEvaluated: number;
+  depsChanged: number;
+  depsUnchanged: number;
   depsRemoved: number;
   duration: number;
   errors: string[];

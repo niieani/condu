@@ -42,7 +42,8 @@ export async function ensureDependencyIn(
     built = false,
     ...opts
   }: DependencyDefinition,
-): Promise<void> {
+): Promise<boolean> {
+  let changed = false;
   if (
     (manifest.pnpm || manifest.packageManager?.startsWith("pnpm@")) &&
     built
@@ -51,13 +52,14 @@ export async function ensureDependencyIn(
     const onlyBuiltDependencies = (pnpm.onlyBuiltDependencies ??= []);
     if (!onlyBuiltDependencies.includes(installAsAlias)) {
       onlyBuiltDependencies.push(installAsAlias);
+      changed = true;
     }
   }
 
   const targetDependencyList = (manifest[list] ||= {});
   const existingVersion = targetDependencyList[installAsAlias];
   if (skipIfExists && existingVersion) {
-    return;
+    return changed;
   }
   const dependency =
     managed === "presence" && existingVersion
@@ -75,12 +77,19 @@ export async function ensureDependencyIn(
       ? `npm:${dependency.manifest.name}@`
       : ""
   }${rangePrefix}${dependency.manifest.version}`;
-  targetDependencyList[installAsAlias] = pkgDescriptor;
+  if (existingVersion !== pkgDescriptor) {
+    targetDependencyList[installAsAlias] = pkgDescriptor;
+    changed = true;
+  }
 
   if (managed) {
     const managedDependencies = ensureManagedDependenciesSection(manifest);
-    managedDependencies[installAsAlias] = managed;
+    if (managedDependencies[installAsAlias] !== managed) {
+      managedDependencies[installAsAlias] = managed;
+      changed = true;
+    }
   }
+  return changed;
 }
 
 export function ensureManagedDependenciesSection(manifest: MinimalManifest) {

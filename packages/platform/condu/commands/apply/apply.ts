@@ -65,7 +65,7 @@ export async function apply(
 
     reporter.endPhase("collecting", { success: true });
 
-    await applyAndCommitCollectedState(collected);
+    const applyResult = await applyAndCommitCollectedState(collected);
 
     reporter.endPhase("applying", { success: true });
 
@@ -76,6 +76,9 @@ export async function apply(
     // Build summary from collected state
     const { fileManager } = collected.collectedState;
     const filesArray = Array.from(fileManager.files.values());
+    const evaluatedFiles = filesArray.filter(
+      (f) => f.isManaged || f.lastApplyKind === "no-longer-generated",
+    );
     const manualReviewItems = filesArray
       .filter((f) => f.manualReviewDetails)
       .map((f) => ({
@@ -94,13 +97,27 @@ export async function apply(
     const skippedFiles = filesArray.filter(
       (f) => f.status === "skipped" && f.hadChanges,
     );
-    const changedFiles = filesArray.filter(
-      (f) => f.hadChanges || f.status === "needs-user-input",
+    const changedFiles = evaluatedFiles.filter(
+      (f) =>
+        f.hadChanges ||
+        f.status === "needs-user-input" ||
+        f.lastApplyKind === "no-longer-generated",
     );
+    const unchangedFilesCount = evaluatedFiles.length - changedFiles.length;
+
+    const packagesWithChangedFiles = new Set(
+      changedFiles.map((f) => f.targetPackage.relPath),
+    );
+    for (const pkg of applyResult.packagesTouched) {
+      packagesWithChangedFiles.add(pkg.relPath);
+    }
 
     const summary = {
       totalFeatures: featureCount,
-      totalFiles: changedFiles.length,
+      totalFiles: evaluatedFiles.length,
+      filesEvaluated: evaluatedFiles.length,
+      filesChanged: changedFiles.length,
+      filesUnchanged: unchangedFilesCount,
       filesCreated: appliedFiles.filter(
         (f) => f.lastApplyKind === "generated" || f.lastApplyKind === "symlink",
       ).length,
@@ -112,12 +129,13 @@ export async function apply(
       ).length,
       filesSkipped: skippedFiles.length,
       filesNeedingReview: manualReviewItems.length,
-      packagesModified: new Set(
-        changedFiles.map((f) => f.targetPackage.relPath),
-      )
-        .size,
-      depsAdded: collected.collectedState.dependencies.length,
-      depsRemoved: 0,
+      packagesModified: packagesWithChangedFiles.size,
+      depsEvaluated: applyResult.dependencyStats.evaluated,
+      depsChanged: applyResult.dependencyStats.changed,
+      depsUnchanged:
+        applyResult.dependencyStats.evaluated -
+        applyResult.dependencyStats.changed,
+      depsRemoved: applyResult.dependencyStats.removed,
       duration,
       errors: [],
       warnings: [],
@@ -626,7 +644,14 @@ export async function applyAndCommitCollectedState({
   collectedState,
   collectedStateReadOnlyView,
   project,
-}: ProjectAndCollectedState) {
+}: ProjectAndCollectedState): Promise<{
+  dependencyStats: {
+    evaluated: number;
+    changed: number;
+    removed: number;
+  };
+  packagesTouched: Set<ConduPackageEntry>;
+}> {
   const {
     fileManager,
     dependencies,
@@ -639,6 +664,12 @@ export async function applyAndCommitCollectedState({
   await fileManager.readCache();
   // compute the content and write any changes to file system
   await fileManager.applyAllFiles(collectedStateReadOnlyView);
+
+  const dependencyStats = {
+    evaluated: dependencies.length,
+    changed: 0,
+    removed: 0,
+  };
 
   // Group dependency additions by target package
   const dependenciesByPackage = new UpsertMap<
@@ -667,27 +698,42 @@ export async function applyAndCommitCollectedState({
 
         // Apply all new dependencies
         for (const { dependencyDefinition } of packageDependencies) {
-          await ensureDependencyIn(manifest, dependencyDefinition);
+          const didChange = await ensureDependencyIn(
+            manifest,
+            dependencyDefinition,
+          );
+          if (didChange) {
+            dependencyStats.changed += 1;
+          }
           noLongerManagedDependencies.delete(
             dependencyDefinition.installAsAlias ?? dependencyDefinition.name,
           );
         }
 
         for (const name of noLongerManagedDependencies) {
+          let removed = false;
           if (manifest.dependencies?.[name]) {
             delete manifest.dependencies[name];
+            removed = true;
           }
           if (manifest.devDependencies?.[name]) {
             delete manifest.devDependencies[name];
+            removed = true;
           }
           if (manifest.peerDependencies?.[name]) {
             delete manifest.peerDependencies[name];
+            removed = true;
           }
           if (manifest.optionalDependencies?.[name]) {
             delete manifest.optionalDependencies[name];
+            removed = true;
           }
           if (manifest.condu?.managedDependencies?.[name]) {
             delete manifest.condu.managedDependencies[name];
+            removed = true;
+          }
+          if (removed) {
+            dependencyStats.removed += 1;
           }
         }
 
@@ -758,6 +804,11 @@ export async function applyAndCommitCollectedState({
   for (const pkg of touchedPackages) {
     await pkg.applyAndCommit();
   }
+
+  return {
+    dependencyStats,
+    packagesTouched: touchedPackages,
+  };
 
   // sync defined workspaces to package.json
   // TODO: this should live in pnpm/yarn feature

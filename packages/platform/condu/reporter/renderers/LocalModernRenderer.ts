@@ -123,9 +123,62 @@ export class LocalModernRenderer extends BaseRenderer {
 
     lines.push(`${this.bold("│")}`);
 
-    // Stats line
-    const stats = `${summary.packagesModified} packages modified, ${summary.totalFiles} files processed`;
-    lines.push(`${this.bold("│")}  ${this.dim(stats)}`);
+    const fileDetails: string[] = [];
+    if (summary.filesCreated > 0)
+      fileDetails.push(`${summary.filesCreated} new`);
+    if (summary.filesUpdated > 0)
+      fileDetails.push(`${summary.filesUpdated} updated`);
+    if (summary.filesNeedingReview > 0)
+      fileDetails.push(this.yellow(`${summary.filesNeedingReview} review`));
+    if (summary.filesDeleted > 0)
+      fileDetails.push(`${summary.filesDeleted} deleted`);
+
+    const filesChangedText =
+      summary.filesChanged > 0
+        ? this.green(`${summary.filesChanged} changed`)
+        : this.dim(`${summary.filesChanged} changed`);
+    const filesUnchangedText = this.dim(
+      `${summary.filesUnchanged} unchanged`,
+    );
+    const depsChangedText =
+      summary.depsChanged > 0
+        ? this.green(`${summary.depsChanged} changed`)
+        : this.dim(`${summary.depsChanged} changed`);
+    const depsUnchangedText = this.dim(
+      `${summary.depsUnchanged} unchanged`,
+    );
+
+    const filesDetailSuffix =
+      fileDetails.length > 0 ? ` (${fileDetails.join(", ")})` : "";
+    const depsRemovedSuffix =
+      summary.depsRemoved > 0
+        ? ` · ${this.red(`${summary.depsRemoved} removed`)}`
+        : "";
+
+    const filesParts = [
+      `Files: ${summary.filesEvaluated} evaluated`,
+      filesChangedText,
+      filesUnchangedText,
+    ];
+    const depsParts = [
+      `Deps: ${summary.depsEvaluated} evaluated`,
+      depsChangedText,
+      depsUnchangedText,
+    ];
+
+    const featuresLine =
+      `${this.bold("│")}  ${this.cyan("Features:")} ${summary.totalFeatures}`;
+    const filesLine =
+      `${this.bold("│")}  ${filesParts.join(" · ")}${filesDetailSuffix}`;
+    const depsLine =
+      `${this.bold("│")}  ${depsParts.join(" · ")}${depsRemovedSuffix}`;
+    const packagesLine =
+      `${this.bold("│")}  Packages: ${summary.packagesModified} touched`;
+
+    lines.push(featuresLine);
+    lines.push(filesLine);
+    lines.push(depsLine);
+    lines.push(packagesLine);
 
     lines.push(`${this.bold("│")}`);
 

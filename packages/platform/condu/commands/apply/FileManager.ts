@@ -23,10 +23,12 @@ import {
   CURRENT_CACHE_VERSION,
 } from "../../constants.js";
 import { prompt } from "../../reporter/Prompt.js";
+import { ConduReporter } from "../../reporter/ConduReporter.js";
 import type {
   FileNameToSerializedTypeMapping,
   GlobalFileAttributes,
 } from "../../extendable.js";
+
 
 export interface ApplyAndCommitArg {
   collectedStateReadOnlyView: ConduReadonlyCollectedStateView;
@@ -349,10 +351,10 @@ export class FileManager {
                 `Manual changes present in ${file.relPath}, please resolve the conflict by running 'condu apply' interactively.`,
               );
             }
-            console.log(
+            reporter.warn(
               `Please resolve the conflict in '${file.relPath}' by running 'condu apply' interactively. Skipping due to diff:`,
             );
-            file.manualConflictResolution.printDiff();
+            await file.manualConflictResolution.printDiff();
             file.status = "skipped";
             file.manualReviewDetails ??=
               "Kept existing changes; rerun 'condu apply' after reconciling this file.";
@@ -507,10 +509,12 @@ export async function write({
   const parentDir = path.dirname(targetPath);
   await fs.mkdir(parentDir, { recursive: true });
   if (typeof content === "string") {
-    console.log(`Writing: ${targetPath}`);
+    ConduReporter.get().log(`Writing: ${targetPath}`);
     await fs.writeFile(targetPath, content);
   } else {
-    console.log(`Creating symlink: ${targetPath} => ${content.target}`);
+    ConduReporter.get().log(
+      `Creating symlink: ${targetPath} => ${content.target}`,
+    );
     await fs.symlink(content.target, targetPath);
   }
   const stat = await fs.lstat(targetPath);
@@ -562,7 +566,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
   status: "pending" | "applied" | "skipped" | "needs-user-input" = "pending";
   manualConflictResolution?:
     | {
-        printDiff: () => void;
+        printDiff: () => Promise<void>;
         promptUserInteractively: () => Promise<boolean>;
       }
     | undefined;
@@ -734,7 +738,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
         await this.deleteFromFileSystem();
         return;
       } else {
-        console.error(
+        ConduReporter.get().warn(
           `File ${this.relPath} is not managed by any feature, yet it wasn't present in cache either.`,
         );
         this.status = "skipped";
@@ -980,7 +984,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       !(newContent instanceof SymlinkTarget)
     ) {
       // Need to unlink the symlink before writing regular file content
-      console.log(
+      ConduReporter.get().log(
         `Unlinking symlink before writing file content: ${this.relPath}`,
       );
       await fs.unlink(targetPath);
@@ -990,7 +994,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       if (existingFile && existingFile.content instanceof SymlinkTarget) {
         // linked content mismatch, unlink the existing file
         // no need to ask for confirmation for symlinks
-        console.log(`Unlinking: ${this.relPath}`);
+        ConduReporter.get().log(`Unlinking: ${this.relPath}`);
         await fs.unlink(targetPath);
       }
       this.status = "applied";
@@ -1026,9 +1030,13 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       this.manualReviewDetails =
         "Manual changes detected; review and re-run 'condu apply'.";
 
-      const printDiff = () => {
-        console.log(
-          `[${this.managedByFeatures.map((f) => f.featureName).join(", ")}] Manual changes present in ${this.relPath}`,
+      const printDiff = async () => {
+        const managedBy = this.managedByFeatures
+          .map((f) => f.featureName)
+          .join(", ");
+        const suffix = managedBy ? ` (managed by ${managedBy})` : "";
+        ConduReporter.get().warn(
+          `Manual changes present in ${this.relPath}${suffix}`,
         );
         printUnifiedDiff(
           existingFile.content.toString(),
@@ -1042,7 +1050,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       this.manualConflictResolution = {
         printDiff,
         promptUserInteractively: async () => {
-          printDiff();
+          await printDiff();
 
           // eslint-disable-next-line no-constant-condition
           while (true) {
@@ -1082,7 +1090,7 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
             this.manualReviewDetails =
               "Kept your local changes; reconcile manually and rerun 'condu apply'.";
             process.exitCode = 1;
-            console.log(
+            ConduReporter.get().warn(
               `Please update your config and re-run 'condu apply' when ready. Skipping: ${this.relPath}`,
             );
             return false;
@@ -1099,9 +1107,9 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
       return;
     }
     const targetPath = this.absPath;
-    console.log(`Deleting, no longer needed: ${targetPath}`);
+    ConduReporter.get().log(`Deleting, no longer needed: ${targetPath}`);
     await fs.unlink(targetPath).catch((reason) => {
-      console.error(`Failed to delete ${targetPath}: ${reason}`);
+      ConduReporter.get().warn(`Failed to delete ${targetPath}: ${reason}`);
     });
     this._fsState = "deleted";
     this.status = "applied";

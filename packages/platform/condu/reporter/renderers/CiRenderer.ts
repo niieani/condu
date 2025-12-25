@@ -108,9 +108,23 @@ export class CiRenderer extends BaseRenderer {
     const lines: string[] = [];
 
     lines.push("");
-    lines.push(
-      `Summary: ${summary.totalFiles} files, ${summary.packagesModified} packages`,
-    );
+    lines.push(`Summary:`);
+    lines.push(`  Features: ${summary.totalFeatures}`);
+    const filesLine = [
+      `  Files: ${summary.filesEvaluated} evaluated`,
+      `${summary.filesChanged} changed`,
+      `${summary.filesUnchanged} unchanged`,
+    ].join(", ");
+    lines.push(filesLine);
+    const depsRemovedSuffix =
+      summary.depsRemoved > 0 ? `, ${summary.depsRemoved} removed` : "";
+    const depsLine = [
+      `  Deps: ${summary.depsEvaluated} evaluated`,
+      `${summary.depsChanged} changed`,
+      `${summary.depsUnchanged} unchanged${depsRemovedSuffix}`,
+    ].join(", ");
+    lines.push(depsLine);
+    lines.push(`  Packages: ${summary.packagesModified} touched`);
 
     if (summary.filesNeedingReview > 0) {
       lines.push(
@@ -127,9 +141,9 @@ export class CiRenderer extends BaseRenderer {
           item.managedBy.length > 0
             ? ` (managed by ${item.managedBy.join(", ")})`
             : "";
-        lines.push(
-          this.yellow(`  - ${item.path}${managedBy}${item.message ? ` — ${item.message}` : ""}`),
-        );
+        const message =
+          item.message ? ` — ${item.message}` : "";
+        lines.push(this.yellow(`  - ${item.path}${managedBy}${message}`));
       }
     }
 
