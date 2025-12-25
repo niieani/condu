@@ -376,7 +376,7 @@ export class FileManager {
       const filePath =
         file.targetPackage === this.rootPackage
           ? file.relPath
-          : `${file.targetPackage.relPath}${file.relPath}`;
+          : path.join(file.targetPackage.relPath, file.relPath);
 
       if (!file.hadChanges && fileStatus === "success") {
         continue;

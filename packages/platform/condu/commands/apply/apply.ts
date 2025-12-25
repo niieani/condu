@@ -6,6 +6,7 @@ import {
   loadConduProject,
 } from "../../loadProject.js";
 import { isMatching } from "ts-pattern";
+import path from "node:path";
 import type {
   ConduApi,
   FeatureDefinition,
@@ -54,6 +55,8 @@ export async function apply(
     const projectLoadData = await loadConduConfigFnFromFs(options);
     const project = await loadConduProject(projectLoadData);
     if (!project) {
+      reporter.endPhase("loading", { success: false });
+      reporter.stopSpinner();
       return;
     }
 
@@ -88,7 +91,7 @@ export async function apply(
         path:
           f.targetPackage === project.workspace
             ? f.relPath
-            : `${f.targetPackage.relPath}${f.relPath}`,
+            : path.join(f.targetPackage.relPath, f.relPath),
         managedBy: f.managedByFeatures.map((mf) => mf.featureName),
         message: f.manualReviewDetails!,
       }));
@@ -617,7 +620,7 @@ const createStateDeclarationApi = ({
 });
 
 const formatFileTarget = (pkg: ConduPackageEntry, relPath: string): string =>
-  pkg.kind === "workspace" ? relPath : `${pkg.relPath}${relPath}`;
+  pkg.kind === "workspace" ? relPath : path.join(pkg.relPath, relPath);
 
 const formatPackageTarget = (pkg: ConduPackageEntry): string =>
   pkg.kind === "workspace" ? "workspace" : pkg.relPath;

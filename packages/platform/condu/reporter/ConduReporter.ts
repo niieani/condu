@@ -278,6 +278,12 @@ export class ConduReporter {
     }
   }
 
+  stopSpinner(): void {
+    if (this.spinner) {
+      this.spinner.stop();
+    }
+  }
+
   // Low-level control
   write(text: string): void {
     if (text) {
