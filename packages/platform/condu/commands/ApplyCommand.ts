@@ -1,7 +1,7 @@
 import { Command, Option } from "clipanion";
 import { ConduReporter } from "../reporter/ConduReporter.js";
 import { detectColorSupport, detectMode } from "../reporter/detection.js";
-import type { ReporterTheme, VerbosityLevel } from "../reporter/types.js";
+import type { VerbosityLevel } from "../reporter/types.js";
 
 export class ApplyCommand extends Command {
   static override paths = [["apply"]];
@@ -17,10 +17,6 @@ export class ApplyCommand extends Command {
 
   verbose = Option.Boolean("--verbose,-v", false, {
     description: "Show detailed output including debug information",
-  });
-
-  theme = Option.String("--theme", {
-    description: "Output theme: modern, retro, minimal",
   });
 
   noColor = Option.Boolean("--no-color", false, {
@@ -40,7 +36,7 @@ export class ApplyCommand extends Command {
     // Initialize reporter with CLI options
     ConduReporter.initialize({
       mode: this.quiet ? "quiet" : detectMode(),
-      theme: (this.theme as ReporterTheme) ?? "minimal",
+      theme: "minimal",
       verbosity,
       supportsColor: !this.noColor && detectColorSupport(),
       isInteractiveTTY: process.stdout.isTTY ?? false,

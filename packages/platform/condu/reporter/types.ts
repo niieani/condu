@@ -2,13 +2,10 @@ export type Phase = "init" | "loading" | "collecting" | "applying" | "complete";
 
 export type ReporterMode = "local" | "ci" | "quiet";
 
-export type ReporterTheme = "modern" | "retro" | "minimal";
-
 export type VerbosityLevel = "quiet" | "normal" | "verbose";
 
 export interface ReporterOptions {
   mode?: ReporterMode;
-  theme?: ReporterTheme;
   verbosity?: VerbosityLevel;
   supportsColor?: boolean;
   isInteractiveTTY?: boolean;

@@ -1,4 +1,4 @@
-import type { ReporterMode, ReporterTheme } from "./types.js";
+import type { ReporterMode } from "./types.js";
 
 export interface EnvironmentInfo {
   isCI: boolean;
@@ -6,7 +6,6 @@ export interface EnvironmentInfo {
   supportsColor: boolean;
   terminalWidth: number;
   isQuiet: boolean;
-  preferredTheme: ReporterTheme | undefined;
 }
 
 export function detectEnvironment(): EnvironmentInfo {
@@ -24,7 +23,6 @@ export function detectEnvironment(): EnvironmentInfo {
     supportsColor: detectColorSupport(),
     terminalWidth: process.stdout.columns ?? 80,
     isQuiet: process.env["CONDU_QUIET"] === "true",
-    preferredTheme: process.env["CONDU_THEME"] as ReporterTheme | undefined,
   };
 }
 

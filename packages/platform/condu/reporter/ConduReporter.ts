@@ -9,7 +9,6 @@ import type {
   PhaseResult,
   ReporterMode,
   ReporterOptions,
-  ReporterTheme,
   VerbosityLevel,
 } from "./types.js";
 import { detectColorSupport, detectMode } from "./detection.js";
@@ -17,8 +16,6 @@ import { Spinner } from "./Spinner.js";
 import type { BaseRenderer } from "./renderers/BaseRenderer.js";
 import { CiRenderer } from "./renderers/CiRenderer.js";
 import { LocalMinimalRenderer } from "./renderers/LocalMinimalRenderer.js";
-import { LocalModernRenderer } from "./renderers/LocalModernRenderer.js";
-import { LocalRetroRenderer } from "./renderers/LocalRetroRenderer.js";
 import { QuietRenderer } from "./renderers/QuietRenderer.js";
 
 /**
@@ -26,7 +23,6 @@ import { QuietRenderer } from "./renderers/QuietRenderer.js";
  */
 export class ConduReporter {
   private mode: ReporterMode;
-  private theme: ReporterTheme;
   private supportsColor: boolean;
   private isInteractiveTTY: boolean;
   private startTime: number;
@@ -46,7 +42,6 @@ export class ConduReporter {
 
   private constructor(options: ReporterOptions) {
     this.mode = options.mode ?? detectMode();
-    this.theme = options.theme ?? "minimal";
     this.supportsColor = options.supportsColor ?? detectColorSupport();
     this.isInteractiveTTY = options.isInteractiveTTY ?? false;
     this.verbosity =
@@ -77,16 +72,7 @@ export class ConduReporter {
     }
 
     // Local mode
-    switch (this.theme) {
-      case "minimal":
-        return new LocalMinimalRenderer(this.supportsColor, this.verbosity);
-      case "modern":
-        return new LocalModernRenderer(this.supportsColor, this.verbosity);
-      case "retro":
-        return new LocalRetroRenderer(this.supportsColor, this.verbosity);
-      default:
-        return new LocalMinimalRenderer(this.supportsColor, this.verbosity);
-    }
+    return new LocalMinimalRenderer(this.supportsColor, this.verbosity);
   }
 
   static initialize(options: ReporterOptions = {}): ConduReporter {
@@ -355,7 +341,6 @@ export class ConduReporter {
 // Initialize singleton at module load with auto-detected settings
 export const reporter = ConduReporter.initialize({
   mode: detectMode(),
-  theme: (process.env["CONDU_THEME"] as ReporterTheme) ?? "minimal",
   verbosity: process.env["CONDU_VERBOSE"] === "1" ? "verbose" : "normal",
   supportsColor: detectColorSupport(),
   isInteractiveTTY: process.stdout.isTTY ?? false,
