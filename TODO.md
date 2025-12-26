@@ -1,5 +1,7 @@
 ## MVP / alpha TODO List
 
+- [ ] replace remaining console.log/warn/error usage with ConduReporter in CLI commands (keep Prompt UI exceptions)
+- [ ] refactor package.json manifest changes so we can track whether a change was made (proxy object or explicit mutation commands)
 - [ ] add an init command that can be run like `bunx condu init` or `pnpx condu init`
   - package.json: add type: module, install condum detect package manager
   - create condu.ts

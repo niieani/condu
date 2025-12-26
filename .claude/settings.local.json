@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git diff:*)",
+      "Bash(git grep:*)",
+      "Bash(git log:*)",
+      "Bash(mkdir:*)",
+      "Bash(pnpm exec moon run:*)",
+      "Bash(pnpm exec tsc:*)",
+      "Bash(pnpm exec vitest run:*)",
+      "Bash(pnpm exec vitest:*)",
+      "Bash(pnpm exec:*)",
+      "WebFetch(domain:oxc.rs)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(pnpm --dir /Volumes/Projects/Software/condu/packages/features/vscode add -D \"@condu-feature/oxlint@workspace:*\")",
+      "Bash(pnpm:*)",
+      "WebFetch(domain:biomejs.dev)",
+      "Bash(rg:*)"
+    ],
+    "deny": [
+      "Read(.swc/**)",
+      "Read(.moon/**)",
+      "Read(.idea/**)",
+      "Read(about-the-projects-and-its-source-code.md)"
+    ]
+  }
+}

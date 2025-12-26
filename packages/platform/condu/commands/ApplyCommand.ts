@@ -1,4 +1,7 @@
-import { Command } from "clipanion";
+import { Command, Option } from "clipanion";
+import { ConduReporter } from "../reporter/ConduReporter.js";
+import { detectColorSupport, detectMode } from "../reporter/detection.js";
+import type { VerbosityLevel } from "../reporter/types.js";
 
 export class ApplyCommand extends Command {
   static override paths = [["apply"]];
@@ -8,14 +11,47 @@ export class ApplyCommand extends Command {
       "Apply the latest changes to the project by creating or modifying configuration files.",
   });
 
-  // name = Option.String();
+  quiet = Option.Boolean("--quiet,-q", false, {
+    description: "Minimal output, single line summary only",
+  });
+
+  verbose = Option.Boolean("--verbose,-v", false, {
+    description: "Show detailed output including debug information",
+  });
+
+  noColor = Option.Boolean("--no-color", false, {
+    description: "Disable colored output",
+  });
 
   async execute() {
+    // Reset any existing reporter instance
+    ConduReporter.reset();
+
+    const verbosity: VerbosityLevel = this.quiet
+      ? "quiet"
+      : this.verbose
+        ? "verbose"
+        : "normal";
+
+    const detectedMode = detectMode();
+    const reporterMode =
+      this.quiet && detectedMode === "ci"
+        ? "ci"
+        : this.quiet
+          ? "quiet"
+          : detectedMode;
+
+    // Initialize reporter with CLI options
+    ConduReporter.initialize({
+      mode: reporterMode,
+      verbosity,
+      supportsColor: !this.noColor && detectColorSupport(),
+      isInteractiveTTY: process.stdout.isTTY ?? false,
+    });
+
     // TODO: also run: ./node_modules/.bin/moon sync projects
     const { apply } = await import("./apply/apply.js");
     await apply();
     // await $`./node_modules/.bin/moon sync projects`;
-
-    // this.context.stdout.write(`Hello ${this.name}!\n`);
   }
 }
