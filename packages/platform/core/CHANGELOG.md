@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.2](https://github.com/niieani/condu/compare/@condu/core@1.0.1...@condu/core@1.0.2) (2025-12-26)
+
+
+### Bug Fixes
+
+* upgrade deps ([95818fe](https://github.com/niieani/condu/commit/95818fec5bb51414254694ae283bb7acfd0d7d95))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/workspace-utils bumped to 1.0.2
+
 ## [1.0.1](https://github.com/niieani/condu/compare/@condu/core@1.0.0...@condu/core@1.0.1) (2025-08-10)
 
 

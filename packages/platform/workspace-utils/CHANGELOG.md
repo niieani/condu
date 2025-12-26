@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.2](https://github.com/niieani/condu/compare/@condu/workspace-utils@1.0.1...@condu/workspace-utils@1.0.2) (2025-12-26)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/schema-types bumped to 1.0.1
+
 ## [1.0.1](https://github.com/niieani/condu/compare/@condu/workspace-utils@1.0.0...@condu/workspace-utils@1.0.1) (2025-08-10)
 
 

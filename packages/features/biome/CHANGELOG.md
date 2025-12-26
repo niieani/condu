@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.4](https://github.com/niieani/condu/compare/@condu-feature/biome@1.0.3...@condu-feature/biome@1.0.4) (2025-12-26)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/schema-types bumped to 1.0.1
+    * condu bumped to 1.1.0
+
 ## [1.0.3](https://github.com/niieani/condu/compare/@condu-feature/biome@1.0.2...@condu-feature/biome@1.0.3) (2025-08-10)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/niieani/condu/compare/@condu/schema-types@1.0.0...@condu/schema-types@1.0.1) (2025-12-26)
+
+
+### Bug Fixes
+
+* upgrade deps ([95818fe](https://github.com/niieani/condu/commit/95818fec5bb51414254694ae283bb7acfd0d7d95))
+
 ## [1.0.0](https://github.com/niieani/condu/compare/@condu/schema-types@0.0.4...@condu/schema-types@1.0.0) (2025-08-02)
 
 
