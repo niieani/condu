@@ -1,6 +1,6 @@
 {
   "name": "@condu/schema-types",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "devDependencies": {
     "@apidevtools/json-schema-ref-parser": "^14.2.0",

@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.4](https://github.com/niieani/condu/compare/@condu-feature/moon@1.0.3...@condu-feature/moon@1.0.4) (2025-12-26)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 1.0.2
+    * @condu/schema-types bumped to 1.0.1
+  * peerDependencies
+    * condu bumped to 1.1.0
+
 ## [1.0.3](https://github.com/niieani/condu/compare/@condu-feature/moon@1.0.2...@condu-feature/moon@1.0.3) (2025-08-10)
 
 

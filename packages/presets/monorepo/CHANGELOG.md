@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.0.4](https://github.com/niieani/condu/compare/@condu-preset/monorepo@1.0.3...@condu-preset/monorepo@1.0.4) (2025-12-26)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu-feature/ci-github-actions bumped to 1.0.4
+    * @condu-feature/condu-packages bumped to 1.0.4
+    * @condu-feature/eslint bumped to 1.0.4
+    * @condu-feature/gitignore bumped to 1.0.4
+    * @condu-feature/moon bumped to 1.0.4
+    * @condu-feature/pnpm bumped to 1.0.4
+    * @condu-feature/release-please bumped to 1.0.4
+    * @condu-feature/typescript bumped to 1.0.4
+    * @condu-feature/vscode bumped to 1.0.4
+  * peerDependencies
+    * condu bumped to 1.1.0
+
 ## [1.0.3](https://github.com/niieani/condu/compare/@condu-preset/monorepo@1.0.2...@condu-preset/monorepo@1.0.3) (2025-08-10)
 
 
