@@ -33,7 +33,6 @@ export class ConduReporter {
   private dependencies: DependencyOperation[] = [];
   private renderer: BaseRenderer;
   private spinner?: Spinner;
-  private quietRenderer?: QuietRenderer;
   private quietSpinnerText = "Applying configuration";
   private quietSpinnerPaused = false;
   private lastFileFeature?: string;
@@ -57,9 +56,6 @@ export class ConduReporter {
     // Create spinner for quiet mode if in TTY
     if (this.mode === "quiet" && this.isInteractiveTTY) {
       this.spinner = new Spinner();
-      if (this.renderer instanceof QuietRenderer) {
-        this.quietRenderer = this.renderer;
-      }
     }
   }
 
@@ -169,11 +165,10 @@ export class ConduReporter {
 
   private updateFeatureDisplay(feature?: FeatureProgress): void {
     // Update spinner in quiet mode
-    if (this.mode === "quiet" && this.spinner && this.quietRenderer) {
-      const inProgress = this.features.find((f) => f.status === "in-progress");
-      if (inProgress) {
-        const message = inProgress.message ? ` › ${inProgress.message}` : "";
-        this.quietSpinnerText = `Applying ${this.features.length} features: ${inProgress.name}${message}`;
+    if (this.mode === "quiet" && this.spinner) {
+      const line = this.renderer.renderFeatureProgress(this.features);
+      if (line) {
+        this.quietSpinnerText = `Applying ${line}`;
         this.spinner.update(this.quietSpinnerText);
       }
     } else if (this.mode === "local") {
@@ -286,8 +281,21 @@ export class ConduReporter {
 
   // Low-level control
   write(text: string): void {
-    if (text) {
-      process.stdout.write(`${text}\n`);
+    if (!text) return;
+
+    let shouldResumeSpinner = false;
+    if (this.mode === "quiet" && this.spinner && !this.quietSpinnerPaused) {
+      // Stop spinner so subsequent writes don't share the same line
+      this.spinner.stop();
+      // Resume only if we're not in the final phase
+      shouldResumeSpinner = this.currentPhase !== "complete";
+    }
+
+    process.stdout.write(`${text}\n`);
+
+    if (shouldResumeSpinner && this.spinner) {
+      const fallback = this.quietSpinnerText || "Applying configuration";
+      this.spinner.start(fallback);
     }
   }
 
@@ -347,14 +355,10 @@ export class ConduReporter {
   resumeAfterUserInput(): void {
     if (
       this.mode === "quiet" &&
-      this.spinner &&
-      this.quietRenderer &&
       this.quietSpinnerPaused
     ) {
-      const fallback =
-        this.quietRenderer?.getCurrentLine() ?? this.quietSpinnerText;
-      this.quietSpinnerText = fallback || "Applying configuration";
-      this.spinner.start(this.quietSpinnerText);
+      const fallback = this.quietSpinnerText || "Applying configuration";
+      this.spinner?.start(fallback);
       this.quietSpinnerPaused = false;
     }
   }

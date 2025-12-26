@@ -13,13 +13,8 @@ import { BaseRenderer } from "./BaseRenderer.js";
  * Features: Single line with spinner in TTY, summary only
  */
 export class QuietRenderer extends BaseRenderer {
-  private currentLine = "";
-
   renderPhaseStart(phase: Phase): string {
-    // Only show something meaningful at the start
-    if (phase === "loading") {
-      return "Applying configuration";
-    }
+    // Quiet mode relies on spinner for live status; avoid extra lines.
     return "";
   }
 
@@ -35,15 +30,7 @@ export class QuietRenderer extends BaseRenderer {
 
     const featureCount = features.length;
     const message = inProgress.message ? ` ${inProgress.message}` : "";
-    this.currentLine = `(${featureCount} features) ${inProgress.name}${message}`;
-
-    // In quiet mode, we don't output this directly
-    // It will be shown by the spinner
-    return "";
-  }
-
-  getCurrentLine(): string {
-    return this.currentLine;
+    return `(${featureCount} features) ${inProgress.name}${message}`;
   }
 
   renderFileOperation(_op: FileOperation): string {

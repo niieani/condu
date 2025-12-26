@@ -15,6 +15,8 @@ export class Spinner {
         this.render();
         this.frame = (this.frame + 1) % SPINNER_FRAMES.length;
       }, 80);
+      // Allow process to exit even if a spinner interval is active
+      this.intervalId.unref?.();
     } else {
       // Non-TTY: just print once
       process.stdout.write(`${text}...\n`);
