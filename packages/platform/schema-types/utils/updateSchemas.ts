@@ -7,13 +7,31 @@ import type { ResolverOptions } from "@apidevtools/json-schema-ref-parser";
 
 const currentModuleUrl = import.meta.url;
 const outputDirectory = new URL("../schemas/", currentModuleUrl).pathname;
+const packageRoot = new URL("../", currentModuleUrl).pathname;
 
 const isValidIdentifier = (str: string) => /^[$A-Z_a-z][\w$]*$/.test(str);
 
 async function updateSchemas() {
   let promises = [];
   for (const [name, url] of Object.entries(schemas)) {
-    const schema = await fetch(url).then((res) => res.json() as JSONSchema);
+    const schema = await (async () => {
+      if (url.startsWith("http://") || url.startsWith("https://")) {
+        return fetch(url).then((res) => res.json() as JSONSchema);
+      }
+      if (url.startsWith("file://")) {
+        return JSON.parse(
+          await fs.readFile(new URL(url), "utf8"),
+        ) as JSONSchema;
+      }
+      if (url.startsWith(".") || url.startsWith("/")) {
+        const filePath = url.startsWith(".")
+          ? path.resolve(packageRoot, url)
+          : url;
+        return JSON.parse(await fs.readFile(filePath, "utf8")) as JSONSchema;
+      }
+
+      return fetch(url).then((res) => res.json() as JSONSchema);
+    })();
     let topLevelSchemaNameSource = schema.title ?? schema["$id"] ?? schema.id;
     const createdName = `${name.slice(0, 1).toUpperCase()}${name.slice(1)}`;
     if (

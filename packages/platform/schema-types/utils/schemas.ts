@@ -27,6 +27,7 @@ export const schemas = {
     "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   oxlint:
     "https://raw.githubusercontent.com/oxc-project/oxc/refs/heads/main/npm/oxlint/configuration_schema.json",
+  oxfmt: "./node_modules/oxfmt/configuration_schema.json",
   biome:
     "https://raw.githubusercontent.com/biomejs/biome/refs/heads/main/packages/%40biomejs/biome/configuration_schema.json",
   vscodeExtensions:

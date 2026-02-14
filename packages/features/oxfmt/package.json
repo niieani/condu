@@ -1,0 +1,13 @@
+{
+  "name": "@condu-feature/oxfmt",
+  "version": "1.0.0",
+  "type": "module",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "condu": "workspace:^",
+    "@condu/schema-types": "workspace:^"
+  }
+}

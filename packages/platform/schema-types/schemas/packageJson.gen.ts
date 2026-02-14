@@ -254,7 +254,7 @@ bundleDependencies?: (string[] | boolean)
  */
 bundledDependencies?: (string[] | boolean)
 /**
- * Resolutions is used to support selective version resolutions using yarn, which lets you define custom package versions or ranges inside your dependencies. For npm, use overrides instead. See: https://classic.yarnpkg.com/en/docs/selective-version-resolutions
+ * Resolutions is used to support selective version resolutions using yarn, which lets you define custom package versions or ranges inside your dependencies. For npm, use overrides instead. See: https://yarnpkg.com/configuration/manifest#resolutions
  */
 resolutions?: {
 [k: string]: unknown | undefined
@@ -8424,6 +8424,10 @@ bracketSameLine?: boolean
  */
 bracketSpacing?: boolean
 /**
+ * Check whether the file's first docblock comment contains '@noprettier' or '@noformat' to determine if it should be formatted.
+ */
+checkIgnorePragma?: boolean
+/**
  * Print (to stderr) where a cursor at the given position would move to after formatting.
  */
 cursorOffset?: number
@@ -8466,7 +8470,7 @@ objectWrap?: ("preserve" | "collapse")
 /**
  * Which parser to use.
  */
-parser?: ("flow" | "babel" | "babel-flow" | "babel-ts" | "typescript" | "acorn" | "espree" | "meriyah" | "css" | "less" | "scss" | "json" | "json5" | "jsonc" | "json-stringify" | "graphql" | "markdown" | "mdx" | "vue" | "yaml" | "glimmer" | "html" | "angular" | "lwc" | string)
+parser?: ("flow" | "babel" | "babel-flow" | "babel-ts" | "typescript" | "acorn" | "espree" | "meriyah" | "css" | "less" | "scss" | "json" | "json5" | "jsonc" | "json-stringify" | "graphql" | "markdown" | "mdx" | "vue" | "yaml" | "glimmer" | "html" | "angular" | "lwc" | "mjml" | string)
 /**
  * Add a plugin. Multiple plugins can be passed as separate `--plugin`s.
  */
@@ -8494,8 +8498,7 @@ rangeEnd?: number
  */
 rangeStart?: number
 /**
- * Require either '@prettier' or '@format' to be present in the file's first docblock comment
- * in order for it to be formatted.
+ * Require either '@prettier' or '@format' to be present in the file's first docblock comment in order for it to be formatted.
  */
 requirePragma?: boolean
 /**
@@ -8562,6 +8565,10 @@ bracketSameLine?: boolean
  */
 bracketSpacing?: boolean
 /**
+ * Check whether the file's first docblock comment contains '@noprettier' or '@noformat' to determine if it should be formatted.
+ */
+checkIgnorePragma?: boolean
+/**
  * Print (to stderr) where a cursor at the given position would move to after formatting.
  */
 cursorOffset?: number
@@ -8604,7 +8611,7 @@ objectWrap?: ("preserve" | "collapse")
 /**
  * Which parser to use.
  */
-parser?: ("flow" | "babel" | "babel-flow" | "babel-ts" | "typescript" | "acorn" | "espree" | "meriyah" | "css" | "less" | "scss" | "json" | "json5" | "jsonc" | "json-stringify" | "graphql" | "markdown" | "mdx" | "vue" | "yaml" | "glimmer" | "html" | "angular" | "lwc" | string)
+parser?: ("flow" | "babel" | "babel-flow" | "babel-ts" | "typescript" | "acorn" | "espree" | "meriyah" | "css" | "less" | "scss" | "json" | "json5" | "jsonc" | "json-stringify" | "graphql" | "markdown" | "mdx" | "vue" | "yaml" | "glimmer" | "html" | "angular" | "lwc" | "mjml" | string)
 /**
  * Add a plugin. Multiple plugins can be passed as separate `--plugin`s.
  */
@@ -8632,8 +8639,7 @@ rangeEnd?: number
  */
 rangeStart?: number
 /**
- * Require either '@prettier' or '@format' to be present in the file's first docblock comment
- * in order for it to be formatted.
+ * Require either '@prettier' or '@format' to be present in the file's first docblock comment in order for it to be formatted.
  */
 requirePragma?: boolean
 /**
@@ -9395,7 +9401,10 @@ tagFormat?: string
 /**
  * Define the list of plugins to use. Plugins will run in series, in the order defined
  */
-plugins?: (string | unknown[])[]
+plugins?: (string | unknown[] | {
+path: string
+[k: string]: unknown | undefined
+})[]
 /**
  * The objective of the dry-run mode is to get a preview of the pending release. Dry-run mode skips the following steps: prepare, publish, success and fail. In addition to this it prints the next version and release notes to the console
  */

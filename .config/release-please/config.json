@@ -66,6 +66,11 @@
       "component": "@condu-feature/moon",
       "initial-version": "1.0.0"
     },
+    "packages/features/oxfmt": {
+      "release-type": "node",
+      "component": "@condu-feature/oxfmt",
+      "initial-version": "1.0.0"
+    },
     "packages/features/oxlint": {
       "release-type": "node",
       "component": "@condu-feature/oxlint",

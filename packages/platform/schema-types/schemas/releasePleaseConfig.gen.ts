@@ -173,6 +173,7 @@ label?: unknown
 "extra-label"?: unknown
 "include-component-in-tag"?: unknown
 "include-v-in-tag"?: unknown
+"include-v-in-release-name"?: unknown
 "changelog-type"?: unknown
 "changelog-host"?: unknown
 "changelog-path"?: unknown
@@ -266,6 +267,10 @@ prerelease?: boolean
  * When tagging a release, include `v` in the tag. Defaults to `false`.
  */
 "include-v-in-tag"?: boolean
+/**
+ * Include `v` in the GitHub release name. Defaults to `true`.
+ */
+"include-v-in-release-name"?: boolean
 /**
  * The type of changelog to use. Defaults to `default`.
  */

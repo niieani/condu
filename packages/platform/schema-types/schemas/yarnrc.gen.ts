@@ -121,6 +121,12 @@ export type DefineWhetherYarnShouldExclusivelyReadPackageMetadataFromItsCache = 
  */
 export type DefineWhetherAnimatedProgressBarsShouldBeShownOrNot = boolean
 /**
+ * If false, Yarn will not execute the `postinstall` scripts from third-party packages when installing the project (workspaces will still see their postinstall scripts evaluated, as they're assumed to be safe if you're running an install within them).
+ * 
+ * Note that you also have the ability to disable scripts on a per-package basis using `dependenciesMeta`, or to re-enable a specific script by combining `enableScripts` and `dependenciesMeta`.
+ */
+export type DefineWhetherToRunPostinstallScriptsOrNot = boolean
+/**
  * If false, SSL certificate errors will be ignored
  */
 export type DefineWhetherSSLErrorsShouldFailRequestsOrNot = boolean
@@ -146,7 +152,7 @@ export type DefineWhetherPureSemverRangesShouldAllowWorkspaceResolutionOrNot = b
 export type PathWhereAllFilesGlobalToTheSystemWillBeStored = string
 export type ProxyToUseWhenMakingAnHTTPRequest = string
 export type AmountOfTimeToWaitInSecondsBeforeRetryingAFailedHTTPRequest = number
-export type AmountOfTimeToWaitInMillisecondsBeforeCancellingPendingHTTPRequests = number
+export type AmountOfTimeToWaitBeforeCancellingPendingHTTPRequests = ((number | string) & ((number & (number | string)) | ((number | string) & string)))
 export type PathToAFileContainingOneOrMultipleCertificateAuthoritySigningCertificates = string
 export type PathToAFileContainingACertificateChainInPEMFormat = string
 export type PathToAFileContainingAPrivateKeyInPEMFormat = string
@@ -223,6 +229,14 @@ export type DefineHowToCopyFilesToTheirTargetDestination = ("classic" | "hardlin
  * - If `node-modules`, a regular `node_modules` folder just like in Yarn Classic or npm will be created.
  */
 export type DefineHowNodePackagesShouldBeInstalled = ((string | ("pnp" | "pnpm" | "node-modules")) & string)
+/**
+ * If a package version is newer than the minimal age gate, it will not be considered for installation. This can be used to reduce the likelihood of installing compromised packages, or to avoid relying on packages that could still be unpublished (e.g. the npm registry has specific rules for packages less than 3 days old).
+ */
+export type MinimumAgeOfAPackageVersionAccordingToThePublishDateOnTheNpmRegistryToBeConsideredForInstallation = ((number | string) & ((number & (number | string)) | ((number | string) & string)))
+/**
+ * If a package descriptor or name matches the specified pattern, it will not be considered when evaluating any of the package gates.
+ */
+export type ArrayOfPackageDescriptorsOrPackageNameGlobPatternsToExcludeFromAllOfThePackageGates = string[]
 /**
  * By default, the store is stored in the `node_modules/.store` of the project. Sometimes in CI scenario's it is convenient to store this in a different location so it can be cached and reused.
  */
@@ -343,7 +357,7 @@ export type ExecutionStrategyForHeavyTasks = ("async" | "workers")
 /**
  * By default we only send one request per week, making it impossible for us to track your usage with a lower granularity.
  */
-export type DefineTheMinimalAmountOfTimeBetweenTwoTelemetryEventsInDays = number
+export type DefineTheMinimalAmountOfTimeBetweenTwoTelemetryEvents = ((number | string) & ((number & (number | string)) | ((number | string) & string)))
 /**
  * The default settings never assign unique IDs to anyone, so we have no way to know which data originates from which project. This setting can be used to force a user ID to be sent to our telemetry server.
  * 
@@ -400,12 +414,7 @@ enableMirror?: DefineWhetherToMirrorLocalCacheEntriesIntoTheGlobalCacheOrNot
 enableNetwork?: DefineWhetherRemoteNetworkRequestsAreAllowedOrNot
 enableOfflineMode?: DefineWhetherYarnShouldExclusivelyReadPackageMetadataFromItsCache
 enableProgressBars?: DefineWhetherAnimatedProgressBarsShouldBeShownOrNot
-/**
- * If false, Yarn will not execute the `postinstall` scripts from third-party packages when installing the project (workspaces will still see their postinstall scripts evaluated, as they're assumed to be safe if you're running an install within them).
- * 
- * Note that you also have the ability to disable scripts on a per-package basis using `dependenciesMeta`, or to re-enable a specific script by combining `enableScripts` and `dependenciesMeta`.
- */
-enableScripts?: boolean
+enableScripts?: DefineWhetherToRunPostinstallScriptsOrNot
 enableStrictSsl?: DefineWhetherSSLErrorsShouldFailRequestsOrNot
 enableTelemetry?: DefineWhetherAnonymousTelemetryDataShouldBeSentOrNot
 enableTimers?: DefineWhetherToPrintTheTimeSpentRunningEachSubStepOrNot
@@ -413,7 +422,7 @@ enableTransparentWorkspaces?: DefineWhetherPureSemverRangesShouldAllowWorkspaceR
 globalFolder?: PathWhereAllFilesGlobalToTheSystemWillBeStored
 httpProxy?: ProxyToUseWhenMakingAnHTTPRequest
 httpRetry?: AmountOfTimeToWaitInSecondsBeforeRetryingAFailedHTTPRequest
-httpTimeout?: AmountOfTimeToWaitInMillisecondsBeforeCancellingPendingHTTPRequests
+httpTimeout?: AmountOfTimeToWaitBeforeCancellingPendingHTTPRequests
 httpsCaFilePath?: PathToAFileContainingOneOrMultipleCertificateAuthoritySigningCertificates
 httpsCertFilePath?: PathToAFileContainingACertificateChainInPEMFormat
 httpsKeyFilePath?: PathToAFileContainingAPrivateKeyInPEMFormat
@@ -431,6 +440,8 @@ nmHoistingLimits?: HighestPointWherePackagesCanBeHoisted
 nmSelfReferences?: DefineWhetherWorkspacesAreAllowedToRequireThemselves
 nmMode?: DefineHowToCopyFilesToTheirTargetDestination
 nodeLinker?: DefineHowNodePackagesShouldBeInstalled
+npmMinimalAgeGate?: MinimumAgeOfAPackageVersionAccordingToThePublishDateOnTheNpmRegistryToBeConsideredForInstallation
+npmPreapprovedPackages?: ArrayOfPackageDescriptorsOrPackageNameGlobPatternsToExcludeFromAllOfThePackageGates
 pnpmStoreFolder?: PathWhereThePnpmStoreWillBeStored
 winLinkType?: DefineWhetherToUseJunctionsOrSymlinksWhenCreatingLinksOnWindows
 npmAlwaysAuth?: DefineWhetherToAlwaysSendAuthenticationCredentialsWhenQueryingTheNpmRegistry
@@ -462,7 +473,7 @@ progressBarStyle?: StyleOfProgressBarToUse
 supportedArchitectures?: SystemsForWhichYarnShouldInstallPackages
 taskPoolConcurrency?: MaximalAmountOfConcurrentHeavyTaskProcessing
 taskPoolMode?: ExecutionStrategyForHeavyTasks
-telemetryInterval?: DefineTheMinimalAmountOfTimeBetweenTwoTelemetryEventsInDays
+telemetryInterval?: DefineTheMinimalAmountOfTimeBetweenTwoTelemetryEvents
 telemetryUserId?: UserDefinedUniqueIDToSendAlongWithTelemetryEvents
 tsEnableAutoTypes?: DefineWhetherToAutomaticallyInstallTypesDependencies
 unsafeHttpWhitelist?: ArrayOfHostnameGlobPatternsForWhichUsingTheHTTPProtocolIsAllowed

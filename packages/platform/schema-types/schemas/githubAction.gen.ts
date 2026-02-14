@@ -81,7 +81,7 @@ export interface RunsJavascript {
 /**
  * The application used to execute the code specified in `main`.
  */
-using: ("node12" | "node16" | "node20")
+using: ("node12" | "node16" | "node20" | "node24")
 /**
  * The file that contains your action code. The application specified in `using` executes this file.
  */

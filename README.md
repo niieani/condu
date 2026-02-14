@@ -77,6 +77,7 @@ condu comes with many built-in features:
 - **typescript**: Manages TypeScript configuration
 - **eslint**: Configures ESLint
 - **prettier**: Sets up Prettier formatting
+- **oxfmt**: Sets up Oxfmt formatting
 - **gitignore**: Creates and manages .gitignore files
 - **vscode**: Configures VS Code workspace settings
 - **editorconfig**: Sets up EditorConfig

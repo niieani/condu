@@ -14,7 +14,7 @@ export type CompilerOptions = ({
  */
 allowArbitraryExtensions?: (boolean | null)
 /**
- * Allow imports to include TypeScript file extensions. Requires '--moduleResolution bundler' and either '--noEmit' or '--emitDeclarationOnly' to be set.
+ * Allow imports to include TypeScript file extensions. Requires `--moduleResolution bundler` and either `--noEmit` or `--emitDeclarationOnly` to be set.
  */
 allowImportingTsExtensions?: (boolean | null)
 /**
@@ -28,7 +28,7 @@ composite?: (boolean | null)
 /**
  * Conditions to set in addition to the resolver-specific defaults when resolving imports.
  */
-customConditions?: ((string | null)[] | null)
+customConditions?: (string[] | null)
 /**
  * Generate .d.ts files from TypeScript and JavaScript files in your project.
  */
@@ -46,7 +46,7 @@ diagnostics?: (boolean | null)
  */
 disableReferencedProjectLoad?: (boolean | null)
 /**
- * Enforces using indexed accessors for keys declared using an indexed type
+ * Enforces using indexed accessors for keys declared using an indexed type.
  */
 noPropertyAccessFromIndexSignature?: (boolean | null)
 /**
@@ -62,7 +62,7 @@ emitDeclarationOnly?: (boolean | null)
  */
 erasableSyntaxOnly?: (boolean | null)
 /**
- * Differentiate between undefined and not present when type checking
+ * Interpret optional property types as written, rather than adding `undefined`.
  */
 exactOptionalPropertyTypes?: (boolean | null)
 /**
@@ -70,7 +70,7 @@ exactOptionalPropertyTypes?: (boolean | null)
  */
 incremental?: (boolean | null)
 /**
- * Specify the folder for .tsbuildinfo incremental compilation files.
+ * Specify the path to .tsbuildinfo incremental compilation file.
  */
 tsBuildInfoFile?: (string | null)
 /**
@@ -90,15 +90,15 @@ jsx?: ("preserve" | "react" | "react-jsx" | "react-jsxdev" | "react-native")
  */
 reactNamespace?: (string | null)
 /**
- * Specify the JSX factory function used when targeting React JSX emit, e.g. 'React.createElement' or 'h'
+ * Specify the JSX factory function used when targeting React JSX emit, e.g. `React.createElement` or `h`.
  */
 jsxFactory?: (string | null)
 /**
- * Specify the JSX Fragment reference used for fragments when targeting React JSX emit e.g. 'React.Fragment' or 'Fragment'.
+ * Specify the JSX Fragment reference used for fragments when targeting React JSX emit e.g. `React.Fragment` or `Fragment`.
  */
 jsxFragmentFactory?: (string | null)
 /**
- * Specify module specifier used to import the JSX factory functions when using `jsx: react-jsx`.
+ * Specify module specifier used to import the JSX factory functions when using `jsx: react-jsx*`.
  */
 jsxImportSource?: (string | null)
 /**
@@ -112,11 +112,11 @@ mapRoot?: (string | null)
 /**
  * Specify what module code is generated.
  */
-module?: ((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "nodenext" | "preserve") | {
+module?: ((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "node20" | "nodenext" | "preserve") | {
 [k: string]: unknown | undefined
-}) & (((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "nodenext" | "preserve") | {
+}) & (((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "node20" | "nodenext" | "preserve") | {
 [k: string]: unknown | undefined
-}) & string) | ((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "nodenext" | "preserve") | {
+}) & string) | ((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "node20" | "nodenext" | "preserve") | {
 [k: string]: unknown | undefined
 }) & null)))
 /**
@@ -130,6 +130,10 @@ moduleResolution?: ((("classic" | "node" | "node10" | "node16" | "nodenext" | "b
 [k: string]: unknown | undefined
 }) & null)))
 /**
+ * List of file name suffixes to search when resolving a module.
+ */
+moduleSuffixes?: (string[] | null)
+/**
  * Set the newline character for emitting files.
  */
 newLine?: ((("crlf" | "lf") | {
@@ -140,7 +144,7 @@ newLine?: ((("crlf" | "lf") | {
 [k: string]: unknown | undefined
 }) & null)))
 /**
- * Disable emitting file from a compilation.
+ * Disable emitting files from a compilation.
  */
 noEmit?: (boolean | null)
 /**
@@ -152,7 +156,7 @@ noEmitHelpers?: (boolean | null)
  */
 noEmitOnError?: (boolean | null)
 /**
- * Enable error reporting for expressions and declarations with an implied `any` type..
+ * Enable error reporting for expressions and declarations with an implied `any` type.
  */
 noImplicitAny?: (boolean | null)
 /**
@@ -160,11 +164,11 @@ noImplicitAny?: (boolean | null)
  */
 noImplicitThis?: (boolean | null)
 /**
- * Enable error reporting when a local variable isn't read.
+ * Enable error reporting when local variables aren't read.
  */
 noUnusedLocals?: (boolean | null)
 /**
- * Raise an error when a function parameter isn't read
+ * Raise an error when a function parameter isn't read.
  */
 noUnusedParameters?: (boolean | null)
 /**
@@ -180,7 +184,7 @@ noResolve?: (boolean | null)
  */
 noStrictGenericChecks?: (boolean | null)
 /**
- * DEPRECATED. Specify an output for the build. It is recommended to use `outFile` instead.
+ * Deprecated setting. Use `outFile` instead.
  */
 out?: (string | null)
 /**
@@ -208,15 +212,15 @@ preserveConstEnums?: (boolean | null)
  */
 preserveSymlinks?: (boolean | null)
 /**
- * Preserve unused imported values in the JavaScript output that would otherwise be removed
+ * Preserve unused imported values in the JavaScript output that would otherwise be removed.
  */
 preserveValueImports?: (boolean | null)
 /**
- * Disable wiping the console in watch mode
+ * Disable wiping the console in watch mode.
  */
 preserveWatchOutput?: (boolean | null)
 /**
- * Enable color and formatting in output to make compiler errors easier to read
+ * Enable color and formatting in TypeScript's output to make compiler errors easier to read.
  */
 pretty?: (boolean | null)
 /**
@@ -224,7 +228,7 @@ pretty?: (boolean | null)
  */
 removeComments?: (boolean | null)
 /**
- * Rewrite '.ts', '.tsx', '.mts', and '.cts' file extensions in relative import paths to their JavaScript equivalent in output files.
+ * Rewrite `.ts`, `.tsx`, `.mts`, and `.cts` file extensions in relative import paths to their JavaScript equivalent in output files.
  */
 rewriteRelativeImportExtensions?: (boolean | null)
 /**
@@ -286,7 +290,7 @@ watchDirectory?: ("useFsEvents" | "fixedPollingInterval" | "dynamicPriorityPolli
  */
 watchFile?: ("fixedPollingInterval" | "priorityPollingInterval" | "dynamicPriorityPolling" | "useFsEvents" | "useFsEventsOnParentDirectory" | "fixedChunkSizePolling")
 /**
- * Enable experimental support for TC39 stage 2 draft decorators.
+ * Enable experimental support for legacy experimental decorators.
  */
 experimentalDecorators?: (boolean | null)
 /**
@@ -333,36 +337,36 @@ baseUrl?: (string | null)
  * Specify a set of entries that re-map imports to additional lookup locations.
  */
 paths?: ({
-[k: string]: ((string | null)[] | null) | undefined
+[k: string]: (string[] | null) | undefined
 } | null)
 /**
  * Specify a list of language service plugins to include.
  */
-plugins?: (({
+plugins?: ({
 /**
  * Plugin name.
  */
-name?: (string | null)
+name?: string
 [k: string]: unknown | undefined
-} | null)[] | null)
+}[] | null)
 /**
  * Allow multiple folders to be treated as one when resolving modules.
  */
-rootDirs?: ((string | null)[] | null)
+rootDirs?: (string[] | null)
 /**
  * Specify multiple folders that act like `./node_modules/@types`.
  */
-typeRoots?: ((string | null)[] | null)
+typeRoots?: (string[] | null)
 /**
  * Specify type package names to be included without being referenced in a source file.
  */
-types?: ((string | null)[] | null)
+types?: (string[] | null)
 /**
- * Enable tracing of the name resolution process. Requires TypeScript version 2.0 or later.
+ * Log paths used during the `moduleResolution` process.
  */
 traceResolution?: (boolean | null)
 /**
- * Allow JavaScript files to be a part of your program. Use the `checkJS` option to get errors from these files.
+ * Allow JavaScript files to be a part of your program. Use the `checkJs` option to get errors from these files.
  */
 allowJs?: (boolean | null)
 /**
@@ -370,11 +374,11 @@ allowJs?: (boolean | null)
  */
 noErrorTruncation?: (boolean | null)
 /**
- * Allow 'import x from y' when a module doesn't have a default export.
+ * Allow `import x from y` when a module doesn't have a default export.
  */
 allowSyntheticDefaultImports?: (boolean | null)
 /**
- * Disable adding 'use strict' directives in emitted JavaScript files.
+ * Disable adding `use strict` directives in emitted JavaScript files.
  */
 noImplicitUseStrict?: (boolean | null)
 /**
@@ -388,19 +392,15 @@ disableSizeLimit?: (boolean | null)
 /**
  * Specify a set of bundled library declaration files that describe the target runtime environment.
  */
-lib?: (((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2017.ArrayBuffer" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Iterator" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "ES2024" | "ES2024.ArrayBuffer" | "ES2024.Collection" | "ES2024.Object" | "ES2024.Promise" | "ES2024.Regexp" | "ES2024.SharedMemory" | "ES2024.String" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
+lib?: (((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2017.ArrayBuffer" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Iterator" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "ES2024" | "ES2024.ArrayBuffer" | "ES2024.Collection" | "ES2024.Object" | "ES2024.Promise" | "ES2024.Regexp" | "ES2024.SharedMemory" | "ES2024.String" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable" | "ESNext.Error" | "ESNext.Sharedmemory") | {
 [k: string]: unknown | undefined
-}) & (((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2017.ArrayBuffer" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Iterator" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "ES2024" | "ES2024.ArrayBuffer" | "ES2024.Collection" | "ES2024.Object" | "ES2024.Promise" | "ES2024.Regexp" | "ES2024.SharedMemory" | "ES2024.String" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
-[k: string]: unknown | undefined
-}) & string) | ((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2017.ArrayBuffer" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Iterator" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "ES2024" | "ES2024.ArrayBuffer" | "ES2024.Collection" | "ES2024.Object" | "ES2024.Promise" | "ES2024.Regexp" | "ES2024.SharedMemory" | "ES2024.String" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
-[k: string]: unknown | undefined
-}) & null)))[] | null)
+}) & string)[] | null)
 /**
  * Enable lib replacement.
  */
 libReplacement?: (boolean | null)
 /**
- * Specify how TypeScript determine a file as module.
+ * Control what method is used to detect module-format JS files.
  */
 moduleDetection?: ("auto" | "legacy" | "force")
 /**
@@ -420,11 +420,11 @@ importHelpers?: (boolean | null)
  */
 importsNotUsedAsValues?: ("remove" | "preserve" | "error")
 /**
- * Ensure 'use strict' is always emitted.
+ * Ensure `use strict` is always emitted.
  */
 alwaysStrict?: (boolean | null)
 /**
- * Enable all strict type checking options.
+ * Enable all strict type-checking options.
  */
 strict?: (boolean | null)
 /**
@@ -468,7 +468,7 @@ useDefineForClassFields?: (boolean | null)
  */
 declarationMap?: (boolean | null)
 /**
- * Enable importing .json files
+ * Enable importing .json files.
  */
 resolveJsonModule?: (boolean | null)
 /**
@@ -480,7 +480,7 @@ resolvePackageJsonExports?: (boolean | null)
  */
 resolvePackageJsonImports?: (boolean | null)
 /**
- * Have recompiles in '--incremental' and '--watch' assume that changes within a file will only affect files directly depending on it. Requires TypeScript version 3.8 or later.
+ * Have recompiles in projects that use `incremental` and `watch` mode assume that changes within a file will only affect files directly depending on it.
  */
 assumeChangesOnlyAffectDirectDependencies?: (boolean | null)
 /**
@@ -492,7 +492,7 @@ extendedDiagnostics?: (boolean | null)
  */
 listFilesOnly?: (boolean | null)
 /**
- * Disable preferring source files instead of declaration files when referencing composite projects
+ * Disable preferring source files instead of declaration files when referencing composite projects.
  */
 disableSourceOfProjectReferenceRedirect?: (boolean | null)
 /**
@@ -500,11 +500,11 @@ disableSourceOfProjectReferenceRedirect?: (boolean | null)
  */
 disableSolutionSearching?: (boolean | null)
 /**
- * Do not transform or elide any imports or exports not marked as type-only, ensuring they are written in the output file's format based on the 'module' setting.
+ * Do not transform or elide any imports or exports not marked as type-only, ensuring they are written in the output file's format based on the `module` setting.
  */
 verbatimModuleSyntax?: (boolean | null)
 /**
- * Disable full type checking (only critical parse and emit errors will be reported)
+ * Disable full type checking (only critical parse and emit errors will be reported).
  */
 noCheck?: (boolean | null)
 /**
@@ -516,7 +516,7 @@ isolatedDeclarations?: (boolean | null)
  */
 noUncheckedSideEffectImports?: (boolean | null)
 /**
- * Built-in iterators are instantiated with a 'TReturn' type of 'undefined' instead of 'any'.
+ * Built-in iterators are instantiated with a `TReturn` type of `undefined` instead of `any`.
  */
 strictBuiltinIteratorReturn?: (boolean | null)
 [k: string]: unknown | undefined
@@ -526,7 +526,7 @@ strictBuiltinIteratorReturn?: (boolean | null)
  */
 allowArbitraryExtensions?: (boolean | null)
 /**
- * Allow imports to include TypeScript file extensions. Requires '--moduleResolution bundler' and either '--noEmit' or '--emitDeclarationOnly' to be set.
+ * Allow imports to include TypeScript file extensions. Requires `--moduleResolution bundler` and either `--noEmit` or `--emitDeclarationOnly` to be set.
  */
 allowImportingTsExtensions?: (boolean | null)
 /**
@@ -540,7 +540,7 @@ composite?: (boolean | null)
 /**
  * Conditions to set in addition to the resolver-specific defaults when resolving imports.
  */
-customConditions?: ((string | null)[] | null)
+customConditions?: (string[] | null)
 /**
  * Generate .d.ts files from TypeScript and JavaScript files in your project.
  */
@@ -558,7 +558,7 @@ diagnostics?: (boolean | null)
  */
 disableReferencedProjectLoad?: (boolean | null)
 /**
- * Enforces using indexed accessors for keys declared using an indexed type
+ * Enforces using indexed accessors for keys declared using an indexed type.
  */
 noPropertyAccessFromIndexSignature?: (boolean | null)
 /**
@@ -574,7 +574,7 @@ emitDeclarationOnly?: (boolean | null)
  */
 erasableSyntaxOnly?: (boolean | null)
 /**
- * Differentiate between undefined and not present when type checking
+ * Interpret optional property types as written, rather than adding `undefined`.
  */
 exactOptionalPropertyTypes?: (boolean | null)
 /**
@@ -582,7 +582,7 @@ exactOptionalPropertyTypes?: (boolean | null)
  */
 incremental?: (boolean | null)
 /**
- * Specify the folder for .tsbuildinfo incremental compilation files.
+ * Specify the path to .tsbuildinfo incremental compilation file.
  */
 tsBuildInfoFile?: (string | null)
 /**
@@ -602,15 +602,15 @@ jsx?: ("preserve" | "react" | "react-jsx" | "react-jsxdev" | "react-native")
  */
 reactNamespace?: (string | null)
 /**
- * Specify the JSX factory function used when targeting React JSX emit, e.g. 'React.createElement' or 'h'
+ * Specify the JSX factory function used when targeting React JSX emit, e.g. `React.createElement` or `h`.
  */
 jsxFactory?: (string | null)
 /**
- * Specify the JSX Fragment reference used for fragments when targeting React JSX emit e.g. 'React.Fragment' or 'Fragment'.
+ * Specify the JSX Fragment reference used for fragments when targeting React JSX emit e.g. `React.Fragment` or `Fragment`.
  */
 jsxFragmentFactory?: (string | null)
 /**
- * Specify module specifier used to import the JSX factory functions when using `jsx: react-jsx`.
+ * Specify module specifier used to import the JSX factory functions when using `jsx: react-jsx*`.
  */
 jsxImportSource?: (string | null)
 /**
@@ -624,11 +624,11 @@ mapRoot?: (string | null)
 /**
  * Specify what module code is generated.
  */
-module?: ((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "nodenext" | "preserve") | {
+module?: ((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "node20" | "nodenext" | "preserve") | {
 [k: string]: unknown | undefined
-}) & (((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "nodenext" | "preserve") | {
+}) & (((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "node20" | "nodenext" | "preserve") | {
 [k: string]: unknown | undefined
-}) & string) | ((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "nodenext" | "preserve") | {
+}) & string) | ((("commonjs" | "amd" | "system" | "umd" | "es6" | "es2015" | "es2020" | "esnext" | "none" | "es2022" | "node16" | "node18" | "node20" | "nodenext" | "preserve") | {
 [k: string]: unknown | undefined
 }) & null)))
 /**
@@ -642,6 +642,10 @@ moduleResolution?: ((("classic" | "node" | "node10" | "node16" | "nodenext" | "b
 [k: string]: unknown | undefined
 }) & null)))
 /**
+ * List of file name suffixes to search when resolving a module.
+ */
+moduleSuffixes?: (string[] | null)
+/**
  * Set the newline character for emitting files.
  */
 newLine?: ((("crlf" | "lf") | {
@@ -652,7 +656,7 @@ newLine?: ((("crlf" | "lf") | {
 [k: string]: unknown | undefined
 }) & null)))
 /**
- * Disable emitting file from a compilation.
+ * Disable emitting files from a compilation.
  */
 noEmit?: (boolean | null)
 /**
@@ -664,7 +668,7 @@ noEmitHelpers?: (boolean | null)
  */
 noEmitOnError?: (boolean | null)
 /**
- * Enable error reporting for expressions and declarations with an implied `any` type..
+ * Enable error reporting for expressions and declarations with an implied `any` type.
  */
 noImplicitAny?: (boolean | null)
 /**
@@ -672,11 +676,11 @@ noImplicitAny?: (boolean | null)
  */
 noImplicitThis?: (boolean | null)
 /**
- * Enable error reporting when a local variable isn't read.
+ * Enable error reporting when local variables aren't read.
  */
 noUnusedLocals?: (boolean | null)
 /**
- * Raise an error when a function parameter isn't read
+ * Raise an error when a function parameter isn't read.
  */
 noUnusedParameters?: (boolean | null)
 /**
@@ -692,7 +696,7 @@ noResolve?: (boolean | null)
  */
 noStrictGenericChecks?: (boolean | null)
 /**
- * DEPRECATED. Specify an output for the build. It is recommended to use `outFile` instead.
+ * Deprecated setting. Use `outFile` instead.
  */
 out?: (string | null)
 /**
@@ -720,15 +724,15 @@ preserveConstEnums?: (boolean | null)
  */
 preserveSymlinks?: (boolean | null)
 /**
- * Preserve unused imported values in the JavaScript output that would otherwise be removed
+ * Preserve unused imported values in the JavaScript output that would otherwise be removed.
  */
 preserveValueImports?: (boolean | null)
 /**
- * Disable wiping the console in watch mode
+ * Disable wiping the console in watch mode.
  */
 preserveWatchOutput?: (boolean | null)
 /**
- * Enable color and formatting in output to make compiler errors easier to read
+ * Enable color and formatting in TypeScript's output to make compiler errors easier to read.
  */
 pretty?: (boolean | null)
 /**
@@ -736,7 +740,7 @@ pretty?: (boolean | null)
  */
 removeComments?: (boolean | null)
 /**
- * Rewrite '.ts', '.tsx', '.mts', and '.cts' file extensions in relative import paths to their JavaScript equivalent in output files.
+ * Rewrite `.ts`, `.tsx`, `.mts`, and `.cts` file extensions in relative import paths to their JavaScript equivalent in output files.
  */
 rewriteRelativeImportExtensions?: (boolean | null)
 /**
@@ -798,7 +802,7 @@ watchDirectory?: ("useFsEvents" | "fixedPollingInterval" | "dynamicPriorityPolli
  */
 watchFile?: ("fixedPollingInterval" | "priorityPollingInterval" | "dynamicPriorityPolling" | "useFsEvents" | "useFsEventsOnParentDirectory" | "fixedChunkSizePolling")
 /**
- * Enable experimental support for TC39 stage 2 draft decorators.
+ * Enable experimental support for legacy experimental decorators.
  */
 experimentalDecorators?: (boolean | null)
 /**
@@ -845,36 +849,36 @@ baseUrl?: (string | null)
  * Specify a set of entries that re-map imports to additional lookup locations.
  */
 paths?: ({
-[k: string]: ((string | null)[] | null) | undefined
+[k: string]: (string[] | null) | undefined
 } | null)
 /**
  * Specify a list of language service plugins to include.
  */
-plugins?: (({
+plugins?: ({
 /**
  * Plugin name.
  */
-name?: (string | null)
+name?: string
 [k: string]: unknown | undefined
-} | null)[] | null)
+}[] | null)
 /**
  * Allow multiple folders to be treated as one when resolving modules.
  */
-rootDirs?: ((string | null)[] | null)
+rootDirs?: (string[] | null)
 /**
  * Specify multiple folders that act like `./node_modules/@types`.
  */
-typeRoots?: ((string | null)[] | null)
+typeRoots?: (string[] | null)
 /**
  * Specify type package names to be included without being referenced in a source file.
  */
-types?: ((string | null)[] | null)
+types?: (string[] | null)
 /**
- * Enable tracing of the name resolution process. Requires TypeScript version 2.0 or later.
+ * Log paths used during the `moduleResolution` process.
  */
 traceResolution?: (boolean | null)
 /**
- * Allow JavaScript files to be a part of your program. Use the `checkJS` option to get errors from these files.
+ * Allow JavaScript files to be a part of your program. Use the `checkJs` option to get errors from these files.
  */
 allowJs?: (boolean | null)
 /**
@@ -882,11 +886,11 @@ allowJs?: (boolean | null)
  */
 noErrorTruncation?: (boolean | null)
 /**
- * Allow 'import x from y' when a module doesn't have a default export.
+ * Allow `import x from y` when a module doesn't have a default export.
  */
 allowSyntheticDefaultImports?: (boolean | null)
 /**
- * Disable adding 'use strict' directives in emitted JavaScript files.
+ * Disable adding `use strict` directives in emitted JavaScript files.
  */
 noImplicitUseStrict?: (boolean | null)
 /**
@@ -900,19 +904,15 @@ disableSizeLimit?: (boolean | null)
 /**
  * Specify a set of bundled library declaration files that describe the target runtime environment.
  */
-lib?: (((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2017.ArrayBuffer" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Iterator" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "ES2024" | "ES2024.ArrayBuffer" | "ES2024.Collection" | "ES2024.Object" | "ES2024.Promise" | "ES2024.Regexp" | "ES2024.SharedMemory" | "ES2024.String" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
+lib?: (((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2017.ArrayBuffer" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Iterator" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "ES2024" | "ES2024.ArrayBuffer" | "ES2024.Collection" | "ES2024.Object" | "ES2024.Promise" | "ES2024.Regexp" | "ES2024.SharedMemory" | "ES2024.String" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable" | "ESNext.Error" | "ESNext.Sharedmemory") | {
 [k: string]: unknown | undefined
-}) & (((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2017.ArrayBuffer" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Iterator" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "ES2024" | "ES2024.ArrayBuffer" | "ES2024.Collection" | "ES2024.Object" | "ES2024.Promise" | "ES2024.Regexp" | "ES2024.SharedMemory" | "ES2024.String" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
-[k: string]: unknown | undefined
-}) & string) | ((("ES5" | "ES6" | "ES2015" | "ES2015.Collection" | "ES2015.Core" | "ES2015.Generator" | "ES2015.Iterable" | "ES2015.Promise" | "ES2015.Proxy" | "ES2015.Reflect" | "ES2015.Symbol.WellKnown" | "ES2015.Symbol" | "ES2016" | "ES2016.Array.Include" | "ES2017" | "ES2017.Intl" | "ES2017.Object" | "ES2017.SharedMemory" | "ES2017.String" | "ES2017.TypedArrays" | "ES2017.ArrayBuffer" | "ES2018" | "ES2018.AsyncGenerator" | "ES2018.AsyncIterable" | "ES2018.Intl" | "ES2018.Promise" | "ES2018.Regexp" | "ES2019" | "ES2019.Array" | "ES2019.Intl" | "ES2019.Object" | "ES2019.String" | "ES2019.Symbol" | "ES2020" | "ES2020.BigInt" | "ES2020.Promise" | "ES2020.String" | "ES2020.Symbol.WellKnown" | "ESNext" | "ESNext.Array" | "ESNext.AsyncIterable" | "ESNext.BigInt" | "ESNext.Collection" | "ESNext.Intl" | "ESNext.Iterator" | "ESNext.Object" | "ESNext.Promise" | "ESNext.Regexp" | "ESNext.String" | "ESNext.Symbol" | "DOM" | "DOM.AsyncIterable" | "DOM.Iterable" | "ScriptHost" | "WebWorker" | "WebWorker.AsyncIterable" | "WebWorker.ImportScripts" | "Webworker.Iterable" | "ES7" | "ES2021" | "ES2020.SharedMemory" | "ES2020.Intl" | "ES2020.Date" | "ES2020.Number" | "ES2021.Promise" | "ES2021.String" | "ES2021.WeakRef" | "ESNext.WeakRef" | "ES2021.Intl" | "ES2022" | "ES2022.Array" | "ES2022.Error" | "ES2022.Intl" | "ES2022.Object" | "ES2022.String" | "ES2022.SharedMemory" | "ES2022.RegExp" | "ES2023" | "ES2023.Array" | "ES2024" | "ES2024.ArrayBuffer" | "ES2024.Collection" | "ES2024.Object" | "ES2024.Promise" | "ES2024.Regexp" | "ES2024.SharedMemory" | "ES2024.String" | "Decorators" | "Decorators.Legacy" | "ES2017.Date" | "ES2023.Collection" | "ESNext.Decorators" | "ESNext.Disposable") | {
-[k: string]: unknown | undefined
-}) & null)))[] | null)
+}) & string)[] | null)
 /**
  * Enable lib replacement.
  */
 libReplacement?: (boolean | null)
 /**
- * Specify how TypeScript determine a file as module.
+ * Control what method is used to detect module-format JS files.
  */
 moduleDetection?: ("auto" | "legacy" | "force")
 /**
@@ -932,11 +932,11 @@ importHelpers?: (boolean | null)
  */
 importsNotUsedAsValues?: ("remove" | "preserve" | "error")
 /**
- * Ensure 'use strict' is always emitted.
+ * Ensure `use strict` is always emitted.
  */
 alwaysStrict?: (boolean | null)
 /**
- * Enable all strict type checking options.
+ * Enable all strict type-checking options.
  */
 strict?: (boolean | null)
 /**
@@ -980,7 +980,7 @@ useDefineForClassFields?: (boolean | null)
  */
 declarationMap?: (boolean | null)
 /**
- * Enable importing .json files
+ * Enable importing .json files.
  */
 resolveJsonModule?: (boolean | null)
 /**
@@ -992,7 +992,7 @@ resolvePackageJsonExports?: (boolean | null)
  */
 resolvePackageJsonImports?: (boolean | null)
 /**
- * Have recompiles in '--incremental' and '--watch' assume that changes within a file will only affect files directly depending on it. Requires TypeScript version 3.8 or later.
+ * Have recompiles in projects that use `incremental` and `watch` mode assume that changes within a file will only affect files directly depending on it.
  */
 assumeChangesOnlyAffectDirectDependencies?: (boolean | null)
 /**
@@ -1004,7 +1004,7 @@ extendedDiagnostics?: (boolean | null)
  */
 listFilesOnly?: (boolean | null)
 /**
- * Disable preferring source files instead of declaration files when referencing composite projects
+ * Disable preferring source files instead of declaration files when referencing composite projects.
  */
 disableSourceOfProjectReferenceRedirect?: (boolean | null)
 /**
@@ -1012,11 +1012,11 @@ disableSourceOfProjectReferenceRedirect?: (boolean | null)
  */
 disableSolutionSearching?: (boolean | null)
 /**
- * Do not transform or elide any imports or exports not marked as type-only, ensuring they are written in the output file's format based on the 'module' setting.
+ * Do not transform or elide any imports or exports not marked as type-only, ensuring they are written in the output file's format based on the `module` setting.
  */
 verbatimModuleSyntax?: (boolean | null)
 /**
- * Disable full type checking (only critical parse and emit errors will be reported)
+ * Disable full type checking (only critical parse and emit errors will be reported).
  */
 noCheck?: (boolean | null)
 /**
@@ -1028,7 +1028,7 @@ isolatedDeclarations?: (boolean | null)
  */
 noUncheckedSideEffectImports?: (boolean | null)
 /**
- * Built-in iterators are instantiated with a 'TReturn' type of 'undefined' instead of 'any'.
+ * Built-in iterators are instantiated with a `TReturn` type of `undefined` instead of `any`.
  */
 strictBuiltinIteratorReturn?: (boolean | null)
 [k: string]: unknown | undefined
@@ -1075,11 +1075,11 @@ enable?: (boolean | null)
 /**
  * Specifies a list of type declarations to be included in auto type acquisition. Ex. ["jquery", "lodash"]
  */
-include?: ((string | null)[] | null)
+include?: (string[] | null)
 /**
  * Specifies a list of type declarations to be excluded from auto type acquisition. Ex. ["jquery", "lodash"]
  */
-exclude?: ((string | null)[] | null)
+exclude?: (string[] | null)
 [k: string]: unknown | undefined
 } | null)
 [k: string]: unknown | undefined
@@ -1119,11 +1119,11 @@ synchronousWatchDirectory?: (boolean | null)
 /**
  * Remove a list of files from the watch mode's processing.
  */
-excludeFiles?: ((string | null)[] | null)
+excludeFiles?: (string[] | null)
 /**
  * Remove a list of directories from the watch process.
  */
-excludeDirectories?: ((string | null)[] | null)
+excludeDirectories?: (string[] | null)
 [k: string]: unknown | undefined
 } | null)
 [k: string]: unknown | undefined
@@ -1229,7 +1229,7 @@ files?: (boolean | null)
  * 
  * Default is to ignore all node_modules subdirectories.
  */
-ignore?: ((string | null)[] | null)
+ignore?: (string[] | null)
 /**
  * Ignore TypeScript warnings by diagnostic code.
  */
@@ -1257,7 +1257,7 @@ pretty?: (boolean | null)
  * If specified programmatically, each input string should be pre-resolved to an absolute path for
  * best results.
  */
-require?: ((string | null)[] | null)
+require?: (string[] | null)
 /**
  * Scope compiler to files within `scopeDir`.
  */
@@ -1297,34 +1297,34 @@ export interface FilesDefinition {
 /**
  * If no 'files' or 'include' property is present in a tsconfig.json, the compiler defaults to including all files in the containing directory and subdirectories except those specified by 'exclude'. When a 'files' property is specified, only those files and those specified by 'include' are included.
  */
-files?: ((string | null)[] | null)
+files?: (string[] | null)
 [k: string]: unknown | undefined
 }
 export interface ExcludeDefinition {
 /**
  * Specifies a list of files to be excluded from compilation. The 'exclude' property only affects the files included via the 'include' property and not the 'files' property. Glob patterns require TypeScript version 2.0 or later.
  */
-exclude?: ((string | null)[] | null)
+exclude?: (string[] | null)
 [k: string]: unknown | undefined
 }
 export interface IncludeDefinition {
 /**
  * Specifies a list of glob patterns that match files to be included in compilation. If no 'files' or 'include' property is present in a tsconfig.json, the compiler defaults to including all files in the containing directory and subdirectories except those specified by 'exclude'. Requires TypeScript version 2.0 or later.
  */
-include?: ((string | null)[] | null)
+include?: (string[] | null)
 [k: string]: unknown | undefined
 }
 export interface ReferencesDefinition {
 /**
  * Referenced projects. Requires TypeScript version 3.0 or later.
  */
-references?: (({
+references?: {
 /**
  * Path to referenced tsconfig or to folder containing tsconfig.
  */
-path?: (string | null)
+path?: string
 [k: string]: unknown | undefined
-} | null)[] | null)
+}[]
 [k: string]: unknown | undefined
 }
 

@@ -11,6 +11,7 @@
   "packages/features/library-bundle": "1.0.3",
   "packages/features/link-other-monorepo": "1.0.3",
   "packages/features/moon": "1.0.3",
+  "packages/features/oxfmt": "0.0.0",
   "packages/features/oxlint": "1.0.3",
   "packages/features/package-scripts": "1.0.3",
   "packages/features/pnpm": "1.0.3",

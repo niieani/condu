@@ -5,9 +5,42 @@
 */
 
 export type AllowWarnDeny = (("allow" | "off" | "warn" | "error" | "deny") | number)
-export type GlobalValue = ("readonly" | "writeable" | "off") | undefined
+export type GlobalValue = ("readonly" | "writable" | "off") | undefined
+export type ExternalPluginEntry = (string | {
+/**
+ * Custom name/alias for the plugin.
+ * 
+ * Note: The following plugin names are reserved because they are implemented natively in Rust within oxlint and cannot be used for JS plugins:
+ * - react (includes react-hooks)
+ * - unicorn
+ * - typescript
+ * - oxc
+ * - import (includes import-x)
+ * - jsdoc
+ * - jest
+ * - vitest
+ * - jsx-a11y
+ * - nextjs
+ * - react-perf
+ * - promise
+ * - node
+ * - regex
+ * - vue
+ * - eslint
+ * 
+ * If you need to use the JavaScript version of any of these plugins, provide a custom alias to avoid conflicts.
+ */
+name: string
+/**
+ * Path or package name of the plugin
+ */
+specifier: string
+})
+/**
+ * A set of glob patterns.
+ */
 export type GlobSet = string[]
-export type LintPluginOptionsSchema = ("eslint" | "react" | "unicorn" | "typescript" | "oxc" | "import" | "jsdoc" | "jest" | "vitest" | "jsx-a11y" | "nextjs" | "react-perf" | "promise" | "node")
+export type LintPluginOptionsSchema = ("eslint" | "react" | "unicorn" | "typescript" | "oxc" | "import" | "jsdoc" | "jest" | "vitest" | "jsx-a11y" | "nextjs" | "react-perf" | "promise" | "node" | "vue")
 export type LintPlugins = LintPluginOptionsSchema[]
 export type DummyRule = (AllowWarnDeny | unknown[]) | undefined
 export type OxlintOverrides = OxlintOverride[]
@@ -76,6 +109,10 @@ name: string
  * ```
  */
 export interface Oxlintrc {
+/**
+ * Schema URI for editor tooling.
+ */
+$schema?: (string | null)
 categories?: RuleCategories
 /**
  * Environments enable and disable collections of global variables.
@@ -97,9 +134,24 @@ globals?: OxlintGlobals
  */
 ignorePatterns?: string[]
 /**
+ * JS plugins.
+ * 
+ * Note: JS plugins are experimental and not subject to semver.
+ * They are not supported in language server at present.
+ */
+jsPlugins?: (null | ExternalPluginEntry[])
+/**
  * Add, remove, or otherwise reconfigure rules for specific files or groups of files.
  */
 overrides?: OxlintOverrides
+/**
+ * Enabled built-in plugins for Oxlint.
+ * You can view the list of available plugins on
+ * [the website](https://oxc.rs/docs/guide/usage/linter/plugins.html#supported-plugins).
+ * 
+ * NOTE: Setting the `plugins` field will overwrite the base set of plugins.
+ * The `plugins` array should reflect all of the plugins you want to use.
+ */
 plugins?: (LintPlugins | null)
 /**
  * Example
@@ -122,7 +174,6 @@ plugins?: (LintPlugins | null)
  */
 rules?: DummyRuleMap
 settings?: OxlintPluginSettings
-[k: string]: unknown | undefined
 }
 /**
  * Configure an entire category of rules all at once.
@@ -150,14 +201,12 @@ perf?: AllowWarnDeny
 restriction?: AllowWarnDeny
 style?: AllowWarnDeny
 suspicious?: AllowWarnDeny
-[k: string]: unknown | undefined
 }
 /**
  * Predefine global variables.
  * 
- * Environments specify what global variables are predefined. See [ESLint's
- * list of
- * environments](https://eslint.org/docs/v8.x/use/configure/language-options#specifying-environments)
+ * Environments specify what global variables are predefined.
+ * See [ESLint's list of environments](https://eslint.org/docs/v8.x/use/configure/language-options#specifying-environments)
  * for what environments are available and what each one provides.
  */
 export interface OxlintEnv {
@@ -210,12 +259,18 @@ files: GlobSet
  */
 globals?: (OxlintGlobals | null)
 /**
+ * JS plugins for this override.
+ * 
+ * Note: JS plugins are experimental and not subject to semver.
+ * They are not supported in language server at present.
+ */
+jsPlugins?: (null | ExternalPluginEntry[])
+/**
  * Optionally change what plugins are enabled for this override. When
  * omitted, the base config's plugins are used.
  */
 plugins?: (LintPlugins | null)
 rules?: DummyRuleMap
-[k: string]: unknown | undefined
 }
 /**
  * See [Oxlint Rules](https://oxc.rs/docs/guide/usage/linter/rules.html)
@@ -254,6 +309,7 @@ jsdoc?: JSDocPluginSettings
 "jsx-a11y"?: JSXA11YPluginSettings
 next?: NextPluginSettings
 react?: ReactPluginSettings
+vitest?: VitestPluginSettings
 [k: string]: unknown | undefined
 }
 export interface JSDocPluginSettings {
@@ -298,6 +354,27 @@ tagNamePreference?: {
  * configuration for a full reference.
  */
 export interface JSXA11YPluginSettings {
+/**
+ * Map of attribute names to their DOM equivalents.
+ * This is useful for non-React frameworks that use different attribute names.
+ * 
+ * Example:
+ * 
+ * ```json
+ * {
+ * "settings": {
+ * "jsx-a11y": {
+ * "attributes": {
+ * "for": ["htmlFor", "for"]
+ * }
+ * }
+ * }
+ * }
+ * ```
+ */
+attributes?: {
+[k: string]: string[] | undefined
+}
 /**
  * To have your custom components be checked as DOM elements, you can
  * provide a mapping of your component names to the DOM element name.
@@ -413,6 +490,39 @@ formComponents?: CustomComponent[]
  * ```
  */
 linkComponents?: CustomComponent[]
+/**
+ * React version to use for version-specific rules.
+ * 
+ * Accepts semver versions (e.g., "18.2.0", "17.0").
+ * 
+ * Example:
+ * 
+ * ```jsonc
+ * {
+ * "settings": {
+ * "react": {
+ * "version": "18.2.0"
+ * }
+ * }
+ * }
+ * ```
+ */
+version?: (string | null)
+[k: string]: unknown | undefined
+}
+/**
+ * Configure Vitest plugin rules.
+ * 
+ * See [eslint-plugin-vitest](https://github.com/vitest-dev/eslint-plugin-vitest)'s
+ * configuration for a full reference.
+ */
+export interface VitestPluginSettings {
+/**
+ * Whether to enable typecheck mode for Vitest rules.
+ * When enabled, some rules will skip certain checks for describe blocks
+ * to accommodate TypeScript type checking scenarios.
+ */
+typecheck?: boolean
 [k: string]: unknown | undefined
 }
 
