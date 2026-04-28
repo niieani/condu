@@ -1,6 +1,10 @@
 ## MVP / alpha TODO List
 
 - [ ] replace remaining console.log/warn/error usage with ConduReporter in CLI commands (keep Prompt UI exceptions)
+- [ ] clean up "CI" action - make it generic
+- [ ] fluent api for github actions - https://github.com/dsherret/gagen
+- [ ] explore if https://github.com/JLarky/gha-ts is better than hand-generating GHA types
+- [ ] website design inspiration: https://tako.sh/
 - [ ] break the dependency on moon repo
 - [ ] refactor package.json manifest changes so we can track whether a change was made (proxy object or explicit mutation commands)
 - [ ] add an init command that can be run like `bunx condu init` or `pnpx condu init`
