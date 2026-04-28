@@ -45,9 +45,7 @@ export class ConduReporter {
     this.supportsColor = options.supportsColor ?? detectColorSupport();
     this.isInteractiveTTY = options.isInteractiveTTY ?? false;
     this.verbosity =
-      this.mode === "quiet"
-        ? "quiet"
-        : options.verbosity ?? "normal";
+      this.mode === "quiet" ? "quiet" : (options.verbosity ?? "normal");
     this.startTime = Date.now();
 
     // Create the appropriate renderer
@@ -353,10 +351,7 @@ export class ConduReporter {
   }
 
   resumeAfterUserInput(): void {
-    if (
-      this.mode === "quiet" &&
-      this.quietSpinnerPaused
-    ) {
+    if (this.mode === "quiet" && this.quietSpinnerPaused) {
       const fallback = this.quietSpinnerText || "Applying configuration";
       this.spinner?.start(fallback);
       this.quietSpinnerPaused = false;

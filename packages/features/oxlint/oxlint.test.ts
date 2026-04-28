@@ -101,6 +101,39 @@ test("oxlint feature should work with category configuration", async () => {
   });
 });
 
+test("oxlint feature should install type-aware dependency", async () => {
+  using testUtils = await testApplyFeatures({
+    config: {
+      features: [
+        oxlint({
+          config: {
+            options: {
+              typeAware: true,
+              typeCheck: true,
+              reportUnusedDisableDirectives: "error",
+            },
+          },
+        }),
+      ],
+    },
+  });
+
+  const content = await testUtils.getFileContents(".oxlintrc.json");
+  const config = JSON.parse(content);
+
+  expect(config.options).toEqual({
+    typeAware: true,
+    typeCheck: true,
+    reportUnusedDisableDirectives: "error",
+  });
+
+  const packageJsonContent = await testUtils.getFileContents("package.json");
+  const packageJson = JSON.parse(packageJsonContent);
+
+  expect(packageJson.devDependencies).toHaveProperty("oxlint");
+  expect(packageJson.devDependencies).toHaveProperty("oxlint-tsgolint");
+});
+
 test("oxlint feature should work with other features providing its peerContext", async () => {
   const customOxlint = oxlint({
     config: { rules: { eqeqeq: "warn" } },

@@ -50,6 +50,12 @@ export const oxlint = ({
 
       // Add oxlint dependency
       condu.root.ensureDependency("oxlint");
+      if (
+        peerContext.config.options?.typeAware === true ||
+        peerContext.config.options?.typeCheck === true
+      ) {
+        condu.root.ensureDependency("oxlint-tsgolint");
+      }
 
       // Define oxlint task
       condu.root.defineTask("oxlint", {

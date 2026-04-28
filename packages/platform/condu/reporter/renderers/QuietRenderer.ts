@@ -53,21 +53,15 @@ export class QuietRenderer extends BaseRenderer {
       summary.filesChanged > 0
         ? this.bold(this.green(`${summary.filesChanged} changed`))
         : this.dim(`${summary.filesChanged} changed`);
-    const filesUnchangedText = this.dim(
-      `${summary.filesUnchanged} unchanged`,
-    );
+    const filesUnchangedText = this.dim(`${summary.filesUnchanged} unchanged`);
     const depsChangedText =
       summary.depsChanged > 0
         ? this.bold(this.green(`${summary.depsChanged} changed`))
         : this.dim(`${summary.depsChanged} changed`);
-    const depsUnchangedText = this.dim(
-      `${summary.depsUnchanged} unchanged`,
-    );
+    const depsUnchangedText = this.dim(`${summary.depsUnchanged} unchanged`);
 
-    const filesLine =
-      `${summary.filesEvaluated} files (${filesChangedText}, ${filesUnchangedText})`;
-    const depsLine =
-      `${summary.depsEvaluated} deps (${depsChangedText}, ${depsUnchangedText})`;
+    const filesLine = `${summary.filesEvaluated} files (${filesChangedText}, ${filesUnchangedText})`;
+    const depsLine = `${summary.depsEvaluated} deps (${depsChangedText}, ${depsUnchangedText})`;
 
     parts.push(featuresText);
     parts.push(filesLine);
@@ -82,8 +76,7 @@ export class QuietRenderer extends BaseRenderer {
     }
 
     const durationStr = (summary.duration / 1000).toFixed(1);
-    const summaryLine =
-      `${this.green("✓")} ${parts.join(", ")} (${durationStr}s)`;
+    const summaryLine = `${this.green("✓")} ${parts.join(", ")} (${durationStr}s)`;
 
     if (summary.manualReviewItems.length === 0) {
       return summaryLine;

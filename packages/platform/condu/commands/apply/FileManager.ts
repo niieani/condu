@@ -29,7 +29,6 @@ import type {
   GlobalFileAttributes,
 } from "../../extendable.js";
 
-
 export interface ApplyAndCommitArg {
   collectedStateReadOnlyView: ConduReadonlyCollectedStateView;
   overwriteWithoutAsking?: boolean;
@@ -1052,11 +1051,11 @@ export class ConduFile<DeserializedT extends PossibleDeserializedValue> {
         promptUserInteractively: async () => {
           await printDiff();
 
-          // eslint-disable-next-line no-constant-condition
           while (true) {
             const action = await prompt<ManualReviewAction>({
               message: `Manual review required: ${this.relPath}`,
-              detail: "The file has local modifications. Choose how to proceed.",
+              detail:
+                "The file has local modifications. Choose how to proceed.",
               choices: [
                 {
                   key: "o",

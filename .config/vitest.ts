@@ -40,6 +40,7 @@ export default defineConfig({
   test: {
     exclude: [
       "**/node_modules/**",
+      "**/.conductor/**",
       // default uses /dist/
       "**/build/**",
       "**/cypress/**",

@@ -44,11 +44,7 @@ function renderPrompt<T>({ message, detail, choices }: PromptOptions<T>): void {
   console.log(TOP_BORDER);
   printWrapped(message);
 
-  const detailLines = Array.isArray(detail)
-    ? detail
-    : detail
-      ? [detail]
-      : [];
+  const detailLines = Array.isArray(detail) ? detail : detail ? [detail] : [];
 
   for (const line of detailLines) {
     printWrapped(line);
@@ -79,8 +75,7 @@ function printWrapped(content: string): void {
 }
 
 function formatLine(content: string): string {
-  const truncated = content.length > BORDER_WIDTH
-    ? content.slice(0, BORDER_WIDTH)
-    : content;
+  const truncated =
+    content.length > BORDER_WIDTH ? content.slice(0, BORDER_WIDTH) : content;
   return `│${truncated.padEnd(BORDER_WIDTH, " ")}│`;
 }

@@ -95,8 +95,6 @@ export const typescript = ({
           module: "nodenext",
           moduleDetection: "force",
           strict: true,
-          // we don't need to emit 'use strict' in the files
-          alwaysStrict: false,
           noImplicitOverride: true,
           noImplicitReturns: true,
           noPropertyAccessFromIndexSignature: true,

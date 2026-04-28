@@ -61,10 +61,7 @@ export async function apply(
     }
 
     const featureCount = project.config.features.length;
-    if (
-      reporter.getMode() !== "ci" ||
-      reporter.getVerbosity() === "verbose"
-    ) {
+    if (reporter.getMode() !== "ci" || reporter.getVerbosity() === "verbose") {
       reporter.success(`Found ${featureCount} features to apply`);
     }
     reporter.endPhase("loading", { success: true });
@@ -533,7 +530,7 @@ const createStateDeclarationApi = ({
       logFeatureAction({
         reporter,
         collectionContext,
-        message: `Ensuring dependency ${name}${describeDependencyVersion(dependencyDef)} in ${formatPackageTarget(pkg)} (${(dependencyDef?.list ?? "devDependencies")})`,
+        message: `Ensuring dependency ${name}${describeDependencyVersion(dependencyDef)} in ${formatPackageTarget(pkg)} (${dependencyDef?.list ?? "devDependencies"})`,
       });
       changesCollector.dependencies.push({
         targetPackage: pkg,

@@ -12,6 +12,8 @@ node_modules
 /packages/platform/condu/.config/generated/webpack.config.cjs
 # eslint:
 /eslint.config.js
+# oxlint:
+/.oxlintrc.json
 # moon:
 /.moon/
 /.moon/cache
@@ -22,7 +24,9 @@ node_modules
 moon.yml
 /moon.yml
 # (anonymous recipe)
+/.conductor/
 /manual-testing
+/packages/test/integration/.cache/
 # vscode:
 /.vscode/settings.json
 /.vscode/extensions.json
@@ -36,4 +40,5 @@ moon.yml
 .env
 .env.*
 /brand/
+temp.local/
 .claude/*.local.json

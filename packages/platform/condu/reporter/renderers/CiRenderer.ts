@@ -144,8 +144,7 @@ export class CiRenderer extends BaseRenderer {
           item.managedBy.length > 0
             ? ` (managed by ${item.managedBy.join(", ")})`
             : "";
-        const message =
-          item.message ? ` — ${item.message}` : "";
+        const message = item.message ? ` — ${item.message}` : "";
         lines.push(this.yellow(`  - ${item.path}${managedBy}${message}`));
       }
     }
