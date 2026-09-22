@@ -40,7 +40,6 @@ async function fixture() {
     const manager = new FileManager(root, [], {
       reporter: new ConduReporter({ mode: "quiet", isInteractiveTTY: false }),
     });
-    await manager.readCache();
     if (content !== undefined)
       manager
         .manageFile({ relPath: "output", targetPackage: root })

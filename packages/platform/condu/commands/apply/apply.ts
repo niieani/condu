@@ -303,9 +303,6 @@ export async function applyAndCommitCollectedState({
     packageJsonModifications,
     releasePackageJsonModifications,
   } = collectedState;
-  // we can delay loading cache until before fileManager.applyAllFiles
-  // that way we can speed up the process by not reading cache if we only want publishing changes
-  await fileManager.readCache();
   // compute the content and write any changes to file system
   await fileManager.applyAllFiles(collectedStateReadOnlyView);
 

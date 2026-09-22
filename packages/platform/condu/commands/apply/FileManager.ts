@@ -89,6 +89,7 @@ export class FileManager {
     const { reporter } = this;
 
     reporter.startPhase("applying");
+    await this.readCache();
 
     const arg = { collectedStateReadOnlyView } as const;
 
@@ -162,7 +163,7 @@ export class FileManager {
       throw new AggregateError(errors, "Failed to apply managed files");
   }
 
-  async readCache(): Promise<void> {
+  private async readCache(): Promise<void> {
     try {
       const content = await this.cacheFile.getContentFromFileSystem();
       const cacheContentJson = JSON.parse(content!) as object;
