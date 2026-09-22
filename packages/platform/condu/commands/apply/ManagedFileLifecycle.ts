@@ -1,8 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { printUnifiedDiff } from "print-diff";
-import { prompt } from "../../reporter/Prompt.js";
-import { ConduReporter } from "../../reporter/ConduReporter.js";
+import type { ConduReporter } from "../../reporter/ConduReporter.js";
 import type { CollectionContext } from "./CollectedState.js";
 import type {
   FileDestination,
@@ -57,6 +55,7 @@ export class ManagedFileLifecycle {
   get absPath() {
     return path.join(this.targetPackage.absPath, this.relPath);
   }
+  operation: "created" | "updated" | "deleted" | "skipped" = "skipped";
   hadChanges = false;
   managedByFeatures: CollectionContext[] = [];
   status: "pending" | "applied" | "skipped" | "needs-user-input" = "pending";
@@ -76,7 +75,13 @@ export class ManagedFileLifecycle {
       !this.neverCache && this.lastApply && !this.lastApply.doNotCache,
     );
   }
-  constructor({ relPath, targetPackage }: FileDestination) {
+  protected readonly reporter: ConduReporter;
+  constructor({
+    relPath,
+    targetPackage,
+    reporter,
+  }: FileDestination & { reporter: ConduReporter }) {
+    this.reporter = reporter;
     this.relPath = relPath;
     this.targetPackage = targetPackage;
   }
@@ -115,6 +120,7 @@ export class ManagedFileLifecycle {
     this.manualReviewDetails = undefined;
     this.manualConflictResolution = undefined;
     this.hadChanges = false;
+    this.operation = "skipped";
     const existing = await this.getFsFile();
     if (
       content !== undefined &&
@@ -145,6 +151,8 @@ export class ManagedFileLifecycle {
           : await write({ targetPath: this.absPath, content });
       this.status = "applied";
       this.hadChanges = true;
+      this.operation =
+        content === undefined ? "deleted" : existing ? "updated" : "created";
       this.manualConflictResolution = undefined;
       this.manualReviewDetails = undefined;
       return true;
@@ -160,18 +168,17 @@ export class ManagedFileLifecycle {
     this.manualReviewDetails =
       "Manual changes detected; review and re-run 'condu apply'.";
     const printDiff = async () => {
-      ConduReporter.get().warn(`Manual changes present in ${this.relPath}`);
-      printUnifiedDiff(
+      this.reporter.warn(`Manual changes present in ${this.relPath}`);
+      this.reporter.printDiff(
         existing.content.toString(),
         content?.toString() ?? "",
-        process.stdout,
       );
     };
     this.manualConflictResolution = {
       printDiff,
       promptUserInteractively: async () => {
         await printDiff();
-        const action = await prompt<"overwrite" | "skip">({
+        const action = await this.reporter.prompt<"overwrite" | "skip">({
           message: `Manual review required: ${this.relPath}`,
           detail:
             content === undefined

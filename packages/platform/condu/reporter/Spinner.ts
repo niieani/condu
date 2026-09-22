@@ -1,3 +1,5 @@
+import type { Writable } from "node:stream";
+
 const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
 export class Spinner {
@@ -6,28 +8,26 @@ export class Spinner {
   private text = "";
   private isActive = false;
 
+  private readonly output: Writable;
+  constructor(output: Writable) {
+    this.output = output;
+  }
+
   start(text: string) {
+    this.stop();
     this.text = text;
     this.isActive = true;
 
-    if (process.stdout.isTTY) {
-      this.intervalId = setInterval(() => {
-        this.render();
-        this.frame = (this.frame + 1) % SPINNER_FRAMES.length;
-      }, 80);
-      // Allow process to exit even if a spinner interval is active
-      this.intervalId.unref?.();
-    } else {
-      // Non-TTY: just print once
-      process.stdout.write(`${text}...\n`);
-    }
+    this.intervalId = setInterval(() => {
+      this.render();
+      this.frame = (this.frame + 1) % SPINNER_FRAMES.length;
+    }, 80);
+    this.intervalId.unref?.();
   }
 
   update(text: string) {
     this.text = text;
-    if (process.stdout.isTTY) {
-      this.render();
-    }
+    this.render();
   }
 
   stop(finalText?: string) {
@@ -36,22 +36,18 @@ export class Spinner {
       this.intervalId = undefined;
     }
 
-    if (process.stdout.isTTY) {
-      process.stdout.clearLine(0);
-      process.stdout.cursorTo(0);
-      if (finalText) {
-        process.stdout.write(`${finalText}\n`);
-      }
+    if (this.isActive) {
+      this.output.write("\u001B[2K\r");
+      if (finalText) this.output.write(`${finalText}\n`);
     }
 
     this.isActive = false;
   }
 
   private render() {
-    if (!process.stdout.isTTY || !this.isActive) return;
+    if (!this.isActive) return;
 
-    process.stdout.clearLine(0);
-    process.stdout.cursorTo(0);
-    process.stdout.write(`${SPINNER_FRAMES[this.frame]} ${this.text}`);
+    this.output.write("\u001B[2K\r");
+    this.output.write(`${SPINNER_FRAMES[this.frame]} ${this.text}`);
   }
 }

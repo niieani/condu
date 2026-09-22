@@ -1,3 +1,4 @@
+import { ConduReporter } from "condu/reporter/ConduReporter.js";
 import { expect, test } from "vitest";
 import { testApplyFeatures } from "./featureTestUtils.js";
 import { defineFeature } from "condu";
@@ -73,7 +74,8 @@ test("root and single-package proxy declarations reconcile the same manifest onc
 
 test("dependency metrics count installed aliases once across lists and duplicate declarations", async () => {
   using fixture = await testApplyFeatures({ config: { features: [] } });
-  const state = await collectState({ project: fixture.project });
+  using reporter = new ConduReporter();
+  const state = await collectState({ project: fixture.project, reporter });
   for (const list of [
     "devDependencies",
     "peerDependencies",

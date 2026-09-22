@@ -1,3 +1,4 @@
+import { createConduApi } from "./recipeDeclarations.js";
 import { reconcileDependencies } from "./reconcileDependencies.js";
 import type { LoadConfigOptions } from "../../api/configTypes.js";
 import type { ConduPackageEntry } from "./ConduPackageEntry.js";
@@ -5,31 +6,21 @@ import {
   loadConduConfigFnFromFs,
   loadConduProject,
 } from "../../loadProject.js";
-import { isMatching } from "ts-pattern";
-import path from "node:path";
 import type {
   ConduApi,
   FeatureDefinition,
   PeerContextReducer,
-  ScopedRecipeApi,
 } from "./conduApiTypes.js";
 import {
   type CollectedState,
-  type CollectionContext,
   ConduReadonlyCollectedStateView,
   type CollectedDependency,
-  type CollectionStage,
-  type DependencyDefinitionInput,
 } from "./CollectedState.js";
 import type { ConduProject } from "./ConduProject.js";
-import {
-  FileManager,
-  type FileManagerOptions,
-  type ModifyUserEditableFileOptions,
-} from "./FileManager.js";
+import { FileManager, type FileManagerOptions } from "./FileManager.js";
 import type { PeerContext } from "../../extendable.js";
 import type { UnionToIntersection } from "type-fest";
-import type { ConduReporter as ReporterInstance } from "../../reporter/ConduReporter.js";
+import { ConduReporter } from "../../reporter/ConduReporter.js";
 
 export interface ProjectAndCollectedState {
   project: ConduProject;
@@ -41,11 +32,13 @@ type AllPossiblePeerContexts = UnionToIntersection<
   PeerContext[keyof PeerContext]
 >;
 
-export async function apply(
-  options: LoadConfigOptions = {},
-): Promise<ProjectAndCollectedState | undefined> {
-  const { ConduReporter } = await import("../../reporter/ConduReporter.js");
-  const reporter = ConduReporter.get();
+export async function apply({
+  reporter: suppliedReporter,
+  ...options
+}: LoadConfigOptions & { reporter?: ConduReporter } = {}): Promise<
+  ProjectAndCollectedState | undefined
+> {
+  using reporter = suppliedReporter ?? new ConduReporter();
   const startTime = Date.now();
 
   try {
@@ -65,7 +58,7 @@ export async function apply(
     }
     reporter.endPhase("loading", { success: true });
 
-    const collected = await collectState({ ...options, project });
+    const collected = await collectState({ ...options, project, reporter });
 
     reporter.endPhase("collecting", { success: true });
 
@@ -75,47 +68,14 @@ export async function apply(
     reporter.startPhase("complete");
     const duration = Date.now() - startTime;
 
-    // Build summary from collected state
-    const { fileManager } = collected.collectedState;
-    const filesArray = Array.from(fileManager.files.values());
-    const evaluatedFiles = filesArray.filter(
-      (f) => f.isManaged || f.lastApplyKind === "no-longer-generated",
-    );
-    const manualReviewItems = filesArray
-      .filter((f) => f.manualReviewDetails)
-      .map((f) => ({
-        path:
-          f.targetPackage === project.workspace
-            ? f.relPath
-            : path.join(f.targetPackage.relPath, f.relPath),
-        managedBy: f.managedByFeatures.map((mf) => mf.featureName),
-        message: f.manualReviewDetails!,
-      }));
-
-    // Count files by their status
-    const appliedFiles = filesArray.filter(
-      (f) => f.status === "applied" && f.hadChanges,
-    );
-    const skippedFiles = filesArray.filter(
-      (f) => f.status === "skipped" && f.hadChanges,
-    );
-    const changedFiles = evaluatedFiles.filter(
-      (f) =>
-        f.hadChanges ||
-        f.status === "needs-user-input" ||
-        f.lastApplyKind === "no-longer-generated",
-    );
-    const unchangedFilesCount = evaluatedFiles.length - changedFiles.length;
-
-    const packagesWithChangedFiles = new Set(
-      changedFiles.map((f) => f.targetPackage.relPath),
-    );
-    for (const pkg of applyResult.packagesTouched) {
-      packagesWithChangedFiles.add(pkg.relPath);
-    }
-
+    const { packagesTouched, ...fileSummary } =
+      collected.collectedState.fileManager.getSummary();
+    for (const pkg of applyResult.packagesTouched)
+      packagesTouched.add(pkg.relPath);
     const noChanges =
-      changedFiles.length === 0 &&
+      fileSummary.filesChanged === 0 &&
+      fileSummary.filesNeedingReview === 0 &&
+      packagesTouched.size === 0 &&
       applyResult.dependencyStats.changed === 0 &&
       applyResult.dependencyStats.removed === 0;
 
@@ -132,22 +92,8 @@ export async function apply(
 
     const summary = {
       totalFeatures: featureCount,
-      totalFiles: evaluatedFiles.length,
-      filesEvaluated: evaluatedFiles.length,
-      filesChanged: changedFiles.length,
-      filesUnchanged: unchangedFilesCount,
-      filesCreated: appliedFiles.filter(
-        (f) => f.lastApplyKind === "generated" || f.lastApplyKind === "symlink",
-      ).length,
-      filesUpdated: appliedFiles.filter(
-        (f) => f.lastApplyKind === "user-editable",
-      ).length,
-      filesDeleted: filesArray.filter(
-        (f) => f.lastApplyKind === "no-longer-generated",
-      ).length,
-      filesSkipped: skippedFiles.length,
-      filesNeedingReview: manualReviewItems.length,
-      packagesModified: packagesWithChangedFiles.size,
+      ...fileSummary,
+      packagesModified: packagesTouched.size,
       depsEvaluated: applyResult.dependencyStats.evaluated,
       depsChanged: applyResult.dependencyStats.changed,
       depsUnchanged:
@@ -157,7 +103,6 @@ export async function apply(
       duration,
       errors: [],
       warnings: [],
-      manualReviewItems,
     };
 
     reporter.printSummary(summary);
@@ -175,14 +120,14 @@ export async function apply(
 }
 
 interface CollectStateConfig extends FileManagerOptions {
+  reporter: ConduReporter;
   project: ConduProject;
 }
 
 export async function collectState(
   options: CollectStateConfig,
 ): Promise<ProjectAndCollectedState> {
-  const { ConduReporter } = await import("../../reporter/ConduReporter.js");
-  const reporter = ConduReporter.get();
+  const { reporter } = options;
 
   reporter.startPhase("collecting");
 
@@ -337,325 +282,6 @@ export async function collectState(
     collectedStateReadOnlyView,
     collectedState: changesCollector,
   };
-}
-
-const createConduApi = ({
-  project,
-  collectionContext,
-  changesCollector,
-  collectedStateReadOnlyView,
-  reporter,
-}: {
-  project: ConduProject;
-  collectionContext: CollectionContext;
-  changesCollector: CollectedState;
-  collectedStateReadOnlyView: ConduReadonlyCollectedStateView;
-  reporter: ReporterInstance;
-}): ConduApi => ({
-  project,
-  root: createStateDeclarationApi({
-    matchingPackages: [project.workspace],
-    changesCollector,
-    collectionContext,
-    matchesAllWorkspacePackages: false,
-    collectedStateReadOnlyView,
-    reporter,
-  }),
-  in(criteria) {
-    const matchPackageFn = isMatching(criteria);
-    const matchAllWorkspacePackages =
-      Object.keys(criteria).length === 1 &&
-      "kind" in criteria &&
-      criteria.kind === "package";
-
-    // TODO: check if any packages matched and maybe add a warning if zero matches?
-    const matchingPackages = matchAllWorkspacePackages
-      ? project.workspacePackages
-      : project.allPackages.filter((pkg) => matchPackageFn(pkg));
-
-    // TODO: when matching all packages, we can optimize the gitignore output
-    // by using the project.projectConventions[*].glob instead of the package's path
-    const matchesAllWorkspacePackages =
-      matchingPackages.length === project.workspacePackages.length;
-
-    return createStateDeclarationApi({
-      matchingPackages,
-      changesCollector,
-      collectionContext,
-      matchesAllWorkspacePackages,
-      collectedStateReadOnlyView,
-      reporter,
-    });
-  },
-});
-
-const createStateDeclarationApi = ({
-  matchingPackages,
-  changesCollector,
-  collectionContext,
-  collectedStateReadOnlyView,
-  matchesAllWorkspacePackages,
-  reporter,
-}: {
-  matchingPackages: readonly ConduPackageEntry[];
-  changesCollector: CollectedState;
-  collectionContext: CollectionContext;
-  collectedStateReadOnlyView: ConduReadonlyCollectedStateView;
-  matchesAllWorkspacePackages: boolean;
-  reporter: ReporterInstance;
-}): ScopedRecipeApi => ({
-  ignoreFile(relPath, options) {
-    assertFreshCollectorState(changesCollector, collectionContext, ["fresh"]);
-
-    for (const pkg of matchingPackages) {
-      const filePath = formatFileTarget(pkg, relPath);
-      logFeatureAction({
-        reporter,
-        collectionContext,
-        message: `Ignoring ${filePath}`,
-      });
-      changesCollector.fileManager
-        .manageFile({
-          targetPackage: pkg,
-          relPath,
-        })
-        .updateAttributes(
-          { ...options, inAllPackages: matchesAllWorkspacePackages },
-          collectionContext,
-        );
-    }
-    return this;
-  },
-  generateFile(relPath, options) {
-    assertFreshCollectorState(changesCollector, collectionContext, [
-      "fresh",
-      "recipes-defined",
-    ]);
-
-    for (const pkg of matchingPackages) {
-      const filePath = formatFileTarget(pkg, relPath);
-      logFeatureAction({
-        reporter,
-        collectionContext,
-        message: `Generating ${filePath}`,
-      });
-      changesCollector.fileManager
-        .manageFile({
-          targetPackage: pkg,
-          relPath,
-        })
-        .defineInitialContent(
-          {
-            ...options,
-            attributes: {
-              ...options.attributes,
-              inAllPackages: matchesAllWorkspacePackages,
-            },
-          },
-          collectionContext,
-        );
-    }
-    return this;
-  },
-  modifyGeneratedFile(relPath, options) {
-    assertFreshCollectorState(changesCollector, collectionContext, [
-      "fresh",
-      "recipes-defined",
-    ]);
-
-    for (const pkg of matchingPackages) {
-      const filePath = formatFileTarget(pkg, relPath);
-      logFeatureAction({
-        reporter,
-        collectionContext,
-        message: `Modifying generated file ${filePath}`,
-      });
-      changesCollector.fileManager
-        .manageFile({
-          targetPackage: pkg,
-          relPath,
-        })
-        .addModification(
-          {
-            ...options,
-            attributes: {
-              ...options.attributes,
-              inAllPackages: matchesAllWorkspacePackages,
-            },
-          },
-          collectionContext,
-        );
-    }
-    return this;
-  },
-  modifyUserEditableFile(relPath, options: ModifyUserEditableFileOptions<any>) {
-    assertFreshCollectorState(changesCollector, collectionContext, [
-      "fresh",
-      "recipes-defined",
-    ]);
-
-    for (const pkg of matchingPackages) {
-      const filePath = formatFileTarget(pkg, relPath);
-      logFeatureAction({
-        reporter,
-        collectionContext,
-        message: `Modifying user-editable file ${filePath}`,
-      });
-      changesCollector.fileManager
-        .manageFile({
-          targetPackage: pkg,
-          relPath,
-        })
-        .addUserEditableModification(
-          {
-            ...options,
-            attributes: {
-              ...options.attributes,
-              inAllPackages: matchesAllWorkspacePackages,
-            },
-          },
-          collectionContext,
-        );
-    }
-    return this;
-  },
-  ensureDependency(name, dependencyDef) {
-    assertFreshCollectorState(changesCollector, collectionContext, [
-      "fresh",
-      "recipes-defined",
-    ]);
-
-    for (const pkg of matchingPackages) {
-      logFeatureAction({
-        reporter,
-        collectionContext,
-        message: `Ensuring dependency ${name}${describeDependencyVersion(dependencyDef)} in ${formatPackageTarget(pkg)} (${dependencyDef?.list ?? "devDependencies"})`,
-      });
-      changesCollector.dependencies.push({
-        targetPackage: pkg,
-        dependencyDefinition: { name, ...dependencyDef },
-        context: collectionContext,
-      });
-    }
-    return this;
-  },
-  setDependencyResolutions(resolutions) {
-    assertFreshCollectorState(changesCollector, collectionContext, [
-      "fresh",
-      "recipes-defined",
-    ]);
-
-    Object.assign(changesCollector.resolutions, resolutions);
-    logFeatureAction({
-      reporter,
-      collectionContext,
-      message: `Setting dependency resolutions for ${Object.keys(resolutions).join(", ")}`,
-    });
-    return this;
-  },
-  modifyPackageJson(modifier) {
-    assertFreshCollectorState(changesCollector, collectionContext, [
-      "fresh",
-      "recipes-defined",
-    ]);
-
-    for (const pkg of matchingPackages) {
-      logFeatureAction({
-        reporter,
-        collectionContext,
-        message: `Modifying package.json in ${formatPackageTarget(pkg)}`,
-      });
-      changesCollector.packageJsonModifications.push({
-        targetPackage: pkg,
-        globalRegistry: collectedStateReadOnlyView,
-        modifier,
-        context: collectionContext,
-      });
-    }
-    return this;
-  },
-  modifyPublishedPackageJson(modifier) {
-    assertFreshCollectorState(changesCollector, collectionContext, [
-      "fresh",
-      "recipes-defined",
-    ]);
-
-    for (const pkg of matchingPackages) {
-      logFeatureAction({
-        reporter,
-        collectionContext,
-        message: `Modifying published package.json in ${formatPackageTarget(pkg)}`,
-      });
-      changesCollector.releasePackageJsonModifications.push({
-        targetPackage: pkg,
-        globalRegistry: collectedStateReadOnlyView,
-        modifier,
-        context: collectionContext,
-      });
-      // pkg.addPublishedModification(modifier, collectionContext);
-    }
-    return this;
-  },
-  defineTask(name, task) {
-    assertFreshCollectorState(changesCollector, collectionContext, ["fresh"]);
-
-    for (const pkg of matchingPackages) {
-      logFeatureAction({
-        reporter,
-        collectionContext,
-        message: `Defining task "${name}" in ${formatPackageTarget(pkg)}`,
-      });
-      changesCollector.tasks.push({
-        targetPackage: pkg,
-        taskDefinition: { name, ...task },
-        context: collectionContext,
-      });
-    }
-    return this;
-  },
-});
-
-const formatFileTarget = (pkg: ConduPackageEntry, relPath: string): string =>
-  pkg.kind === "workspace" ? relPath : path.join(pkg.relPath, relPath);
-
-const formatPackageTarget = (pkg: ConduPackageEntry): string =>
-  pkg.kind === "workspace" ? "workspace" : pkg.relPath;
-
-const describeDependencyVersion = (
-  dependency?: DependencyDefinitionInput,
-): string => {
-  if (!dependency) return "";
-  if ("version" in dependency && dependency.version) {
-    return `@${dependency.version}`;
-  }
-  if (dependency.tag) {
-    return `@${dependency.tag}`;
-  }
-  return "";
-};
-
-const logFeatureAction = ({
-  reporter,
-  collectionContext,
-  message,
-}: {
-  reporter: ReporterInstance;
-  collectionContext: CollectionContext;
-  message: string;
-}): void => {
-  reporter.log(message, { feature: collectionContext.featureName });
-};
-
-function assertFreshCollectorState(
-  changesCollector: CollectedState,
-  collectionContext: CollectionContext,
-  allowedInStates: CollectionStage[],
-) {
-  if (!allowedInStates.includes(changesCollector.stage)) {
-    throw new Error(
-      `condu's APIs cannot be used after the recipe function has been executed. Please check ${collectionContext.featureName}'s recipe functions for issues.`,
-    );
-  }
 }
 
 export async function applyAndCommitCollectedState({

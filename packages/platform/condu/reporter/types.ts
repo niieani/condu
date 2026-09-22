@@ -1,3 +1,5 @@
+import type { Readable, Writable } from "node:stream";
+
 export type Phase = "init" | "loading" | "collecting" | "applying" | "complete";
 
 export type ReporterMode = "local" | "ci" | "quiet";
@@ -5,6 +7,8 @@ export type ReporterMode = "local" | "ci" | "quiet";
 export type VerbosityLevel = "quiet" | "normal" | "verbose";
 
 export interface ReporterOptions {
+  input?: Readable;
+  output?: Writable;
   mode?: ReporterMode;
   verbosity?: VerbosityLevel;
   supportsColor?: boolean;

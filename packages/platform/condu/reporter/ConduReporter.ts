@@ -1,4 +1,10 @@
+import { stripVTControlCharacters } from "node:util";
+import { stdin, stdout } from "node:process";
+import type { Readable, Writable } from "node:stream";
+import { printUnifiedDiff } from "print-diff";
+import { prompt } from "./Prompt.js";
 import type {
+  PromptOptions,
   ApplySummary,
   DependencyOperation,
   FeatureContext,
@@ -19,7 +25,7 @@ import { LocalMinimalRenderer } from "./renderers/LocalMinimalRenderer.js";
 import { QuietRenderer } from "./renderers/QuietRenderer.js";
 
 /**
- * Singleton reporter instance for all condu CLI output
+ * Output and progress owned by one apply run
  */
 export class ConduReporter {
   private mode: ReporterMode;
@@ -29,23 +35,31 @@ export class ConduReporter {
   private verbosity: VerbosityLevel;
   private currentPhase?: Phase;
   private features: FeatureProgress[] = [];
-  private files: FileOperation[] = [];
-  private dependencies: DependencyOperation[] = [];
   private renderer: BaseRenderer;
   private spinner?: Spinner;
   private quietSpinnerText = "Applying configuration";
   private quietSpinnerPaused = false;
   private lastFileFeature?: string;
 
-  // Singleton pattern
-  private static instance?: ConduReporter;
+  private readonly input: Readable;
+  private readonly output: Writable;
 
-  private constructor(options: ReporterOptions) {
+  constructor(options: ReporterOptions = {}) {
+    this.input = options.input ?? stdin;
+    this.output = options.output ?? stdout;
     this.mode = options.mode ?? detectMode();
     this.supportsColor = options.supportsColor ?? detectColorSupport();
-    this.isInteractiveTTY = options.isInteractiveTTY ?? false;
+    this.isInteractiveTTY =
+      options.isInteractiveTTY ??
+      (this.output === stdout &&
+        (stdout.isTTY ?? false) &&
+        this.input === stdin &&
+        (stdin.isTTY ?? false));
     this.verbosity =
-      this.mode === "quiet" ? "quiet" : (options.verbosity ?? "normal");
+      this.mode === "quiet"
+        ? "quiet"
+        : (options.verbosity ??
+          (process.env["CONDU_VERBOSE"] === "1" ? "verbose" : "normal"));
     this.startTime = Date.now();
 
     // Create the appropriate renderer
@@ -53,7 +67,7 @@ export class ConduReporter {
 
     // Create spinner for quiet mode if in TTY
     if (this.mode === "quiet" && this.isInteractiveTTY) {
-      this.spinner = new Spinner();
+      this.spinner = new Spinner(this.output);
     }
   }
 
@@ -68,24 +82,6 @@ export class ConduReporter {
 
     // Local mode
     return new LocalMinimalRenderer(this.supportsColor, this.verbosity);
-  }
-
-  static initialize(options: ReporterOptions = {}): ConduReporter {
-    if (!ConduReporter.instance) {
-      ConduReporter.instance = new ConduReporter(options);
-    }
-    return ConduReporter.instance;
-  }
-
-  static get(): ConduReporter {
-    if (!ConduReporter.instance) {
-      throw new Error("Reporter not initialized");
-    }
-    return ConduReporter.instance;
-  }
-
-  static reset(): void {
-    ConduReporter.instance = undefined;
   }
 
   // Phase management
@@ -188,8 +184,6 @@ export class ConduReporter {
 
   // File operations
   reportFile(operation: FileOperation): void {
-    this.files.push(operation);
-
     // Only output in non-quiet mode
     if (this.mode !== "quiet") {
       const output = this.renderer.renderFileOperation(operation);
@@ -213,8 +207,6 @@ export class ConduReporter {
 
   // Dependencies
   reportDependency(operation: DependencyOperation): void {
-    this.dependencies.push(operation);
-
     // Only output in non-quiet mode
     if (this.mode !== "quiet") {
       const output = this.renderer.renderDependencyOperation(operation);
@@ -249,6 +241,25 @@ export class ConduReporter {
     if (output) {
       this.write(output);
     }
+    const pending: unknown[] = error ? [error] : [];
+    const seen = new Set<unknown>();
+    while (pending.length && seen.size < 20) {
+      const current = pending.shift();
+      if (seen.has(current)) continue;
+      seen.add(current);
+      if (current !== error) {
+        this.write(
+          this.renderer.renderError(
+            "Caused by",
+            current instanceof Error ? current : new Error(String(current)),
+          ),
+        );
+      }
+      if (current instanceof AggregateError) pending.push(...current.errors);
+      if (current instanceof Error && current.cause !== undefined)
+        pending.push(current.cause);
+    }
+    if (pending.length) this.write("Additional error causes omitted");
   }
 
   success(message: string): void {
@@ -289,7 +300,7 @@ export class ConduReporter {
       shouldResumeSpinner = this.currentPhase !== "complete";
     }
 
-    process.stdout.write(`${text}\n`);
+    this.output.write(`${text}\n`);
 
     if (shouldResumeSpinner && this.spinner) {
       const fallback = this.quietSpinnerText || "Applying configuration";
@@ -299,15 +310,14 @@ export class ConduReporter {
 
   clearLine(): void {
     if (this.isInteractiveTTY) {
-      process.stdout.clearLine(0);
-      process.stdout.cursorTo(0);
+      this.output.write("\u001B[2K\r");
     }
   }
 
   updateLine(text: string): void {
     if (this.isInteractiveTTY) {
       this.clearLine();
-      process.stdout.write(text);
+      this.output.write(text);
     } else {
       this.write(text);
     }
@@ -358,6 +368,39 @@ export class ConduReporter {
     }
   }
 
+  isInteractive(): boolean {
+    return (
+      this.isInteractiveTTY &&
+      this.mode !== "ci" &&
+      process.env["npm_lifecycle_event"] !== "postinstall"
+    );
+  }
+
+  printDiff(actual: string, desired: string): void {
+    printUnifiedDiff(actual, desired, {
+      write: (text: string) =>
+        this.output.write(
+          this.supportsColor ? text : stripVTControlCharacters(text),
+        ),
+    });
+  }
+
+  async prompt<T>(options: PromptOptions<T>): Promise<T> {
+    if (!this.isInteractive()) {
+      throw new Error("Cannot prompt in a non-interactive run");
+    }
+    this.pauseForUserInput();
+    try {
+      return await prompt(options, { input: this.input, output: this.output });
+    } finally {
+      this.resumeAfterUserInput();
+    }
+  }
+
+  [Symbol.dispose](): void {
+    this.stopSpinner();
+  }
+
   // Get elapsed time
   getElapsedTime(): number {
     return Date.now() - this.startTime;
@@ -371,14 +414,3 @@ export class ConduReporter {
     return this.verbosity;
   }
 }
-
-// Initialize singleton at module load with auto-detected settings
-export const reporter = ConduReporter.initialize({
-  mode: detectMode(),
-  verbosity: process.env["CONDU_VERBOSE"] === "1" ? "verbose" : "normal",
-  supportsColor: detectColorSupport(),
-  isInteractiveTTY: process.stdout.isTTY ?? false,
-});
-
-// Re-export for convenience
-export default reporter;

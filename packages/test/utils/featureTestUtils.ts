@@ -1,3 +1,4 @@
+import { ConduReporter } from "condu/reporter/ConduReporter.js";
 import { configure } from "condu";
 import type { ConduConfigInput } from "condu/api/configTypes.js";
 import type { CollectedState } from "condu/commands/apply/CollectedState.js";
@@ -162,7 +163,8 @@ export async function testApplyFeatures({
     }
 
     // Collect state from features
-    const collected = await collectState({ project });
+    using reporter = new ConduReporter();
+    const collected = await collectState({ project, reporter });
 
     await applyAndCommitCollectedState(collected);
     const { collectedState } = collected;

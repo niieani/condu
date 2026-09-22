@@ -1,12 +1,15 @@
 import readline from "node:readline/promises";
-import { stdin as input, stdout as output } from "node:process";
+import type { Readable, Writable } from "node:stream";
 import type { PromptOptions } from "./types.js";
 
 const BORDER_WIDTH = 69;
 const TOP_BORDER = `┌${"─".repeat(BORDER_WIDTH)}┐`;
 const BOTTOM_BORDER = `└${"─".repeat(BORDER_WIDTH)}┘`;
 
-export async function prompt<T>(options: PromptOptions<T>): Promise<T> {
+export async function prompt<T>(
+  options: PromptOptions<T>,
+  { input, output }: { input: Readable; output: Writable },
+): Promise<T> {
   if (!options.choices.length) {
     throw new Error("Prompt requires at least one choice");
   }
@@ -15,7 +18,7 @@ export async function prompt<T>(options: PromptOptions<T>): Promise<T> {
 
   try {
     while (true) {
-      renderPrompt(options);
+      renderPrompt(options, output);
       const answer = await rl.question("  Your choice: ");
       const rawInput = (answer.trim() || options.defaultKey || "").trim();
       const normalized = rawInput.toLowerCase();
@@ -29,9 +32,9 @@ export async function prompt<T>(options: PromptOptions<T>): Promise<T> {
       }
 
       if (!normalized) {
-        console.log("  Please enter a choice.");
+        output.write("  Please enter a choice.\n");
       } else {
-        console.log(`  Unknown option: ${answer.trim()}`);
+        output.write(`  Unknown option: ${answer.trim()}\n`);
       }
     }
   } finally {
@@ -39,9 +42,14 @@ export async function prompt<T>(options: PromptOptions<T>): Promise<T> {
   }
 }
 
-function renderPrompt<T>({ message, detail, choices }: PromptOptions<T>): void {
-  console.log("");
-  console.log(TOP_BORDER);
+function renderPrompt<T>(
+  { message, detail, choices }: PromptOptions<T>,
+  output: Writable,
+): void {
+  const print = (text: string) => output.write(`${text}\n`);
+  const printWrapped = (text: string) => writeWrapped(text, output);
+  print("");
+  print(TOP_BORDER);
   printWrapped(message);
 
   const detailLines = Array.isArray(detail) ? detail : detail ? [detail] : [];
@@ -58,18 +66,19 @@ function renderPrompt<T>({ message, detail, choices }: PromptOptions<T>): void {
   for (const choice of choices) {
     printWrapped(`  [${choice.key}] ${choice.label}`);
   }
-  console.log(BOTTOM_BORDER);
+  print(BOTTOM_BORDER);
 }
 
-function printWrapped(content: string): void {
+function writeWrapped(content: string, output: Writable): void {
+  const print = (text: string) => output.write(`${text}\n`);
   if (!content) {
-    console.log(formatLine(""));
+    print(formatLine(""));
     return;
   }
   let remaining = content;
   while (remaining.length > 0) {
     const segment = remaining.slice(0, BORDER_WIDTH);
-    console.log(formatLine(segment));
+    print(formatLine(segment));
     remaining = remaining.slice(BORDER_WIDTH);
   }
 }

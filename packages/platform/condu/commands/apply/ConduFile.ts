@@ -1,5 +1,5 @@
 import { ManagedFileLifecycle, SymlinkTarget } from "./ManagedFileLifecycle.js";
-import { ConduReporter } from "../../reporter/ConduReporter.js";
+import type { ConduReporter } from "../../reporter/ConduReporter.js";
 import {
   getDefaultStringify,
   getDefaultParse,
@@ -44,9 +44,13 @@ export class ConduFile<
   // defaults to stringify based on file name/extension
   private stringify: (content: DeserializedT) => string;
 
-  constructor({ relPath, targetPackage }: FileDestination) {
+  constructor({
+    relPath,
+    targetPackage,
+    reporter,
+  }: FileDestination & { reporter: ConduReporter }) {
     // TODO: handle edge case - prevent reaching into other packages by using relative paths or from root (e.g. by specifiying root package + ./packages/file as the path)
-    super({ relPath, targetPackage });
+    super({ relPath, targetPackage, reporter });
     // set default stringify based on file name/extension
     this.stringify = getDefaultStringify(this.relPath);
   }
@@ -168,7 +172,7 @@ export class ConduFile<
         await this.deleteFromFileSystem();
         return;
       } else {
-        ConduReporter.get().warn(
+        this.reporter.warn(
           `File ${this.relPath} is not managed by any feature, yet it wasn't present in cache either.`,
         );
         this.status = "skipped";

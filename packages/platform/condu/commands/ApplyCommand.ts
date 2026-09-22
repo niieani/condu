@@ -24,9 +24,6 @@ export class ApplyCommand extends Command {
   });
 
   async execute() {
-    // Reset any existing reporter instance
-    ConduReporter.reset();
-
     const verbosity: VerbosityLevel = this.quiet
       ? "quiet"
       : this.verbose
@@ -41,17 +38,15 @@ export class ApplyCommand extends Command {
           ? "quiet"
           : detectedMode;
 
-    // Initialize reporter with CLI options
-    ConduReporter.initialize({
+    using reporter = new ConduReporter({
       mode: reporterMode,
       verbosity,
       supportsColor: !this.noColor && detectColorSupport(),
-      isInteractiveTTY: process.stdout.isTTY ?? false,
     });
 
     // TODO: also run: ./node_modules/.bin/moon sync projects
     const { apply } = await import("./apply/apply.js");
-    await apply();
+    await apply({ reporter });
     // await $`./node_modules/.bin/moon sync projects`;
   }
 }

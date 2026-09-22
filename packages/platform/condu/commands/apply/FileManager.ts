@@ -1,3 +1,4 @@
+import type { ConduReporter } from "../../reporter/ConduReporter.js";
 import { UpsertMap } from "@condu/core/utils/UpsertMap.js";
 import path from "node:path";
 import type {
@@ -6,11 +7,7 @@ import type {
 } from "./ConduPackageEntry.js";
 import type { ConduReadonlyCollectedStateView } from "./CollectedState.js";
 import { getRootPackageRelativePath } from "./getRootPackageRelativePath.js";
-import {
-  IS_INTERACTIVE,
-  FILE_STATE_PATH,
-  CURRENT_CACHE_VERSION,
-} from "../../constants.js";
+import { FILE_STATE_PATH, CURRENT_CACHE_VERSION } from "../../constants.js";
 import { ConduFile } from "./ConduFile.js";
 import { SymlinkTarget } from "./ManagedFileLifecycle.js";
 import type {
@@ -19,7 +16,7 @@ import type {
   FilesJsonCacheFileVersion1,
   WrittenFileInCache,
 } from "./fileTypes.js";
-export * from "./fileTypes.js";
+export type * from "./fileTypes.js";
 export { ConduFile } from "./ConduFile.js";
 export { SymlinkTarget, write } from "./ManagedFileLifecycle.js";
 // implementation:
@@ -29,15 +26,21 @@ export class FileManager {
   rootPackage: WorkspaceRootPackage;
   packages: readonly WorkspaceSubPackage[];
   throwOnManualChanges: boolean;
+  private readonly reporter: ConduReporter;
 
   constructor(
     rootPackage: WorkspaceRootPackage,
     packages: readonly WorkspaceSubPackage[],
-    { throwOnManualChanges = false }: FileManagerOptions = {},
+    {
+      throwOnManualChanges = false,
+      reporter,
+    }: FileManagerOptions & { reporter: ConduReporter },
   ) {
     this.throwOnManualChanges = throwOnManualChanges;
+    this.reporter = reporter;
 
     this.cacheFile = new ConduFile({
+      reporter,
       relPath: FILE_STATE_PATH,
       targetPackage: rootPackage,
     });
@@ -76,15 +79,14 @@ export class FileManager {
     );
     return this.files.getOrInsertComputed(
       rootRelativePath,
-      () => new ConduFile(destination),
+      () => new ConduFile({ ...destination, reporter: this.reporter }),
     );
   }
 
   async applyAllFiles(
     collectedStateReadOnlyView: ConduReadonlyCollectedStateView,
   ): Promise<void> {
-    const { ConduReporter } = await import("../../reporter/ConduReporter.js");
-    const reporter = ConduReporter.get();
+    const { reporter } = this;
 
     reporter.startPhase("applying");
 
@@ -105,7 +107,7 @@ export class FileManager {
       if (file.manualConflictResolution) {
         reporter.pauseForUserInput();
         try {
-          if (!IS_INTERACTIVE || this.throwOnManualChanges) {
+          if (!reporter.isInteractive() || this.throwOnManualChanges) {
             process.exitCode = 1;
             if (this.throwOnManualChanges) {
               throw new Error(
@@ -132,9 +134,7 @@ export class FileManager {
     }
 
     for (const file of this.files.values()) {
-      const operationType = this.mapLastApplyKindToOperation(
-        file.lastApplyKind,
-      );
+      const operationType = file.operation;
       const fileStatus = this.mapFileStatusToReporterStatus(file);
       const filePath =
         file.targetPackage === this.rootPackage
@@ -191,6 +191,7 @@ export class FileManager {
           filePath,
           () =>
             new ConduFile({
+              reporter: this.reporter,
               relPath: packageRelativePath,
               targetPackage,
             }),
@@ -215,31 +216,46 @@ export class FileManager {
     }
   }
 
-  private mapLastApplyKindToOperation(
-    lastApplyKind: string | undefined,
-  ): "generated" | "updated" | "created" | "deleted" | "skipped" {
-    if (!lastApplyKind) return "skipped";
-
-    switch (lastApplyKind) {
-      case "generated":
-      case "symlink":
-        return "generated";
-      case "created":
-        return "created";
-      case "updated":
-      case "user-edited":
-        return "updated";
-      case "deleted":
-      case "no-longer-generated":
-        return "deleted";
-      case "unchanged":
-        return "skipped";
-      case "skipped":
-      case "non-fs":
-      case "invalid":
-      default:
-        return "skipped";
-    }
+  getSummary() {
+    const files = [...this.files.values()].filter(
+      (file) =>
+        file.hasFileSystemEffects ||
+        file.lastApplyKind === "no-longer-generated",
+    );
+    const changed = files.filter((file) => file.hadChanges);
+    const manualReviewItems = files.flatMap((file) =>
+      file.manualReviewDetails
+        ? [
+            {
+              path: path.join(file.targetPackage.relPath, file.relPath),
+              managedBy: file.managedByFeatures.map(
+                ({ featureName }) => featureName,
+              ),
+              message: file.manualReviewDetails,
+            },
+          ]
+        : [],
+    );
+    return {
+      totalFiles: files.length,
+      filesEvaluated: files.length,
+      filesChanged: changed.length,
+      filesUnchanged: files.filter(
+        (file) => !file.hadChanges && !file.manualReviewDetails,
+      ).length,
+      filesCreated: changed.filter((file) => file.operation === "created")
+        .length,
+      filesUpdated: changed.filter((file) => file.operation === "updated")
+        .length,
+      filesDeleted: changed.filter((file) => file.operation === "deleted")
+        .length,
+      filesSkipped: files.filter((file) => !!file.manualReviewDetails).length,
+      filesNeedingReview: manualReviewItems.length,
+      manualReviewItems,
+      packagesTouched: new Set(
+        changed.map((file) => file.targetPackage.relPath),
+      ),
+    };
   }
 
   private mapFileStatusToReporterStatus(

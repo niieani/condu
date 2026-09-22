@@ -17,7 +17,6 @@ afterEach(async () => {
   );
 });
 async function fixture() {
-  ConduReporter.initialize({ mode: "quiet" });
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), "condu-lifecycle-"));
   directories.push(dir);
   const root = new ConduPackageEntry({
@@ -30,13 +29,17 @@ async function fixture() {
     manifestAbsPath: path.join(dir, "package.json"),
     relPath: ".",
     absPath: dir,
-    writeProjectManifest: async () => {},
+    writeProjectManifest: async () => {
+      throw new Error("File tests must not write package manifests");
+    },
   });
   const run = async (
     content?: string | { symlinkTarget: string },
     configure?: (manager: FileManager) => void,
   ) => {
-    const manager = new FileManager(root, []);
+    const manager = new FileManager(root, [], {
+      reporter: new ConduReporter({ mode: "quiet", isInteractiveTTY: false }),
+    });
     await manager.readCache();
     if (content !== undefined)
       manager
