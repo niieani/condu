@@ -1,3 +1,4 @@
+import type { DependencyResolver } from "../../ensureDependency.js";
 import { expect, test, vi } from "vitest";
 import type { ConduPackageJson } from "@condu/workspace-utils/packageJsonTypes.js";
 import { reconcileDependencies } from "./reconcileDependencies.js";
@@ -21,7 +22,7 @@ test("moves an owned dependency to a new list preserving its presence range", as
   const result = await reconcileDependencies({
     manifest: owned(),
     dependencies: [{ name: "tool", list: "dependencies" }],
-    resolve: vi.fn(() => {
+    resolve: vi.fn<DependencyResolver>(() => {
       throw new Error("must preserve range");
     }),
   });
@@ -75,7 +76,7 @@ test("allows desired peer and development placements, deduplicating identical de
 });
 
 test("conflicting desired declarations fail before registry resolution", async () => {
-  const resolve = vi.fn();
+  const resolve = vi.fn<DependencyResolver>();
   await expect(
     reconcileDependencies({
       manifest: owned(),

@@ -1,6 +1,9 @@
 import { expect, test, vi } from "vitest";
 import type { MinimalManifest } from "@condu/workspace-utils/packageJsonTypes.js";
-import { ensureDependencyIn } from "./ensureDependency.js";
+import {
+  ensureDependencyIn,
+  type DependencyResolver,
+} from "./ensureDependency.js";
 
 test("skipping an existing unmanaged dependency preserves user ownership", async () => {
   const manifest: MinimalManifest = { devDependencies: { tool: "~1.2.3" } };
@@ -51,7 +54,7 @@ test("owned dependency management can change without resolving a skipped version
     devDependencies: { tool: "~1.2.3" },
     condu: { managedDependencies: { tool: "presence" } },
   };
-  const resolve = vi.fn();
+  const resolve = vi.fn<DependencyResolver>();
   expect(
     await ensureDependencyIn(
       manifest,
@@ -71,7 +74,10 @@ test("version management resolves requested tag through the resolver seam", asyn
   const manifest: MinimalManifest = {
     devDependencies: { alias: "npm:tool@^1.0.0" },
   };
-  const resolve = vi.fn(async () => ({ name: "tool", version: "2.0.0" }));
+  const resolve = vi.fn<DependencyResolver>(async () => ({
+    name: "tool",
+    version: "2.0.0",
+  }));
   await ensureDependencyIn(
     manifest,
     {

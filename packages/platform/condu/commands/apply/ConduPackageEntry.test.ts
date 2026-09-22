@@ -18,10 +18,9 @@ function createEntry(writeProjectManifest: WriteManifestFn) {
 }
 
 test("manifest write failure preserves committed state and supports retry", async () => {
-  const write = vi
-    .fn<WriteManifestFn>()
-    .mockRejectedValueOnce(new Error("disk full"))
-    .mockResolvedValue(undefined);
+  const write = vi.fn<WriteManifestFn>();
+  write.mockRejectedValueOnce(new Error("disk full"));
+  write.mockResolvedValue(undefined);
   const entry = createEntry(write);
   entry.addInternalModification((manifest) => {
     manifest.devDependencies = { tool: "2.0.0" };
@@ -54,10 +53,9 @@ test("modifier failure cannot expose partial changes", async () => {
 });
 
 test("pending feature modifiers survive a failed write and commit exactly once", async () => {
-  const write = vi
-    .fn<WriteManifestFn>()
-    .mockRejectedValueOnce(new Error("disk full"))
-    .mockResolvedValue(undefined);
+  const write = vi.fn<WriteManifestFn>();
+  write.mockRejectedValueOnce(new Error("disk full"));
+  write.mockResolvedValue(undefined);
   const entry = createEntry(write);
   const view = new ConduReadonlyCollectedStateView({
     get fileManager(): never {

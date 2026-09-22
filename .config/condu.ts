@@ -249,6 +249,7 @@ const oxlintConfig = {
         "vitest/no-importing-vitest-globals": "off",
         "vitest/prefer-expect-assertions": "off",
         "vitest/prefer-to-be-truthy": "off",
+        "vitest/prefer-to-be-falsy": "off",
         "vitest/require-test-timeout": "off",
         "vitest/require-top-level-describe": "off",
         "typescript/no-non-null-assertion": "off",
