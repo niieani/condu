@@ -346,7 +346,7 @@ export default configure((pkg) => ({
     }),
     eslint({
       importAdditionalConfigFrom: "./eslint.ts",
-      ignores: [".conductor/**"],
+      ignores: [".conductor/**", "notes/**"],
       defaultRules: {
         // TODO: opinionated rules (these should not be defaults)
         "unicorn/no-null": "error",
