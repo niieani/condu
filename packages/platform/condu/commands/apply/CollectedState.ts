@@ -142,7 +142,8 @@ export type DependencyDefinitionInput = {
   /** @default 'devDependencies' */
   readonly list?: DependencyTargetList;
   /**
-   * do not resolve or install if the dependency is already present
+   * Do not resolve, install, or take ownership of an existing unmanaged
+   * dependency. Set false to explicitly adopt an existing dependency.
    * @default true
    */
   readonly skipIfExists?: boolean;

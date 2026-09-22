@@ -1,4 +1,4 @@
-import { ensureDependencyIn } from "../../ensureDependency.js";
+import { reconcileDependencies } from "./reconcileDependencies.js";
 import type { LoadConfigOptions } from "../../api/configTypes.js";
 import type { ConduPackageEntry } from "./ConduPackageEntry.js";
 import {
@@ -28,7 +28,6 @@ import {
   type ModifyUserEditableFileOptions,
 } from "./FileManager.js";
 import type { PeerContext } from "../../extendable.js";
-import { UpsertMap } from "@condu/core/utils/UpsertMap.js";
 import type { UnionToIntersection } from "type-fest";
 import type { ConduReporter as ReporterInstance } from "../../reporter/ConduReporter.js";
 
@@ -685,78 +684,60 @@ export async function applyAndCommitCollectedState({
   await fileManager.applyAllFiles(collectedStateReadOnlyView);
 
   const dependencyStats = {
-    evaluated: dependencies.length,
+    evaluated: new Set(
+      dependencies.map(({ targetPackage, dependencyDefinition }) =>
+        JSON.stringify([
+          targetPackage.manifestAbsPath,
+          dependencyDefinition.installAsAlias ?? dependencyDefinition.name,
+        ]),
+      ),
+    ).size,
     changed: 0,
     removed: 0,
   };
 
-  // Group dependency additions by target package
-  const dependenciesByPackage = new UpsertMap<
-    ConduPackageEntry,
-    CollectedDependency[]
+  // Manifest paths identify packages even when a workspace proxy is used.
+  const dependenciesByPackage = new Map<
+    string,
+    { targetPackage: ConduPackageEntry; dependencies: CollectedDependency[] }
   >();
-  for (const collectedDependency of dependencies) {
-    const list = dependenciesByPackage.getOrInsert(
-      collectedDependency.targetPackage,
-      [],
-    );
-    list.push(collectedDependency);
+  for (const targetPackage of [project.workspace, ...project.allPackages]) {
+    if (!dependenciesByPackage.has(targetPackage.manifestAbsPath)) {
+      dependenciesByPackage.set(targetPackage.manifestAbsPath, {
+        targetPackage,
+        dependencies: [],
+      });
+    }
+  }
+  for (const dependency of dependencies) {
+    const key = dependency.targetPackage.manifestAbsPath;
+    let group = dependenciesByPackage.get(key);
+    if (!group) {
+      group = { targetPackage: dependency.targetPackage, dependencies: [] };
+      dependenciesByPackage.set(key, group);
+    }
+    group.dependencies.push(dependency);
   }
 
-  // TODO: move this to a 'dependencies' feature
-  // Create a modification to add dependencies per each package
-  for (const [targetPackage, packageDependencies] of dependenciesByPackage) {
+  // Run after feature modifiers, which may change previous ownership metadata.
+  for (const {
+    targetPackage,
+    dependencies: desired,
+  } of dependenciesByPackage.values()) {
     packageJsonModifications.push({
       targetPackage,
       context: { featureName: "condu:dependencies" },
       globalRegistry: collectedStateReadOnlyView,
       modifier: async (manifest) => {
-        const noLongerManagedDependencies = new Set(
-          Object.keys(manifest.condu?.managedDependencies ?? {}),
-        );
-
-        // Apply all new dependencies
-        for (const { dependencyDefinition } of packageDependencies) {
-          const didChange = await ensureDependencyIn(
-            manifest,
-            dependencyDefinition,
-          );
-          if (didChange) {
-            dependencyStats.changed += 1;
-          }
-          noLongerManagedDependencies.delete(
-            dependencyDefinition.installAsAlias ?? dependencyDefinition.name,
-          );
-        }
-
-        for (const name of noLongerManagedDependencies) {
-          let removed = false;
-          if (manifest.dependencies?.[name]) {
-            delete manifest.dependencies[name];
-            removed = true;
-          }
-          if (manifest.devDependencies?.[name]) {
-            delete manifest.devDependencies[name];
-            removed = true;
-          }
-          if (manifest.peerDependencies?.[name]) {
-            delete manifest.peerDependencies[name];
-            removed = true;
-          }
-          if (manifest.optionalDependencies?.[name]) {
-            delete manifest.optionalDependencies[name];
-            removed = true;
-          }
-          if (manifest.condu?.managedDependencies?.[name]) {
-            delete manifest.condu.managedDependencies[name];
-            removed = true;
-          }
-          if (removed) {
-            dependencyStats.removed += 1;
-          }
-        }
-
-        return manifest;
+        const result = await reconcileDependencies({
+          manifest,
+          dependencies: desired.map(
+            ({ dependencyDefinition }) => dependencyDefinition,
+          ),
+        });
+        dependencyStats.changed += result.stats.changed;
+        dependencyStats.removed += result.stats.removed;
+        return result.manifest;
       },
     });
   }
@@ -821,7 +802,7 @@ export async function applyAndCommitCollectedState({
   }
 
   for (const pkg of touchedPackages) {
-    await pkg.applyAndCommit();
+    if (!(await pkg.applyAndCommit())) touchedPackages.delete(pkg);
   }
 
   return {

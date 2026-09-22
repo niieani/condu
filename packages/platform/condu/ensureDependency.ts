@@ -27,6 +27,22 @@ const { resolveFromNpm } = createNpmResolver(
   },
 );
 
+export type DependencyResolver = (dependency: {
+  name: string;
+  tag?: string;
+}) => Promise<{ name: string; version: string }>;
+
+const resolveDependency: DependencyResolver = async ({ name, tag }) => {
+  const dependency = await resolveFromNpm(
+    { alias: name, bareSpecifier: tag },
+    {},
+  );
+  if (!dependency?.manifest) {
+    throw new Error(`no ${name} dependency found in the NPM registry`);
+  }
+  return dependency.manifest;
+};
+
 /**
  * Mutates the manifest to ensure the dependency is present.
  */
@@ -42,6 +58,7 @@ export async function ensureDependencyIn(
     built = false,
     ...opts
   }: DependencyDefinition,
+  resolve: DependencyResolver = resolveDependency,
 ): Promise<boolean> {
   let changed = false;
   if (
@@ -56,38 +73,32 @@ export async function ensureDependencyIn(
     }
   }
 
-  const targetDependencyList = (manifest[list] ||= {});
+  const targetDependencyList = (manifest[list] ??= {});
   const existingVersion = targetDependencyList[installAsAlias];
-  if (skipIfExists && existingVersion) {
-    return changed;
-  }
-  const dependency =
-    managed === "presence" && existingVersion
-      ? { manifest: { name, version: existingVersion } }
-      : "version" in opts && opts.version
-        ? { manifest: { name, version: opts.version } }
-        : await resolveFromNpm({ alias: name, bareSpecifier: opts.tag }, {});
-
-  if (!dependency?.manifest) {
-    throw new Error(`no ${name} dependency found in the NPM registry`);
-  }
-
-  const pkgDescriptor = `${
-    dependency.manifest.name !== installAsAlias
-      ? `npm:${dependency.manifest.name}@`
-      : ""
-  }${rangePrefix}${dependency.manifest.version}`;
-  if (existingVersion !== pkgDescriptor) {
-    targetDependencyList[installAsAlias] = pkgDescriptor;
-    changed = true;
+  if (!existingVersion || (!skipIfExists && managed !== "presence")) {
+    const dependency = opts.version
+      ? { name, version: opts.version }
+      : await resolve({ name, tag: opts.tag });
+    const pkgDescriptor = `${
+      dependency.name !== installAsAlias ? `npm:${dependency.name}@` : ""
+    }${rangePrefix}${dependency.version}`;
+    if (existingVersion !== pkgDescriptor) {
+      targetDependencyList[installAsAlias] = pkgDescriptor;
+      changed = true;
+    }
   }
 
-  if (managed) {
+  const previousOwnership = manifest.condu?.managedDependencies;
+  const wasManaged = previousOwnership?.[installAsAlias];
+  if (managed && (!existingVersion || !skipIfExists || wasManaged)) {
     const managedDependencies = ensureManagedDependenciesSection(manifest);
     if (managedDependencies[installAsAlias] !== managed) {
       managedDependencies[installAsAlias] = managed;
       changed = true;
     }
+  } else if (!managed && previousOwnership?.[installAsAlias]) {
+    delete previousOwnership[installAsAlias];
+    changed = true;
   }
   return changed;
 }

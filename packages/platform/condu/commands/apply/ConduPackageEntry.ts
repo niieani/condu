@@ -1,4 +1,5 @@
 import path from "node:path";
+import { isDeepStrictEqual } from "node:util";
 import type {
   CollectionContext,
   ConduReadonlyCollectedStateView,
@@ -112,23 +113,28 @@ export class ConduPackageEntry<KindT extends PackageKind = PackageKind>
     this.#publishedManagedByFeatures.push(context);
   }
 
-  async applyAndCommit(): Promise<void> {
+  async applyAndCommit(): Promise<boolean> {
+    let stagedManifest = structuredClone(this.#manifest);
     for (const { modifier, globalRegistry } of this.#pendingModifications) {
       // for now process sequentially in case the modifier does network calls
       // TODO: consider parallelizing with a cap
-      this.#manifest = await modifier(this.#manifest, {
+      stagedManifest = await modifier(stagedManifest, {
         globalRegistry,
         targetPackage: this,
       });
     }
 
     for (const modifier of this.#internalModifications) {
-      this.#manifest = await modifier(this.#manifest);
+      stagedManifest = await modifier(stagedManifest);
     }
 
+    const changed = !isDeepStrictEqual(this.#manifest, stagedManifest);
+    if (changed) {
+      await this.#writeProjectManifest(stagedManifest);
+      this.#manifest = stagedManifest;
+    }
     this.#pendingModifications = [];
-
-    await this.#writeProjectManifest(this.#manifest);
+    return changed;
   }
 
   async generatePublishManifest({
