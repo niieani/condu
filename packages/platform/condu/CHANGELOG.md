@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.1.0](https://github.com/niieani/condu/compare/condu@1.0.3...condu@1.1.0) (2026-11-09)
+
+
+### Features
+
+* enable oxlint for condu ([3c3ec49](https://github.com/niieani/condu/commit/3c3ec49f6788bd5689349dcf60dfadd0841c01b7))
+* implement modern CLI output design for condu apply command ([#37](https://github.com/niieani/condu/issues/37)) ([f971983](https://github.com/niieani/condu/commit/f9719833bbd171792549a14ad727b1406ebb4289))
+
+
+### Bug Fixes
+
+* isolate reporting and outcomes for each apply run ([5b6a41f](https://github.com/niieani/condu/commit/5b6a41f447faecc1f7f6eb297721fb40030c28fe))
+* preserve managed file ownership through reconciliation ([87c08a7](https://github.com/niieani/condu/commit/87c08a7bbd0f0accd7144692445f652b6074e66e))
+* reconcile complete managed dependency lifecycles ([590a3ba](https://github.com/niieani/condu/commit/590a3ba3b5400de162fe9315cc5ed16f2187406a))
+* upgrade deps ([95818fe](https://github.com/niieani/condu/commit/95818fec5bb51414254694ae283bb7acfd0d7d95))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/core bumped to 1.0.2
+    * @condu/schema-types bumped to 1.0.1
+    * @condu/update-specifiers bumped to 1.0.2
+    * @condu/workspace-utils bumped to 1.0.2
+
 ## [1.0.3](https://github.com/niieani/condu/compare/condu@1.0.2...condu@1.0.3) (2025-08-10)
 
 

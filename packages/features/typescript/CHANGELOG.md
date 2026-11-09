@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.1.0](https://github.com/niieani/condu/compare/@condu-feature/typescript@1.0.3...@condu-feature/typescript@1.1.0) (2026-11-09)
+
+
+### Features
+
+* enable oxlint for condu ([3c3ec49](https://github.com/niieani/condu/commit/3c3ec49f6788bd5689349dcf60dfadd0841c01b7))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @condu/schema-types bumped to 1.0.1
+  * peerDependencies
+    * condu bumped to 1.1.0
+
 ## [1.0.3](https://github.com/niieani/condu/compare/@condu-feature/typescript@1.0.2...@condu-feature/typescript@1.0.3) (2025-08-10)
 
 
