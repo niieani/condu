@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 export type TaskArgs = null | string | string[];
 
 /** Expanded information about a task dependency. */
